@@ -107,5 +107,10 @@
   "kaleidoscope.cookbook.info.shaped": "Crafting table (in this shape)",
   "kaleidoscope.cookbook.info.shapeless": "Crafting table (any arrangement)",
   "kaleidoscope.cookbook.info.best_quality": "The result gets the best quality of the ingredients",
-  "kaleidoscope.cookbook.info.campfire": "Shawarma spit (with redstone) or campfire"
+  "kaleidoscope.cookbook.info.campfire": "Shawarma spit (with redstone) or campfire",
+  "kaleidoscope.cookbook.variants": "%s variants",
+  "kaleidoscope.cookbook.variants.amounts": "%s variants: more ingredients make more portions (%s to %s).",
+  "kaleidoscope.cookbook.variants.ingredients": "%s variants with different ingredients.",
+  "kaleidoscope.cookbook.variant.previous": "◀ Previous variant",
+  "kaleidoscope.cookbook.variant.next": "Next variant ▶"
 }

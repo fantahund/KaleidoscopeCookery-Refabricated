@@ -107,5 +107,10 @@
   "kaleidoscope.cookbook.info.shaped": "Werkbank (in dieser Form)",
   "kaleidoscope.cookbook.info.shapeless": "Werkbank (beliebig angeordnet)",
   "kaleidoscope.cookbook.info.best_quality": "Das Ergebnis bekommt die beste Qualität der Zutaten",
-  "kaleidoscope.cookbook.info.campfire": "Dönerspieß (mit Redstone) oder Lagerfeuer"
+  "kaleidoscope.cookbook.info.campfire": "Dönerspieß (mit Redstone) oder Lagerfeuer",
+  "kaleidoscope.cookbook.variants": "%s Varianten",
+  "kaleidoscope.cookbook.variants.amounts": "%s Varianten: mehr Zutaten ergeben mehr Portionen (%s bis %s).",
+  "kaleidoscope.cookbook.variants.ingredients": "%s Varianten mit unterschiedlichen Zutaten.",
+  "kaleidoscope.cookbook.variant.previous": "◀ Vorherige Variante",
+  "kaleidoscope.cookbook.variant.next": "Nächste Variante ▶"
 }

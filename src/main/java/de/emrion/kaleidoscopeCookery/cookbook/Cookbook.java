@@ -157,14 +157,23 @@ public class Cookbook {
 
     private Dialog listDialog(Component title, List<DialogBody> body, List<CookbookEntry> list, int page, Supplier<Dialog> back,
                               java.util.function.IntFunction<Dialog> pageOf) {
-        int pages = Math.max(1, (list.size() + PER_PAGE - 1) / PER_PAGE);
+        // Gleiches Gericht an derselben Station (z. B. Milchtee für 1 bis 9 Portionen) als ein Eintrag mit Varianten
+        java.util.Map<String, List<CookbookEntry>> grouped = new java.util.LinkedHashMap<>();
+        for (CookbookEntry entry : list) {
+            grouped.computeIfAbsent(entry.category() + "|" + entry.main().item().asString(), key -> new ArrayList<>()).add(entry);
+        }
+        List<List<CookbookEntry>> groups = new ArrayList<>(grouped.values());
+        int pages = Math.max(1, (groups.size() + PER_PAGE - 1) / PER_PAGE);
         int current = Math.clamp(page, 0, pages - 1);
         List<ActionButton> buttons = new ArrayList<>();
         Supplier<Dialog> self = () -> pageOf.apply(current);
-        for (CookbookEntry entry : list.subList(current * PER_PAGE, Math.min(list.size(), (current + 1) * PER_PAGE))) {
+        for (List<CookbookEntry> group : groups.subList(current * PER_PAGE, Math.min(groups.size(), (current + 1) * PER_PAGE))) {
+            CookbookEntry entry = group.getFirst();
             ItemStack result = stack(entry.main().item(), entry.main().amount());
             Component label = ItemIcons.withIcon(result, name(entry.main().item()));
-            buttons.add(button(label, entry.category().title(), (response, audience) -> show(audience, entryPage(entry, self))));
+            Component tooltip = group.size() > 1 ? entry.category().title().append(Component.text(" · ")).append(Lang.get("cookbook.variants", group.size()))
+                    : entry.category().title();
+            buttons.add(button(label, tooltip, (response, audience) -> show(audience, entryPage(group, 0, self))));
         }
         if (list.isEmpty()) {
             body = new ArrayList<>(body);
@@ -181,7 +190,16 @@ public class Cookbook {
     }
 
     private Dialog entryPage(CookbookEntry entry, Supplier<Dialog> back) {
-        Supplier<Dialog> self = () -> entryPage(entry, back);
+        return entryPage(List.of(entry), 0, back);
+    }
+
+    /**
+     * Rezeptseite; bei mehreren Varianten (gleiches Ergebnis, andere Zutaten-Menge) mit Umschalter.
+     */
+    private Dialog entryPage(List<CookbookEntry> variants, int index, Supplier<Dialog> back) {
+        int variant = Math.clamp(index, 0, variants.size() - 1);
+        CookbookEntry entry = variants.get(variant);
+        Supplier<Dialog> self = () -> entryPage(variants, variant, back);
         List<DialogBody> body = new ArrayList<>();
         if (entry.grid() != null) {
             body.add(DialogBody.plainMessage(craftingGrid(entry), 200));
@@ -218,6 +236,16 @@ public class Cookbook {
         body.add(DialogBody.plainMessage(info, 300));
 
         List<ActionButton> buttons = new ArrayList<>();
+        if (variants.size() > 1) {
+            int min = variants.stream().mapToInt(other -> other.main().amount()).min().orElse(1);
+            int max = variants.stream().mapToInt(other -> other.main().amount()).max().orElse(1);
+            body.add(DialogBody.plainMessage(Lang.get(min != max ? "cookbook.variants.amounts" : "cookbook.variants.ingredients", variants.size(), min, max)
+                    .color(NamedTextColor.YELLOW), 300));
+            buttons.add(button(Lang.get("cookbook.variant.previous"), null, (response, audience) ->
+                    show(audience, entryPage(variants, (variant - 1 + variants.size()) % variants.size(), back))));
+            buttons.add(button(Lang.get("cookbook.variant.next"), null, (response, audience) ->
+                    show(audience, entryPage(variants, (variant + 1) % variants.size(), back))));
+        }
         Set<Key> asked = new LinkedHashSet<>();
         for (CookbookEntry.Input input : entry.inputs()) {
             for (Key item : input.ingredient().items()) {
@@ -235,7 +263,8 @@ public class Cookbook {
                     (response, audience) -> show(audience, usesPage(result, self))));
         }
         buttons.add(button(Lang.get("cookbook.overview"), null, (response, audience) -> show(audience, mainPage())));
-        return dialog(name(result), body, List.of(), buttons, back);
+        Component title = variants.size() > 1 ? name(result).append(Component.text(" ")).append(Lang.get("cookbook.page", variant + 1, variants.size())) : name(result);
+        return dialog(title, body, List.of(), buttons, back);
     }
 
     private static final Key FONT = Key.key("kaleidoscope", "cookbook");
