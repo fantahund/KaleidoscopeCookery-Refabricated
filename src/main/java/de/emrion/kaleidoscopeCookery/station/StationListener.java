@@ -6,6 +6,7 @@ import de.emrion.kaleidoscopeCookery.item.CookeryItem;
 import de.emrion.kaleidoscopeCookery.item.CookeryItems;
 import de.emrion.kaleidoscopeCookery.station.crop.CropKind;
 import de.emrion.kaleidoscopeCookery.station.crop.CropStation;
+import de.emrion.kaleidoscopeCookery.station.oil.OilPotStation;
 import de.emrion.kaleidoscopeCookery.station.plate.PlateStation;
 import de.emrion.kaleidoscopeCookery.station.teapot.CupStation;
 import de.emrion.kaleidoscopeCookery.station.teapot.TeapotStation;
@@ -285,6 +286,8 @@ public class StationListener implements Listener {
                 teapot.initFrom(placedFrom);
             } else if (station instanceof CupStation cup) {
                 cup.initFrom(placedId);
+            } else if (station instanceof OilPotStation oilPot) {
+                oilPot.initFrom(placedFrom);
             }
         });
         if (player.getGameMode() != GameMode.CREATIVE) {

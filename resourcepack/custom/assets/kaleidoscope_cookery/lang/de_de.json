@@ -259,6 +259,8 @@
   "tooltip.kaleidoscope_cookery.kitchenware_racks": "Zum Aufhängen von Küchenwerkzeug",
   "tooltip.kaleidoscope_cookery.millstone": "Bestimmte Tiere auf dem Mühlstein werden eingespannt und treiben ihn an.",
   "tooltip.kaleidoscope_cookery.oil": "Bekommt man, wenn man Schweine, Piglins oder Hoglins mit dem Küchenmesser tötet.",
+  "tooltip.kaleidoscope_cookery.oil_pot.count": "Öl: %d",
+  "tooltip.kaleidoscope_cookery.oil_pot.empty": "Leer",
   "tooltip.kaleidoscope_cookery.pot": "Auf eine Hitzequelle stellen, Öl hinein, Zutaten dazu, mit dem Pfannenwender rühren, servieren.",
   "tooltip.kaleidoscope_cookery.qingtuan_plate": "Qingming-Leckerei, gedämpft aus Beifußsaft und Klebreismehl.",
   "tooltip.kaleidoscope_cookery.raw_dough": "Rechtsklick halten, um den Teig zu ziehen",

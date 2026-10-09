@@ -1264,6 +1264,7 @@ items:
   "kaleidoscope_cookery:oil_pot":
     model: "kaleidoscope_cookery:oil_pot"
     name: block.kaleidoscope_cookery.oil_pot
+    max-stack: 1
   "kaleidoscope_cookery:oil_splashed_fish":
     model: "kaleidoscope_cookery:oil_splashed_fish"
     name: block.kaleidoscope_cookery.oil_splashed_fish

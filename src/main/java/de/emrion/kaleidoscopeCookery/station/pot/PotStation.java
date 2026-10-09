@@ -9,6 +9,7 @@ import de.emrion.kaleidoscopeCookery.recipe.PotRecipe;
 import de.emrion.kaleidoscopeCookery.station.Station;
 import de.emrion.kaleidoscopeCookery.station.StationContext;
 import de.emrion.kaleidoscopeCookery.station.StationType;
+import de.emrion.kaleidoscopeCookery.station.oil.OilItems;
 import de.emrion.kaleidoscopeCookery.station.stove.StoveStation;
 import de.emrion.kaleidoscopeCookery.util.Keys;
 import de.emrion.kaleidoscopeCookery.util.Lang;
@@ -342,15 +343,13 @@ public class PotStation extends Station {
     }
 
     private boolean placeOil(Player player, ItemStack held) {
-        if (!OIL.equals(CookeryItems.idOf(held))) {
+        // Öl, Pfannenwender mit Öl oder Ölkanne (PotBlockEntity#onPlaceOil)
+        if (!OilItems.takeOne(held, player.getGameMode() == GameMode.CREATIVE)) {
             return false;
         }
         currentTick = PUT_INGREDIENT_TIME;
         hasOil = true;
         showOil = true;
-        if (player.getGameMode() != GameMode.CREATIVE) {
-            held.subtract();
-        }
         ThreadLocalRandom random = ThreadLocalRandom.current();
         world().playSound(center(), Sound.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 1, (random.nextFloat() - random.nextFloat()) * 0.8f);
         world().spawnParticle(Particle.SMOKE, position().x() + 0.5, position().y() + 0.4, position().z() + 0.5, 10, 0.2, 0.1, 0.2, 0.05);

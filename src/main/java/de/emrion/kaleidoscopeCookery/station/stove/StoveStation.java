@@ -3,6 +3,7 @@ package de.emrion.kaleidoscopeCookery.station.stove;
 import de.emrion.kaleidoscopeCookery.station.Station;
 import de.emrion.kaleidoscopeCookery.station.StationContext;
 import de.emrion.kaleidoscopeCookery.station.StationType;
+import de.emrion.kaleidoscopeCookery.station.oil.OilItems;
 import de.emrion.kaleidoscopeCookery.util.Keys;
 import net.kyori.adventure.key.Key;
 import org.bukkit.GameMode;
@@ -100,6 +101,9 @@ public class StoveStation extends Station {
             return true;
         }
         if (lit && Tag.ITEMS_SHOVELS.isTagged(held.getType())) {
+            if (OilItems.isShovel(held) && OilItems.shovelHasOil(held)) {
+                OilItems.setShovelOil(held, false);
+            }
             extinguish(0.5f);
             if (player.getGameMode() != GameMode.CREATIVE) {
                 player.damageItemStack(hand, 1);

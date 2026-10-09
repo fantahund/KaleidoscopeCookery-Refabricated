@@ -283,6 +283,8 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry["armor"] = armor
                 entry["unbreakable"] = True
                 entry.pop("max-stack", None)
+            if full_id == "kaleidoscope_cookery:oil_pot":
+                entry["max-stack"] = 1  # OilPotItem: stacksTo(1)
             if full_id == "kaleidoscope_cookery:teapot":
                 entry["sneak-place"] = True  # TeapotItem#useOn: nur beim Schleichen platzieren
                 entry["max-stack"] = 1

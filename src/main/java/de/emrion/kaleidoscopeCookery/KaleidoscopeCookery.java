@@ -7,6 +7,7 @@ import de.emrion.kaleidoscopeCookery.food.FoodService;
 import de.emrion.kaleidoscopeCookery.food.VanillaFoodAdjuster;
 import de.emrion.kaleidoscopeCookery.item.CookeryItems;
 import de.emrion.kaleidoscopeCookery.item.ItemProtectionListener;
+import de.emrion.kaleidoscopeCookery.item.ModelProperties;
 import de.emrion.kaleidoscopeCookery.item.QuickKnifeListener;
 import de.emrion.kaleidoscopeCookery.loot.OilDropListener;
 import de.emrion.kaleidoscopeCookery.pack.ResourcePackService;
@@ -18,6 +19,9 @@ import de.emrion.kaleidoscopeCookery.station.choppingboard.ChoppingBoardStation;
 import de.emrion.kaleidoscopeCookery.station.crop.CropKind;
 import de.emrion.kaleidoscopeCookery.station.crop.CropListener;
 import de.emrion.kaleidoscopeCookery.station.crop.CropStation;
+import de.emrion.kaleidoscopeCookery.station.oil.EnamelBasinStation;
+import de.emrion.kaleidoscopeCookery.station.oil.OilBlockStation;
+import de.emrion.kaleidoscopeCookery.station.oil.OilPotStation;
 import de.emrion.kaleidoscopeCookery.station.plate.PlateStation;
 import de.emrion.kaleidoscopeCookery.station.pot.PotStation;
 import de.emrion.kaleidoscopeCookery.station.steamer.SteamerStation;
@@ -67,6 +71,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
 
         cookeryConfig = CookeryConfig.load(getConfig(), getLogger());
         items = CookeryItems.loadBundled(this);
+        ModelProperties.load(this);
         recipes = loadRecipes();
         vanillaRecipes = new VanillaRecipes(this, items);
         vanillaRecipes.register(recipes);
@@ -84,6 +89,9 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         stations.register(SteamerStation.type());
         stations.register(TeapotStation.type());
         stations.register(CupStation.type());
+        stations.register(OilPotStation.type());
+        stations.register(EnamelBasinStation.type());
+        stations.register(OilBlockStation.type());
         for (CropKind kind : CropKind.values()) {
             stations.register(CropStation.type(kind));
         }

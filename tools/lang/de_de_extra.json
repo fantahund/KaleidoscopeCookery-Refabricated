@@ -81,7 +81,9 @@
     "tooltip.kaleidoscope_cookery.teapot.progress.no_fluid": "Teebasis fehlt",
     "tooltip.kaleidoscope_cookery.teapot.progress.no_tea_base": "Zutat fehlt",
     "tooltip.kaleidoscope_cookery.teapot.progress.processing": "Zieht",
-    "tooltip.kaleidoscope_cookery.teapot.progress.finished": "Der Tee ist fertig"
+    "tooltip.kaleidoscope_cookery.teapot.progress.finished": "Der Tee ist fertig",
+    "tooltip.kaleidoscope_cookery.oil_pot.empty": "Leer",
+    "tooltip.kaleidoscope_cookery.oil_pot.count": "Öl: %d"
   },
   "kaleidoscope_grilling": {
     "hud.kaleidoscope_grilling.pot.state.need_heat": "Wartet auf Hitzequelle",
