@@ -86,7 +86,7 @@ public class Cookbook {
     public void openFor(Player player, Key item) {
         List<CookbookEntry> producing = entries().all().stream().filter(entry -> entry.produces(item)).toList();
         if (!producing.isEmpty()) {
-            player.showDialog(listPage(Lang.get("cookbook.recipes_for", name(item)), producing, 0, this::mainPage));
+            player.showDialog(entryPage(producing, 0, this::mainPage));
         } else {
             player.showDialog(usesPage(item, this::mainPage));
         }
@@ -177,7 +177,8 @@ public class Cookbook {
             Component label = ItemIcons.withIcon(result, name(entry.main().item()));
             Component tooltip = group.size() > 1 ? entry.category().title().append(Component.text(" · ")).append(Lang.get("cookbook.variants", group.size()))
                     : entry.category().title();
-            buttons.add(button(label, tooltip, (response, audience) -> show(audience, entryPage(group, 0, self))));
+            // Alle Rezepte für dieses Item (auch an anderen Stationen) zum Blättern, die dieser Station zuerst
+            buttons.add(button(label, tooltip, (response, audience) -> show(audience, entryPage(allRecipesFor(group), 0, self))));
         }
         if (list.isEmpty()) {
             body = new ArrayList<>(body);
@@ -221,8 +222,9 @@ public class Cookbook {
         if (variants.size() > 1) {
             int min = variants.stream().mapToInt(other -> other.main().amount()).min().orElse(1);
             int max = variants.stream().mapToInt(other -> other.main().amount()).max().orElse(1);
-            body.add(DialogBody.plainMessage(Lang.get(min != max ? "cookbook.variants.amounts" : "cookbook.variants.ingredients", variants.size(), min, max)
-                    .color(NamedTextColor.YELLOW), 300));
+            boolean oneStation = variants.stream().map(CookbookEntry::category).distinct().count() == 1;
+            String key = !oneStation ? "cookbook.variants.recipes" : min != max ? "cookbook.variants.amounts" : "cookbook.variants.ingredients";
+            body.add(DialogBody.plainMessage(Lang.get(key, variants.size(), min, max).color(NamedTextColor.YELLOW), 300));
             toggle.add(button(Lang.get("cookbook.variant.previous"), null, (response, audience) ->
                     show(audience, entryPage(variants, (variant - 1 + variants.size()) % variants.size(), back))));
             toggle.add(button(Lang.get("cookbook.variant.next"), null, (response, audience) ->
@@ -233,7 +235,7 @@ public class Cookbook {
             for (Key item : input.ingredient().items()) {
                 if (asked.add(item) && entries().all().stream().anyMatch(other -> other.produces(item))) {
                     buttons.add(button(ItemIcons.withIcon(stack(item, 1), Lang.get("cookbook.made_by", name(item))), null,
-                            (response, audience) -> show(audience, listPage(Lang.get("cookbook.recipes_for", name(item)),
+                            (response, audience) -> show(audience, entryPage(
                                     entries().all().stream().filter(other -> other.produces(item)).toList(), 0, self))));
                     break;
                 }
@@ -361,6 +363,20 @@ public class Cookbook {
             cell.append(glyph(0xE250 + digits.length() - 1)).append(Component.text(glyphs.toString()).font(FONT).color(NamedTextColor.WHITE));
         }
         return cell.append(GAP).build();
+    }
+
+    /**
+     * Die Gruppe zuerst, danach alle anderen Rezepte mit demselben Ergebnis.
+     */
+    private List<CookbookEntry> allRecipesFor(List<CookbookEntry> group) {
+        List<CookbookEntry> all = new ArrayList<>(group);
+        Key item = group.getFirst().main().item();
+        for (CookbookEntry entry : entries().all()) {
+            if (entry.produces(item) && !all.contains(entry)) {
+                all.add(entry);
+            }
+        }
+        return all;
     }
 
     private Dialog usesPage(Key item, Supplier<Dialog> back) {

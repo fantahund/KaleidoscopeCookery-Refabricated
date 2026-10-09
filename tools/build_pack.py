@@ -257,33 +257,34 @@ class PackBuilder:
             return data
 
         def first_model(node):
-            if isinstance(node, dict):
-                # Inventar-Ansicht bevorzugen (select display_context mit "gui")
-                for case in node.get("cases", []) if isinstance(node.get("cases"), list) else []:
+            """Modell, das der Client im Inventar ohne besondere Daten zeigt (custom_model_data 0, nicht benutzt)."""
+            if not isinstance(node, dict):
+                return None
+            kind = node.get("type", "").removeprefix("minecraft:")
+            if kind == "model":
+                return node.get("model")
+            if kind == "special":
+                return node.get("base")
+            if kind == "range_dispatch":
+                chosen = None
+                for entry in sorted(node.get("entries", []), key=lambda e: e.get("threshold", 0)):
+                    if entry.get("threshold", 0) <= 0:
+                        chosen = entry.get("model")
+                return first_model(chosen) if chosen else first_model(node.get("fallback"))
+            if kind == "select":
+                for case in node.get("cases", []):
                     when = case.get("when")
                     if when == "gui" or (isinstance(when, list) and "gui" in when):
-                        found = first_model(case.get("model"))
-                        if found:
-                            return found
-                if node.get("type") in ("minecraft:model", "model") and "model" in node:
-                    return node["model"]
-                if "base" in node and isinstance(node["base"], str):
-                    return node["base"]
-                for key in ("fallback", "on_false", "on_true", "model", "cases", "entries", "models"):
-                    if key in node:
-                        found = first_model(node[key])
-                        if found:
-                            return found
-                for value in node.values():
-                    found = first_model(value)
+                        return first_model(case.get("model"))
+                return first_model(node.get("fallback")) or (first_model(node["cases"][0].get("model")) if node.get("cases") else None)
+            if kind == "condition":
+                return first_model(node.get("on_false"))
+            if kind == "composite":
+                for model in node.get("models", []):
+                    found = first_model(model)
                     if found:
                         return found
-            elif isinstance(node, list):
-                for value in node:
-                    found = first_model(value)
-                    if found:
-                        return found
-            return None
+            return first_model(node.get("fallback"))
 
         def textures_of(reference, chain=None):
             textures = {}
@@ -370,7 +371,7 @@ class PackBuilder:
             parts: Liste aus (Texturen, Elemente, y-Versatz in Modell-Pixeln).
             """
             extra = max(offset for _, _, offset in parts)
-            height = 33 + extra
+            height = 32 + extra  # ganzzahlig auf 16 bzw. 32 Pixel skalierbar, sonst wirken die Bilder verzogen
             faces = []
             for textures, elements, offset in parts:
                 for element in elements:
@@ -490,7 +491,8 @@ class PackBuilder:
                     file = save_icon(ns, item, image)
                     glyph = add_glyph(file, ICON_HEIGHT, ICON_ASCENT)
                     if f"{ns}:{item}" in DIAGRAM_ITEMS:
-                        diagrams.append(f"@diagram|{ns}:{item}={add_glyph(file, 32, 14 + (image.height - 33) // 2)}")
+                        # In Originalgröße, mittig über den drei Slot-Reihen (54 Pixel)
+                        diagrams.append(f"@diagram|{ns}:{item}={add_glyph(file, image.height, 7 + 18 - (54 - image.height) // 2)}")
                     first = resolve(textures, textures.get("particle")) or next((resolve(textures, v) for v in textures.values() if resolve(textures, v)), None)
                     if first and atlas_of(first):
                         tns, tpath = norm(first)

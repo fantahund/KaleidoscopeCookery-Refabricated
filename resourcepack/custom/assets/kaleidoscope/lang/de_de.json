@@ -111,6 +111,7 @@
   "kaleidoscope.cookbook.variants": "%s Varianten",
   "kaleidoscope.cookbook.variants.amounts": "%s Varianten: mehr Zutaten ergeben mehr Portionen (%s bis %s).",
   "kaleidoscope.cookbook.variants.ingredients": "%s Varianten mit unterschiedlichen Zutaten.",
-  "kaleidoscope.cookbook.variant.previous": "◀ Vorherige Variante",
-  "kaleidoscope.cookbook.variant.next": "Nächste Variante ▶"
+  "kaleidoscope.cookbook.variant.previous": "◀ Vorheriges Rezept",
+  "kaleidoscope.cookbook.variant.next": "Nächstes Rezept ▶",
+  "kaleidoscope.cookbook.variants.recipes": "%s Rezepte für dieses Item – blättere, um alle zu sehen."
 }
