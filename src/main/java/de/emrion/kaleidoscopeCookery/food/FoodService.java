@@ -135,8 +135,8 @@ public class FoodService implements Listener {
             hotUntil = 0;
         }
         List<Component> lore = new ArrayList<>();
-        if (item != null && item.tooltipKey() != null) {
-            lore.add(CookeryItems.tooltip(item));
+        if (item != null) {
+            lore.addAll(CookeryItems.tooltipLines(item));
         }
         Quality quality = quality(stack);
         if (quality != null) {

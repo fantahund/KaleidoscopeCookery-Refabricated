@@ -270,6 +270,11 @@ def collect_items(foods: dict, bites: dict) -> dict:
             tooltip_key = f"tooltip.{ns}.{item_id}"
             if tooltip_key in lang:
                 entry["tooltip"] = tooltip_key
+            maxim_key = f"tooltip.{ns}.{item_id}.maxim"
+            if maxim_key in lang:
+                # Anzahl Zeilen: so viele, wie Englisch oder Deutsch brauchen (siehe write_german_lang)
+                german_maxim = read_json(ROOT / "tools" / "lang" / "de_de_extra.json").get(ns, {}).get(maxim_key, lang[maxim_key])
+                entry["maxim-lines"] = max(len(lang[maxim_key].split("\n")), len(german_maxim.split("\n")))
             if full_id in BASE_MATERIALS:
                 entry["base"] = BASE_MATERIALS[full_id]
                 if full_id in PROTOTYPES:
@@ -696,6 +701,23 @@ def write_german_lang():
                 else:
                     missing.append(key)
         german.update(extra.get(ns, {}))
+        # Sprüche (*.maxim) sind mehrzeilig ("\n"); Item-Beschreibungen können keine Zeilenumbrüche,
+        # deshalb je Zeile ein eigener Schlüssel (*.maxim.line1 ...) für Englisch und Deutsch
+        english_lines = {}
+        for key, value in english.items():
+            if key.endswith(".maxim"):
+                en = value.split("\n")
+                de = german.get(key, value).split("\n")
+                for i in range(max(len(en), len(de))):
+                    english_lines[f"{key}.line{i + 1}"] = en[i] if i < len(en) else ""
+                    german[f"{key}.line{i + 1}"] = de[i] if i < len(de) else ""
+        if english_lines:
+            out_en = CUSTOM / ns / "lang" / "en_us.json"
+            existing = read_json(out_en) if out_en.exists() else {}
+            existing = {k: v for k, v in existing.items() if ".maxim.line" not in k}
+            existing.update(english_lines)
+            out_en.parent.mkdir(parents=True, exist_ok=True)
+            out_en.write_text(json.dumps(dict(sorted(existing.items())), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         out = CUSTOM / ns / "lang" / "de_de.json"
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(dict(sorted(german.items())), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

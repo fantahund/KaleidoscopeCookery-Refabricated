@@ -32,6 +32,7 @@ public class ServingPlateStation extends Station {
 
     /**
      * @param stackable StackableFoodBlock statt PlateBlock (Anzahl 1..max, das Essen selbst ist das Item)
+     * @param height    Höhe der Klick-Hitbox: Oberkante des vollen Modells
      */
     public record Kind(String name, int max, List<Key> servings, boolean stackable, float height) {
 
@@ -58,17 +59,17 @@ public class ServingPlateStation extends Station {
 
     /** PlateRegistry#init und ModBlocks.BAMBOO_TUBE_RICE */
     public static final List<Kind> KINDS = List.of(
-            new Kind("shengjian_mantou_plate", 5, List.of(cookery("shengjian_mantou")), false, 0.25f),
-            new Kind("baozi_plate", 5, List.of(cookery("baozi")), false, 0.25f),
-            new Kind("qingtuan_plate", 4, List.of(cookery("qingtuan")), false, 0.25f),
-            new Kind("sticky_candy_plate", 4, List.of(cookery("sticky_candy")), false, 0.25f),
-            new Kind("sticky_rice_cake_plate", 5, List.of(cookery("sticky_rice_cake")), false, 0.25f),
-            new Kind("zongzi_plate", 4, List.of(cookery("zongzi")), false, 0.25f),
-            new Kind("berry_platter", 4, List.of(vanilla("sweet_berries"), vanilla("glow_berries")), false, 0.25f),
-            new Kind("apple_platter", 4, List.of(vanilla("apple")), false, 0.25f),
-            new Kind("tomato_platter", 5, List.of(cookery("tomato")), false, 0.25f),
-            new Kind("watermelon_platter", 3, List.of(vanilla("melon_slice")), false, 0.25f),
-            new Kind("chorus_fruit_platter", 5, List.of(vanilla("chorus_fruit")), false, 0.25f),
+            new Kind("shengjian_mantou_plate", 5, List.of(cookery("shengjian_mantou")), false, 0.65f),
+            new Kind("baozi_plate", 5, List.of(cookery("baozi")), false, 0.65f),
+            new Kind("qingtuan_plate", 4, List.of(cookery("qingtuan")), false, 0.65f),
+            new Kind("sticky_candy_plate", 4, List.of(cookery("sticky_candy")), false, 0.45f),
+            new Kind("sticky_rice_cake_plate", 5, List.of(cookery("sticky_rice_cake")), false, 0.55f),
+            new Kind("zongzi_plate", 4, List.of(cookery("zongzi")), false, 0.7f),
+            new Kind("berry_platter", 4, List.of(vanilla("sweet_berries"), vanilla("glow_berries")), false, 0.95f),
+            new Kind("apple_platter", 4, List.of(vanilla("apple")), false, 1.0f),
+            new Kind("tomato_platter", 5, List.of(cookery("tomato")), false, 0.9f),
+            new Kind("watermelon_platter", 3, List.of(vanilla("melon_slice")), false, 0.85f),
+            new Kind("chorus_fruit_platter", 5, List.of(vanilla("chorus_fruit")), false, 1.0f),
             new Kind("bamboo_tube_rice", 4, List.of(cookery("bamboo_tube_rice")), true, 0.625f));
 
     private static final NamespacedKey COUNT = Keys.key("count");

@@ -10,6 +10,7 @@ items:
   "kaleidoscope_cookery:bamboo_tube_rice":
     model: "kaleidoscope_cookery:bamboo_tube_rice"
     name: block.kaleidoscope_cookery.bamboo_tube_rice
+    maxim-lines: 2
     food:
       nutrition: 10
       saturation: 10.0
@@ -17,6 +18,7 @@ items:
   "kaleidoscope_cookery:baozi":
     model: "kaleidoscope_cookery:baozi"
     name: item.kaleidoscope_cookery.baozi
+    maxim-lines: 1
     food:
       nutrition: 8
       saturation: 16.0
@@ -31,6 +33,7 @@ items:
   "kaleidoscope_cookery:barley_tea":
     model: "kaleidoscope_cookery:barley_tea"
     name: block.kaleidoscope_cookery.barley_tea
+    maxim-lines: 1
     food:
       nutrition: 0
       saturation: 0.0
@@ -49,6 +52,7 @@ items:
   "kaleidoscope_cookery:beef_meatball_soup":
     model: "kaleidoscope_cookery:beef_meatball_soup"
     name: item.kaleidoscope_cookery.beef_meatball_soup
+    maxim-lines: 1
     food:
       nutrition: 6
       saturation: 8.0
@@ -60,6 +64,7 @@ items:
   "kaleidoscope_cookery:beef_noodle":
     model: "kaleidoscope_cookery:beef_noodle"
     name: item.kaleidoscope_cookery.beef_noodle
+    maxim-lines: 1
     food:
       nutrition: 14
       saturation: 18.0
@@ -75,6 +80,7 @@ items:
   "kaleidoscope_cookery:biluochun":
     model: "kaleidoscope_cookery:biluochun"
     name: block.kaleidoscope_cookery.biluochun
+    maxim-lines: 1
     food:
       nutrition: 0
       saturation: 0.0
@@ -93,6 +99,7 @@ items:
   "kaleidoscope_cookery:blaze_lamb_chop":
     model: "kaleidoscope_cookery:blaze_lamb_chop"
     name: block.kaleidoscope_cookery.blaze_lamb_chop
+    maxim-lines: 1
     food:
       nutrition: 13
       saturation: 15.99
@@ -121,6 +128,7 @@ items:
   "kaleidoscope_cookery:borscht":
     model: "kaleidoscope_cookery:borscht"
     name: item.kaleidoscope_cookery.borscht
+    maxim-lines: 1
     food:
       nutrition: 6
       saturation: 8.0
@@ -132,6 +140,7 @@ items:
   "kaleidoscope_cookery:braised_beef":
     model: "kaleidoscope_cookery:braised_beef"
     name: item.kaleidoscope_cookery.braised_beef
+    maxim-lines: 1
     food:
       nutrition: 9
       saturation: 11.0
@@ -143,6 +152,7 @@ items:
   "kaleidoscope_cookery:braised_beef_rice_bowl":
     model: "kaleidoscope_cookery:braised_beef_rice_bowl"
     name: item.kaleidoscope_cookery.braised_beef_rice_bowl
+    maxim-lines: 1
     food:
       nutrition: 14
       saturation: 18.0
@@ -154,6 +164,7 @@ items:
   "kaleidoscope_cookery:braised_beef_with_potatoes":
     model: "kaleidoscope_cookery:braised_beef_with_potatoes"
     name: item.kaleidoscope_cookery.braised_beef_with_potatoes
+    maxim-lines: 1
     food:
       nutrition: 6
       saturation: 8.0
@@ -165,6 +176,7 @@ items:
   "kaleidoscope_cookery:braised_pork_ribs":
     model: "kaleidoscope_cookery:braised_pork_ribs"
     name: block.kaleidoscope_cookery.braised_pork_ribs
+    maxim-lines: 1
     food:
       nutrition: 16
       saturation: 25.6
@@ -201,6 +213,7 @@ items:
   "kaleidoscope_cookery:brown_mushroom_pot_soup":
     model: "kaleidoscope_cookery:brown_mushroom_pot_soup"
     name: block.kaleidoscope_cookery.brown_mushroom_pot_soup
+    maxim-lines: 1
     food:
       nutrition: 18
       saturation: 24.01
@@ -227,6 +240,7 @@ items:
   "kaleidoscope_cookery:buddha_jumps_over_the_wall":
     model: "kaleidoscope_cookery:buddha_jumps_over_the_wall"
     name: block.kaleidoscope_cookery.buddha_jumps_over_the_wall
+    maxim-lines: 2
     food:
       nutrition: 20
       saturation: 22.0
@@ -253,6 +267,7 @@ items:
   "kaleidoscope_cookery:butter_tea":
     model: "kaleidoscope_cookery:butter_tea"
     name: block.kaleidoscope_cookery.butter_tea
+    maxim-lines: 1
     food:
       nutrition: 0
       saturation: 0.0
@@ -271,6 +286,7 @@ items:
   "kaleidoscope_cookery:candied_potato":
     model: "kaleidoscope_cookery:candied_potato"
     name: block.kaleidoscope_cookery.candied_potato
+    maxim-lines: 1
     food:
       nutrition: 20
       saturation: 22.0
@@ -342,6 +358,7 @@ items:
   "kaleidoscope_cookery:chicken_and_mushroom_stew":
     model: "kaleidoscope_cookery:chicken_and_mushroom_stew"
     name: item.kaleidoscope_cookery.chicken_and_mushroom_stew
+    maxim-lines: 1
     food:
       nutrition: 6
       saturation: 8.0
@@ -363,6 +380,7 @@ items:
   "kaleidoscope_cookery:chorus_fried_egg":
     model: "kaleidoscope_cookery:chorus_fried_egg"
     name: block.kaleidoscope_cookery.chorus_fried_egg
+    maxim-lines: 1
     food:
       nutrition: 9
       saturation: 0.0
@@ -401,6 +419,7 @@ items:
   "kaleidoscope_cookery:cold_roasted_meat":
     model: "kaleidoscope_cookery:cold_roasted_meat"
     name: block.kaleidoscope_cookery.cold_roasted_meat
+    maxim-lines: 1
     food:
       nutrition: 16
       saturation: 25.6
@@ -428,6 +447,7 @@ items:
   "kaleidoscope_cookery:cold_style_sashimi":
     model: "kaleidoscope_cookery:cold_style_sashimi"
     name: block.kaleidoscope_cookery.cold_style_sashimi
+    maxim-lines: 1
     food:
       nutrition: 16
       saturation: 6.0
@@ -526,6 +546,7 @@ items:
   "kaleidoscope_cookery:cooked_rice":
     model: "kaleidoscope_cookery:cooked_rice"
     name: item.kaleidoscope_cookery.cooked_rice
+    maxim-lines: 1
     food:
       nutrition: 6
       saturation: 12.0
@@ -534,6 +555,7 @@ items:
   "kaleidoscope_cookery:crimson_fungus_pot_soup":
     model: "kaleidoscope_cookery:crimson_fungus_pot_soup"
     name: block.kaleidoscope_cookery.crimson_fungus_pot_soup
+    maxim-lines: 1
     food:
       nutrition: 18
       saturation: 24.01
@@ -560,6 +582,7 @@ items:
   "kaleidoscope_cookery:crystal_lamb_chop":
     model: "kaleidoscope_cookery:crystal_lamb_chop"
     name: block.kaleidoscope_cookery.crystal_lamb_chop
+    maxim-lines: 1
     food:
       nutrition: 13
       saturation: 15.99
@@ -590,6 +613,7 @@ items:
   "kaleidoscope_cookery:dark_cuisine":
     model: "kaleidoscope_cookery:dark_cuisine"
     name: block.kaleidoscope_cookery.dark_cuisine
+    maxim-lines: 1
     food:
       nutrition: 2
       saturation: 0.0
@@ -625,6 +649,7 @@ items:
   "kaleidoscope_cookery:desert_style_sashimi":
     model: "kaleidoscope_cookery:desert_style_sashimi"
     name: block.kaleidoscope_cookery.desert_style_sashimi
+    maxim-lines: 1
     food:
       nutrition: 16
       saturation: 6.0
@@ -659,6 +684,7 @@ items:
   "kaleidoscope_cookery:dongpo_pork":
     model: "kaleidoscope_cookery:dongpo_pork"
     name: block.kaleidoscope_cookery.dongpo_pork
+    maxim-lines: 1
     food:
       nutrition: 20
       saturation: 22.0
@@ -687,6 +713,7 @@ items:
   "kaleidoscope_cookery:donkey_burger":
     model: "kaleidoscope_cookery:donkey_burger"
     name: item.kaleidoscope_cookery.donkey_burger
+    maxim-lines: 1
     food:
       nutrition: 12
       saturation: 19.2
@@ -697,6 +724,7 @@ items:
   "kaleidoscope_cookery:dough_drop_soup":
     model: "kaleidoscope_cookery:dough_drop_soup"
     name: block.kaleidoscope_cookery.dough_drop_soup
+    maxim-lines: 1
     food:
       nutrition: 8
       saturation: 16.0
@@ -727,6 +755,7 @@ items:
   "kaleidoscope_cookery:dumpling":
     model: "kaleidoscope_cookery:dumpling"
     name: item.kaleidoscope_cookery.dumpling
+    maxim-lines: 1
     food:
       nutrition: 8
       saturation: 16.0
@@ -737,6 +766,7 @@ items:
   "kaleidoscope_cookery:egg_fried_rice":
     model: "kaleidoscope_cookery:egg_fried_rice"
     name: item.kaleidoscope_cookery.egg_fried_rice
+    maxim-lines: 1
     food:
       nutrition: 8
       saturation: 14.0
@@ -755,6 +785,7 @@ items:
   "kaleidoscope_cookery:end_style_sashimi":
     model: "kaleidoscope_cookery:end_style_sashimi"
     name: block.kaleidoscope_cookery.end_style_sashimi
+    maxim-lines: 1
     food:
       nutrition: 16
       saturation: 6.0
@@ -814,6 +845,7 @@ items:
   "kaleidoscope_cookery:fearsome_thick_soup":
     model: "kaleidoscope_cookery:fearsome_thick_soup"
     name: item.kaleidoscope_cookery.fearsome_thick_soup
+    maxim-lines: 1
     food:
       nutrition: 4
       saturation: 0.0
@@ -825,6 +857,7 @@ items:
   "kaleidoscope_cookery:fish_flavored_shredded_pork":
     model: "kaleidoscope_cookery:fish_flavored_shredded_pork"
     name: item.kaleidoscope_cookery.fish_flavored_shredded_pork
+    maxim-lines: 1
     food:
       nutrition: 9
       saturation: 11.0
@@ -836,6 +869,7 @@ items:
   "kaleidoscope_cookery:fish_flavored_shredded_pork_rice_bowl":
     model: "kaleidoscope_cookery:fish_flavored_shredded_pork_rice_bowl"
     name: item.kaleidoscope_cookery.fish_flavored_shredded_pork_rice_bowl
+    maxim-lines: 1
     food:
       nutrition: 14
       saturation: 18.0
@@ -850,6 +884,7 @@ items:
   "kaleidoscope_cookery:flower_tea":
     model: "kaleidoscope_cookery:flower_tea"
     name: block.kaleidoscope_cookery.flower_tea
+    maxim-lines: 1
     food:
       nutrition: 0
       saturation: 0.0
@@ -865,6 +900,7 @@ items:
   "kaleidoscope_cookery:fondant_pie":
     model: "kaleidoscope_cookery:fondant_pie"
     name: block.kaleidoscope_cookery.fondant_pie
+    maxim-lines: 1
     food:
       nutrition: 20
       saturation: 22.0
@@ -893,6 +929,7 @@ items:
   "kaleidoscope_cookery:fondant_spider_eye":
     model: "kaleidoscope_cookery:fondant_spider_eye"
     name: block.kaleidoscope_cookery.fondant_spider_eye
+    maxim-lines: 1
     food:
       nutrition: 8
       saturation: 0.0
@@ -921,6 +958,7 @@ items:
   "kaleidoscope_cookery:four_joy_meatball_soup":
     model: "kaleidoscope_cookery:four_joy_meatball_soup"
     name: block.kaleidoscope_cookery.four_joy_meatball_soup
+    maxim-lines: 1
     food:
       nutrition: 13
       saturation: 15.99
@@ -952,6 +990,7 @@ items:
   "kaleidoscope_cookery:fried_caterpillar":
     model: "kaleidoscope_cookery:fried_caterpillar"
     name: block.kaleidoscope_cookery.fried_caterpillar
+    maxim-lines: 1
     food:
       nutrition: 12
       saturation: 19.2
@@ -986,6 +1025,7 @@ items:
   "kaleidoscope_cookery:fried_spring_roll":
     model: "kaleidoscope_cookery:fried_spring_roll"
     name: block.kaleidoscope_cookery.fried_spring_roll
+    maxim-lines: 2
     food:
       nutrition: 13
       saturation: 15.99
@@ -1013,6 +1053,7 @@ items:
   "kaleidoscope_cookery:frost_lamb_chop":
     model: "kaleidoscope_cookery:frost_lamb_chop"
     name: block.kaleidoscope_cookery.frost_lamb_chop
+    maxim-lines: 1
     food:
       nutrition: 13
       saturation: 15.99
@@ -1051,6 +1092,7 @@ items:
   "kaleidoscope_cookery:golden_salad":
     model: "kaleidoscope_cookery:golden_salad"
     name: block.kaleidoscope_cookery.golden_salad
+    maxim-lines: 1
     food:
       nutrition: 20
       saturation: 22.0
@@ -1088,6 +1130,7 @@ items:
   "kaleidoscope_cookery:hot_dry_noodles":
     model: "kaleidoscope_cookery:hot_dry_noodles"
     name: item.kaleidoscope_cookery.hot_dry_noodles
+    maxim-lines: 2
     food:
       nutrition: 14
       saturation: 18.0
@@ -1099,6 +1142,7 @@ items:
   "kaleidoscope_cookery:hui_noodle":
     model: "kaleidoscope_cookery:hui_noodle"
     name: item.kaleidoscope_cookery.hui_noodle
+    maxim-lines: 1
     food:
       nutrition: 14
       saturation: 18.0
@@ -1124,6 +1168,7 @@ items:
   "kaleidoscope_cookery:laba_congee":
     model: "kaleidoscope_cookery:laba_congee"
     name: item.kaleidoscope_cookery.laba_congee
+    maxim-lines: 1
     food:
       nutrition: 12
       saturation: 12.0
@@ -1135,6 +1180,7 @@ items:
   "kaleidoscope_cookery:lamb_and_radish_soup":
     model: "kaleidoscope_cookery:lamb_and_radish_soup"
     name: item.kaleidoscope_cookery.lamb_and_radish_soup
+    maxim-lines: 1
     food:
       nutrition: 6
       saturation: 8.0
@@ -1159,6 +1205,7 @@ items:
   "kaleidoscope_cookery:mantou":
     model: "kaleidoscope_cookery:mantou"
     name: item.kaleidoscope_cookery.mantou
+    maxim-lines: 1
     food:
       nutrition: 6
       saturation: 10.8
@@ -1167,6 +1214,7 @@ items:
   "kaleidoscope_cookery:meat_pie":
     model: "kaleidoscope_cookery:meat_pie"
     name: item.kaleidoscope_cookery.meat_pie
+    maxim-lines: 1
     food:
       nutrition: 8
       saturation: 16.0
@@ -1181,6 +1229,7 @@ items:
   "kaleidoscope_cookery:mystery_tea":
     model: "kaleidoscope_cookery:mystery_tea"
     name: block.kaleidoscope_cookery.mystery_tea
+    maxim-lines: 1
     food:
       nutrition: 0
       saturation: 0.0
@@ -1196,6 +1245,7 @@ items:
   "kaleidoscope_cookery:nether_style_sashimi":
     model: "kaleidoscope_cookery:nether_style_sashimi"
     name: block.kaleidoscope_cookery.nether_style_sashimi
+    maxim-lines: 1
     food:
       nutrition: 16
       saturation: 6.0
@@ -1231,6 +1281,7 @@ items:
   "kaleidoscope_cookery:numbing_spicy_chicken":
     model: "kaleidoscope_cookery:numbing_spicy_chicken"
     name: block.kaleidoscope_cookery.numbing_spicy_chicken
+    maxim-lines: 1
     food:
       nutrition: 13
       saturation: 15.99
@@ -1269,6 +1320,7 @@ items:
   "kaleidoscope_cookery:oil_splashed_fish":
     model: "kaleidoscope_cookery:oil_splashed_fish"
     name: block.kaleidoscope_cookery.oil_splashed_fish
+    maxim-lines: 3
     food:
       nutrition: 13
       saturation: 15.99
@@ -1307,6 +1359,7 @@ items:
   "kaleidoscope_cookery:oolong":
     model: "kaleidoscope_cookery:oolong"
     name: block.kaleidoscope_cookery.oolong
+    maxim-lines: 1
     food:
       nutrition: 0
       saturation: 0.0
@@ -1327,6 +1380,7 @@ items:
   "kaleidoscope_cookery:pan_seared_knight_steak":
     model: "kaleidoscope_cookery:pan_seared_knight_steak"
     name: block.kaleidoscope_cookery.pan_seared_knight_steak
+    maxim-lines: 1
     food:
       nutrition: 13
       saturation: 15.99
@@ -1359,6 +1413,7 @@ items:
   "kaleidoscope_cookery:pork_bone_soup":
     model: "kaleidoscope_cookery:pork_bone_soup"
     name: item.kaleidoscope_cookery.pork_bone_soup
+    maxim-lines: 1
     food:
       nutrition: 6
       saturation: 8.0
@@ -1374,6 +1429,7 @@ items:
   "kaleidoscope_cookery:pufferfish_soup":
     model: "kaleidoscope_cookery:pufferfish_soup"
     name: item.kaleidoscope_cookery.pufferfish_soup
+    maxim-lines: 1
     food:
       nutrition: 4
       saturation: 0.0
@@ -1385,6 +1441,7 @@ items:
   "kaleidoscope_cookery:qingtuan":
     model: "kaleidoscope_cookery:qingtuan"
     name: item.kaleidoscope_cookery.qingtuan
+    maxim-lines: 1
     food:
       nutrition: 5
       saturation: 6.0
@@ -1396,6 +1453,7 @@ items:
   "kaleidoscope_cookery:raw_bamboo_tube_rice":
     model: "kaleidoscope_cookery:raw_bamboo_tube_rice"
     name: item.kaleidoscope_cookery.raw_bamboo_tube_rice
+    maxim-lines: 2
   "kaleidoscope_cookery:raw_cow_offal":
     model: "kaleidoscope_cookery:raw_cow_offal"
     name: item.kaleidoscope_cookery.raw_cow_offal
@@ -1454,6 +1512,7 @@ items:
   "kaleidoscope_cookery:red_mushroom_pot_soup":
     model: "kaleidoscope_cookery:red_mushroom_pot_soup"
     name: block.kaleidoscope_cookery.red_mushroom_pot_soup
+    maxim-lines: 1
     food:
       nutrition: 18
       saturation: 24.01
@@ -1486,6 +1545,7 @@ items:
   "kaleidoscope_cookery:sakura_fubuki":
     model: "kaleidoscope_cookery:sakura_fubuki"
     name: block.kaleidoscope_cookery.sakura_fubuki
+    maxim-lines: 1
     food:
       nutrition: 0
       saturation: 0.0
@@ -1504,6 +1564,7 @@ items:
   "kaleidoscope_cookery:samsa":
     model: "kaleidoscope_cookery:samsa"
     name: item.kaleidoscope_cookery.samsa
+    maxim-lines: 1
     food:
       nutrition: 8
       saturation: 16.0
@@ -1526,6 +1587,7 @@ items:
   "kaleidoscope_cookery:scramble_egg_with_tomatoes":
     model: "kaleidoscope_cookery:scramble_egg_with_tomatoes"
     name: item.kaleidoscope_cookery.scramble_egg_with_tomatoes
+    maxim-lines: 1
     food:
       nutrition: 9
       saturation: 11.0
@@ -1537,6 +1599,7 @@ items:
   "kaleidoscope_cookery:scramble_egg_with_tomatoes_rice_bowl":
     model: "kaleidoscope_cookery:scramble_egg_with_tomatoes_rice_bowl"
     name: item.kaleidoscope_cookery.scramble_egg_with_tomatoes_rice_bowl
+    maxim-lines: 1
     food:
       nutrition: 14
       saturation: 18.0
@@ -1548,6 +1611,7 @@ items:
   "kaleidoscope_cookery:seafood_miso_soup":
     model: "kaleidoscope_cookery:seafood_miso_soup"
     name: item.kaleidoscope_cookery.seafood_miso_soup
+    maxim-lines: 1
     food:
       nutrition: 6
       saturation: 8.0
@@ -1563,6 +1627,7 @@ items:
   "kaleidoscope_cookery:shengjian_mantou":
     model: "kaleidoscope_cookery:shengjian_mantou"
     name: item.kaleidoscope_cookery.shengjian_mantou
+    maxim-lines: 1
     food:
       nutrition: 8
       saturation: 16.0
@@ -1586,6 +1651,7 @@ items:
   "kaleidoscope_cookery:slime_ball_meal":
     model: "kaleidoscope_cookery:slime_ball_meal"
     name: block.kaleidoscope_cookery.slime_ball_meal
+    maxim-lines: 1
     food:
       nutrition: 9
       saturation: 0.0
@@ -1613,6 +1679,7 @@ items:
   "kaleidoscope_cookery:spicy_blood_stew":
     model: "kaleidoscope_cookery:spicy_blood_stew"
     name: block.kaleidoscope_cookery.spicy_blood_stew
+    maxim-lines: 1
     food:
       nutrition: 13
       saturation: 15.99
@@ -1640,6 +1707,7 @@ items:
   "kaleidoscope_cookery:spicy_chicken":
     model: "kaleidoscope_cookery:spicy_chicken"
     name: block.kaleidoscope_cookery.spicy_chicken
+    maxim-lines: 1
     food:
       nutrition: 20
       saturation: 22.0
@@ -1668,6 +1736,7 @@ items:
   "kaleidoscope_cookery:spicy_rabbit_head":
     model: "kaleidoscope_cookery:spicy_rabbit_head"
     name: block.kaleidoscope_cookery.spicy_rabbit_head
+    maxim-lines: 1
     food:
       nutrition: 13
       saturation: 15.99
@@ -1695,6 +1764,7 @@ items:
   "kaleidoscope_cookery:stargazy_pie":
     model: "kaleidoscope_cookery:stargazy_pie"
     name: block.kaleidoscope_cookery.stargazy_pie
+    maxim-lines: 1
     food:
       nutrition: 13
       saturation: 15.99
@@ -1731,6 +1801,7 @@ items:
   "kaleidoscope_cookery:sticky_candy":
     model: "kaleidoscope_cookery:sticky_candy"
     name: item.kaleidoscope_cookery.sticky_candy
+    maxim-lines: 1
     food:
       nutrition: 6
       saturation: 12.0
@@ -1742,6 +1813,7 @@ items:
   "kaleidoscope_cookery:sticky_rice_cake":
     model: "kaleidoscope_cookery:sticky_rice_cake"
     name: item.kaleidoscope_cookery.sticky_rice_cake
+    maxim-lines: 2
     food:
       nutrition: 8
       saturation: 14.0
@@ -1753,6 +1825,7 @@ items:
   "kaleidoscope_cookery:stir_fried_pork_with_peppers":
     model: "kaleidoscope_cookery:stir_fried_pork_with_peppers"
     name: item.kaleidoscope_cookery.stir_fried_pork_with_peppers
+    maxim-lines: 1
     food:
       nutrition: 9
       saturation: 11.0
@@ -1764,6 +1837,7 @@ items:
   "kaleidoscope_cookery:stir_fried_pork_with_peppers_rice_bowl":
     model: "kaleidoscope_cookery:stir_fried_pork_with_peppers_rice_bowl"
     name: item.kaleidoscope_cookery.stir_fried_pork_with_peppers_rice_bowl
+    maxim-lines: 1
     food:
       nutrition: 14
       saturation: 18.0
@@ -1817,6 +1891,7 @@ items:
   "kaleidoscope_cookery:stuffed_tiger_skin_pepper":
     model: "kaleidoscope_cookery:stuffed_tiger_skin_pepper"
     name: block.kaleidoscope_cookery.stuffed_tiger_skin_pepper
+    maxim-lines: 1
     food:
       nutrition: 13
       saturation: 15.99
@@ -1846,6 +1921,7 @@ items:
   "kaleidoscope_cookery:suspicious_stir_fry":
     model: "kaleidoscope_cookery:suspicious_stir_fry"
     name: block.kaleidoscope_cookery.suspicious_stir_fry
+    maxim-lines: 1
     food:
       nutrition: 4
       saturation: 3.2
@@ -1903,6 +1979,7 @@ items:
   "kaleidoscope_cookery:sweet_and_sour_ender_pearls":
     model: "kaleidoscope_cookery:sweet_and_sour_ender_pearls"
     name: block.kaleidoscope_cookery.sweet_and_sour_ender_pearls
+    maxim-lines: 1
     food:
       nutrition: 9
       saturation: 0.0
@@ -1930,6 +2007,7 @@ items:
   "kaleidoscope_cookery:sweet_and_sour_pork":
     model: "kaleidoscope_cookery:sweet_and_sour_pork"
     name: item.kaleidoscope_cookery.sweet_and_sour_pork
+    maxim-lines: 1
     food:
       nutrition: 9
       saturation: 11.0
@@ -1941,6 +2019,7 @@ items:
   "kaleidoscope_cookery:sweet_and_sour_pork_rice_bowl":
     model: "kaleidoscope_cookery:sweet_and_sour_pork_rice_bowl"
     name: item.kaleidoscope_cookery.sweet_and_sour_pork_rice_bowl
+    maxim-lines: 1
     food:
       nutrition: 14
       saturation: 18.0
@@ -1988,6 +2067,7 @@ items:
   "kaleidoscope_cookery:tea_egg":
     model: "kaleidoscope_cookery:tea_egg"
     name: item.kaleidoscope_cookery.tea_egg
+    maxim-lines: 1
     food:
       nutrition: 4
       saturation: 4.0
@@ -2006,6 +2086,7 @@ items:
   "kaleidoscope_cookery:tieguanyin":
     model: "kaleidoscope_cookery:tieguanyin"
     name: block.kaleidoscope_cookery.tieguanyin
+    maxim-lines: 1
     food:
       nutrition: 0
       saturation: 0.0
@@ -2045,6 +2126,7 @@ items:
   "kaleidoscope_cookery:tundra_style_sashimi":
     model: "kaleidoscope_cookery:tundra_style_sashimi"
     name: block.kaleidoscope_cookery.tundra_style_sashimi
+    maxim-lines: 1
     food:
       nutrition: 16
       saturation: 6.0
@@ -2073,6 +2155,7 @@ items:
   "kaleidoscope_cookery:udon_noodle":
     model: "kaleidoscope_cookery:udon_noodle"
     name: item.kaleidoscope_cookery.udon_noodle
+    maxim-lines: 1
     food:
       nutrition: 14
       saturation: 18.0
@@ -2084,6 +2167,7 @@ items:
   "kaleidoscope_cookery:warped_fungus_pot_soup":
     model: "kaleidoscope_cookery:warped_fungus_pot_soup"
     name: block.kaleidoscope_cookery.warped_fungus_pot_soup
+    maxim-lines: 1
     food:
       nutrition: 18
       saturation: 24.01
@@ -2114,6 +2198,7 @@ items:
   "kaleidoscope_cookery:wild_mushroom_rabbit_soup":
     model: "kaleidoscope_cookery:wild_mushroom_rabbit_soup"
     name: item.kaleidoscope_cookery.wild_mushroom_rabbit_soup
+    maxim-lines: 1
     food:
       nutrition: 6
       saturation: 8.0
@@ -2128,6 +2213,7 @@ items:
   "kaleidoscope_cookery:zongzi":
     model: "kaleidoscope_cookery:zongzi"
     name: item.kaleidoscope_cookery.zongzi
+    maxim-lines: 1
     food:
       nutrition: 8
       saturation: 10.0
@@ -2151,6 +2237,7 @@ items:
   "kaleidoscope_grilling:braised_chicken_wings":
     model: "kaleidoscope_grilling:braised_chicken_wings"
     name: item.kaleidoscope_grilling.braised_chicken_wings
+    maxim-lines: 1
   "kaleidoscope_grilling:canola_oil_brush":
     model: "kaleidoscope_grilling:canola_oil_brush"
     name: item.kaleidoscope_grilling.canola_oil_brush
@@ -2175,9 +2262,11 @@ items:
   "kaleidoscope_grilling:cold_houttuynia":
     model: "kaleidoscope_grilling:cold_houttuynia"
     name: item.kaleidoscope_grilling.cold_houttuynia
+    maxim-lines: 1
   "kaleidoscope_grilling:dark_grilling":
     model: "kaleidoscope_grilling:dark_grilling"
     name: item.kaleidoscope_grilling.dark_grilling
+    maxim-lines: 1
   "kaleidoscope_grilling:dragon_egg_powder":
     model: "kaleidoscope_grilling:dragon_egg_powder"
     name: item.kaleidoscope_grilling.dragon_egg_powder
@@ -2190,66 +2279,86 @@ items:
   "kaleidoscope_grilling:green_pepper_squid_tentacles":
     model: "kaleidoscope_grilling:green_pepper_squid_tentacles"
     name: item.kaleidoscope_grilling.green_pepper_squid_tentacles
+    maxim-lines: 1
   "kaleidoscope_grilling:grill":
     model: "kaleidoscope_grilling:grill"
     name: block.kaleidoscope_grilling.grill
   "kaleidoscope_grilling:grilled_beef_skewer":
     model: "kaleidoscope_grilling:grilled_beef_skewer"
     name: item.kaleidoscope_grilling.grilled_beef_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_bun_slice_skewer":
     model: "kaleidoscope_grilling:grilled_bun_slice_skewer"
     name: item.kaleidoscope_grilling.grilled_bun_slice_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_caterpillar_skewer":
     model: "kaleidoscope_grilling:grilled_caterpillar_skewer"
     name: item.kaleidoscope_grilling.grilled_caterpillar_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_chicken_skin_skewer":
     model: "kaleidoscope_grilling:grilled_chicken_skin_skewer"
     name: item.kaleidoscope_grilling.grilled_chicken_skin_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_ender_pearl_skewer":
     model: "kaleidoscope_grilling:grilled_ender_pearl_skewer"
     name: item.kaleidoscope_grilling.grilled_ender_pearl_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_fish_skewer":
     model: "kaleidoscope_grilling:grilled_fish_skewer"
     name: item.kaleidoscope_grilling.grilled_fish_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_fried_egg_skewer":
     model: "kaleidoscope_grilling:grilled_fried_egg_skewer"
     name: item.kaleidoscope_grilling.grilled_fried_egg_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_gluten_skewer":
     model: "kaleidoscope_grilling:grilled_gluten_skewer"
     name: item.kaleidoscope_grilling.grilled_gluten_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_golden_skewer":
     model: "kaleidoscope_grilling:grilled_golden_skewer"
     name: item.kaleidoscope_grilling.grilled_golden_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_lamb_skewer":
     model: "kaleidoscope_grilling:grilled_lamb_skewer"
     name: item.kaleidoscope_grilling.grilled_lamb_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_meat_and_bone_skewer":
     model: "kaleidoscope_grilling:grilled_meat_and_bone_skewer"
     name: item.kaleidoscope_grilling.grilled_meat_and_bone_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_meatball_skewer":
     model: "kaleidoscope_grilling:grilled_meatball_skewer"
     name: item.kaleidoscope_grilling.grilled_meatball_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_mid_wing_skewer":
     model: "kaleidoscope_grilling:grilled_mid_wing_skewer"
     name: item.kaleidoscope_grilling.grilled_mid_wing_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_mushroom_skewer":
     model: "kaleidoscope_grilling:grilled_mushroom_skewer"
     name: item.kaleidoscope_grilling.grilled_mushroom_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_pork_belly_skewer":
     model: "kaleidoscope_grilling:grilled_pork_belly_skewer"
     name: item.kaleidoscope_grilling.grilled_pork_belly_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_potato_slice_skewer":
     model: "kaleidoscope_grilling:grilled_potato_slice_skewer"
     name: item.kaleidoscope_grilling.grilled_potato_slice_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_slime_skewer":
     model: "kaleidoscope_grilling:grilled_slime_skewer"
     name: item.kaleidoscope_grilling.grilled_slime_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_squid_tentacle_skewer":
     model: "kaleidoscope_grilling:grilled_squid_tentacle_skewer"
     name: item.kaleidoscope_grilling.grilled_squid_tentacle_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:grilled_sweet_potato_sheet_skewer":
     model: "kaleidoscope_grilling:grilled_sweet_potato_sheet_skewer"
     name: item.kaleidoscope_grilling.grilled_sweet_potato_sheet_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:houttuynia":
     model: "kaleidoscope_grilling:houttuynia"
     name: item.kaleidoscope_grilling.houttuynia
@@ -2259,12 +2368,14 @@ items:
   "kaleidoscope_grilling:houttuynia_stir_fried_pork":
     model: "kaleidoscope_grilling:houttuynia_stir_fried_pork"
     name: item.kaleidoscope_grilling.houttuynia_stir_fried_pork
+    maxim-lines: 1
   "kaleidoscope_grilling:minced_houttuynia":
     model: "kaleidoscope_grilling:minced_houttuynia"
     name: item.kaleidoscope_grilling.minced_houttuynia
   "kaleidoscope_grilling:mysterious_skewer":
     model: "kaleidoscope_grilling:mysterious_skewer"
     name: item.kaleidoscope_grilling.mysterious_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:oil_cake":
     model: "kaleidoscope_grilling:oil_cake"
     name: item.kaleidoscope_grilling.oil_cake
@@ -2283,12 +2394,14 @@ items:
   "kaleidoscope_grilling:ordinary_skewer":
     model: "kaleidoscope_grilling:ordinary_skewer"
     name: item.kaleidoscope_grilling.ordinary_skewer
+    maxim-lines: 1
   "kaleidoscope_grilling:pending_seasoning":
     model: "kaleidoscope_grilling:pending_seasoning"
     name: item.kaleidoscope_grilling.pending_seasoning
   "kaleidoscope_grilling:pepper_honey":
     model: "kaleidoscope_grilling:pepper_honey"
     name: item.kaleidoscope_grilling.pepper_honey
+    maxim-lines: 1
   "kaleidoscope_grilling:pepper_leaves":
     model: "kaleidoscope_grilling:pepper_leaves"
     name: block.kaleidoscope_grilling.pepper_leaves
@@ -2301,6 +2414,7 @@ items:
   "kaleidoscope_grilling:potato_beef_stew":
     model: "kaleidoscope_grilling:potato_beef_stew"
     name: item.kaleidoscope_grilling.potato_beef_stew
+    maxim-lines: 1
   "kaleidoscope_grilling:potato_slice":
     model: "kaleidoscope_grilling:potato_slice"
     name: item.kaleidoscope_grilling.potato_slice
@@ -2380,12 +2494,15 @@ items:
   "kaleidoscope_grilling:red_sweet_potato_porridge":
     model: "kaleidoscope_grilling:red_sweet_potato_porridge"
     name: item.kaleidoscope_grilling.red_sweet_potato_porridge
+    maxim-lines: 1
   "kaleidoscope_grilling:roasted_chicken_wing":
     model: "kaleidoscope_grilling:roasted_chicken_wing"
     name: item.kaleidoscope_grilling.roasted_chicken_wing
+    maxim-lines: 1
   "kaleidoscope_grilling:roasted_sweet_potato":
     model: "kaleidoscope_grilling:roasted_sweet_potato"
     name: item.kaleidoscope_grilling.roasted_sweet_potato
+    maxim-lines: 1
   "kaleidoscope_grilling:secret_chili_oil_brush":
     model: "kaleidoscope_grilling:secret_chili_oil_brush"
     name: item.kaleidoscope_grilling.secret_chili_oil_brush
@@ -2408,6 +2525,7 @@ items:
   "kaleidoscope_grilling:sour_spicy_noodles":
     model: "kaleidoscope_grilling:sour_spicy_noodles"
     name: item.kaleidoscope_grilling.sour_spicy_noodles
+    maxim-lines: 1
   "kaleidoscope_grilling:special_seasoning":
     model: "kaleidoscope_grilling:special_seasoning"
     name: item.kaleidoscope_grilling.special_seasoning
@@ -2417,6 +2535,7 @@ items:
   "kaleidoscope_grilling:sugared_tomato":
     model: "kaleidoscope_grilling:sugared_tomato"
     name: item.kaleidoscope_grilling.sugared_tomato
+    maxim-lines: 1
   "kaleidoscope_grilling:sweet_potato":
     model: "kaleidoscope_grilling:sweet_potato"
     name: item.kaleidoscope_grilling.sweet_potato

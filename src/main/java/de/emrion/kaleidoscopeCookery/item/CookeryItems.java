@@ -83,7 +83,7 @@ public class CookeryItems {
                         Math.clamp(entry.getInt("max-stack", 64), 1, 99), Math.max(0, entry.getInt("max-damage", 0)), food, plate,
                         entry.getBoolean("sneak-place"), loadWearable(id, entry, logger),
                         entry.getString("repair") == null ? null : Material.matchMaterial(entry.getString("repair")), entry.getBoolean("attributes", true),
-                        entry.getString("use-animation")));
+                        entry.getString("use-animation"), Math.max(0, entry.getInt("maxim-lines", 0))));
             }
         }
         return new CookeryItems(items);
@@ -239,8 +239,9 @@ public class CookeryItems {
                             io.papermc.paper.registry.TypedKey.create(io.papermc.paper.registry.RegistryKey.ITEM, item.repair().key()))));
         }
         stack.setData(DataComponentTypes.ITEM_NAME, Text.noItalic(Lang.raw(item.nameKey())));
-        if (item.tooltipKey() != null) {
-            stack.setData(DataComponentTypes.LORE, ItemLore.lore(List.of(tooltip(item))));
+        List<Component> lore = tooltipLines(item);
+        if (!lore.isEmpty()) {
+            stack.setData(DataComponentTypes.LORE, ItemLore.lore(lore));
         }
         if (item.base() == BASE_MATERIAL) {
             // Werkzeuge behalten Stapelgröße 1 und ihre Haltbarkeit
@@ -315,8 +316,19 @@ public class CookeryItems {
     /**
      * Beschreibungszeile aus der Mod-Sprachdatei.
      */
-    public static Component tooltip(CookeryItem item) {
-        return Text.noItalic(Lang.raw(item.tooltipKey()).color(NamedTextColor.GRAY));
+    /**
+     * Beschreibung (grau) und Spruch (dunkelgrau, kursiv; *.maxim.lineN) wie in den appendHoverText der Mods.
+     */
+    public static List<Component> tooltipLines(CookeryItem item) {
+        List<Component> lines = new java.util.ArrayList<>();
+        if (item.tooltipKey() != null) {
+            lines.add(Text.noItalic(Lang.raw(item.tooltipKey()).color(NamedTextColor.GRAY)));
+        }
+        for (int i = 1; i <= item.maximLines(); i++) {
+            lines.add(Lang.raw("tooltip." + item.id().namespace() + "." + item.id().value() + ".maxim.line" + i)
+                    .color(NamedTextColor.DARK_GRAY).decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, true));
+        }
+        return lines;
     }
 
     public static @Nullable PotionEffectType vanillaEffect(Key key) {

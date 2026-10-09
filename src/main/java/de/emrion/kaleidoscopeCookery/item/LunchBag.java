@@ -116,7 +116,9 @@ public class LunchBag implements Listener {
         if (animation == null) {
             bag.unsetData(DataComponentTypes.CONSUMABLE);
         } else {
-            bag.setData(DataComponentTypes.CONSUMABLE, Consumable.consumable().consumeSeconds(1.6f).animation(animation).hasConsumeParticles(false).build());
+            bag.setData(DataComponentTypes.CONSUMABLE, Consumable.consumable().consumeSeconds(1.6f).animation(animation)
+                    .sound(Key.key("minecraft", animation == ItemUseAnimation.DRINK ? "entity.generic.drink" : "entity.generic.eat"))
+                    .hasConsumeParticles(true).build());
         }
     }
 

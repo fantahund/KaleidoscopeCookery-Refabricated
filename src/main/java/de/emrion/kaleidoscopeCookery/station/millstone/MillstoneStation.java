@@ -42,7 +42,8 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Mühlstein (MillstoneBlock/MillstoneBlockEntity im Mod), 3x3 Blöcke.
+ * Mühlstein (MillstoneBlock/MillstoneBlockEntity im Mod). Im Mod belegt er 3x3 Blöcke, der Stein selbst ist aber nur
+ * 2 Blöcke breit – hier belegt er deshalb 2x2, die Mitte liegt auf der Kante zwischen den vier Blöcken.
  * <ul>
  *     <li>Ein Tier (mind. 1 Block hoch, kein Spieler, nicht geritten), das auf den Mühlstein tritt, wird eingespannt
  *     und läuft im Kreis (Radius 2) – eine Runde dauert je nach Tier 80 bis 500 Ticks</li>
@@ -64,6 +65,11 @@ public class MillstoneStation extends Station {
     private static final float MODEL_SCALE = 4;
     /** Walzenmitte relativ zur Blockmitte bei Drehung 0 */
     private static final Vector3f ROLL_CENTER = new Vector3f(0, 13 / 16f, -0.5f);
+    /** Mitte des Mühlsteins relativ zur Mitte des Stationsblocks (2x2: Blockkante) */
+    private static final Vector3f MODEL_OFFSET = new Vector3f(0.5f, 0, 0.5f);
+    /** Ausgabe: knapp vor dem Ausguss (der Stein reicht 1 Block weit, der Ausguss 1,1) */
+    private static final double OUTPUT_DISTANCE = 1.45;
+    private static final NamespacedKey LAYOUT = Keys.key("layout");
     private static final int WHEEL_UPDATE_TICKS = 2;
     private static final double MAX_DISTANCE_SQUARED = 5 * 5;
 
@@ -92,19 +98,22 @@ public class MillstoneStation extends Station {
     private final List<ItemStack> outputs = new ArrayList<>();
 
     private @Nullable LivingEntity bound;
+    /** Alte 3x3-Mühlsteine: überzählige Barrieren beim ersten Tick entfernen */
+    private boolean oldLayout;
 
     public MillstoneStation(StationContext context) {
         super(context);
     }
 
     public static StationType type() {
-        return new StationType("millstone", ITEM, true, 3f, 1f, false, MillstoneStation::new, 1, 1);
+        return new StationType("millstone", ITEM, true, 3f, 1f, false, MillstoneStation::new, 2, 1);
     }
 
     // ---- Zustand ----
 
     @Override
     protected void load(PersistentDataContainer state) {
+        oldLayout = state.getOrDefault(LAYOUT, PersistentDataType.INTEGER, 1) < 2;
         String id = state.get(ENTITY, PersistentDataType.STRING);
         entityId = id == null ? null : UUID.fromString(id);
         cacheRot = fixRot(state.getOrDefault(CACHE_ROT, PersistentDataType.FLOAT, 0f));
@@ -120,6 +129,7 @@ public class MillstoneStation extends Station {
 
     @Override
     protected void save(PersistentDataContainer state) {
+        state.set(LAYOUT, PersistentDataType.INTEGER, 2);
         if (entityId != null) {
             state.set(ENTITY, PersistentDataType.STRING, entityId.toString());
         }
@@ -163,7 +173,9 @@ public class MillstoneStation extends Station {
 
     @Override
     public void updateDisplay() {
-        showPart("base", MODEL_BASE, new Transformation(new Vector3f(), facing().blockRotation(), new Vector3f(MODEL_SCALE), new Quaternionf()));
+        showPart("base", MODEL_BASE, new Transformation(new Vector3f(MODEL_OFFSET), facing().blockRotation(), new Vector3f(MODEL_SCALE), new Quaternionf()));
+        // Klicks auf die ganze 2x2-Fläche (die Wurzel-Hitbox sitzt nur auf dem Stationsblock)
+        showHitbox("area", new org.bukkit.util.Vector(MODEL_OFFSET.x, 0, MODEL_OFFSET.z), 2.02f, 1.02f);
         updateWheel(0);
         updateItems();
     }
@@ -174,9 +186,9 @@ public class MillstoneStation extends Station {
     private void updateWheel(int interpolation) {
         float rot = hasEntity() ? rotation() : cacheRot;
         Quaternionf wheel = new Quaternionf().rotationY((float) Math.toRadians(180 + rot));
-        showPart("wheel", MODEL_WHEEL, new Transformation(new Vector3f(), wheel, new Vector3f(MODEL_SCALE), new Quaternionf()), interpolation);
+        showPart("wheel", MODEL_WHEEL, new Transformation(new Vector3f(MODEL_OFFSET), wheel, new Vector3f(MODEL_SCALE), new Quaternionf()), interpolation);
         float roll = hasEntity() ? (float) Math.toRadians(facing().dataValue() * 90 + rot) : 0;
-        Vector3f rollCenter = wheel.transform(new Vector3f(ROLL_CENTER));
+        Vector3f rollCenter = wheel.transform(new Vector3f(ROLL_CENTER)).add(MODEL_OFFSET);
         showPart("roll", MODEL_ROLL, new Transformation(rollCenter, new Quaternionf(wheel).rotateZ(roll), new Vector3f(MODEL_SCALE), new Quaternionf()), interpolation);
     }
 
@@ -189,7 +201,7 @@ public class MillstoneStation extends Station {
         Random random = new Random(position().hashCode());
         for (int i = 0; i < count; i++) {
             Quaternionf around = new Quaternionf().rotationY((float) Math.toRadians(i * 45 + random.nextInt(15)));
-            Vector3f translation = around.transform(new Vector3f(-0.5f, 0, -0.5f)).add(0, 0.375f, 0);
+            Vector3f translation = around.transform(new Vector3f(-0.5f, 0, -0.5f)).add(0, 0.375f, 0).add(MODEL_OFFSET);
             Quaternionf rotation = new Quaternionf(around).rotateY((float) Math.toRadians(random.nextInt(20)))
                     .rotateX((float) Math.toRadians(-(80 + random.nextInt(20))));
             showItemPart("item_" + i, shown, new Transformation(translation, rotation, new Vector3f(0.65f), new Quaternionf()), 0, null);
@@ -297,15 +309,41 @@ public class MillstoneStation extends Station {
         updateWheel(0);
     }
 
+    /**
+     * Mitte unten des Mühlsteins (Blockkante zwischen den vier Blöcken).
+     */
     private Location bottomCenter() {
-        return position().bottomCenter(world());
+        return position().bottomCenter(world()).add(MODEL_OFFSET.x, 0, MODEL_OFFSET.z);
+    }
+
+    private Location outputLocation() {
+        BlockFace front = facing().face();
+        return bottomCenter().add(front.getModX() * OUTPUT_DISTANCE, 0.1, front.getModZ() * OUTPUT_DISTANCE);
+    }
+
+    /**
+     * Überzählige Barrieren eines alten 3x3-Mühlsteins entfernen.
+     */
+    private void migrateLayout() {
+        oldLayout = false;
+        java.util.List<de.emrion.kaleidoscopeCookery.station.BlockKey> now = occupied();
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                de.emrion.kaleidoscopeCookery.station.BlockKey key = position().relative(dx, 0, dz);
+                org.bukkit.block.Block block = key.block();
+                if (!now.contains(key) && block != null && block.getType() == org.bukkit.Material.BARRIER && context.manager().at(key) == null) {
+                    block.setType(org.bukkit.Material.AIR, false);
+                }
+            }
+        }
+        markDirty();
     }
 
     /**
      * MillstoneBlock#stepOn: lebende Wesen, die auf dem Mühlstein stehen.
      */
     private void checkStepOn() {
-        BoundingBox top = new BoundingBox(position().x() - 1, position().y() + 0.9, position().z() - 1,
+        BoundingBox top = new BoundingBox(position().x(), position().y() + 0.9, position().z(),
                 position().x() + 2, position().y() + 1.2, position().z() + 2);
         for (Entity entity : world().getNearbyEntities(top, e -> e instanceof LivingEntity)) {
             LivingEntity living = (LivingEntity) entity;
@@ -325,6 +363,9 @@ public class MillstoneStation extends Station {
 
     @Override
     public void tick(long serverTick) {
+        if (oldLayout) {
+            migrateLayout();
+        }
         long gameTime = world().getGameTime();
         if (entityId == null) {
             if (gameTime % 5 == 4) {
@@ -335,8 +376,7 @@ public class MillstoneStation extends Station {
 
         // Ergebnisse vorne auswerfen
         if (gameTime % 20 == 9 && !outputs.isEmpty()) {
-            BlockFace front = facing().face();
-            Location drop = new Location(world(), position().x() + front.getModX() + 0.5, position().y(), position().z() + front.getModZ() + 0.5);
+            Location drop = outputLocation();
             for (ItemStack output : outputs) {
                 world().dropItem(drop, output, item -> item.setVelocity(new org.bukkit.util.Vector()));
             }
@@ -422,8 +462,9 @@ public class MillstoneStation extends Station {
                 }
             }
         }
-        BoundingBox above = new BoundingBox(position().x() - 0.3125, position().y() + 1, position().z() - 0.3125,
-                position().x() + 1.3125, position().y() + 1.5, position().z() + 1.3125);
+        Location middle = bottomCenter();
+        BoundingBox above = new BoundingBox(middle.getX() - 0.8125, position().y() + 1, middle.getZ() - 0.8125,
+                middle.getX() + 0.8125, position().y() + 1.5, middle.getZ() + 0.8125);
         for (Entity entity1 : world().getNearbyEntities(above, e -> e instanceof Item)) {
             Item item = (Item) entity1;
             ItemStack copy = item.getItemStack().clone();
@@ -498,7 +539,6 @@ public class MillstoneStation extends Station {
             outputs.add(stack);
             return;
         }
-        BlockFace front = facing().face();
-        world().dropItem(new Location(world(), position().x() + front.getModX() + 0.5, position().y(), position().z() + front.getModZ() + 0.5), stack);
+        world().dropItem(outputLocation(), stack);
     }
 }

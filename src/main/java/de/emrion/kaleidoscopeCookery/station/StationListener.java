@@ -282,7 +282,7 @@ public class StationListener implements Listener {
         }
         BlockState replaced = target.getState();
         if (type.barrier()) {
-            BoundingBox box = BoundingBox.of(target).expand(type.radius(), 0, type.radius()).expand(0, 0, 0, 0, type.height() - 1, 0);
+            BoundingBox box = BoundingBox.of(target).expand(-type.minOffset(), 0, -type.minOffset(), type.maxOffset(), type.height() - 1, type.maxOffset());
             Collection<Entity> blocking = target.getWorld().getNearbyEntities(box, entity -> entity instanceof LivingEntity);
             if (!blocking.isEmpty()) {
                 return false;
@@ -292,7 +292,7 @@ public class StationListener implements Listener {
         checking = true;
         boolean allowed;
         try {
-            if (type.radius() > 0 || type.height() > 1) {
+            if (type.width() > 1 || type.height() > 1) {
                 // Mehrblock-Station: Schutz-Plugins prüfen alle belegten Blöcke
                 List<BlockState> states = new ArrayList<>();
                 states.add(replaced);
