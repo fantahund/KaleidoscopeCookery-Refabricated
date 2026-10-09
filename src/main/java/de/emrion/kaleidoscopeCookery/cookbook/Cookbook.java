@@ -435,7 +435,7 @@ public class Cookbook {
         // Nach einem Klick unverändert offen bleiben, bis die nächste Seite kommt: kein Warte-Bildschirm,
         // und der Mauszeiger springt nicht in die Mitte
         return Dialog.create(builder -> builder.empty()
-                .base(DialogBase.builder(title).canCloseWithEscape(true).afterAction(DialogBase.DialogAfterAction.NONE)
+                .base(DialogBase.builder(title).canCloseWithEscape(true).pause(false).afterAction(DialogBase.DialogAfterAction.NONE)
                         .body(body).inputs(inputs).build())
                 .type(DialogType.multiAction(all).columns(COLUMNS).exitAction(exit).build()));
     }
