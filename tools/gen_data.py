@@ -501,7 +501,7 @@ def collect_recipes(tags: dict) -> dict:
 
 
 # Bei jeder inhaltlichen Aenderung der erzeugten recipes.yml erhoehen: das Plugin ersetzt dann alte Kopien (mit Backup)
-DATA_VERSION = 8
+DATA_VERSION = 9
 STOCKPOT_DEFAULT_TIME = 300
 POT_DEFAULT_TIME = 200
 POT_DEFAULT_STIR_FRY = 3
@@ -656,9 +656,11 @@ VANILLA_RECIPE_DIRS = [
 
 
 def collect_vanilla_recipes(used_tags: set) -> dict:
-    # Kochbuch des Plugins: Buch + Tomate
+    # Kochbuch des Plugins: Buch + ein beliebiger Mod-Samen (gibt es früh: Gras mit Strohhut abbauen)
+    seeds = ["kaleidoscope_cookery:tomato_seed", "kaleidoscope_cookery:chili_seed", "kaleidoscope_cookery:lettuce_seed",
+             "kaleidoscope_cookery:wild_rice", "kaleidoscope_cookery:rice", "kaleidoscope_cookery:tea_seed"]
     recipes = {"kaleidoscope:cookbook": {"type": "crafting_shapeless",
-                                         "ingredients": ["minecraft:book", "kaleidoscope_cookery:tomato"],
+                                         "ingredients": ["minecraft:book", seeds],
                                          "result": "kaleidoscope:cookbook"}}
     for folder, namespace in VANILLA_RECIPE_DIRS:
         if not folder.exists():

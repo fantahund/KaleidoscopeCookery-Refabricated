@@ -2,7 +2,7 @@
 # Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert
 # und kann dort angepasst werden (/kc reload).
 # Zutaten: Item-ID, "#tag" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.
-data-version: 8
+data-version: 9
 tags:
   "c:bricks/normal":
     - "minecraft:brick"
@@ -2538,7 +2538,12 @@ vanilla:
     type: crafting_shapeless
     ingredients:
       - "minecraft:book"
-      - "kaleidoscope_cookery:tomato"
+      - - "kaleidoscope_cookery:tomato_seed"
+        - "kaleidoscope_cookery:chili_seed"
+        - "kaleidoscope_cookery:lettuce_seed"
+        - "kaleidoscope_cookery:wild_rice"
+        - "kaleidoscope_cookery:rice"
+        - "kaleidoscope_cookery:tea_seed"
     result: "kaleidoscope:cookbook"
   "kaleidoscope_cookery:apple_platter":
     type: crafting_shapeless
