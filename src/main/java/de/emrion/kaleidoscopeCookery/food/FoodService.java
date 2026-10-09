@@ -264,7 +264,8 @@ public class FoodService implements Listener {
     private void nerfVanilla(Player player, ItemStack stack) {
         CookeryConfig.Food config = plugin.getCookeryConfig().food();
         int percent = config.vanillaPercent(stack.getType());
-        FoodProperties food = stack.getData(DataComponentTypes.FOOD);
+        // Vanilla-Werte des Typs, nicht die des Stapels (der ist normalerweise schon angepasst, siehe VanillaFoodAdjuster)
+        FoodProperties food = VanillaFoodAdjuster.vanillaFood(stack.getType());
         if (!config.vanillaNerfEnabled() || percent >= 100 || food == null) {
             return;
         }

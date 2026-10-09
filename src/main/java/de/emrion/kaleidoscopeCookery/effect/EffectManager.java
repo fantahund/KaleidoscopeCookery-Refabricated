@@ -61,7 +61,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Die Effekte aus Kaleidoscope Cookery, nachgebaut wie im Mod (VigorEffect, WarmthEffect, SatiatedShieldEvent ...).
- * Aktive Effekte stehen in einer Bossbar mit den Original-Icons. Beim Verlassen werden sie im Spieler-PDC gespeichert.
+ * Aktive Effekte stehen oben in einer Bossbar mit den Original-Icons; die Leiste selbst ist im Resourcepack
+ * unsichtbar (weiße Bossbars, textures/gui/sprites/boss_bar/white_*). Eigene Effekte im Inventar anzeigen geht nicht:
+ * Effekte sind eine feste Registry im Client. Beim Verlassen werden sie im Spieler-PDC gespeichert.
  */
 public class EffectManager implements Listener {
 
@@ -283,7 +285,7 @@ public class EffectManager implements Listener {
         BossBar bar = bars.get(player.getUniqueId());
         float progress = (float) Math.clamp(longest / (20.0 * 60 * 5), 0, 1);
         if (bar == null) {
-            bar = BossBar.bossBar(title.build(), progress, BossBar.Color.YELLOW, BossBar.Overlay.PROGRESS);
+            bar = BossBar.bossBar(title.build(), progress, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS);
             bars.put(player.getUniqueId(), bar);
             player.showBossBar(bar);
         } else {

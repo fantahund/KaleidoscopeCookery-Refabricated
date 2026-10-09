@@ -4,6 +4,7 @@ import de.emrion.kaleidoscopeCookery.command.CommandRegistration;
 import de.emrion.kaleidoscopeCookery.config.CookeryConfig;
 import de.emrion.kaleidoscopeCookery.effect.EffectManager;
 import de.emrion.kaleidoscopeCookery.food.FoodService;
+import de.emrion.kaleidoscopeCookery.food.VanillaFoodAdjuster;
 import de.emrion.kaleidoscopeCookery.item.CookeryItems;
 import de.emrion.kaleidoscopeCookery.item.ItemProtectionListener;
 import de.emrion.kaleidoscopeCookery.loot.OilDropListener;
@@ -39,6 +40,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     private StationManager stations;
     private FoodService foodService;
     private EffectManager effects;
+    private VanillaFoodAdjuster vanillaFood;
 
     @Override
     public void onEnable() {
@@ -62,6 +64,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
 
         foodService = new FoodService(this);
         effects = new EffectManager(this);
+        vanillaFood = new VanillaFoodAdjuster(this);
 
         stations = new StationManager(this);
         stations.register(ChoppingBoardStation.type());
@@ -77,11 +80,13 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         pluginManager.registerEvents(new OilDropListener(this), this);
         pluginManager.registerEvents(foodService, this);
         pluginManager.registerEvents(effects, this);
+        pluginManager.registerEvents(vanillaFood, this);
         pluginManager.registerEvents(new StoveListener(stations), this);
 
         stations.start();
         foodService.start();
         effects.start();
+        vanillaFood.start();
         resourcePack.start(cookeryConfig.resourcePack());
         new CommandRegistration(this).registerCommands();
         getLogger().info(items.all().size() + " Items, " + recipes.choppingBoard().size() + " Schneidebrett-Rezepte geladen");
@@ -97,6 +102,9 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         }
         if (effects != null) {
             effects.stop();
+        }
+        if (vanillaFood != null) {
+            vanillaFood.stop();
         }
         if (vanillaRecipes != null) {
             vanillaRecipes.unregister();
