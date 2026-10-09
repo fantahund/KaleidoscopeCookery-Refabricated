@@ -185,9 +185,17 @@ def parse_food_bites(foods: dict) -> dict:
 
 # ---------------------------------------------------------------- Items
 
-# Items mit Vanilla-Funktion: Basis-Material statt Papier (Schaden, Haltbarkeit, Verzaubern bleiben erhalten)
+# Items mit Vanilla-Funktion: Basis-Material statt Papier
 BASE_MATERIALS = {
     "kaleidoscope_cookery:kitchen_shovel": "IRON_SHOVEL",
+    # Küchenmesser: Wissensbuch (im Survival nicht erhältlich) mit allen Komponenten des passenden Schwerts.
+    # Das Plugin trägt das Wissensbuch in #minecraft:swords ein (wie die Messer im Mod).
+    "kaleidoscope_cookery:iron_kitchen_knife": "KNOWLEDGE_BOOK",
+    "kaleidoscope_cookery:gold_kitchen_knife": "KNOWLEDGE_BOOK",
+    "kaleidoscope_cookery:diamond_kitchen_knife": "KNOWLEDGE_BOOK",
+    "kaleidoscope_cookery:netherite_kitchen_knife": "KNOWLEDGE_BOOK",
+}
+PROTOTYPES = {
     "kaleidoscope_cookery:iron_kitchen_knife": "IRON_SWORD",
     "kaleidoscope_cookery:gold_kitchen_knife": "GOLDEN_SWORD",
     "kaleidoscope_cookery:diamond_kitchen_knife": "DIAMOND_SWORD",
@@ -225,6 +233,8 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry["tooltip"] = tooltip_key
             if full_id in BASE_MATERIALS:
                 entry["base"] = BASE_MATERIALS[full_id]
+                if full_id in PROTOTYPES:
+                    entry["prototype"] = PROTOTYPES[full_id]
             elif full_id in stack_sizes:
                 entry["max-stack"] = stack_sizes[full_id]
             if ns == "kaleidoscope_cookery" and item_id in foods:

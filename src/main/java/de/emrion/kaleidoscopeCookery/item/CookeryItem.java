@@ -10,7 +10,8 @@ import java.util.List;
  * Ein Item aus den Mods (Definition aus items.yml).
  *
  * @param id       z. B. kaleidoscope_cookery:tomato
- * @param base     Basis-Material (Papier, bei Werkzeugen wie dem Küchenmesser das passende Vanilla-Werkzeug)
+ * @param base     Basis-Material (Papier; Pfannenwender: Eisenschaufel; Küchenmesser: Wissensbuch)
+ * @param prototype Vanilla-Item, dessen Komponenten (Schaden, Haltbarkeit ...) übernommen werden, sonst null
  * @param model    Item-Model-Definition im Resourcepack (assets/&lt;ns&gt;/items/&lt;pfad&gt;.json)
  * @param nameKey  Übersetzungs-Key des Namens
  * @param maxStack Stapelgröße
@@ -18,7 +19,7 @@ import java.util.List;
  * @param food     Nahrungswerte, null wenn nicht essbar
  * @param plate    Gericht, das man als Teller hinstellen und bissweise essen kann, sonst null
  */
-public record CookeryItem(Key id, Material base, Key model, String nameKey, @Nullable String tooltipKey, int maxStack, @Nullable Food food,
+public record CookeryItem(Key id, Material base, @Nullable Material prototype, Key model, String nameKey, @Nullable String tooltipKey, int maxStack, @Nullable Food food,
                           @Nullable Plate plate) {
 
     /**

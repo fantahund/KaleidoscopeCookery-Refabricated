@@ -76,7 +76,8 @@ public class CookeryItems {
                 if (plateSection != null) {
                     plate = loadPlate(id, plateSection, logger);
                 }
-                items.put(key, new CookeryItem(key, base, Key.key(entry.getString("model", id)), entry.getString("name", id), entry.getString("tooltip"),
+                Material prototype = entry.getString("prototype") == null ? null : Material.matchMaterial(entry.getString("prototype"));
+                items.put(key, new CookeryItem(key, base, prototype, Key.key(entry.getString("model", id)), entry.getString("name", id), entry.getString("tooltip"),
                         Math.clamp(entry.getInt("max-stack", 64), 1, 99), food, plate));
             }
         }
@@ -191,6 +192,10 @@ public class CookeryItems {
     @SuppressWarnings("UnstableApiUsage")
     public ItemStack create(CookeryItem item, int amount) {
         ItemStack stack = ItemStack.of(item.base(), 1);
+        if (item.prototype() != null) {
+            // Alle Eigenschaften des Vanilla-Items übernehmen (Schaden, Tempo, Haltbarkeit, Reparatur, Abbau ...)
+            stack.copyDataFrom(ItemStack.of(item.prototype()), type -> true);
+        }
         stack.setData(DataComponentTypes.ITEM_MODEL, item.model());
         stack.setData(DataComponentTypes.ITEM_NAME, Text.noItalic(Lang.raw(item.nameKey())));
         if (item.tooltipKey() != null) {

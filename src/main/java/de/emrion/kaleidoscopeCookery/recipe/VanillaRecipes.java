@@ -41,6 +41,7 @@ public class VanillaRecipes implements Listener {
     private final Plugin plugin;
     private final CookeryItems items;
     private final List<NamespacedKey> registered = new ArrayList<>();
+    private final java.util.Map<NamespacedKey, Ingredient> smithingBases = new java.util.HashMap<>();
 
     public VanillaRecipes(Plugin plugin, CookeryItems items) {
         this.plugin = plugin;
@@ -83,6 +84,7 @@ public class VanillaRecipes implements Listener {
             Bukkit.removeRecipe(key, false);
         }
         registered.clear();
+        smithingBases.clear();
     }
 
     private @Nullable Recipe toBukkit(VanillaRecipe recipe) {
@@ -113,8 +115,26 @@ public class VanillaRecipes implements Listener {
             case BLASTING -> new BlastingRecipe(key, result, choice(ingredients.getFirst()), recipe.experience(), recipe.time());
             case CAMPFIRE_COOKING -> new CampfireRecipe(key, result, choice(ingredients.getFirst()), recipe.experience(), recipe.time());
             case STONECUTTING -> new StonecuttingRecipe(key, result, choice(ingredients.getFirst()));
-            case SMITHING_TRANSFORM -> new SmithingTransformRecipe(key, result, choice(ingredients.get(0)), choice(ingredients.get(1)), choice(ingredients.get(2)), false);
+            case SMITHING_TRANSFORM -> {
+                // Basis nach Material (verzauberte/beschädigte Messer passen nicht exakt), geprüft in onPrepareSmithing
+                smithingBases.put(key, ingredients.get(1));
+                yield new SmithingTransformRecipe(key, result, choice(ingredients.get(0)), materialChoice(ingredients.get(1)), choice(ingredients.get(2)), false);
+            }
         };
+    }
+
+    private RecipeChoice materialChoice(Ingredient ingredient) {
+        List<Material> materials = new ArrayList<>();
+        for (Key id : ingredient.items()) {
+            ItemStack stack = items.create(id, 1);
+            if (stack != null && !materials.contains(stack.getType())) {
+                materials.add(stack.getType());
+            }
+        }
+        if (materials.isEmpty()) {
+            throw new IllegalArgumentException("keine gültigen Items in " + ingredient.items());
+        }
+        return new RecipeChoice.MaterialChoice(materials);
     }
 
     /**
@@ -161,6 +181,11 @@ public class VanillaRecipes implements Listener {
         Recipe recipe = event.getInventory().getRecipe();
         ItemStack base = event.getInventory().getInputEquipment();
         if (!isOwn(recipe) || base == null || event.getResult() == null) {
+            return;
+        }
+        Ingredient expected = smithingBases.get(((Keyed) recipe).getKey());
+        if (expected != null && !expected.test(base)) {
+            event.setResult(null);
             return;
         }
         ItemStack result = items.create(CookeryItems.typeOf(event.getResult()), 1);
