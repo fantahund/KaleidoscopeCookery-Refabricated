@@ -109,6 +109,9 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         stations.register(KitchenwareRacksStation.type());
         stations.register(FruitBasketStation.type());
         stations.register(TrashCanStation.type());
+        for (de.emrion.kaleidoscopeCookery.station.plate.ServingPlateStation.Kind kind : de.emrion.kaleidoscopeCookery.station.plate.ServingPlateStation.KINDS) {
+            stations.register(de.emrion.kaleidoscopeCookery.station.plate.ServingPlateStation.type(kind));
+        }
         for (CropKind kind : CropKind.values()) {
             stations.register(CropStation.type(kind));
         }

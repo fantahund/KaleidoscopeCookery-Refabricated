@@ -83,7 +83,18 @@
     "tooltip.kaleidoscope_cookery.teapot.progress.processing": "Zieht",
     "tooltip.kaleidoscope_cookery.teapot.progress.finished": "Der Tee ist fertig",
     "tooltip.kaleidoscope_cookery.oil_pot.empty": "Leer",
-    "tooltip.kaleidoscope_cookery.oil_pot.count": "Öl: %d"
+    "tooltip.kaleidoscope_cookery.oil_pot.count": "Öl: %d",
+    "tooltip.kaleidoscope_cookery.transmutation_lunch_bag.line1": "Bewahrt Essen und Tränke auf.",
+    "tooltip.kaleidoscope_cookery.transmutation_lunch_bag.line2": "Rechtsklick zum Essen.",
+    "tooltip.kaleidoscope_cookery.transmutation_lunch_bag.line3": "Isst so lange, bis du satt bist.",
+    "tooltip.kaleidoscope_cookery.kitchen_knife": "Erlegt Schweine, Piglins und Hoglins für Öl.",
+    "tooltip.kaleidoscope_cookery.crop_seed": "Fällt beim Abbauen von Gras, wenn man einen Strohhut trägt.",
+    "tooltip.kaleidoscope_cookery.item_container.empty": "Leer",
+    "tooltip.kaleidoscope_cookery.pot.fail": "Mit falschen Zutaten oder zu lange gekocht misslingt das Gericht.",
+    "tooltip.kaleidoscope_cookery.stockpot.fail": "Deckel ab unterbricht das Kochen. Falsche Schritte ergeben einen seltsamen Eintopf.",
+    "tooltip.kaleidoscope_cookery.teapot.add_tea_fluid.fluid_not_enough": "Es braucht mindestens 1000 mB Flüssigkeit",
+    "tooltip.kaleidoscope_cookery.teapot.add_ingredient.recipe_incorrect": "Kein passendes Rezept – stimmt die Zutat?",
+    "tooltip.kaleidoscope_cookery.clay_pot_milk_tea.effect": "Entfernt alle schädlichen Effekte, gute bleiben erhalten"
   },
   "kaleidoscope_grilling": {
     "hud.kaleidoscope_grilling.pot.state.need_heat": "Wartet auf Hitzequelle",
