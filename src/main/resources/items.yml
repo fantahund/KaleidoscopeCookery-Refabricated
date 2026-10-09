@@ -1,7 +1,7 @@
 # Generiert von tools/gen_data.py aus den Mod-Quellen - nicht von Hand bearbeiten.
 items:
   "kaleidoscope:cookbook":
-    model: "minecraft:book"
+    model: "kaleidoscope:cookbook"
     name: kaleidoscope.cookbook.item
     tooltip: kaleidoscope.cookbook.item.tooltip
     max-stack: 1

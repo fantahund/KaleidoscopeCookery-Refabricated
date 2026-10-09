@@ -311,7 +311,7 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry["plate"] = bite
             items[full_id] = entry
     # Eigene Items des Plugins (nicht aus den Mods)
-    items["kaleidoscope:cookbook"] = {"model": "minecraft:book", "name": "kaleidoscope.cookbook.item",
+    items["kaleidoscope:cookbook"] = {"model": "kaleidoscope:cookbook", "name": "kaleidoscope.cookbook.item",
                                       "tooltip": "kaleidoscope.cookbook.item.tooltip", "max-stack": 1}
     for full_id, name_key in EXTRA_ITEMS.items():
         ns, item_id = full_id.split(":")

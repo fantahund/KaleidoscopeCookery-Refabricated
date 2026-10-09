@@ -18,6 +18,7 @@ Aufruf: python3 -I tools/build_pack.py --out target/generated-resources/pack
 import argparse
 import hashlib
 import io
+import math
 import json
 import sys
 import urllib.request
@@ -302,8 +303,12 @@ class PackBuilder:
             return textures
 
         def resolve(textures, value, depth=0):
+            if isinstance(value, dict):
+                value = value.get("sprite")  # 26.x: {"sprite": ..., "force_translucent": true}
             while isinstance(value, str) and value.startswith("#") and depth < 8:
                 value = textures.get(value[1:])
+                if isinstance(value, dict):
+                    value = value.get("sprite")
                 depth += 1
             return value if isinstance(value, str) and not value.startswith("#") else None
 
@@ -345,9 +350,10 @@ class PackBuilder:
             return Image.merge("RGBA", [c.point(lambda v: int(v * factor)) for c in channels] + [a])
 
         def model_parts(reference):
-            """Texturen und Elemente eines Modells (Elemente vom ersten Modell der Kette, das welche hat)."""
+            """Texturen, Elemente (vom ersten Modell der Kette, das welche hat) und Inventar-Ansicht (display.gui)."""
             textures = {}
             elements = None
+            gui = None
             seen = 0
             while reference and seen < 16:
                 seen += 1
@@ -358,55 +364,103 @@ class PackBuilder:
                     textures.setdefault(key, value)
                 if elements is None and "elements" in model:
                     elements = model["elements"]
+                if gui is None and "gui" in model.get("display", {}):
+                    gui = model["display"]["gui"]
                 reference = model.get("parent")
-            return textures, elements
+            return textures, elements, gui or {"rotation": [30, 225, 0], "translation": [0, 0, 0], "scale": [0.625, 0.625, 0.625]}
 
         FOLIAGE = (124, 189, 107)
 
+        def rotate(point, rx, ry, rz):
+            """Quaternionf.rotationXYZ: erst um z, dann y, dann x (Grad)."""
+            x, y, z = point
+            for axis, angle in (("z", rz), ("y", ry), ("x", rx)):
+                if not angle:
+                    continue
+                c, s_ = math.cos(math.radians(angle)), math.sin(math.radians(angle))
+                if axis == "x":
+                    y, z = y * c - z * s_, y * s_ + z * c
+                elif axis == "y":
+                    x, z = x * c + z * s_, -x * s_ + z * c
+                else:
+                    x, y = x * c - y * s_, x * s_ + y * c
+            return x, y, z
+
+        def element_rotation(element, point):
+            rotation = element.get("rotation")
+            if not rotation:
+                return point
+            origin = rotation.get("origin", [8, 8, 8])
+            local = [point[i] - origin[i] for i in range(3)]
+            if "axis" in rotation:
+                angles = {"x": 0, "y": 0, "z": 0}
+                angles[rotation["axis"]] = rotation.get("angle", 0)
+                rx, ry, rz = angles["x"], angles["y"], angles["z"]
+            else:
+                rx, ry, rz = rotation.get("x", 0), rotation.get("y", 0), rotation.get("z", 0)
+            local = rotate(local, rx, ry, rz)
+            return tuple(local[i] + origin[i] for i in range(3))
+
+        # Ecken je Fläche: A = Textur-Ursprung (u, v = 0), B = Ende in u-Richtung, C = Ende in v-Richtung;
+        # Standard-UV aus den Abmessungen; Helligkeit wie Minecraft (oben hell, Seiten dunkler)
+        FACES = {
+            "up": (lambda a, b: ((a[0], b[1], a[2]), (b[0], b[1], a[2]), (a[0], b[1], b[2])), lambda a, b: [a[0], a[2], b[0], b[2]], 1.0),
+            "down": (lambda a, b: ((a[0], a[1], b[2]), (b[0], a[1], b[2]), (a[0], a[1], a[2])), lambda a, b: [a[0], 16 - b[2], b[0], 16 - a[2]], 0.5),
+            "north": (lambda a, b: ((b[0], b[1], a[2]), (a[0], b[1], a[2]), (b[0], a[1], a[2])), lambda a, b: [16 - b[0], 16 - b[1], 16 - a[0], 16 - a[1]], 0.8),
+            "south": (lambda a, b: ((a[0], b[1], b[2]), (b[0], b[1], b[2]), (a[0], a[1], b[2])), lambda a, b: [a[0], 16 - b[1], b[0], 16 - a[1]], 0.8),
+            "west": (lambda a, b: ((a[0], b[1], a[2]), (a[0], b[1], b[2]), (a[0], a[1], a[2])), lambda a, b: [a[2], 16 - b[1], b[2], 16 - a[1]], 0.6),
+            "east": (lambda a, b: ((b[0], b[1], b[2]), (b[0], b[1], a[2]), (b[0], a[1], b[2])), lambda a, b: [16 - b[2], 16 - b[1], 16 - a[2], 16 - a[1]], 0.6),
+        }
+
         def render3d(parts):
             """
-            Blockmodell wie im Inventar zeichnen: Blick von Nordwesten schräg von oben, sichtbar sind Oberseite,
-            Nordseite (links) und Westseite (rechts). Elemente werden als Quader gezeichnet (Drehungen ignoriert),
-            von hinten nach vorne. 2 Pixel je Modell-Pixel in der Breite.
-            parts: Liste aus (Texturen, Elemente, y-Versatz in Modell-Pixeln).
+            Modell so zeichnen, wie es im Inventar erscheint: Inventar-Ansicht (display.gui: Drehung, Größe,
+            Verschiebung), gedrehte Elemente, sichtbare Flächen von hinten nach vorne. 2 Pixel je Modell-Pixel,
+            4-fach groß gezeichnet und glatt verkleinert.
+            parts: Liste aus (Texturen, Elemente, Inventar-Ansicht, y-Versatz in Modell-Pixeln).
             """
-            extra = max(offset for _, _, offset in parts)
-            height = 32 + extra  # ganzzahlig auf 16 bzw. 32 Pixel skalierbar, sonst wirken die Bilder verzogen
+            extra = max(offset for *_, offset in parts)
+            supersample = 4
+            gui = parts[0][2]
+            rx, ry, rz = gui.get("rotation", [0, 0, 0])
+            tx, ty, tz = gui.get("translation", [0, 0, 0])
+            sx_, sy_, sz_ = gui.get("scale", [1, 1, 1])
+            # Bei hohen Mehrblock-Modellen (Dönerspieß) die gemeinsame Mitte nehmen und die Fläche nach oben verlängern
+            center = (8, 8 + extra / 2, 8)
+            width = 32 * supersample
+            height = round((32 + extra * sy_ * 2)) * supersample if extra else width
+
+            def screen(point):
+                p = ((point[0] - center[0]) * sx_, (point[1] - center[1]) * sy_, (point[2] - center[2]) * sz_)
+                x, y, z = rotate(p, rx, ry, rz)
+                x, y, z = x + tx, y + ty, z + tz
+                return width / 2 + x * 2 * supersample, height / 2 - y * 2 * supersample, z
+
             faces = []
-            for textures, elements, offset in parts:
+            for textures, elements, _, offset in parts:
                 for element in elements:
-                    (x1, y1, z1), (x2, y2, z2) = element["from"], element["to"]
-                    y1, y2 = y1 + offset, y2 + offset
+                    a = (element["from"][0], element["from"][1] + offset, element["from"][2])
+                    b = (element["to"][0], element["to"][1] + offset, element["to"][2])
                     for direction, face in element.get("faces", {}).items():
-                        if direction not in ("up", "north", "west"):
+                        if direction not in FACES:
                             continue
                         texture = resolve(textures, face.get("texture"))
                         if not texture:
                             continue
+                        corners_of, default_uv, light = FACES[direction]
                         uv = face.get("uv")
-                        if direction == "up":
-                            uv = uv or [x1, z1, x2, z2]
-                            corners = ((x1, y2, z1), (x2, y2, z1), (x1, y2, z2))
-                            center = ((x1 + x2) / 2, y2, (z1 + z2) / 2)
-                            light = 1.0
-                        elif direction == "north":
-                            uv = uv or [16 - x2, 16 - (y2 - offset), 16 - x1, 16 - (y1 - offset)]
-                            corners = ((x2, y2, z1), (x1, y2, z1), (x2, y1, z1))
-                            center = ((x1 + x2) / 2, (y1 + y2) / 2, z1)
-                            light = 0.8
-                        else:
-                            uv = uv or [z1, 16 - (y2 - offset), z2, 16 - (y1 - offset)]
-                            corners = ((x1, y2, z1), (x1, y2, z2), (x1, y1, z1))
-                            center = (x1, (y1 + y2) / 2, (z1 + z2) / 2)
-                            light = 0.6
-                        faces.append((center[0] + center[2] - center[1], texture, uv, corners, light, "tintindex" in face))
-            out = Image.new("RGBA", (32, height), (0, 0, 0, 0))
-
-            def screen(point):
-                x, y, z = point
-                return 16 - x + z, 16 - 0.5 * x - 0.5 * z + (16 + extra - y)
-
-            for _, texture, uv, corners, light, tinted in sorted(faces, key=lambda f: -f[0]):
+                        if uv is None:
+                            raw = default_uv((a[0], a[1] - offset, a[2]), (b[0], b[1] - offset, b[2]))
+                            uv = raw
+                        corners = [screen(element_rotation(element, c)) for c in corners_of(a, b)]
+                        (ax, ay, az), (bx, by, bz), (cx, cy, cz) = corners
+                        # Rückseiten weglassen (gegen den Uhrzeigersinn auf dem Bildschirm)
+                        if (bx - ax) * (cy - ay) - (by - ay) * (cx - ax) <= 0:
+                            continue
+                        depth = (az + bz + cz) / 3
+                        faces.append((depth, texture, uv, (ax, ay), (bx, by), (cx, cy), light, "tintindex" in face, face.get("rotation", 0)))
+            out = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+            for _, texture, uv, (ax, ay), (bx, by), (cx, cy), light, tinted, uv_rotation in sorted(faces, key=lambda f: f[0]):
                 image = load_texture(texture)
                 if image is None:
                     continue
@@ -420,10 +474,10 @@ class PackBuilder:
                     part = part.transpose(Image.FLIP_LEFT_RIGHT)
                 if v2 < v1:
                     part = part.transpose(Image.FLIP_TOP_BOTTOM)
+                if uv_rotation:
+                    part = part.rotate(-uv_rotation, expand=True)
                 part = shade(part, light, FOLIAGE if tinted else None)
-                (ax, ay), (bx, by), (cx, cy) = (screen(c) for c in corners)
                 w, h = part.size
-                # Textur (p, q) -> Bildschirm: A + p/w (B - A) + q/h (C - A); PIL braucht die Umkehrung
                 m11, m12, m21, m22 = (bx - ax) / w, (cx - ax) / h, (by - ay) / w, (cy - ay) / h
                 det = m11 * m22 - m12 * m21
                 if abs(det) < 1e-9:
@@ -431,8 +485,9 @@ class PackBuilder:
                 i11, i12, i21, i22 = m22 / det, -m12 / det, -m21 / det, m11 / det
                 data = (i11, i12, -(i11 * ax + i12 * ay), i21, i22, -(i21 * ax + i22 * ay))
                 out.alpha_composite(part.transform(out.size, Image.AFFINE, data, Image.NEAREST))
-            box = out.getbbox()
-            return out if box else None
+            if not out.getbbox():
+                return None
+            return out.resize((width // supersample, height // supersample), Image.BOX)
 
         def glyph_advance(file, height):
             """Vorschub wie BitmapProvider: Breite bis zur letzten nicht ganz durchsichtigen Spalte, skaliert, + 1."""
@@ -470,7 +525,7 @@ class PackBuilder:
         for name in sorted(definitions):
             ns = name.split("/")[1]
             item = name.split("/")[3][:-5]
-            if ns not in ("minecraft", "kaleidoscope_cookery", "kaleidoscope_grilling"):
+            if ns not in ("minecraft", "kaleidoscope", "kaleidoscope_cookery", "kaleidoscope_grilling"):
                 continue
             definition = read(name)
             model = first_model(definition.get("model")) if definition else None
@@ -485,7 +540,7 @@ class PackBuilder:
                     parts = [model_parts(ref) + (offset,) for ref, offset in MULTIBLOCK_MODELS[f"{ns}:{item}"]]
                 else:
                     parts = [model_parts(model) + (0,)]
-                parts = [(t, e, o) for t, e, o in parts if e]
+                parts = [(t, e, g, o) for t, e, g, o in parts if e]
                 image = render3d(parts) if parts else None
                 if image is not None:
                     file = save_icon(ns, item, image)

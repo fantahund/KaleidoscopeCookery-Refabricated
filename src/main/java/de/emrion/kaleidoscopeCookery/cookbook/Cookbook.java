@@ -421,7 +421,7 @@ public class Cookbook {
     }
 
     /**
-     * Knöpfe in festen Paaren (2 Spalten): oben "Zurück | Übersicht", dann ein Umschalter-Paar (Varianten), dann der
+     * Knöpfe in festen Paaren (2 Spalten): oben ein Umschalter-Paar (andere Rezepte), dann "Zurück | Übersicht", dann der
      * Inhalt und unten "◀ | ▶" zum Blättern. Fehlende Plätze füllt ein leerer Knopf, damit nichts verrutscht.
      *
      * @param toggle  Paar oben (z. B. Varianten), leer = keins
@@ -431,12 +431,11 @@ public class Cookbook {
     private static Dialog dialog(Component title, List<DialogBody> body, List<DialogInput> inputs, List<ActionButton> toggle,
                                  List<ActionButton> content, List<@Nullable ActionButton> paging, @Nullable Supplier<Dialog> back,
                                  @Nullable Supplier<Dialog> self) {
-        List<ActionButton> all = new ArrayList<>();
+        List<ActionButton> all = new ArrayList<>(toggle);
         if (back != null) {
             all.add(button(Lang.get("cookbook.back").color(NamedTextColor.YELLOW), null, (response, audience) -> show(audience, back.get())));
             all.add(button(Lang.get("cookbook.overview"), null, (response, audience) -> show(audience, Cookbook.instance().mainPage())));
         }
-        all.addAll(toggle);
         all.addAll(content);
         if (!paging.isEmpty()) {
             if (content.size() % COLUMNS != 0) {
