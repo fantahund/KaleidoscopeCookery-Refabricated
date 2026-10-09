@@ -37,8 +37,9 @@ import java.util.function.Supplier;
 public class Cookbook {
 
     private static final int PER_PAGE = 24;
-    private static final int COLUMNS = 3;
-    private static final int BUTTON_WIDTH = 110;
+    private static final int COLUMNS = 2;
+    /** Breit genug für lange Gerichtsnamen mit Bild */
+    private static final int BUTTON_WIDTH = 200;
     private static final ClickCallback.Options CALLBACK = ClickCallback.Options.builder().uses(ClickCallback.UNLIMITED_USES).build();
 
     private final KaleidoscopeCookery plugin;
@@ -101,6 +102,8 @@ public class Cookbook {
             String query = response.getText("search");
             if (audience instanceof Player player) {
                 player.showDialog(query == null || query.isBlank() ? mainPage() : searchPage(player, query));
+            } else {
+                audience.closeDialog();
             }
         }));
         for (Category category : Category.values()) {
@@ -259,9 +262,7 @@ public class Cookbook {
     // ---- Hilfen ----
 
     private static void show(net.kyori.adventure.audience.Audience audience, Dialog dialog) {
-        if (audience instanceof Player player) {
-            player.showDialog(dialog);
-        }
+        audience.showDialog(dialog);
     }
 
     private static ActionButton button(Component label, @Nullable Component tooltip, DialogActionCallback callback) {
@@ -270,10 +271,12 @@ public class Cookbook {
 
     private static Dialog dialog(Component title, List<DialogBody> body, List<DialogInput> inputs, List<ActionButton> buttons, @Nullable Supplier<Dialog> back) {
         ActionButton exit = back == null
-                ? ActionButton.builder(Lang.get("cookbook.close")).width(BUTTON_WIDTH).build()
+                ? button(Lang.get("cookbook.close"), null, (response, audience) -> audience.closeDialog())
                 : button(Lang.get("cookbook.back"), null, (response, audience) -> show(audience, back.get()));
+        // Nach einem Klick offen bleiben, bis die nächste Seite kommt: so springt der Mauszeiger nicht in die Mitte
         return Dialog.create(builder -> builder.empty()
-                .base(DialogBase.builder(title).canCloseWithEscape(true).body(body).inputs(inputs).build())
+                .base(DialogBase.builder(title).canCloseWithEscape(true).afterAction(DialogBase.DialogAfterAction.WAIT_FOR_RESPONSE)
+                        .body(body).inputs(inputs).build())
                 .type(DialogType.multiAction(buttons).columns(COLUMNS).exitAction(exit).build()));
     }
 
