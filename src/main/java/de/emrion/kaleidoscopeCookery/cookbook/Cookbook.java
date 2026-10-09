@@ -275,7 +275,8 @@ public class Cookbook {
         ActionButton exit = button(Lang.get("cookbook.close"), null, (response, audience) -> audience.closeDialog());
         if (back != null) {
             buttons = new ArrayList<>(buttons);
-            buttons.add(button(Lang.get("cookbook.back"), null, (response, audience) -> show(audience, back.get())));
+            // Ganz vorne, damit man ihn ohne Scrollen findet
+            buttons.addFirst(button(Lang.get("cookbook.back").color(NamedTextColor.YELLOW), null, (response, audience) -> show(audience, back.get())));
         }
         List<ActionButton> allButtons = buttons;
         // Nach einem Klick offen bleiben, bis die nächste Seite kommt: so springt der Mauszeiger nicht in die Mitte
