@@ -1,0 +1,76 @@
+{
+  "textures": {
+    "texture": "kaleidoscope_cookery:block/millstone",
+    "particle": "kaleidoscope_cookery:block/millstone"
+  },
+  "elements": [
+    {
+      "from": [
+        6.5,
+        6.5,
+        6.25
+      ],
+      "to": [
+        9.5,
+        9.5,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11.25,
+            1.75,
+            12.75,
+            3.25
+          ],
+          "texture": "#texture"
+        },
+        "south": {
+          "uv": [
+            14.5,
+            1.75,
+            16.0,
+            3.25
+          ],
+          "texture": "#texture"
+        },
+        "east": {
+          "uv": [
+            9.5,
+            1.75,
+            11.25,
+            3.25
+          ],
+          "texture": "#texture"
+        },
+        "west": {
+          "uv": [
+            12.75,
+            1.75,
+            14.5,
+            3.25
+          ],
+          "texture": "#texture"
+        },
+        "up": {
+          "uv": [
+            12.75,
+            1.75,
+            11.25,
+            0.0
+          ],
+          "texture": "#texture"
+        },
+        "down": {
+          "uv": [
+            14.25,
+            0.0,
+            12.75,
+            1.75
+          ],
+          "texture": "#texture"
+        }
+      }
+    }
+  ]
+}

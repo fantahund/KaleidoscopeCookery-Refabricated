@@ -436,6 +436,14 @@ public class StationManager implements Listener {
         if (station == null) {
             throw new IllegalStateException("Station " + type.id() + " nicht registriert");
         }
+        if (type.barrier()) {
+            for (BlockKey key : station.occupied()) {
+                Block occupied = key.block();
+                if (occupied != null && occupied.getType() != Material.BARRIER) {
+                    occupied.setType(Material.BARRIER, false);
+                }
+            }
+        }
         init.accept(station);
         station.forceDirty();
         station.flush();
@@ -513,6 +521,15 @@ public class StationManager implements Listener {
                 }
                 fixes++;
                 continue;
+            }
+            if (station.context().type().barrier()) {
+                for (BlockKey key : station.occupied()) {
+                    Block occupied = key.block();
+                    if (occupied != null && occupied.getType() != Material.BARRIER && (occupied.getType().isAir() || occupied.isReplaceable())) {
+                        occupied.setType(Material.BARRIER, false);
+                        fixes++;
+                    }
+                }
             }
             Map<String, ItemDisplay> parts = station.parts();
             int before = (int) parts.values().stream().filter(Entity::isValid).count();

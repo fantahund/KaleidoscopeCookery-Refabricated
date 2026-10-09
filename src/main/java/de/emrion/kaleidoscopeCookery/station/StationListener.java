@@ -34,6 +34,7 @@ import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -48,6 +49,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -107,13 +109,31 @@ public class StationListener implements Listener {
         if (stationItem && placeOnStation(player, held, event)) {
             return;
         }
-        if (station.onInteract(player, EquipmentSlot.HAND)) {
+        boolean handled;
+        try {
+            station.setClickPosition(clickPosition(station, event));
+            handled = station.onInteract(player, EquipmentSlot.HAND);
+        } finally {
+            station.setClickPosition(null);
+        }
+        if (handled) {
             player.swingMainHand();
             return;
         }
         if (!stationItem && placeableType(held) != null) {
             placeOnStation(player, held, event);
         }
+    }
+
+    /**
+     * Klickposition relativ zur Blockmitte unten der Station.
+     */
+    private static @Nullable Vector clickPosition(Station station, PlayerInteractEntityEvent event) {
+        if (!(event instanceof PlayerInteractAtEntityEvent at) || at.getClickedPosition() == null) {
+            return null;
+        }
+        return event.getRightClicked().getLocation().toVector().add(at.getClickedPosition())
+                .subtract(station.position().bottomCenter(station.world()).toVector());
     }
 
     /**
@@ -248,8 +268,11 @@ public class StationListener implements Listener {
         }
         Block target = clicked.isReplaceable() && stations.at(clicked) == null ? clicked : clicked.getRelative(face);
         Facing facing = Facing.towards(player.getYaw());
-        if (!canPlaceAt(type, target)) {
-            return false;
+        for (BlockKey block : type.footprint(BlockKey.of(target))) {
+            Block part = block.block();
+            if (part == null || !canPlaceAt(type, part)) {
+                return false;
+            }
         }
         if (dish != null && dish.plate() != null && dish.plate().wide()) {
             BlockFace side = PlateStation.secondBlock(facing);
@@ -259,7 +282,7 @@ public class StationListener implements Listener {
         }
         BlockState replaced = target.getState();
         if (type.barrier()) {
-            BoundingBox box = BoundingBox.of(target);
+            BoundingBox box = BoundingBox.of(target).expand(type.radius(), 0, type.radius());
             Collection<Entity> blocking = target.getWorld().getNearbyEntities(box, entity -> entity instanceof LivingEntity);
             if (!blocking.isEmpty()) {
                 return false;
@@ -269,7 +292,20 @@ public class StationListener implements Listener {
         checking = true;
         boolean allowed;
         try {
-            allowed = new BlockPlaceEvent(target, replaced, clicked, item, player, true, hand).callEvent();
+            if (type.radius() > 0) {
+                // Mehrblock-Station: Schutz-Plugins prüfen alle belegten Blöcke
+                List<BlockState> states = new ArrayList<>();
+                states.add(replaced);
+                for (BlockKey block : type.footprint(BlockKey.of(target))) {
+                    Block part = block.block();
+                    if (part != null && !part.equals(target)) {
+                        states.add(part.getState());
+                    }
+                }
+                allowed = new BlockMultiPlaceEvent(states, clicked, item, player, true, hand).callEvent();
+            } else {
+                allowed = new BlockPlaceEvent(target, replaced, clicked, item, player, true, hand).callEvent();
+            }
         } finally {
             checking = false;
         }

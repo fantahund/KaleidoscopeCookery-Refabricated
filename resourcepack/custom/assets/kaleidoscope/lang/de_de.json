@@ -49,5 +49,14 @@
   "kaleidoscope.hud.steamer.need_lid": "Deckel fehlt (Schleichen + Rechtsklick mit leerer Hand)",
   "kaleidoscope.hud.steamer.cooking": "Dämpft · noch %s s · Hitze %s",
   "kaleidoscope.hud.steamer.done": "Fertig gedämpft",
-  "kaleidoscope.hud.cup.cups": "%s Tassen, %s mit Tee"
+  "kaleidoscope.hud.cup.cups": "%s Tassen, %s mit Tee",
+  "kaleidoscope.hud.millstone.no_animal": "Kein Tier eingespannt – führe ein Tier auf den Mühlstein",
+  "kaleidoscope.hud.millstone.empty": "Leer · Zutat einlegen (Rechtsklick)",
+  "kaleidoscope.hud.millstone.grinding": "Mahlt · %s%%",
+  "kaleidoscope.hud.millstone.done": "Fertig · wird vorne ausgeworfen",
+  "kaleidoscope.hud.bamboo_tray.empty": "Leer · Rechtsklick auf ein Viertel legt Items ab",
+  "kaleidoscope.hud.bamboo_tray.idle": "Wartet · trocknet unter freiem Himmel ohne Regen, befeuchtet im Regen oder unter tropfendem Tropfstein",
+  "kaleidoscope.hud.bamboo_tray.drying": "Trocknet · %s%%",
+  "kaleidoscope.hud.bamboo_tray.wetting": "Wird befeuchtet · %s%%",
+  "kaleidoscope.hud.bamboo_tray.done": "Fertig · mit leerer Hand herausnehmen (Schleichen: alles)"
 }

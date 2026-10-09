@@ -2,7 +2,7 @@
 # Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert
 # und kann dort angepasst werden (/kc reload).
 # Zutaten: Item-ID, "#tag" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.
-data-version: 5
+data-version: 6
 tags:
   "c:bricks/normal":
     - "minecraft:brick"
@@ -53,6 +53,8 @@ tags:
     - "minecraft:glass"
   "c:grain/rice":
     - "kaleidoscope_cookery:rice"
+  "c:gravels":
+    - "minecraft:gravel"
   "c:ingots/copper":
     - "minecraft:copper_ingot"
   "c:ingots/gold":
@@ -83,6 +85,10 @@ tags:
     - "minecraft:salmon"
     - "kaleidoscope_cookery:sashimi"
     - "kaleidoscope_cookery:raw_cut_small_meats"
+  "c:sands/colorless":
+    - "minecraft:sand"
+  "c:sands/red":
+    - "minecraft:red_sand"
   "c:seeds":
     - "kaleidoscope_cookery:chili_seed"
     - "kaleidoscope_cookery:tomato_seed"
@@ -121,6 +127,8 @@ tags:
     - "kaleidoscope_cookery:butter_tea_bag"
   "kaleidoscope_grilling:ingredients/beef_chunks":
     - "kaleidoscope_grilling:beef_chunks"
+  "kaleidoscope_grilling:ingredients/canola_seeds":
+    - "kaleidoscope_grilling:canola_seeds"
   "kaleidoscope_grilling:ingredients/carrot_dice":
     - "kaleidoscope_grilling:carrot_dice"
   "kaleidoscope_grilling:ingredients/chicken_wings":
@@ -1933,6 +1941,582 @@ teapot:
     tea-fluid: "minecraft:water"
     time: 240
     result: "kaleidoscope_cookery:tieguanyin"
+millstone:
+  "kaleidoscope_cookery:millstone/amethyst_shard_from_amethyst_block":
+    ingredient: "minecraft:amethyst_block"
+    results:
+      - item: "minecraft:amethyst_shard"
+        count: 3
+  "kaleidoscope_cookery:millstone/black_dye_from_wither_rose":
+    ingredient: "minecraft:wither_rose"
+    results:
+      - item: "minecraft:black_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/blue_dye_from_cornflower":
+    ingredient: "minecraft:cornflower"
+    results:
+      - item: "minecraft:blue_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/bone_meal_from_bone":
+    ingredient: "minecraft:bone"
+    results:
+      - item: "minecraft:bone_meal"
+        count: 5
+  "kaleidoscope_cookery:millstone/coal_from_coal_ore":
+    ingredient: "minecraft:coal_ore"
+    results:
+      - item: "minecraft:coal"
+        count: 3
+  "kaleidoscope_cookery:millstone/coal_from_deepslate_coal_ore":
+    ingredient: "minecraft:deepslate_coal_ore"
+    results:
+      - item: "minecraft:coal"
+        count: 3
+  "kaleidoscope_cookery:millstone/cobblestone_from_stone":
+    ingredient: "minecraft:stone"
+    results:
+      - "minecraft:cobblestone"
+  "kaleidoscope_cookery:millstone/cyan_dye_from_pitcher_plant":
+    ingredient: "minecraft:pitcher_plant"
+    results:
+      - item: "minecraft:cyan_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/diamond_from_deepslate_diamond_ore":
+    ingredient: "minecraft:deepslate_diamond_ore"
+    results:
+      - item: "minecraft:diamond"
+        count: 2
+  "kaleidoscope_cookery:millstone/diamond_from_diamond_ore":
+    ingredient: "minecraft:diamond_ore"
+    results:
+      - item: "minecraft:diamond"
+        count: 2
+  "kaleidoscope_cookery:millstone/emerald_from_deepslate_emerald_ore":
+    ingredient: "minecraft:deepslate_emerald_ore"
+    results:
+      - item: "minecraft:emerald"
+        count: 2
+  "kaleidoscope_cookery:millstone/emerald_from_emerald_ore":
+    ingredient: "minecraft:emerald_ore"
+    results:
+      - item: "minecraft:emerald"
+        count: 2
+  "kaleidoscope_cookery:millstone/flour_from_wheat":
+    ingredient: "minecraft:wheat"
+    results:
+      - "kaleidoscope_cookery:flour"
+  "kaleidoscope_cookery:millstone/gold_nugget_from_gilded_blackstone":
+    ingredient: "minecraft:gilded_blackstone"
+    results:
+      - item: "minecraft:gold_nugget"
+        count: 3
+  "kaleidoscope_cookery:millstone/gold_nugget_from_nether_gold_ore":
+    ingredient: "minecraft:nether_gold_ore"
+    results:
+      - item: "minecraft:gold_nugget"
+        count: 5
+  "kaleidoscope_cookery:millstone/green_dye_from_cactus":
+    ingredient: "minecraft:cactus"
+    results:
+      - item: "minecraft:green_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/green_dye_from_fern":
+    ingredient: "minecraft:fern"
+    results:
+      - "minecraft:green_dye"
+  "kaleidoscope_cookery:millstone/green_dye_from_large_fern":
+    ingredient: "minecraft:large_fern"
+    results:
+      - item: "minecraft:green_dye"
+        count: 3
+  "kaleidoscope_cookery:millstone/gunpowder_from_flint":
+    ingredient: "minecraft:flint"
+    results:
+      - "minecraft:gunpowder"
+  "kaleidoscope_cookery:millstone/lapis_lazuli_from_deepslate_lapis_ore":
+    ingredient: "minecraft:deepslate_lapis_ore"
+    results:
+      - item: "minecraft:lapis_lazuli"
+        count: 7
+  "kaleidoscope_cookery:millstone/lapis_lazuli_from_lapis_ore":
+    ingredient: "minecraft:lapis_ore"
+    results:
+      - item: "minecraft:lapis_lazuli"
+        count: 7
+  "kaleidoscope_cookery:millstone/light_blue_dye_from_blue_orchid":
+    ingredient: "minecraft:blue_orchid"
+    results:
+      - item: "minecraft:light_blue_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/light_gray_dye_from_azure_bluet":
+    ingredient: "minecraft:azure_bluet"
+    results:
+      - item: "minecraft:light_gray_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/light_gray_dye_from_oxeye_daisy":
+    ingredient: "minecraft:oxeye_daisy"
+    results:
+      - item: "minecraft:light_gray_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/magenta_dye_from_allium":
+    ingredient: "minecraft:allium"
+    results:
+      - item: "minecraft:magenta_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/magenta_dye_from_lilac":
+    ingredient: "minecraft:lilac"
+    results:
+      - item: "minecraft:magenta_dye"
+        count: 3
+  "kaleidoscope_cookery:millstone/oil_from_seeds":
+    ingredient: "#c:seeds"
+    results:
+      - "kaleidoscope_cookery:oil"
+  "kaleidoscope_cookery:millstone/orange_dye_from_orange_tulip":
+    ingredient: "minecraft:orange_tulip"
+    results:
+      - item: "minecraft:orange_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/orange_dye_from_torchflower":
+    ingredient: "minecraft:torchflower"
+    results:
+      - item: "minecraft:orange_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/pink_dye_from_peony":
+    ingredient: "minecraft:peony"
+    results:
+      - item: "minecraft:pink_dye"
+        count: 3
+  "kaleidoscope_cookery:millstone/pink_dye_from_pink_petals":
+    ingredient: "minecraft:pink_petals"
+    results:
+      - item: "minecraft:pink_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/pink_dye_from_pink_tulip":
+    ingredient: "minecraft:pink_tulip"
+    results:
+      - item: "minecraft:pink_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/polished_andesite_from_andesite":
+    ingredient: "minecraft:andesite"
+    results:
+      - "minecraft:polished_andesite"
+  "kaleidoscope_cookery:millstone/polished_basalt_from_basalt":
+    ingredient: "minecraft:basalt"
+    results:
+      - "minecraft:polished_basalt"
+  "kaleidoscope_cookery:millstone/polished_basalt_from_smooth_basalt":
+    ingredient: "minecraft:smooth_basalt"
+    results:
+      - "minecraft:polished_basalt"
+  "kaleidoscope_cookery:millstone/polished_blackstone_from_blackstone":
+    ingredient: "minecraft:blackstone"
+    results:
+      - "minecraft:polished_blackstone"
+  "kaleidoscope_cookery:millstone/polished_deepslate_from_cobbled_deepslate":
+    ingredient: "minecraft:cobbled_deepslate"
+    results:
+      - "minecraft:polished_deepslate"
+  "kaleidoscope_cookery:millstone/polished_deepslate_from_deepslate":
+    ingredient: "minecraft:deepslate"
+    results:
+      - "minecraft:polished_deepslate"
+  "kaleidoscope_cookery:millstone/polished_diorite_from_diorite":
+    ingredient: "minecraft:diorite"
+    results:
+      - "minecraft:polished_diorite"
+  "kaleidoscope_cookery:millstone/polished_granite_from_granite":
+    ingredient: "minecraft:granite"
+    results:
+      - "minecraft:polished_granite"
+  "kaleidoscope_cookery:millstone/quartz_from_chiseled_quartz_block":
+    ingredient: "minecraft:chiseled_quartz_block"
+    results:
+      - item: "minecraft:quartz"
+        count: 3
+  "kaleidoscope_cookery:millstone/quartz_from_nether_quartz_ore":
+    ingredient: "minecraft:nether_quartz_ore"
+    results:
+      - item: "minecraft:quartz"
+        count: 3
+  "kaleidoscope_cookery:millstone/quartz_from_quartz_block":
+    ingredient: "minecraft:quartz_block"
+    results:
+      - item: "minecraft:quartz"
+        count: 3
+  "kaleidoscope_cookery:millstone/quartz_from_quartz_bricks":
+    ingredient: "minecraft:quartz_bricks"
+    results:
+      - item: "minecraft:quartz"
+        count: 3
+  "kaleidoscope_cookery:millstone/quartz_from_quartz_pillar":
+    ingredient: "minecraft:quartz_pillar"
+    results:
+      - item: "minecraft:quartz"
+        count: 3
+  "kaleidoscope_cookery:millstone/quartz_from_smooth_quartz":
+    ingredient: "minecraft:smooth_quartz"
+    results:
+      - item: "minecraft:quartz"
+        count: 3
+  "kaleidoscope_cookery:millstone/raw_copper_from_copper_ore":
+    ingredient: "minecraft:copper_ore"
+    results:
+      - item: "minecraft:raw_copper"
+        count: 5
+  "kaleidoscope_cookery:millstone/raw_copper_from_deepslate_copper_ore":
+    ingredient: "minecraft:deepslate_copper_ore"
+    results:
+      - item: "minecraft:raw_copper"
+        count: 5
+  "kaleidoscope_cookery:millstone/raw_gold_from_deepslate_gold_ore":
+    ingredient: "minecraft:deepslate_gold_ore"
+    results:
+      - item: "minecraft:raw_gold"
+        count: 3
+  "kaleidoscope_cookery:millstone/raw_gold_from_gold_ore":
+    ingredient: "minecraft:gold_ore"
+    results:
+      - item: "minecraft:raw_gold"
+        count: 3
+  "kaleidoscope_cookery:millstone/raw_iron_from_deepslate_iron_ore":
+    ingredient: "minecraft:deepslate_iron_ore"
+    results:
+      - item: "minecraft:raw_iron"
+        count: 3
+  "kaleidoscope_cookery:millstone/raw_iron_from_iron_ore":
+    ingredient: "minecraft:iron_ore"
+    results:
+      - item: "minecraft:raw_iron"
+        count: 3
+  "kaleidoscope_cookery:millstone/red_dye_from_beetroot":
+    ingredient: "minecraft:beetroot"
+    results:
+      - item: "minecraft:red_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/red_dye_from_poppy":
+    ingredient: "minecraft:poppy"
+    results:
+      - item: "minecraft:red_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/red_dye_from_red_tulip":
+    ingredient: "minecraft:red_tulip"
+    results:
+      - item: "minecraft:red_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/red_dye_from_rose_bush":
+    ingredient: "minecraft:rose_bush"
+    results:
+      - item: "minecraft:red_dye"
+        count: 3
+  "kaleidoscope_cookery:millstone/redstone_from_deepslate_redstone_ore":
+    ingredient: "minecraft:deepslate_redstone_ore"
+    results:
+      - item: "minecraft:redstone"
+        count: 7
+  "kaleidoscope_cookery:millstone/redstone_from_redstone_ore":
+    ingredient: "minecraft:redstone_ore"
+    results:
+      - item: "minecraft:redstone"
+        count: 7
+  "kaleidoscope_cookery:millstone/rice_from_rice_panicle":
+    ingredient: "kaleidoscope_cookery:rice_panicle"
+    results:
+      - item: "kaleidoscope_cookery:rice"
+        count: 3
+  "kaleidoscope_cookery:millstone/sand_from_gravel":
+    ingredient: "#c:gravels"
+    results:
+      - "minecraft:sand"
+  "kaleidoscope_cookery:millstone/smooth_red_sandstone_from_red_sand":
+    ingredient: "#c:sands/red"
+    results:
+      - "minecraft:smooth_red_sandstone"
+  "kaleidoscope_cookery:millstone/smooth_red_sandstone_from_red_sandstone":
+    ingredient: "minecraft:red_sandstone"
+    results:
+      - "minecraft:smooth_red_sandstone"
+  "kaleidoscope_cookery:millstone/smooth_sandstone_from_sand":
+    ingredient: "#c:sands/colorless"
+    results:
+      - "minecraft:smooth_sandstone"
+  "kaleidoscope_cookery:millstone/smooth_sandstone_from_sandstone":
+    ingredient: "minecraft:sandstone"
+    results:
+      - "minecraft:smooth_sandstone"
+  "kaleidoscope_cookery:millstone/smooth_stone_from_cobblestone":
+    ingredient: "minecraft:cobblestone"
+    results:
+      - "minecraft:smooth_stone"
+  "kaleidoscope_cookery:millstone/string_from_black_wool":
+    ingredient: "minecraft:black_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_blue_wool":
+    ingredient: "minecraft:blue_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_brown_wool":
+    ingredient: "minecraft:brown_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_cyan_wool":
+    ingredient: "minecraft:cyan_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_gray_wool":
+    ingredient: "minecraft:gray_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_green_wool":
+    ingredient: "minecraft:green_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_light_blue_wool":
+    ingredient: "minecraft:light_blue_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_light_gray_wool":
+    ingredient: "minecraft:light_gray_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_lime_wool":
+    ingredient: "minecraft:lime_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_magenta_wool":
+    ingredient: "minecraft:magenta_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_orange_wool":
+    ingredient: "minecraft:orange_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_pink_wool":
+    ingredient: "minecraft:pink_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_purple_wool":
+    ingredient: "minecraft:purple_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_red_wool":
+    ingredient: "minecraft:red_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_white_wool":
+    ingredient: "minecraft:white_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/string_from_yellow_wool":
+    ingredient: "minecraft:yellow_wool"
+    results:
+      - item: "minecraft:string"
+        count: 3
+  "kaleidoscope_cookery:millstone/white_dye_from_lily_of_the_valley":
+    ingredient: "minecraft:lily_of_the_valley"
+    results:
+      - item: "minecraft:white_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/white_dye_from_white_tulip":
+    ingredient: "minecraft:white_tulip"
+    results:
+      - item: "minecraft:white_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/yellow_dye_from_dandelion":
+    ingredient: "minecraft:dandelion"
+    results:
+      - item: "minecraft:yellow_dye"
+        count: 2
+  "kaleidoscope_cookery:millstone/yellow_dye_from_sunflower":
+    ingredient: "minecraft:sunflower"
+    results:
+      - item: "minecraft:yellow_dye"
+        count: 3
+  "kaleidoscope_grilling:millstone/canola_powder":
+    ingredient: "#kaleidoscope_grilling:ingredients/canola_seeds"
+    results:
+      - "kaleidoscope_grilling:canola_powder"
+  "kaleidoscope_grilling:millstone/green_chili_powder":
+    ingredient: "kaleidoscope_cookery:green_chili"
+    results:
+      - "kaleidoscope_grilling:green_chili_powder"
+  "kaleidoscope_grilling:millstone/houttuynia_powder":
+    ingredient: "#kaleidoscope_grilling:ingredients/houttuynia"
+    results:
+      - "kaleidoscope_grilling:houttuynia_powder"
+  "kaleidoscope_grilling:millstone/onion_powder":
+    ingredient: "#kaleidoscope_grilling:ingredients/onions"
+    results:
+      - "kaleidoscope_grilling:onion_powder"
+  "kaleidoscope_grilling:millstone/red_chili_powder":
+    ingredient: "kaleidoscope_cookery:red_chili"
+    results:
+      - "kaleidoscope_grilling:red_chili_powder"
+  "kaleidoscope_grilling:millstone/sweet_potato_powder":
+    ingredient: "#kaleidoscope_grilling:ingredients/sweet_potatoes"
+    results:
+      - "kaleidoscope_grilling:sweet_potato_powder"
+  "kaleidoscope_grilling:millstone/totem_powder":
+    ingredient: "minecraft:totem_of_undying"
+    results:
+      - "kaleidoscope_grilling:totem_powder"
+bamboo-tray:
+  "kaleidoscope_cookery:bamboo_tray/drying/fresh_tea_leaves_to_dried_tea_leaves":
+    type: drying
+    ingredient: "kaleidoscope_cookery:fresh_tea_leaves"
+    time: 1800
+    result: "kaleidoscope_cookery:dried_tea_leaves"
+  "kaleidoscope_cookery:bamboo_tray/drying/kelp_to_dried_kelp":
+    type: drying
+    ingredient: "minecraft:kelp"
+    time: 1800
+    result: "minecraft:dried_kelp"
+  "kaleidoscope_cookery:bamboo_tray/drying/mud_to_clay":
+    type: drying
+    ingredient: "minecraft:mud"
+    time: 1800
+    result: "minecraft:clay"
+  "kaleidoscope_cookery:bamboo_tray/drying/rotten_flesh_to_leather":
+    type: drying
+    ingredient: "minecraft:rotten_flesh"
+    time: 1800
+    result: "minecraft:leather"
+  "kaleidoscope_cookery:bamboo_tray/drying/wet_sponge_to_sponge":
+    type: drying
+    ingredient: "minecraft:wet_sponge"
+    time: 1800
+    result: "minecraft:sponge"
+  "kaleidoscope_cookery:bamboo_tray/wetting/black_concrete_powder_to_black_concrete":
+    type: wetting
+    ingredient: "minecraft:black_concrete_powder"
+    time: 900
+    result: "minecraft:black_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/blue_concrete_powder_to_blue_concrete":
+    type: wetting
+    ingredient: "minecraft:blue_concrete_powder"
+    time: 900
+    result: "minecraft:blue_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/brown_concrete_powder_to_brown_concrete":
+    type: wetting
+    ingredient: "minecraft:brown_concrete_powder"
+    time: 900
+    result: "minecraft:brown_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/clay_to_mud":
+    type: wetting
+    ingredient: "minecraft:clay"
+    time: 900
+    result: "minecraft:mud"
+  "kaleidoscope_cookery:bamboo_tray/wetting/copper_block_to_oxidized_copper":
+    type: wetting
+    ingredient: "minecraft:copper_block"
+    time: 900
+    result: "minecraft:oxidized_copper"
+  "kaleidoscope_cookery:bamboo_tray/wetting/cyan_concrete_powder_to_cyan_concrete":
+    type: wetting
+    ingredient: "minecraft:cyan_concrete_powder"
+    time: 900
+    result: "minecraft:cyan_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/dirt_to_mud":
+    type: wetting
+    ingredient: "minecraft:dirt"
+    time: 900
+    result: "minecraft:mud"
+  "kaleidoscope_cookery:bamboo_tray/wetting/dried_kelp_to_kelp":
+    type: wetting
+    ingredient: "minecraft:dried_kelp"
+    time: 900
+    result: "minecraft:kelp"
+  "kaleidoscope_cookery:bamboo_tray/wetting/dried_tea_leaves_to_fresh_tea_leaves":
+    type: wetting
+    ingredient: "kaleidoscope_cookery:dried_tea_leaves"
+    time: 900
+    result: "kaleidoscope_cookery:fresh_tea_leaves"
+  "kaleidoscope_cookery:bamboo_tray/wetting/gray_concrete_powder_to_gray_concrete":
+    type: wetting
+    ingredient: "minecraft:gray_concrete_powder"
+    time: 900
+    result: "minecraft:gray_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/green_concrete_powder_to_green_concrete":
+    type: wetting
+    ingredient: "minecraft:green_concrete_powder"
+    time: 900
+    result: "minecraft:green_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/leather_to_rotten_flesh":
+    type: wetting
+    ingredient: "minecraft:leather"
+    time: 900
+    result: "minecraft:rotten_flesh"
+  "kaleidoscope_cookery:bamboo_tray/wetting/light_blue_concrete_powder_to_light_blue_concrete":
+    type: wetting
+    ingredient: "minecraft:light_blue_concrete_powder"
+    time: 900
+    result: "minecraft:light_blue_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/light_gray_concrete_powder_to_light_gray_concrete":
+    type: wetting
+    ingredient: "minecraft:light_gray_concrete_powder"
+    time: 900
+    result: "minecraft:light_gray_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/lime_concrete_powder_to_lime_concrete":
+    type: wetting
+    ingredient: "minecraft:lime_concrete_powder"
+    time: 900
+    result: "minecraft:lime_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/magenta_concrete_powder_to_magenta_concrete":
+    type: wetting
+    ingredient: "minecraft:magenta_concrete_powder"
+    time: 900
+    result: "minecraft:magenta_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/orange_concrete_powder_to_orange_concrete":
+    type: wetting
+    ingredient: "minecraft:orange_concrete_powder"
+    time: 900
+    result: "minecraft:orange_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/pink_concrete_powder_to_pink_concrete":
+    type: wetting
+    ingredient: "minecraft:pink_concrete_powder"
+    time: 900
+    result: "minecraft:pink_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/purple_concrete_powder_to_purple_concrete":
+    type: wetting
+    ingredient: "minecraft:purple_concrete_powder"
+    time: 900
+    result: "minecraft:purple_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/red_concrete_powder_to_red_concrete":
+    type: wetting
+    ingredient: "minecraft:red_concrete_powder"
+    time: 900
+    result: "minecraft:red_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/sponge_to_wet_sponge":
+    type: wetting
+    ingredient: "minecraft:sponge"
+    time: 900
+    result: "minecraft:wet_sponge"
+  "kaleidoscope_cookery:bamboo_tray/wetting/white_concrete_powder_to_white_concrete":
+    type: wetting
+    ingredient: "minecraft:white_concrete_powder"
+    time: 900
+    result: "minecraft:white_concrete"
+  "kaleidoscope_cookery:bamboo_tray/wetting/yellow_concrete_powder_to_yellow_concrete":
+    type: wetting
+    ingredient: "minecraft:yellow_concrete_powder"
+    time: 900
+    result: "minecraft:yellow_concrete"
 vanilla:
   "kaleidoscope_cookery:apple_platter":
     type: crafting_shapeless

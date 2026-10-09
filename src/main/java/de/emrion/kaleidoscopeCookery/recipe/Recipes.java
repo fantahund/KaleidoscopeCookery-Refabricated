@@ -25,10 +25,12 @@ public class Recipes {
     private final List<StockpotRecipe> stockpot;
     private final List<SteamerRecipe> steamer;
     private final List<TeapotRecipe> teapot;
+    private final List<MillstoneRecipe> millstone;
+    private final List<BambooTrayRecipe> bambooTray;
     private final int dataVersion;
 
     private Recipes(Map<String, List<String>> tags, List<ChoppingBoardRecipe> choppingBoard, List<VanillaRecipe> vanilla, List<PotRecipe> pot,
-                    List<StockpotRecipe> stockpot, List<SteamerRecipe> steamer, List<TeapotRecipe> teapot, int dataVersion) {
+                    List<StockpotRecipe> stockpot, List<SteamerRecipe> steamer, List<TeapotRecipe> teapot, List<MillstoneRecipe> millstone, List<BambooTrayRecipe> bambooTray, int dataVersion) {
         this.tags = Collections.unmodifiableMap(tags);
         this.choppingBoard = List.copyOf(choppingBoard);
         this.vanilla = List.copyOf(vanilla);
@@ -36,6 +38,8 @@ public class Recipes {
         this.stockpot = List.copyOf(stockpot);
         this.steamer = List.copyOf(steamer);
         this.teapot = List.copyOf(teapot);
+        this.millstone = List.copyOf(millstone);
+        this.bambooTray = List.copyOf(bambooTray);
         this.dataVersion = dataVersion;
     }
 
@@ -147,7 +151,33 @@ public class Recipes {
                 logger.warning("Teekannen-Rezept " + entry.getKey() + " ungültig: " + e.getMessage());
             }
         }
-        return new Recipes(tags, chopping, vanilla, pot, stockpot, steamer, teapot, config.getInt("data-version", 0));
+        List<MillstoneRecipe> millstone = new ArrayList<>();
+        for (Map.Entry<String, ConfigurationSection> entry : sections(config, "millstone").entrySet()) {
+            try {
+                List<MillstoneRecipe.Output> results = new ArrayList<>();
+                for (Object value : entry.getValue().getList("results", List.of())) {
+                    double chance = value instanceof Map<?, ?> map && map.get("chance") instanceof Number number ? number.doubleValue() : 1;
+                    results.add(new MillstoneRecipe.Output(RecipeResult.parse(value), Math.clamp(chance, 0, 1)));
+                }
+                if (results.isEmpty()) {
+                    throw new IllegalArgumentException("keine Ergebnisse");
+                }
+                millstone.add(new MillstoneRecipe(entry.getKey(), Ingredient.parse(entry.getValue().get("ingredient"), tags), List.copyOf(results)));
+            } catch (RuntimeException e) {
+                logger.warning("Mühlstein-Rezept " + entry.getKey() + " ungültig: " + e.getMessage());
+            }
+        }
+        List<BambooTrayRecipe> bambooTray = new ArrayList<>();
+        for (Map.Entry<String, ConfigurationSection> entry : sections(config, "bamboo-tray").entrySet()) {
+            ConfigurationSection section = entry.getValue();
+            try {
+                bambooTray.add(new BambooTrayRecipe(entry.getKey(), BambooTrayRecipe.Type.valueOf(section.getString("type", "drying").toUpperCase(java.util.Locale.ROOT)),
+                        Ingredient.parse(section.get("ingredient"), tags), Math.max(1, section.getInt("time", 1800)), RecipeResult.parse(section.get("result"))));
+            } catch (RuntimeException e) {
+                logger.warning("Bambustablett-Rezept " + entry.getKey() + " ungültig: " + e.getMessage());
+            }
+        }
+        return new Recipes(tags, chopping, vanilla, pot, stockpot, steamer, teapot, millstone, bambooTray, config.getInt("data-version", 0));
     }
 
     /**
@@ -230,6 +260,32 @@ public class Recipes {
             }
         }
         return null;
+    }
+
+    public @Nullable MillstoneRecipe findMillstone(ItemStack input) {
+        for (MillstoneRecipe recipe : millstone) {
+            if (recipe.ingredient().test(input)) {
+                return recipe;
+            }
+        }
+        return null;
+    }
+
+    public @Nullable BambooTrayRecipe findBambooTray(ItemStack input, BambooTrayRecipe.Type type) {
+        for (BambooTrayRecipe recipe : bambooTray) {
+            if (recipe.type() == type && recipe.ingredient().test(input)) {
+                return recipe;
+            }
+        }
+        return null;
+    }
+
+    public List<MillstoneRecipe> millstone() {
+        return millstone;
+    }
+
+    public List<BambooTrayRecipe> bambooTray() {
+        return bambooTray;
     }
 
     public List<SteamerRecipe> steamer() {

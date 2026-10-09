@@ -427,6 +427,35 @@ def collect_recipes(tags: dict) -> dict:
                 entry["time"] = recipe["cook_tick"]
             entry["result"] = result_list({"result": recipe["result"]})[0]
             steamer[f"{ns}:steamer/{file.stem}"] = entry
+    millstone = {}
+    for ns, folder in pot_dirs("millstone"):
+        for file in sorted(folder.glob("*.json")):
+            recipe = read_json(file)
+            results = recipe.get("results") or recipe.get("result")
+            if isinstance(results, dict):
+                results = [results]
+            out = []
+            for r in results:
+                rid = item_id(r["id"])
+                count = r.get("count", 1)
+                chance = r.get("chance", 1.0)
+                if count == 1 and chance >= 1:
+                    out.append(rid)
+                else:
+                    entry = {"item": rid, "count": count}
+                    if chance < 1:
+                        entry["chance"] = chance
+                    out.append(entry)
+            millstone[f"{ns}:millstone/{file.stem}"] = {"ingredient": ingredient(recipe["ingredient"], used_tags), "results": out}
+    bamboo_tray = {}
+    for ns, folder in pot_dirs("bamboo_tray"):
+        for file in sorted(folder.glob("*/*.json")):
+            recipe = read_json(file)
+            bamboo_tray[f"{ns}:bamboo_tray/{file.parent.name}/{file.stem}"] = {
+                "type": recipe.get("subtype", "drying"),
+                "ingredient": ingredient(recipe["ingredient"], used_tags),
+                "time": recipe.get("duration", 1800),
+                "result": result_list({"result": recipe["result"]})[0]}
     vanilla = collect_vanilla_recipes(used_tags)
     tag_groups = {}
     for name in sorted(used_tags):
@@ -437,11 +466,12 @@ def collect_recipes(tags: dict) -> dict:
             print(f"WARNUNG: Tag #{name} lässt sich nicht auflösen")
         tag_groups[name] = values
     return {"data-version": DATA_VERSION, "tags": tag_groups, "chopping-board": chopping, "pot": pot, "flex-pot": flex_pot,
-            "stockpot": stockpot, "flex-stockpot": flex_stockpot, "steamer": steamer, "teapot": teapot, "vanilla": vanilla}
+            "stockpot": stockpot, "flex-stockpot": flex_stockpot, "steamer": steamer, "teapot": teapot,
+            "millstone": millstone, "bamboo-tray": bamboo_tray, "vanilla": vanilla}
 
 
 # Bei jeder inhaltlichen Aenderung der erzeugten recipes.yml erhoehen: das Plugin ersetzt dann alte Kopien (mit Backup)
-DATA_VERSION = 5
+DATA_VERSION = 6
 STOCKPOT_DEFAULT_TIME = 300
 POT_DEFAULT_TIME = 200
 POT_DEFAULT_STIR_FRY = 3
@@ -524,6 +554,9 @@ def pot_entry(recipe: dict, used_tags: set) -> dict:
 
 # NeoForge-Common-Tags, die nicht in den Mod-Daten stehen
 COMMON_TAGS = {
+    "c:gravels": ["minecraft:gravel"],
+    "c:sands/colorless": ["minecraft:sand"],
+    "c:sands/red": ["minecraft:red_sand"],
     "c:ingots/iron": ["minecraft:iron_ingot"],
     "c:ingots/gold": ["minecraft:gold_ingot"],
     "c:ingots/copper": ["minecraft:copper_ingot"],

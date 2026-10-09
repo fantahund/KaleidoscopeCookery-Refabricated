@@ -5,6 +5,7 @@ import de.emrion.kaleidoscopeCookery.station.StationContext;
 import de.emrion.kaleidoscopeCookery.station.StationType;
 import de.emrion.kaleidoscopeCookery.station.oil.OilItems;
 import de.emrion.kaleidoscopeCookery.util.Keys;
+import de.emrion.kaleidoscopeCookery.util.Weather;
 import net.kyori.adventure.key.Key;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -157,8 +158,7 @@ public class StoveStation extends Station {
         if (serverTick % 20 == 0) {
             Block above = world().getBlockAt(position().x(), position().y() + 1, position().z());
             boolean water = above.getType() == Material.WATER || (above.getBlockData() instanceof org.bukkit.block.data.Waterlogged waterlogged && waterlogged.isWaterlogged());
-            boolean rain = world().hasStorm() && above.getLightFromSky() == 15 && above.getTemperature() < 0.95 && above.getTemperature() >= 0.15
-                    && random.nextDouble() < RAIN_CHANCE_PER_SECOND && world().getHighestBlockYAt(above.getX(), above.getZ()) <= above.getY();
+            boolean rain = random.nextDouble() < RAIN_CHANCE_PER_SECOND && Weather.isRainingAt(above);
             if (water || rain) {
                 extinguish(1);
             }

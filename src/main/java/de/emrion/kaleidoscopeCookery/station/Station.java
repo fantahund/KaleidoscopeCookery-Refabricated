@@ -42,6 +42,7 @@ public abstract class Station {
     private final Map<String, Interaction> hitboxes = new HashMap<>();
     private boolean dirty;
     private boolean removed;
+    private @Nullable Vector clickPosition;
 
     protected Station(StationContext context) {
         this.context = context;
@@ -147,7 +148,7 @@ public abstract class Station {
      * Alle Blöcke, die die Station belegt (Standard: nur ihr eigener).
      */
     public List<BlockKey> occupied() {
-        return List.of(position());
+        return context.type().footprint(position());
     }
 
     /**
@@ -367,11 +368,18 @@ public abstract class Station {
             display.setTransformation(look.transformation());
             display.setBrightness(look.brightness());
             display.setPersistent(true);
-            display.setDisplayWidth(1.5f);
-            display.setDisplayHeight(1.5f);
+            display.setDisplayWidth(displaySize());
+            display.setDisplayHeight(displaySize());
             display.getPersistentDataContainer().set(Keys.STATION_OWNER, PersistentDataType.STRING, owner);
             display.getPersistentDataContainer().set(Keys.STATION_PART, PersistentDataType.STRING, name);
         });
+    }
+
+    /**
+     * Größe der Displays fürs Culling (große Modelle wie der Mühlstein brauchen mehr).
+     */
+    protected float displaySize() {
+        return 1.5f + 2 * context.type().radius();
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -394,7 +402,18 @@ public abstract class Station {
         return result;
     }
 
+    /**
+     * Klickposition des aktuellen Rechtsklicks relativ zur Blockmitte unten der Station (nur während onInteract), sonst null.
+     */
+    protected @Nullable Vector clickPosition() {
+        return clickPosition;
+    }
+
     // ---- intern (StationManager) ----
+
+    void setClickPosition(@Nullable Vector clickPosition) {
+        this.clickPosition = clickPosition;
+    }
 
     void adoptPart(String name, ItemDisplay display) {
         ItemDisplay previous = parts.put(name, display);
