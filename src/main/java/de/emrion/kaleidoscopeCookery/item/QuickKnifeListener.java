@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Verzauberung "Schnelles Messer" (kaleidoscope_cookery:quick_knife, aus dem mitgelieferten Datapack).
+ * Verzauberung "Schnelles Messer" (kaleidoscope_cookery:quick_knife, registriert in KaleidoscopeCookeryBootstrap).
  * Sie hängt technisch an den Schwert-Typen, auf denen die Küchenmesser basieren. Dieser Listener sorgt dafür,
  * dass normale Schwerter sie weder am Zaubertisch noch am Amboss bekommen.
  */
