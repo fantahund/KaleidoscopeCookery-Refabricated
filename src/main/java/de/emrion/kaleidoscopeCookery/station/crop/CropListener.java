@@ -114,7 +114,7 @@ public class CropListener implements Listener {
         Block below = target.getRelative(BlockFace.DOWN);
         return switch (kind.soil()) {
             case FARMLAND -> target.getType().isAir() && below.getType() == Material.FARMLAND;
-            case DIRT -> target.getType().isAir() && Tag.DIRT.isTagged(below.getType());
+            case DIRT -> target.getType().isAir() && CropKind.DIRT_121.contains(below.getType());
             // RiceCropBlock#getStateForPlacement: im Wasser auf Ackerland, darüber zwei Blöcke Luft
             case WATER -> CropStation.isWaterSource(target) && below.getType() == Material.FARMLAND
                     && target.getY() < target.getWorld().getMaxHeight() - 2
@@ -124,6 +124,43 @@ public class CropListener implements Listener {
     }
 
     // ---- Ackerland ----
+
+    private static final java.util.Set<Material> TILLABLE = java.util.EnumSet.of(Material.DIRT, Material.GRASS_BLOCK, Material.DIRT_PATH, Material.COARSE_DIRT);
+
+    /**
+     * Reisfelder: Vanilla hackt nur Erde mit Luft darüber – hier geht es auch unter einer Wasserquelle
+     * (grobe Erde wird wie bei Vanilla zu Erde).
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = false)
+    public void onTillUnderWater(PlayerInteractEvent event) {
+        Block clicked = event.getClickedBlock();
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || clicked == null || event.getHand() != EquipmentSlot.HAND || checking
+                || !TILLABLE.contains(clicked.getType()) || !Tag.ITEMS_HOES.isTagged(event.getMaterial())
+                || !CropStation.isWaterSource(clicked.getRelative(BlockFace.UP)) || event.getBlockFace() == BlockFace.DOWN) {
+            return;
+        }
+        Player player = event.getPlayer();
+        BlockState before = clicked.getState();
+        Material result = clicked.getType() == Material.COARSE_DIRT ? Material.DIRT : Material.FARMLAND;
+        clicked.setType(result);
+        checking = true;
+        boolean allowed;
+        try {
+            allowed = new BlockPlaceEvent(clicked, before, clicked, event.getItem(), player, true, EquipmentSlot.HAND).callEvent();
+        } finally {
+            checking = false;
+        }
+        if (!allowed) {
+            before.update(true, false);
+            return;
+        }
+        event.setCancelled(true);
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            player.damageItemStack(EquipmentSlot.HAND, 1);
+        }
+        player.swingMainHand();
+        clicked.getWorld().playSound(clicked.getLocation().toCenterLocation(), Sound.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1, 1);
+    }
 
     /**
      * Vanilla hält Ackerland nur unter echten Pflanzen feucht genug – unter unseren Pflanzen darf es nicht zu Erde werden.

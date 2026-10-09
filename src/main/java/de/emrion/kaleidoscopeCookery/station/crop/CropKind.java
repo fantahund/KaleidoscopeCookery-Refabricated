@@ -25,6 +25,13 @@ public enum CropKind {
         FARMLAND, DIRT, WATER
     }
 
+    /**
+     * BlockTags.DIRT in 1.21.1 (in 26.x enthält der Tag nur noch Erde, Grobe Erde und Wurzelerde).
+     */
+    public static final java.util.Set<org.bukkit.Material> DIRT_121 = java.util.EnumSet.of(org.bukkit.Material.DIRT, org.bukkit.Material.GRASS_BLOCK,
+            org.bukkit.Material.PODZOL, org.bukkit.Material.COARSE_DIRT, org.bukkit.Material.MYCELIUM, org.bukkit.Material.ROOTED_DIRT,
+            org.bukkit.Material.MOSS_BLOCK, org.bukkit.Material.MUD, org.bukkit.Material.MUDDY_MANGROVE_ROOTS);
+
     private final String name;
     private final List<Key> seeds;
     private final Key result;

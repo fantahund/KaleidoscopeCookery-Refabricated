@@ -123,7 +123,7 @@ public class CropStation extends Station {
         Block below = block(-1);
         return switch (kind.soil()) {
             case FARMLAND -> below.getType() == Material.FARMLAND && (rawLight(block(0)) >= 8 || canSeeSky());
-            case DIRT -> Tag.DIRT.isTagged(below.getType());
+            case DIRT -> CropKind.DIRT_121.contains(below.getType());
             case WATER -> below.getType() == Material.FARMLAND && isWaterSource(block(0)) && (rawLight(block(0)) >= 8 || canSeeSky());
         };
     }
