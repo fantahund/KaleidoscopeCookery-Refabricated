@@ -24,7 +24,7 @@ import java.util.List;
  * Registriert beim Serverstart die Verzauberung "Schnelles Messer" (quick_knife aus Kaleidoscope Cookery)
  * über die Registry-API von Paper – ohne Datapack und ohne NMS.
  * <p>
- * Werte wie im Mod (data/kaleidoscope_cookery/enchantment/quick_knife.json). Erlaubtes Item ist das Wissensbuch,
+ * Werte wie im Mod (data/kaleidoscope_cookery/enchantment/quick_knife.json). Erlaubtes Item ist der Verbundblock,
  * auf dem die Küchenmesser basieren; normale Schwerter bekommen sie dadurch nie.
  */
 @SuppressWarnings("UnstableApiUsage")
@@ -34,8 +34,8 @@ public class KaleidoscopeCookeryBootstrap implements PluginBootstrap {
 
     @Override
     public void bootstrap(BootstrapContext context) {
-        // Die Küchenmesser basieren auf dem Wissensbuch (im Survival nicht erhältlich)
-        List<TypedKey<ItemType>> knifeBases = List.of(ItemTypeKeys.KNOWLEDGE_BOOK);
+        // Die Küchenmesser basieren auf dem Verbundblock (im Survival nicht erhältlich)
+        List<TypedKey<ItemType>> knifeBases = List.of(ItemTypeKeys.JIGSAW);
         context.getLifecycleManager().registerEventHandler(RegistryEvents.ENCHANTMENT.compose().newHandler(event ->
                 event.registry().register(QUICK_KNIFE, builder -> builder
                         .description(Component.translatable("enchantment.kaleidoscope_cookery.quick_knife"))
@@ -49,7 +49,7 @@ public class KaleidoscopeCookeryBootstrap implements PluginBootstrap {
                         .activeSlots(EquipmentSlotGroup.MAINHAND))));
         // Wie im Mod stehen die Küchenmesser in #minecraft:swords: alle Schwert-Verzauberungen gelten auch für sie
         context.getLifecycleManager().registerEventHandler(LifecycleEvents.TAGS.preFlatten(RegistryKey.ITEM), event ->
-                event.registrar().addToTag(ItemTypeTagKeys.SWORDS, List.of(TagEntry.valueEntry(ItemTypeKeys.KNOWLEDGE_BOOK))));
+                event.registrar().addToTag(ItemTypeTagKeys.SWORDS, List.of(TagEntry.valueEntry(ItemTypeKeys.JIGSAW))));
         // Wie im Mod: am Zaubertisch erhältlich, kein Schatz
         context.getLifecycleManager().registerEventHandler(LifecycleEvents.TAGS.postFlatten(RegistryKey.ENCHANTMENT), event -> {
             event.registrar().addToTag(EnchantmentTagKeys.IN_ENCHANTING_TABLE, List.of(QUICK_KNIFE));

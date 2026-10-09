@@ -188,12 +188,12 @@ def parse_food_bites(foods: dict) -> dict:
 # Items mit Vanilla-Funktion: Basis-Material statt Papier
 BASE_MATERIALS = {
     "kaleidoscope_cookery:kitchen_shovel": "IRON_SHOVEL",
-    # Küchenmesser: Wissensbuch (im Survival nicht erhältlich) mit allen Komponenten des passenden Schwerts.
-    # Das Plugin trägt das Wissensbuch in #minecraft:swords ein (wie die Messer im Mod).
-    "kaleidoscope_cookery:iron_kitchen_knife": "KNOWLEDGE_BOOK",
-    "kaleidoscope_cookery:gold_kitchen_knife": "KNOWLEDGE_BOOK",
-    "kaleidoscope_cookery:diamond_kitchen_knife": "KNOWLEDGE_BOOK",
-    "kaleidoscope_cookery:netherite_kitchen_knife": "KNOWLEDGE_BOOK",
+    # Küchenmesser: Verbundblock (im Survival nicht erhältlich, ohne OP nicht platzierbar, keine Rechtsklick-Funktion)
+    # mit allen Komponenten des passenden Schwerts. Das Plugin trägt ihn in #minecraft:swords ein (wie die Messer im Mod).
+    "kaleidoscope_cookery:iron_kitchen_knife": "JIGSAW",
+    "kaleidoscope_cookery:gold_kitchen_knife": "JIGSAW",
+    "kaleidoscope_cookery:diamond_kitchen_knife": "JIGSAW",
+    "kaleidoscope_cookery:netherite_kitchen_knife": "JIGSAW",
 }
 PROTOTYPES = {
     "kaleidoscope_cookery:iron_kitchen_knife": "IRON_SWORD",

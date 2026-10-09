@@ -10,7 +10,7 @@ import java.util.List;
  * Ein Item aus den Mods (Definition aus items.yml).
  *
  * @param id       z. B. kaleidoscope_cookery:tomato
- * @param base     Basis-Material (Papier; Pfannenwender: Eisenschaufel; Küchenmesser: Wissensbuch)
+ * @param base     Basis-Material (Papier; Pfannenwender: Eisenschaufel; Küchenmesser: Verbundblock)
  * @param prototype Vanilla-Item, dessen Komponenten (Schaden, Haltbarkeit ...) übernommen werden, sonst null
  * @param model    Item-Model-Definition im Resourcepack (assets/&lt;ns&gt;/items/&lt;pfad&gt;.json)
  * @param nameKey  Übersetzungs-Key des Namens

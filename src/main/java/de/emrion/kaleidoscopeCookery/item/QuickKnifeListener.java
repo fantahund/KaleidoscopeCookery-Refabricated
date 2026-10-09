@@ -4,12 +4,10 @@ import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.key.Key;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -18,7 +16,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Verzauberung "Schnelles Messer" (kaleidoscope_cookery:quick_knife, registriert in KaleidoscopeCookeryBootstrap).
- * Außerdem Regeln für die Küchenmesser selbst: kein Schwungangriff, kein Wissensbuch-Rechtsklick.
+ * Außerdem Regeln für die Küchenmesser selbst: kein Schwungangriff, nicht als Block platzierbar.
  */
 public class QuickKnifeListener implements Listener {
 
@@ -56,12 +54,12 @@ public class QuickKnifeListener implements Listener {
     }
 
     /**
-     * Basis der Messer ist das Wissensbuch: dessen Rechtsklick (verbraucht sich) verhindern.
+     * Basis der Messer ist der Verbundblock: OPs im Kreativmodus könnten ihn sonst platzieren.
      */
-    @EventHandler(priority = EventPriority.LOW)
-    public void onUse(PlayerInteractEvent event) {
-        if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && isKnife(event.getItem())) {
-            event.setUseItemInHand(Event.Result.DENY);
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPlace(BlockPlaceEvent event) {
+        if (isKnife(event.getItemInHand())) {
+            event.setCancelled(true);
         }
     }
 }

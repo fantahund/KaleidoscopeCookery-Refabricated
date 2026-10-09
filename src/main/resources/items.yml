@@ -618,7 +618,7 @@ items:
   "kaleidoscope_cookery:diamond_kitchen_knife":
     model: "kaleidoscope_cookery:diamond_kitchen_knife"
     name: item.kaleidoscope_cookery.diamond_kitchen_knife
-    base: KNOWLEDGE_BOOK
+    base: JIGSAW
     prototype: DIAMOND_SWORD
   "kaleidoscope_cookery:dongpo_pork":
     model: "kaleidoscope_cookery:dongpo_pork"
@@ -979,7 +979,7 @@ items:
   "kaleidoscope_cookery:gold_kitchen_knife":
     model: "kaleidoscope_cookery:gold_kitchen_knife"
     name: item.kaleidoscope_cookery.gold_kitchen_knife
-    base: KNOWLEDGE_BOOK
+    base: JIGSAW
     prototype: GOLDEN_SWORD
   "kaleidoscope_cookery:golden_salad":
     model: "kaleidoscope_cookery:golden_salad"
@@ -1043,7 +1043,7 @@ items:
   "kaleidoscope_cookery:iron_kitchen_knife":
     model: "kaleidoscope_cookery:iron_kitchen_knife"
     name: item.kaleidoscope_cookery.iron_kitchen_knife
-    base: KNOWLEDGE_BOOK
+    base: JIGSAW
     prototype: IRON_SWORD
   "kaleidoscope_cookery:kitchen_shovel":
     model: "kaleidoscope_cookery:kitchen_shovel"
@@ -1147,7 +1147,7 @@ items:
   "kaleidoscope_cookery:netherite_kitchen_knife":
     model: "kaleidoscope_cookery:netherite_kitchen_knife"
     name: item.kaleidoscope_cookery.netherite_kitchen_knife
-    base: KNOWLEDGE_BOOK
+    base: JIGSAW
     prototype: NETHERITE_SWORD
   "kaleidoscope_cookery:numbing_spicy_chicken":
     model: "kaleidoscope_cookery:numbing_spicy_chicken"
