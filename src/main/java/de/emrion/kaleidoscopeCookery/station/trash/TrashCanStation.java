@@ -300,6 +300,18 @@ public class TrashCanStation extends Station {
         updateParts(ended ? 0 : 1);
     }
 
+    /**
+     * Abgebaut: Insassen aussteigen lassen (Seats macht ihn beim Absteigen wieder sichtbar).
+     */
+    @Override
+    protected void onRemoved() {
+        Location seat = seatLocation();
+        for (Entity entity : world().getNearbyEntities(seat, 0.3, 0.3, 0.3, Seats::isSeat)) {
+            entity.eject();
+            entity.remove();
+        }
+    }
+
     private boolean seated() {
         return Seats.isOccupied(seatLocation());
     }

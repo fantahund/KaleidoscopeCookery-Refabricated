@@ -456,7 +456,14 @@ public abstract class Station {
     /**
      * Alle Entities entfernen (Abbauen).
      */
+    /**
+     * Wird beim Entfernen der Station aufgerufen (Abbauen, /kc repair ...), bevor die Entities verschwinden.
+     */
+    protected void onRemoved() {
+    }
+
     void destroy() {
+        onRemoved();
         removed = true;
         for (ItemDisplay display : parts.values()) {
             display.remove();
