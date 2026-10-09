@@ -54,8 +54,8 @@ public class TrashCanStation extends Station {
             new Part("bone3", Key.key("kaleidoscope_cookery", "block/trash_can_pupils"), new Vector3f(8, 7, 7.9f)));
     private static final int SLOTS = 3;
     private static final NamespacedKey STORAGE = Keys.key("storage");
-    /** Sitzhöhe: im Mod 0,875 (der Client versteckt den Spieler), hier tiefer, damit man im Eimer sitzt */
-    private static final double SEAT_HEIGHT = 0.875 - 0.9;
+    /** Sitzhöhe: im Mod 0,875 (der Client versteckt den Spieler); hier unsichtbar im Eimer, die Augen knapp über dem Rand */
+    private static final double SEAT_HEIGHT = 0.875 - 0.9 + 0.25;
 
     private final @Nullable ItemStack[] storage = new ItemStack[SLOTS];
     private boolean powered;
@@ -234,7 +234,7 @@ public class TrashCanStation extends Station {
             case NORTH -> 180;
             case EAST -> 270;
         });
-        seats.sit(player, seat, "trash_can");
+        seats.sit(player, seat, "trash_can", true);
         play(TrashCanAnimation.ENTER);
         for (Entity entity : world().getNearbyEntities(center(), 32.5, 32.5, 32.5, e -> e instanceof Mob)) {
             Mob mob = (Mob) entity;
