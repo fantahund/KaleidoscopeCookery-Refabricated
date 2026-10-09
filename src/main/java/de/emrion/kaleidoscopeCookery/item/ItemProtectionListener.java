@@ -32,9 +32,17 @@ public class ItemProtectionListener implements Listener {
     public void onPrepareResult(PrepareInventoryResultEvent event) {
         Inventory inventory = event.getInventory();
         if (event instanceof PrepareAnvilEvent && inventory instanceof AnvilInventory anvil) {
-            // Nur Umbenennen: zweiter Slot leer
+            ItemStack first = anvil.getFirstItem();
             ItemStack second = anvil.getSecondItem();
-            if (CookeryItems.isCustom(second) || (CookeryItems.isCustom(anvil.getFirstItem()) && second != null && !second.isEmpty())) {
+            if (isTool(first)) {
+                // Werkzeuge (Küchenmesser, Pfannenwender): Bücher, Reparatur und gleiches Werkzeug erlaubt, fremde Mod-Items nicht
+                if (CookeryItems.isCustom(second) && !CookeryItems.typeOf(second).equals(CookeryItems.typeOf(first))) {
+                    event.setResult(null);
+                }
+                return;
+            }
+            // Sonst nur Umbenennen: zweiter Slot leer
+            if (CookeryItems.isCustom(second) || (CookeryItems.isCustom(first) && second != null && !second.isEmpty())) {
                 event.setResult(null);
             }
             return;
@@ -53,6 +61,13 @@ public class ItemProtectionListener implements Listener {
                 && containsCustom(crafter.getInventory().getContents())) {
             event.setCancelled(true);
         }
+    }
+
+    /**
+     * Mod-Item mit Vanilla-Werkzeug als Basis (nicht Papier).
+     */
+    private static boolean isTool(ItemStack stack) {
+        return CookeryItems.isCustom(stack) && stack.getType() != CookeryItems.BASE_MATERIAL;
     }
 
     private static boolean containsCustom(ItemStack[] items) {
