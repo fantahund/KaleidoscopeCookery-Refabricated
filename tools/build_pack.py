@@ -433,10 +433,27 @@ class PackBuilder:
             box = out.getbbox()
             return out if box else None
 
+        def glyph_advance(file, height):
+            """Vorschub wie BitmapProvider: Breite bis zur letzten nicht ganz durchsichtigen Spalte, skaliert, + 1."""
+            fns, fpath = norm(file)
+            png = f"assets/{fns}/textures/{fpath}"
+            data = self.files.get(png) or (jar.read(png) if png in self.vanilla.names else None)
+            if data is None:
+                return height + 1
+            image = Image.open(io.BytesIO(data)).convert("RGBA")
+            alpha = image.getchannel("A")
+            width = 0
+            for x in range(image.width - 1, -1, -1):
+                if any(alpha.getpixel((x, y)) for y in range(image.height)):
+                    width = x + 1
+                    break
+            return int(0.5 + width * height / image.height) + 1
+
         def add_glyph(file, height, ascent):
             char = chr(ICON_FIRST_CHAR + len(providers))
             providers.append({"type": "bitmap", "file": file, "height": height, "ascent": ascent, "chars": [char]})
-            return f"{ord(char):X}"
+            # Hex des Zeichens und sein Vorschub (der Client kürzt Bilder rechts auf den letzten sichtbaren Pixel)
+            return f"{ord(char):X}:{glyph_advance(file, height)}"
 
         def save_icon(ns, item, image):
             buffer = io.BytesIO()

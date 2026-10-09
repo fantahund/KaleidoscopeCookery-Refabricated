@@ -39,8 +39,7 @@ public final class ItemIcons {
             for (String line : new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).split("\n")) {
                 if (line.startsWith("@diagram|")) {
                     String[] parts = line.substring("@diagram|".length()).trim().split("=");
-                    DIAGRAMS.put(Key.key(parts[0]), Component.text(Character.toString(Integer.parseInt(parts[1], 16))).font(ICON_FONT)
-                            .color(net.kyori.adventure.text.format.NamedTextColor.WHITE).shadowColor(net.kyori.adventure.text.format.ShadowColor.none()));
+                    DIAGRAMS.put(Key.key(parts[0]), padded(parts[1], DIAGRAM_WIDTH));
                     continue;
                 }
                 int equals = line.indexOf('=');
@@ -52,8 +51,7 @@ public final class ItemIcons {
                 Key item = Key.key(line.substring(0, equals));
                 ICONS.put(item, Component.object(ObjectContents.sprite(Key.key(line.substring(equals + 1, bar)), Key.key(sprite[0]))));
                 if (sprite.length > 1 && !sprite[1].isEmpty()) {
-                    BIG_ICONS.put(item, Component.text(Character.toString(Integer.parseInt(sprite[1], 16))).font(ICON_FONT)
-                            .color(net.kyori.adventure.text.format.NamedTextColor.WHITE).shadowColor(net.kyori.adventure.text.format.ShadowColor.none()));
+                    BIG_ICONS.put(item, padded(sprite[1], BIG_WIDTH));
                 }
             }
         } catch (java.io.IOException e) {
@@ -70,6 +68,35 @@ public final class ItemIcons {
         }
         Key id = CookeryItems.idOf(stack);
         return ICONS.get(id != null ? id : stack.getType().key());
+    }
+
+    /** Vorschub eines großen Item-Bildes bzw. Stations-Bildes, wie die Slots im Kochbuch ihn erwarten */
+    public static final int BIG_WIDTH = 17;
+    public static final int DIAGRAM_WIDTH = 33;
+    private static final Key PAD_FONT = Key.key("kaleidoscope", "cookbook");
+
+    /**
+     * Schriftzeichen "HEX:Vorschub" auf eine feste Breite bringen: der Client kürzt Bilder rechts auf den letzten
+     * sichtbaren Pixel, schmalere Bilder werden deshalb mit Abständen links und rechts mittig ausgeglichen.
+     */
+    private static Component padded(String glyph, int width) {
+        String[] parts = glyph.split(":");
+        int advance = parts.length > 1 ? Integer.parseInt(parts[1]) : width;
+        int missing = width - advance;
+        Component image = Component.text(Character.toString(Integer.parseInt(parts[0], 16))).font(ICON_FONT)
+                .color(net.kyori.adventure.text.format.NamedTextColor.WHITE).shadowColor(net.kyori.adventure.text.format.ShadowColor.none());
+        if (missing == 0) {
+            return image;
+        }
+        return Component.text().append(pad(missing / 2)).append(image).append(pad(missing - missing / 2)).build();
+    }
+
+    /**
+     * Leerraum von n Pixeln (auch negativ), Schrift kaleidoscope:cookbook.
+     */
+    public static Component pad(int pixels) {
+        int clamped = Math.clamp(pixels, -63, 63);
+        return Component.text(Character.toString(clamped >= 0 ? 0xE300 + clamped : 0xE340 - clamped)).font(PAD_FONT);
     }
 
     public static @Nullable Component diagram(Key item) {

@@ -46,6 +46,9 @@ DIAGRAM_CHAR = 0xE220
 # Ziffern 0-9 für Mengen im Slot und 6/12/18 Pixel zurück
 DIGIT_CHAR = 0xE240
 DIGIT_BACK_CHAR = 0xE250
+# Abstände +n / -n Pixel
+PAD_CHAR = 0xE300
+PAD_NEG_CHAR = 0xE340
 
 
 def main():
@@ -59,6 +62,8 @@ def main():
         size = max(part.size)
         square = Image.new("RGBA", (size, size), (0, 0, 0, 0))
         square.paste(part, ((size - part.width) // 2, (size - part.height) // 2))
+        # Fast unsichtbarer Pixel unten rechts: der Client kürzt Schrift-Bilder sonst auf die sichtbare Breite
+        square.putpixel((size - 1, size - 1), (0, 0, 0, 1))
         square.save(sprites / f"{name}.png")
         providers.append({"type": "bitmap", "file": f"kaleidoscope:gui/sprites/cookbook/{name}.png",
                           "height": BIG_HEIGHT, "ascent": 7, "chars": [chr(FIRST_CHAR + index)]})
@@ -84,6 +89,7 @@ def main():
     for i in range(5):
         for y in range(8 - i, 9 + i):
             arrow.putpixel((14 - i, y), gray)
+    arrow.putpixel((15, 15), (0, 0, 0, 1))
     arrow.save(sprites / "arrow.png")
     providers.append({"type": "bitmap", "file": "kaleidoscope:gui/sprites/cookbook/slot.png", "height": 18, "ascent": 8, "chars": [chr(SLOT_CHAR)]})
     providers.append({"type": "bitmap", "file": "kaleidoscope:gui/sprites/cookbook/arrow.png", "height": 16, "ascent": 7, "chars": [chr(ARROW_CHAR)]})
@@ -101,6 +107,9 @@ def main():
         grid.append(line)
     providers.append({"type": "bitmap", "file": "minecraft:font/ascii.png", "height": 8, "ascent": -2, "chars": grid})
     providers.append({"type": "space", "advances": {chr(DIGIT_BACK_CHAR + i): -6 * (i + 1) for i in range(3)}})
+    # Ausgleich für Bilder mit anderer Breite: +n und -n Pixel (n = 0..63)
+    providers.append({"type": "space", "advances": {**{chr(PAD_CHAR + n): n for n in range(64)},
+                                                    **{chr(PAD_NEG_CHAR + n): -n for n in range(64)}}})
     (OUT / "font").mkdir(parents=True, exist_ok=True)
     (OUT / "font" / "cookbook.json").write_text(json.dumps({"providers": providers}, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
 
