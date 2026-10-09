@@ -19,9 +19,10 @@ import java.util.List;
  * @param tooltipKey Beschreibung aus der Mod-Sprachdatei, sonst null
  * @param food     Nahrungswerte, null wenn nicht essbar
  * @param plate    Gericht, das man als Teller hinstellen und bissweise essen kann, sonst null
+ * @param sneakToPlace nur beim Schleichen platzieren (Teetassen, Teekanne – sonst trinken bzw. benutzen)
  */
 public record CookeryItem(Key id, Material base, @Nullable Material prototype, Key model, String nameKey, @Nullable String tooltipKey, int maxStack, int maxDamage, @Nullable Food food,
-                          @Nullable Plate plate) {
+                          @Nullable Plate plate, boolean sneakToPlace) {
 
     /**
      * Teller-Gericht (FoodBiteBlock im Mod).
@@ -38,8 +39,10 @@ public record CookeryItem(Key id, Material base, @Nullable Material prototype, K
      * Nahrungswerte wie im Mod.
      *
      * @param remainder Item, das nach dem Essen zurückbleibt (z. B. Schüssel), sonst null
+     * @param drink     Getränk (Trink-Animation; ohne Nährwert keine food-Komponente)
      */
-    public record Food(int nutrition, float saturation, boolean alwaysEdible, float eatSeconds, @Nullable Key remainder, List<FoodEffect> effects) {
+    public record Food(int nutrition, float saturation, boolean alwaysEdible, float eatSeconds, @Nullable Key remainder, List<FoodEffect> effects,
+                       boolean drink) {
     }
 
     /**

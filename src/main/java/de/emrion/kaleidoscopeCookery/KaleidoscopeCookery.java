@@ -20,6 +20,9 @@ import de.emrion.kaleidoscopeCookery.station.pot.PotStation;
 import de.emrion.kaleidoscopeCookery.station.steamer.SteamerStation;
 import de.emrion.kaleidoscopeCookery.station.stockpot.StockpotStation;
 import de.emrion.kaleidoscopeCookery.station.stove.StoveListener;
+import de.emrion.kaleidoscopeCookery.station.teapot.CupStation;
+import de.emrion.kaleidoscopeCookery.station.teapot.TeapotItems;
+import de.emrion.kaleidoscopeCookery.station.teapot.TeapotStation;
 import de.emrion.kaleidoscopeCookery.station.stove.StoveStation;
 import de.emrion.kaleidoscopeCookery.util.Lang;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -76,6 +79,8 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         stations.register(PlateStation.type());
         stations.register(StockpotStation.type());
         stations.register(SteamerStation.type());
+        stations.register(TeapotStation.type());
+        stations.register(CupStation.type());
 
         pluginManager.registerEvents(resourcePack, this);
         pluginManager.registerEvents(stations, this);
@@ -88,6 +93,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         pluginManager.registerEvents(effects, this);
         pluginManager.registerEvents(vanillaFood, this);
         pluginManager.registerEvents(new StoveListener(stations), this);
+        pluginManager.registerEvents(new TeapotItems(this), this);
 
         stations.start();
         foodService.start();

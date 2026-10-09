@@ -48,5 +48,6 @@
   "kaleidoscope.hud.steamer.empty": "Empty",
   "kaleidoscope.hud.steamer.need_lid": "Lid missing (sneak + right click with empty hand)",
   "kaleidoscope.hud.steamer.cooking": "Steaming · %s s left · heat %s",
-  "kaleidoscope.hud.steamer.done": "Done"
+  "kaleidoscope.hud.steamer.done": "Done",
+  "kaleidoscope.hud.cup.cups": "%s cups, %s with tea"
 }

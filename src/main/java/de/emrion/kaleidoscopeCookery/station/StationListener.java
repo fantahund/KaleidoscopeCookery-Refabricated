@@ -5,6 +5,8 @@ import de.emrion.kaleidoscopeCookery.command.Permissions;
 import de.emrion.kaleidoscopeCookery.item.CookeryItem;
 import de.emrion.kaleidoscopeCookery.item.CookeryItems;
 import de.emrion.kaleidoscopeCookery.station.plate.PlateStation;
+import de.emrion.kaleidoscopeCookery.station.teapot.CupStation;
+import de.emrion.kaleidoscopeCookery.station.teapot.TeapotStation;
 import net.kyori.adventure.key.Key;
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import org.bukkit.GameMode;
@@ -200,6 +202,10 @@ public class StationListener implements Listener {
         if (placeableType(item) == null) {
             return;
         }
+        CookeryItem placed = plugin.getItems().get(CookeryItems.typeOf(item));
+        if (placed != null && placed.sneakToPlace() && !event.getPlayer().isSneaking()) {
+            return; // Tee trinken, Teekanne benutzen
+        }
         event.setCancelled(true);
         if (event.getPlayer().isSneaking() && stations.at(event.getClickedBlock()) != null) {
             return;
@@ -217,6 +223,8 @@ public class StationListener implements Listener {
             CookeryItem dish = plugin.getItems().get(itemId);
             if (dish != null && dish.plate() != null) {
                 type = stations.type(PlateStation.TYPE_ID);
+            } else if (CupStation.isTeacup(dish)) {
+                type = stations.type(CupStation.TYPE_ID);
             }
         }
         return type;
@@ -232,6 +240,9 @@ public class StationListener implements Listener {
         }
         Key itemId = CookeryItems.idOf(item);
         CookeryItem dish = plugin.getItems().get(itemId);
+        if (dish != null && dish.sneakToPlace() && !player.isSneaking()) {
+            return false;
+        }
         Block target = clicked.isReplaceable() && stations.at(clicked) == null ? clicked : clicked.getRelative(face);
         Facing facing = Facing.towards(player.getYaw());
         if (!canPlaceAt(type, target)) {
@@ -268,6 +279,10 @@ public class StationListener implements Listener {
         stations.place(type, target, facing, station -> {
             if (station instanceof PlateStation plate) {
                 plate.initFrom(placedFrom, placedId);
+            } else if (station instanceof TeapotStation teapot) {
+                teapot.initFrom(placedFrom);
+            } else if (station instanceof CupStation cup) {
+                cup.initFrom(placedId);
             }
         });
         if (player.getGameMode() != GameMode.CREATIVE) {

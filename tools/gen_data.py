@@ -183,6 +183,27 @@ def parse_food_bites(foods: dict) -> dict:
     return bites
 
 
+# ---------------------------------------------------------------- Tee
+
+def parse_teacups() -> dict:
+    """TeacupRegistry: Tee-Getränke mit Effekten (Trinken 32 Ticks, leere Tasse bleibt)."""
+    source = (COOKERY_JAVA / "init/registry/TeacupRegistry.java").read_text(encoding="utf-8")
+    teas = {}
+    for match in re.finditer(r'registerTeacupData\("(\w+)",\s*TeacupData\.create\((\d+)\)(.*?)\);', source, re.S):
+        name, _, body = match.groups()
+        effects = []
+        for e in re.finditer(r"new MobEffectInstance\(\s*([\w.]+)\s*,\s*([^,)]+?)\s*(?:,\s*(\d+))?\s*\)", body):
+            effect_name = e.group(1).split(".")[-1]
+            key = "minecraft:" + VANILLA_EFFECTS[effect_name] if effect_name in VANILLA_EFFECTS else "kaleidoscope_cookery:" + effect_name.lower()
+            effect = {"effect": key, "duration": eval_int(e.group(2))}
+            if e.group(3) and int(e.group(3)) > 0:
+                effect["amplifier"] = int(e.group(3))
+            effects.append(effect)
+        teas[f"kaleidoscope_cookery:{name}"] = {"nutrition": 0, "saturation": 0.0, "always-edible": True, "drink": True,
+                                                "eat-seconds": 1.6, "remainder": "kaleidoscope_cookery:empty_cup", "effects": effects}
+    return teas
+
+
 # ---------------------------------------------------------------- Items
 
 # Items mit Vanilla-Funktion: Basis-Material statt Papier
@@ -217,6 +238,7 @@ def parse_stack_sizes() -> dict:
 
 def collect_items(foods: dict, bites: dict) -> dict:
     items = {}
+    teas = parse_teacups()
     stack_sizes = parse_stack_sizes()
     for ns in ("kaleidoscope_cookery", "kaleidoscope_grilling"):
         lang = read_json(IMPORTED / ns / "lang" / "en_us.json")
@@ -244,6 +266,13 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry["max-stack"] = stack_sizes[full_id]
             if ns == "kaleidoscope_cookery" and item_id in foods:
                 entry["food"] = foods[item_id]
+            if full_id == "kaleidoscope_cookery:teapot":
+                entry["sneak-place"] = True  # TeapotItem#useOn: nur beim Schleichen platzieren
+                entry["max-stack"] = 1
+            if full_id in teas:
+                entry["food"] = teas[full_id]
+                entry["max-stack"] = 16
+                entry["sneak-place"] = True
             if full_id in bites:
                 bite = dict(bites[full_id])
                 entry["food"] = bite.pop("item-food")
@@ -360,6 +389,16 @@ def collect_recipes(tags: dict) -> dict:
             }
     pot, flex_pot = collect_pot_recipes(used_tags)
     stockpot, flex_stockpot = collect_stockpot_recipes(used_tags)
+    teapot = {}
+    for ns, folder in pot_dirs("teapot"):
+        for file in sorted(folder.glob("*.json")):
+            recipe = read_json(file)
+            entry = {"ingredient": ingredient(recipe["ingredient"], used_tags), "tea-fluid": recipe.get("tea_fluid", "minecraft:empty")}
+            if recipe.get("ingredient_count", 12) != 1:
+                entry["ingredient-count"] = recipe.get("ingredient_count", 12)
+            entry["time"] = recipe.get("time", 2400)
+            entry["result"] = result_list({"result": recipe["result"]})[0]
+            teapot[f"{ns}:teapot/{file.stem}"] = entry
     steamer = {}
     for ns, folder in pot_dirs("steamer"):
         for file in sorted(folder.glob("*.json")):
@@ -379,11 +418,11 @@ def collect_recipes(tags: dict) -> dict:
             print(f"WARNUNG: Tag #{name} lässt sich nicht auflösen")
         tag_groups[name] = values
     return {"data-version": DATA_VERSION, "tags": tag_groups, "chopping-board": chopping, "pot": pot, "flex-pot": flex_pot,
-            "stockpot": stockpot, "flex-stockpot": flex_stockpot, "steamer": steamer, "vanilla": vanilla}
+            "stockpot": stockpot, "flex-stockpot": flex_stockpot, "steamer": steamer, "teapot": teapot, "vanilla": vanilla}
 
 
 # Bei jeder inhaltlichen Aenderung der erzeugten recipes.yml erhoehen: das Plugin ersetzt dann alte Kopien (mit Backup)
-DATA_VERSION = 4
+DATA_VERSION = 5
 STOCKPOT_DEFAULT_TIME = 300
 POT_DEFAULT_TIME = 200
 POT_DEFAULT_STIR_FRY = 3

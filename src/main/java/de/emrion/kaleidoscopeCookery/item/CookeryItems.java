@@ -78,7 +78,8 @@ public class CookeryItems {
                 }
                 Material prototype = entry.getString("prototype") == null ? null : Material.matchMaterial(entry.getString("prototype"));
                 items.put(key, new CookeryItem(key, base, prototype, Key.key(entry.getString("model", id)), entry.getString("name", id), entry.getString("tooltip"),
-                        Math.clamp(entry.getInt("max-stack", 64), 1, 99), Math.max(0, entry.getInt("max-damage", 0)), food, plate));
+                        Math.clamp(entry.getInt("max-stack", 64), 1, 99), Math.max(0, entry.getInt("max-damage", 0)), food, plate,
+                        entry.getBoolean("sneak-place")));
             }
         }
         return new CookeryItems(items);
@@ -105,13 +106,14 @@ public class CookeryItems {
         }
         String remainder = section.getString("remainder");
         return new CookeryItem.Food(section.getInt("nutrition"), (float) section.getDouble("saturation"), section.getBoolean("always-edible"),
-                (float) section.getDouble("eat-seconds", 1.6), remainder == null ? null : Key.key(remainder), List.copyOf(effects));
+                (float) section.getDouble("eat-seconds", 1.6), remainder == null ? null : Key.key(remainder), List.copyOf(effects),
+                section.getBoolean("drink"));
     }
 
     private static CookeryItem.Plate loadPlate(String id, ConfigurationSection section, Logger logger) {
         ConfigurationSection foodSection = section.getConfigurationSection("food");
         CookeryItem.Food food = foodSection != null ? loadFood(id, foodSection, logger)
-                : new CookeryItem.Food(0, 0, true, 1.6f, null, List.of());
+                : new CookeryItem.Food(0, 0, true, 1.6f, null, List.of(), false);
         List<Key> loot = new ArrayList<>();
         for (String value : section.getStringList("loot")) {
             if (Key.parseable(value)) {
@@ -221,15 +223,21 @@ public class CookeryItems {
      */
     @SuppressWarnings("UnstableApiUsage")
     public void applyFood(ItemStack stack, CookeryItem.Food food, double ratio) {
-        stack.setData(DataComponentTypes.FOOD, FoodProperties.food()
-                .nutrition((int) Math.round(food.nutrition() * ratio))
-                .saturation((float) (food.saturation() * ratio))
-                .canAlwaysEat(food.alwaysEdible())
-                .build());
+        if (food.drink() && food.nutrition() == 0) {
+            // Getränk ohne Nährwert: trinkbar auch mit vollem Hunger, keine food-Komponente
+            stack.unsetData(DataComponentTypes.FOOD);
+        } else {
+            stack.setData(DataComponentTypes.FOOD, FoodProperties.food()
+                    .nutrition((int) Math.round(food.nutrition() * ratio))
+                    .saturation((float) (food.saturation() * ratio))
+                    .canAlwaysEat(food.alwaysEdible())
+                    .build());
+        }
         Consumable.Builder consumable = Consumable.consumable()
                 .consumeSeconds(food.eatSeconds())
-                .animation(ItemUseAnimation.EAT)
-                .hasConsumeParticles(true);
+                .animation(food.drink() ? ItemUseAnimation.DRINK : ItemUseAnimation.EAT)
+                .sound(food.drink() ? org.bukkit.Sound.ENTITY_GENERIC_DRINK.key() : org.bukkit.Sound.ENTITY_GENERIC_EAT.key())
+                .hasConsumeParticles(!food.drink());
         for (CookeryItem.FoodEffect effect : food.effects()) {
             PotionEffectType type = vanillaEffect(effect.effect());
             int duration = (int) Math.round(effect.duration() * ratio);

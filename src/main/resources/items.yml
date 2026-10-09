@@ -31,6 +31,18 @@ items:
   "kaleidoscope_cookery:barley_tea":
     model: "kaleidoscope_cookery:barley_tea"
     name: block.kaleidoscope_cookery.barley_tea
+    food:
+      nutrition: 0
+      saturation: 0.0
+      always-edible: true
+      drink: true
+      eat-seconds: 1.6
+      remainder: "kaleidoscope_cookery:empty_cup"
+      effects:
+        - effect: "kaleidoscope_cookery:vitality"
+          duration: 9600
+    max-stack: 16
+    sneak-place: true
   "kaleidoscope_cookery:barley_tea_bag":
     model: "kaleidoscope_cookery:barley_tea_bag"
     name: item.kaleidoscope_cookery.barley_tea_bag
@@ -63,6 +75,18 @@ items:
   "kaleidoscope_cookery:biluochun":
     model: "kaleidoscope_cookery:biluochun"
     name: block.kaleidoscope_cookery.biluochun
+    food:
+      nutrition: 0
+      saturation: 0.0
+      always-edible: true
+      drink: true
+      eat-seconds: 1.6
+      remainder: "kaleidoscope_cookery:empty_cup"
+      effects:
+        - effect: "kaleidoscope_cookery:projectile_dodge"
+          duration: 7200
+    max-stack: 16
+    sneak-place: true
   "kaleidoscope_cookery:biluochun_tea_bag":
     model: "kaleidoscope_cookery:biluochun_tea_bag"
     name: item.kaleidoscope_cookery.biluochun_tea_bag
@@ -229,6 +253,18 @@ items:
   "kaleidoscope_cookery:butter_tea":
     model: "kaleidoscope_cookery:butter_tea"
     name: block.kaleidoscope_cookery.butter_tea
+    food:
+      nutrition: 0
+      saturation: 0.0
+      always-edible: true
+      drink: true
+      eat-seconds: 1.6
+      remainder: "kaleidoscope_cookery:empty_cup"
+      effects:
+        - effect: "kaleidoscope_cookery:projectile_dodge"
+          duration: 900
+    max-stack: 16
+    sneak-place: true
   "kaleidoscope_cookery:butter_tea_bag":
     model: "kaleidoscope_cookery:butter_tea_bag"
     name: item.kaleidoscope_cookery.butter_tea_bag
@@ -796,6 +832,18 @@ items:
   "kaleidoscope_cookery:flower_tea":
     model: "kaleidoscope_cookery:flower_tea"
     name: block.kaleidoscope_cookery.flower_tea
+    food:
+      nutrition: 0
+      saturation: 0.0
+      always-edible: true
+      drink: true
+      eat-seconds: 1.6
+      remainder: "kaleidoscope_cookery:empty_cup"
+      effects:
+        - effect: "minecraft:regeneration"
+          duration: 400
+    max-stack: 16
+    sneak-place: true
   "kaleidoscope_cookery:fondant_pie":
     model: "kaleidoscope_cookery:fondant_pie"
     name: block.kaleidoscope_cookery.fondant_pie
@@ -1114,6 +1162,18 @@ items:
   "kaleidoscope_cookery:mystery_tea":
     model: "kaleidoscope_cookery:mystery_tea"
     name: block.kaleidoscope_cookery.mystery_tea
+    food:
+      nutrition: 0
+      saturation: 0.0
+      always-edible: true
+      drink: true
+      eat-seconds: 1.6
+      remainder: "kaleidoscope_cookery:empty_cup"
+      effects:
+        - effect: "minecraft:blindness"
+          duration: 300
+    max-stack: 16
+    sneak-place: true
   "kaleidoscope_cookery:nether_style_sashimi":
     model: "kaleidoscope_cookery:nether_style_sashimi"
     name: block.kaleidoscope_cookery.nether_style_sashimi
@@ -1227,6 +1287,20 @@ items:
   "kaleidoscope_cookery:oolong":
     model: "kaleidoscope_cookery:oolong"
     name: block.kaleidoscope_cookery.oolong
+    food:
+      nutrition: 0
+      saturation: 0.0
+      always-edible: true
+      drink: true
+      eat-seconds: 1.6
+      remainder: "kaleidoscope_cookery:empty_cup"
+      effects:
+        - effect: "minecraft:slow_falling"
+          duration: 7200
+        - effect: "minecraft:jump_boost"
+          duration: 7200
+    max-stack: 16
+    sneak-place: true
   "kaleidoscope_cookery:oolong_tea_bag":
     model: "kaleidoscope_cookery:oolong_tea_bag"
     name: item.kaleidoscope_cookery.oolong_tea_bag
@@ -1391,6 +1465,18 @@ items:
   "kaleidoscope_cookery:sakura_fubuki":
     model: "kaleidoscope_cookery:sakura_fubuki"
     name: block.kaleidoscope_cookery.sakura_fubuki
+    food:
+      nutrition: 0
+      saturation: 0.0
+      always-edible: true
+      drink: true
+      eat-seconds: 1.6
+      remainder: "kaleidoscope_cookery:empty_cup"
+      effects:
+        - effect: "kaleidoscope_cookery:hinder"
+          duration: 7200
+    max-stack: 16
+    sneak-place: true
   "kaleidoscope_cookery:sakura_fubuki_tea_bag":
     model: "kaleidoscope_cookery:sakura_fubuki_tea_bag"
     name: item.kaleidoscope_cookery.sakura_fubuki_tea_bag
@@ -1877,9 +1963,23 @@ items:
   "kaleidoscope_cookery:teapot":
     model: "kaleidoscope_cookery:teapot"
     name: block.kaleidoscope_cookery.teapot
+    sneak-place: true
+    max-stack: 1
   "kaleidoscope_cookery:tieguanyin":
     model: "kaleidoscope_cookery:tieguanyin"
     name: block.kaleidoscope_cookery.tieguanyin
+    food:
+      nutrition: 0
+      saturation: 0.0
+      always-edible: true
+      drink: true
+      eat-seconds: 1.6
+      remainder: "kaleidoscope_cookery:empty_cup"
+      effects:
+        - effect: "kaleidoscope_cookery:instant_smelting"
+          duration: 7200
+    max-stack: 16
+    sneak-place: true
   "kaleidoscope_cookery:tieguanyin_tea_bag":
     model: "kaleidoscope_cookery:tieguanyin_tea_bag"
     name: item.kaleidoscope_cookery.tieguanyin_tea_bag

@@ -2,7 +2,7 @@
 # Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert
 # und kann dort angepasst werden (/kc reload).
 # Zutaten: Item-ID, "#tag" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.
-data-version: 4
+data-version: 5
 tags:
   "c:bricks/normal":
     - "minecraft:brick"
@@ -100,6 +100,12 @@ tags:
     - "kaleidoscope_grilling:houttuynia"
   "kaleidoscope_cookery:caterpillars":
     - "kaleidoscope_cookery:caterpillar"
+  "kaleidoscope_cookery:flower_tea_ingredients":
+    - "minecraft:lilac"
+    - "minecraft:rose_bush"
+    - "minecraft:peony"
+    - "minecraft:pitcher_plant"
+    - "minecraft:sunflower"
   "kaleidoscope_cookery:straw_bale":
     - "minecraft:hay_block"
     - "kaleidoscope_cookery:straw_block"
@@ -1891,6 +1897,42 @@ steamer:
   "kaleidoscope_cookery:steamer/qingtuan":
     ingredient: "minecraft:slime_ball"
     result: "kaleidoscope_cookery:qingtuan"
+teapot:
+  "kaleidoscope_cookery:teapot/barley_tea":
+    ingredient: "kaleidoscope_cookery:barley_tea_bag"
+    tea-fluid: "minecraft:water"
+    time: 240
+    result: "kaleidoscope_cookery:barley_tea"
+  "kaleidoscope_cookery:teapot/biluochun":
+    ingredient: "kaleidoscope_cookery:biluochun_tea_bag"
+    tea-fluid: "minecraft:water"
+    time: 240
+    result: "kaleidoscope_cookery:biluochun"
+  "kaleidoscope_cookery:teapot/butter_tea":
+    ingredient: "kaleidoscope_cookery:butter_tea_bag"
+    tea-fluid: "minecraft:milk"
+    time: 240
+    result: "kaleidoscope_cookery:butter_tea"
+  "kaleidoscope_cookery:teapot/flower_tea":
+    ingredient: "#kaleidoscope_cookery:flower_tea_ingredients"
+    tea-fluid: "minecraft:water"
+    time: 240
+    result: "kaleidoscope_cookery:flower_tea"
+  "kaleidoscope_cookery:teapot/oolong":
+    ingredient: "kaleidoscope_cookery:oolong_tea_bag"
+    tea-fluid: "minecraft:water"
+    time: 240
+    result: "kaleidoscope_cookery:oolong"
+  "kaleidoscope_cookery:teapot/sakura_fubuki":
+    ingredient: "kaleidoscope_cookery:sakura_fubuki_tea_bag"
+    tea-fluid: "minecraft:water"
+    time: 240
+    result: "kaleidoscope_cookery:sakura_fubuki"
+  "kaleidoscope_cookery:teapot/tieguanyin":
+    ingredient: "kaleidoscope_cookery:tieguanyin_tea_bag"
+    tea-fluid: "minecraft:water"
+    time: 240
+    result: "kaleidoscope_cookery:tieguanyin"
 vanilla:
   "kaleidoscope_cookery:apple_platter":
     type: crafting_shapeless

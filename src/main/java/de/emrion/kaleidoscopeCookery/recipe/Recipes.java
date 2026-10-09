@@ -24,16 +24,18 @@ public class Recipes {
     private final List<PotRecipe> pot;
     private final List<StockpotRecipe> stockpot;
     private final List<SteamerRecipe> steamer;
+    private final List<TeapotRecipe> teapot;
     private final int dataVersion;
 
     private Recipes(Map<String, List<String>> tags, List<ChoppingBoardRecipe> choppingBoard, List<VanillaRecipe> vanilla, List<PotRecipe> pot,
-                    List<StockpotRecipe> stockpot, List<SteamerRecipe> steamer, int dataVersion) {
+                    List<StockpotRecipe> stockpot, List<SteamerRecipe> steamer, List<TeapotRecipe> teapot, int dataVersion) {
         this.tags = Collections.unmodifiableMap(tags);
         this.choppingBoard = List.copyOf(choppingBoard);
         this.vanilla = List.copyOf(vanilla);
         this.pot = List.copyOf(pot);
         this.stockpot = List.copyOf(stockpot);
         this.steamer = List.copyOf(steamer);
+        this.teapot = List.copyOf(teapot);
         this.dataVersion = dataVersion;
     }
 
@@ -134,7 +136,18 @@ public class Recipes {
                 logger.warning("Dampfkorb-Rezept " + entry.getKey() + " ungültig: " + e.getMessage());
             }
         }
-        return new Recipes(tags, chopping, vanilla, pot, stockpot, steamer, config.getInt("data-version", 0));
+        List<TeapotRecipe> teapot = new ArrayList<>();
+        for (Map.Entry<String, ConfigurationSection> entry : sections(config, "teapot").entrySet()) {
+            ConfigurationSection section = entry.getValue();
+            try {
+                teapot.add(new TeapotRecipe(entry.getKey(), Ingredient.parse(section.get("ingredient"), tags), Math.max(1, section.getInt("ingredient-count", 1)),
+                        Key.key(section.getString("tea-fluid", "minecraft:water")), Math.max(1, section.getInt("time", TeapotRecipe.DEFAULT_TIME)),
+                        RecipeResult.parse(section.get("result"))));
+            } catch (RuntimeException e) {
+                logger.warning("Teekannen-Rezept " + entry.getKey() + " ungültig: " + e.getMessage());
+            }
+        }
+        return new Recipes(tags, chopping, vanilla, pot, stockpot, steamer, teapot, config.getInt("data-version", 0));
     }
 
     /**
@@ -204,6 +217,15 @@ public class Recipes {
     public @Nullable SteamerRecipe findSteamer(ItemStack input) {
         for (SteamerRecipe recipe : steamer) {
             if (recipe.ingredient().test(input)) {
+                return recipe;
+            }
+        }
+        return null;
+    }
+
+    public @Nullable TeapotRecipe findTeapot(ItemStack input, Key fluid) {
+        for (TeapotRecipe recipe : teapot) {
+            if (recipe.fluid().equals(fluid) && recipe.ingredient().test(input) && input.getAmount() >= recipe.ingredientCount()) {
                 return recipe;
             }
         }
