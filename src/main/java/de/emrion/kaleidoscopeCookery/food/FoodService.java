@@ -164,6 +164,10 @@ public class FoodService implements Listener {
      */
     private void updateHeldLore() {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
+            // Beim Essen das Item nicht austauschen, sonst bricht der Client das Essen samt Animation ab
+            if (player.hasActiveItem()) {
+                continue;
+            }
             ItemStack[] contents = player.getInventory().getContents();
             for (int slot = 0; slot < contents.length; slot++) {
                 ItemStack stack = contents[slot];
