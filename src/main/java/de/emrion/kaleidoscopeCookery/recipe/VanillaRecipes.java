@@ -42,6 +42,9 @@ public class VanillaRecipes implements Listener {
     private final CookeryItems items;
     private final List<NamespacedKey> registered = new ArrayList<>();
     private final java.util.Map<NamespacedKey, Ingredient> smithingBases = new java.util.HashMap<>();
+    /** Ein Rezept für alle Reisschalen: zwei beliebige Mod-Items, das Ergebnis bestimmt onPrepareRiceBowl */
+    private static final NamespacedKey RICE_BOWL = Keys.key("rice_bowl");
+    private @Nullable Recipes recipes;
 
     public VanillaRecipes(Plugin plugin, CookeryItems items) {
         this.plugin = plugin;
@@ -54,6 +57,7 @@ public class VanillaRecipes implements Listener {
 
     public void register(Recipes recipes) {
         unregister();
+        this.recipes = recipes;
         for (VanillaRecipe recipe : recipes.vanilla()) {
             try {
                 Recipe bukkit = toBukkit(recipe);
@@ -64,9 +68,22 @@ public class VanillaRecipes implements Listener {
                 plugin.getLogger().warning("Rezept " + recipe.id() + " konnte nicht registriert werden: " + e.getMessage());
             }
         }
+        // Zuletzt registrieren, damit genauere Rezepte mit zwei Mod-Items zuerst passen
+        if (!recipes.riceBowl().isEmpty()) {
+            ItemStack icon = recipes.riceBowl().getFirst().result().create(items);
+            if (icon != null) {
+                // Mod-Items mit Qualität/Wärme passen auf keine ExactChoice – deshalb Basis-Material und eigene Prüfung
+                ShapelessRecipe riceBowl = new ShapelessRecipe(RICE_BOWL, icon);
+                riceBowl.addIngredient(new RecipeChoice.MaterialChoice(CookeryItems.BASE_MATERIAL));
+                riceBowl.addIngredient(new RecipeChoice.MaterialChoice(CookeryItems.BASE_MATERIAL));
+                if (Bukkit.addRecipe(riceBowl, false)) {
+                    registered.add(RICE_BOWL);
+                }
+            }
+        }
         Bukkit.updateRecipes();
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.discoverRecipes(registered);
+            player.discoverRecipes(discoverable());
         }
         plugin.getLogger().info(registered.size() + " Werkbank-/Ofen-Rezepte registriert");
     }
@@ -76,7 +93,51 @@ public class VanillaRecipes implements Listener {
      */
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        event.getPlayer().discoverRecipes(registered);
+        event.getPlayer().discoverRecipes(discoverable());
+    }
+
+    private List<NamespacedKey> discoverable() {
+        return registered.stream().filter(key -> !key.equals(RICE_BOWL)).toList();
+    }
+
+    /**
+     * RiceBowlRecipe#matches/assemble: genau eine Zutat und genau ein gekochter Reis, beste Qualität aufs Ergebnis.
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPrepareRiceBowl(org.bukkit.event.inventory.PrepareItemCraftEvent event) {
+        if (!(event.getRecipe() instanceof Keyed keyed) || !keyed.getKey().equals(RICE_BOWL) || recipes == null) {
+            return;
+        }
+        List<ItemStack> inputs = new ArrayList<>();
+        for (ItemStack stack : event.getInventory().getMatrix()) {
+            if (stack != null && !stack.isEmpty()) {
+                inputs.add(stack);
+            }
+        }
+        ItemStack result = null;
+        if (inputs.size() == 2) {
+            for (RiceBowlRecipe recipe : recipes.riceBowl()) {
+                boolean firstRice = recipes.cookedRice().test(inputs.get(0)) && recipe.ingredient().test(inputs.get(1));
+                boolean secondRice = recipes.cookedRice().test(inputs.get(1)) && recipe.ingredient().test(inputs.get(0));
+                if (firstRice || secondRice) {
+                    result = recipe.result().create(items);
+                    break;
+                }
+            }
+        }
+        if (result != null) {
+            de.emrion.kaleidoscopeCookery.food.Quality best = null;
+            for (ItemStack input : inputs) {
+                de.emrion.kaleidoscopeCookery.food.Quality quality = de.emrion.kaleidoscopeCookery.food.FoodService.quality(input);
+                if (quality != null && (best == null || quality.score() > best.score())) {
+                    best = quality;
+                }
+            }
+            if (best != null && plugin instanceof de.emrion.kaleidoscopeCookery.KaleidoscopeCookery cookery) {
+                cookery.getFoodService().setQuality(result, best);
+            }
+        }
+        event.getInventory().setResult(result);
     }
 
     public void unregister() {

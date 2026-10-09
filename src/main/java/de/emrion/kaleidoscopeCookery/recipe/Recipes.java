@@ -27,10 +27,12 @@ public class Recipes {
     private final List<TeapotRecipe> teapot;
     private final List<MillstoneRecipe> millstone;
     private final List<BambooTrayRecipe> bambooTray;
+    private final List<RiceBowlRecipe> riceBowl;
+    private final Ingredient cookedRice;
     private final int dataVersion;
 
     private Recipes(Map<String, List<String>> tags, List<ChoppingBoardRecipe> choppingBoard, List<VanillaRecipe> vanilla, List<PotRecipe> pot,
-                    List<StockpotRecipe> stockpot, List<SteamerRecipe> steamer, List<TeapotRecipe> teapot, List<MillstoneRecipe> millstone, List<BambooTrayRecipe> bambooTray, int dataVersion) {
+                    List<StockpotRecipe> stockpot, List<SteamerRecipe> steamer, List<TeapotRecipe> teapot, List<MillstoneRecipe> millstone, List<BambooTrayRecipe> bambooTray, List<RiceBowlRecipe> riceBowl, int dataVersion) {
         this.tags = Collections.unmodifiableMap(tags);
         this.choppingBoard = List.copyOf(choppingBoard);
         this.vanilla = List.copyOf(vanilla);
@@ -40,6 +42,14 @@ public class Recipes {
         this.teapot = List.copyOf(teapot);
         this.millstone = List.copyOf(millstone);
         this.bambooTray = List.copyOf(bambooTray);
+        this.riceBowl = List.copyOf(riceBowl);
+        Ingredient rice;
+        try {
+            rice = Ingredient.parse(RiceBowlRecipe.COOKED_RICE, tags);
+        } catch (IllegalArgumentException e) {
+            rice = Ingredient.parse("kaleidoscope_cookery:cooked_rice", tags);
+        }
+        this.cookedRice = rice;
         this.dataVersion = dataVersion;
     }
 
@@ -177,7 +187,15 @@ public class Recipes {
                 logger.warning("Bambustablett-Rezept " + entry.getKey() + " ungültig: " + e.getMessage());
             }
         }
-        return new Recipes(tags, chopping, vanilla, pot, stockpot, steamer, teapot, millstone, bambooTray, config.getInt("data-version", 0));
+        List<RiceBowlRecipe> riceBowl = new ArrayList<>();
+        for (Map.Entry<String, ConfigurationSection> entry : sections(config, "rice-bowl").entrySet()) {
+            try {
+                riceBowl.add(new RiceBowlRecipe(entry.getKey(), Ingredient.parse(entry.getValue().get("ingredient"), tags), RecipeResult.parse(entry.getValue().get("result"))));
+            } catch (RuntimeException e) {
+                logger.warning("Reisschalen-Rezept " + entry.getKey() + " ungültig: " + e.getMessage());
+            }
+        }
+        return new Recipes(tags, chopping, vanilla, pot, stockpot, steamer, teapot, millstone, bambooTray, riceBowl, config.getInt("data-version", 0));
     }
 
     /**
@@ -278,6 +296,14 @@ public class Recipes {
             }
         }
         return null;
+    }
+
+    public List<RiceBowlRecipe> riceBowl() {
+        return riceBowl;
+    }
+
+    public Ingredient cookedRice() {
+        return cookedRice;
     }
 
     public List<MillstoneRecipe> millstone() {

@@ -128,6 +128,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         pluginManager.registerEvents(new CropListener(this, stations), this);
         pluginManager.registerEvents(new MillstoneListener(stations), this);
         pluginManager.registerEvents(new SickleListener(stations), this);
+        pluginManager.registerEvents(new de.emrion.kaleidoscopeCookery.item.DoughListener(this), this);
         seats = new Seats(this);
         pluginManager.registerEvents(seats, this);
         pluginManager.registerEvents(new TrashCanListener(stations, seats), this);

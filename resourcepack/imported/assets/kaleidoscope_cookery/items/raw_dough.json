@@ -1,8 +1,8 @@
 {
   "model": {
     "type": "minecraft:range_dispatch",
-    "property": "minecraft:custom_model_data",
-    "index": 3,
+    "property": "minecraft:use_duration",
+    "scale": 0.1,
     "entries": [
       {
         "threshold": 0.0,

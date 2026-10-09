@@ -1414,6 +1414,7 @@ items:
     model: "kaleidoscope_cookery:raw_dough"
     name: item.kaleidoscope_cookery.raw_dough
     tooltip: tooltip.kaleidoscope_cookery.raw_dough
+    use-animation: bow
   "kaleidoscope_cookery:raw_lamb_chops":
     model: "kaleidoscope_cookery:raw_lamb_chops"
     name: item.kaleidoscope_cookery.raw_lamb_chops

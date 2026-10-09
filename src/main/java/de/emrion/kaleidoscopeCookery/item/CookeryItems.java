@@ -82,7 +82,8 @@ public class CookeryItems {
                 items.put(key, new CookeryItem(key, base, prototype, Key.key(entry.getString("model", id)), entry.getString("name", id), entry.getString("tooltip"),
                         Math.clamp(entry.getInt("max-stack", 64), 1, 99), Math.max(0, entry.getInt("max-damage", 0)), food, plate,
                         entry.getBoolean("sneak-place"), loadWearable(id, entry, logger),
-                        entry.getString("repair") == null ? null : Material.matchMaterial(entry.getString("repair")), entry.getBoolean("attributes", true)));
+                        entry.getString("repair") == null ? null : Material.matchMaterial(entry.getString("repair")), entry.getBoolean("attributes", true),
+                        entry.getString("use-animation")));
             }
         }
         return new CookeryItems(items);
@@ -222,6 +223,15 @@ public class CookeryItems {
         }
         if (!item.attributes()) {
             stack.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, io.papermc.paper.datacomponent.item.ItemAttributeModifiers.itemAttributes().build());
+        }
+        if (item.useAnimation() != null && item.food() == null) {
+            // Lange "Benutzung" ohne Wirkung: der Client zeigt die Animation, das Plugin wertet das Loslassen aus
+            stack.setData(DataComponentTypes.CONSUMABLE, io.papermc.paper.datacomponent.item.Consumable.consumable()
+                    .consumeSeconds(3600)
+                    .animation(io.papermc.paper.datacomponent.item.consumable.ItemUseAnimation.valueOf(item.useAnimation().toUpperCase(java.util.Locale.ROOT)))
+                    .sound(Key.key("minecraft", "intentionally_empty"))
+                    .hasConsumeParticles(false)
+                    .build());
         }
         if (item.repair() != null) {
             stack.setData(DataComponentTypes.REPAIRABLE, io.papermc.paper.datacomponent.item.Repairable.repairable(

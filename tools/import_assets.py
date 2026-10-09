@@ -174,6 +174,8 @@ class Importer:
 
     # Predicates, die es in 26.x als echte Item-Model-Bedingung gibt (statt custom_model_data)
     CONDITION_PROPERTIES = {"kaleidoscope_cookery:using": "minecraft:using_item"}
+    # Predicates mit Vanilla-Gegenstück als Zahl: Teig ziehen = Benutzungsdauer / 10 (RawDoughItem#getTexture)
+    RANGE_PROPERTIES = {"kaleidoscope_cookery:pull": {"property": "minecraft:use_duration", "scale": 0.1}}
 
     def convert_overrides(self, base_ref: str, overrides: list) -> dict:
         """Vanilla-1.21.1-Semantik: das letzte Override, dessen Predicates alle <= Wert sind, gewinnt."""
@@ -209,6 +211,8 @@ class Importer:
             # Wert unterhalb aller Schwellen (z. B. 0 bei Schwelle 0.25)
             fallback = build(level + 1, {**values, name: float("-inf")})
             entries = [{"threshold": t, "model": build(level + 1, {**values, name: t})} for t in thresholds[name]]
+            if name in self.RANGE_PROPERTIES:
+                return {"type": "minecraft:range_dispatch", **self.RANGE_PROPERTIES[name], "entries": entries, "fallback": fallback}
             return {"type": "minecraft:range_dispatch", "property": "minecraft:custom_model_data",
                     "index": self.property_index(name), "entries": entries, "fallback": fallback}
 

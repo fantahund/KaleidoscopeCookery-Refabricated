@@ -2,14 +2,14 @@
   "model": {
     "type": "minecraft:range_dispatch",
     "property": "minecraft:custom_model_data",
-    "index": 14,
+    "index": 13,
     "entries": [
       {
         "threshold": 0.0,
         "model": {
           "type": "minecraft:range_dispatch",
           "property": "minecraft:custom_model_data",
-          "index": 13,
+          "index": 12,
           "entries": [
             {
               "threshold": 0.125,
@@ -79,7 +79,7 @@
         "model": {
           "type": "minecraft:range_dispatch",
           "property": "minecraft:custom_model_data",
-          "index": 13,
+          "index": 12,
           "entries": [
             {
               "threshold": 0.125,
@@ -149,7 +149,7 @@
         "model": {
           "type": "minecraft:range_dispatch",
           "property": "minecraft:custom_model_data",
-          "index": 13,
+          "index": 12,
           "entries": [
             {
               "threshold": 0.125,
@@ -219,7 +219,7 @@
         "model": {
           "type": "minecraft:range_dispatch",
           "property": "minecraft:custom_model_data",
-          "index": 13,
+          "index": 12,
           "entries": [
             {
               "threshold": 0.125,
@@ -289,7 +289,7 @@
         "model": {
           "type": "minecraft:range_dispatch",
           "property": "minecraft:custom_model_data",
-          "index": 13,
+          "index": 12,
           "entries": [
             {
               "threshold": 0.125,
@@ -359,7 +359,7 @@
         "model": {
           "type": "minecraft:range_dispatch",
           "property": "minecraft:custom_model_data",
-          "index": 13,
+          "index": 12,
           "entries": [
             {
               "threshold": 0.125,
@@ -429,7 +429,7 @@
         "model": {
           "type": "minecraft:range_dispatch",
           "property": "minecraft:custom_model_data",
-          "index": 13,
+          "index": 12,
           "entries": [
             {
               "threshold": 0.125,
@@ -499,7 +499,7 @@
         "model": {
           "type": "minecraft:range_dispatch",
           "property": "minecraft:custom_model_data",
-          "index": 13,
+          "index": 12,
           "entries": [
             {
               "threshold": 0.125,
@@ -568,7 +568,7 @@
     "fallback": {
       "type": "minecraft:range_dispatch",
       "property": "minecraft:custom_model_data",
-      "index": 13,
+      "index": 12,
       "entries": [
         {
           "threshold": 0.125,

@@ -289,6 +289,8 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry["armor"] = armor
                 entry["unbreakable"] = True
                 entry.pop("max-stack", None)
+            if full_id == "kaleidoscope_cookery:raw_dough":
+                entry["use-animation"] = "bow"  # RawDoughItem: gedrückt halten wie einen Bogen, dann werden es Nudeln
             if full_id in ("kaleidoscope_cookery:oil_pot", "kaleidoscope_cookery:fruit_basket"):
                 entry["max-stack"] = 1  # OilPotItem, FruitBasketItem: stacksTo(1)
             if full_id == "kaleidoscope_cookery:teapot":
@@ -462,6 +464,16 @@ def collect_recipes(tags: dict) -> dict:
                 "ingredient": ingredient(recipe["ingredient"], used_tags),
                 "time": recipe.get("duration", 1800),
                 "result": result_list({"result": recipe["result"]})[0]}
+    # RiceBowlRecipe: formlos Zutat + gekochter Reis (#c:foods/cooked_rice), beste Qualität geht aufs Ergebnis
+    rice_bowl = {}
+    for ns, base in [(b.parent.name, b) for b in RECIPE_DIRS]:
+        for file in sorted(base.glob("*.json")) if base.exists() else []:
+            recipe = read_json(file)
+            if recipe.get("type") == "kaleidoscope_cookery:rice_bowl":
+                rice_bowl[f"{ns}:{file.stem}"] = {"ingredient": ingredient(recipe["ingredient"], used_tags),
+                                                  "result": result_list({"result": recipe["result"]})[0]}
+    if rice_bowl:
+        used_tags.add("c:foods/cooked_rice")
     vanilla = collect_vanilla_recipes(used_tags)
     tag_groups = {}
     for name in sorted(used_tags):
@@ -473,11 +485,11 @@ def collect_recipes(tags: dict) -> dict:
         tag_groups[name] = values
     return {"data-version": DATA_VERSION, "tags": tag_groups, "chopping-board": chopping, "pot": pot, "flex-pot": flex_pot,
             "stockpot": stockpot, "flex-stockpot": flex_stockpot, "steamer": steamer, "teapot": teapot,
-            "millstone": millstone, "bamboo-tray": bamboo_tray, "vanilla": vanilla}
+            "millstone": millstone, "bamboo-tray": bamboo_tray, "rice-bowl": rice_bowl, "vanilla": vanilla}
 
 
 # Bei jeder inhaltlichen Aenderung der erzeugten recipes.yml erhoehen: das Plugin ersetzt dann alte Kopien (mit Backup)
-DATA_VERSION = 6
+DATA_VERSION = 7
 STOCKPOT_DEFAULT_TIME = 300
 POT_DEFAULT_TIME = 200
 POT_DEFAULT_STIR_FRY = 3

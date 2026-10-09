@@ -2,14 +2,14 @@
   "model": {
     "type": "minecraft:range_dispatch",
     "property": "minecraft:custom_model_data",
-    "index": 11,
+    "index": 10,
     "entries": [
       {
         "threshold": 0.2,
         "model": {
           "type": "minecraft:range_dispatch",
           "property": "minecraft:custom_model_data",
-          "index": 6,
+          "index": 5,
           "entries": [
             {
               "threshold": 0.25,
@@ -44,7 +44,7 @@
         "model": {
           "type": "minecraft:range_dispatch",
           "property": "minecraft:custom_model_data",
-          "index": 6,
+          "index": 5,
           "entries": [
             {
               "threshold": 0.25,
@@ -79,7 +79,7 @@
         "model": {
           "type": "minecraft:range_dispatch",
           "property": "minecraft:custom_model_data",
-          "index": 6,
+          "index": 5,
           "entries": [
             {
               "threshold": 0.25,
@@ -114,7 +114,7 @@
         "model": {
           "type": "minecraft:range_dispatch",
           "property": "minecraft:custom_model_data",
-          "index": 6,
+          "index": 5,
           "entries": [
             {
               "threshold": 0.25,
@@ -149,7 +149,7 @@
         "model": {
           "type": "minecraft:range_dispatch",
           "property": "minecraft:custom_model_data",
-          "index": 6,
+          "index": 5,
           "entries": [
             {
               "threshold": 0.25,
@@ -183,7 +183,7 @@
     "fallback": {
       "type": "minecraft:range_dispatch",
       "property": "minecraft:custom_model_data",
-      "index": 6,
+      "index": 5,
       "entries": [
         {
           "threshold": 0.25,

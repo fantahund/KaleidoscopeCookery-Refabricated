@@ -23,9 +23,11 @@ import java.util.List;
  * @param wearable Kleidung, sonst null
  * @param repair   Reparatur-Material im Amboss statt dem des Prototyps, sonst null
  * @param attributes Angriffs-Attribute des Prototyps behalten (Sichel: nein)
+ * @param useAnimation Gedrückt halten mit dieser Animation (Teig: bow), sonst null
  */
 public record CookeryItem(Key id, Material base, @Nullable Material prototype, Key model, String nameKey, @Nullable String tooltipKey, int maxStack, int maxDamage, @Nullable Food food,
-                          @Nullable Plate plate, boolean sneakToPlace, @Nullable Wearable wearable, @Nullable Material repair, boolean attributes) {
+                          @Nullable Plate plate, boolean sneakToPlace, @Nullable Wearable wearable, @Nullable Material repair, boolean attributes,
+                          @Nullable String useAnimation) {
 
     /**
      * Kleidung (Strohhut, Bauernkleidung).

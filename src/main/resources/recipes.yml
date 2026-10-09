@@ -2,7 +2,7 @@
 # Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert
 # und kann dort angepasst werden (/kc reload).
 # Zutaten: Item-ID, "#tag" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.
-data-version: 6
+data-version: 7
 tags:
   "c:bricks/normal":
     - "minecraft:brick"
@@ -2517,6 +2517,22 @@ bamboo-tray:
     ingredient: "minecraft:yellow_concrete_powder"
     time: 900
     result: "minecraft:yellow_concrete"
+rice-bowl:
+  "kaleidoscope_cookery:braised_beef_rice_bowl":
+    ingredient: "kaleidoscope_cookery:braised_beef"
+    result: "kaleidoscope_cookery:braised_beef_rice_bowl"
+  "kaleidoscope_cookery:fish_flavored_shredded_pork_rice_bowl":
+    ingredient: "kaleidoscope_cookery:fish_flavored_shredded_pork"
+    result: "kaleidoscope_cookery:fish_flavored_shredded_pork_rice_bowl"
+  "kaleidoscope_cookery:scramble_egg_with_tomatoes_rice_bowl":
+    ingredient: "kaleidoscope_cookery:scramble_egg_with_tomatoes"
+    result: "kaleidoscope_cookery:scramble_egg_with_tomatoes_rice_bowl"
+  "kaleidoscope_cookery:stir_fried_pork_with_peppers_rice_bowl":
+    ingredient: "kaleidoscope_cookery:stir_fried_pork_with_peppers"
+    result: "kaleidoscope_cookery:stir_fried_pork_with_peppers_rice_bowl"
+  "kaleidoscope_cookery:sweet_and_sour_pork_rice_bowl":
+    ingredient: "kaleidoscope_cookery:sweet_and_sour_pork"
+    result: "kaleidoscope_cookery:sweet_and_sour_pork_rice_bowl"
 vanilla:
   "kaleidoscope_cookery:apple_platter":
     type: crafting_shapeless
