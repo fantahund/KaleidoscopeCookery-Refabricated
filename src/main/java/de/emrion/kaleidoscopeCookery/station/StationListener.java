@@ -315,7 +315,7 @@ public class StationListener implements Listener {
         }
         ItemStack placedFrom = item.asOne();
         Key placedId = itemId;
-        stations.place(type, target, facing, station -> {
+        Station placed = stations.place(type, target, facing, station -> {
             if (station instanceof PlateStation plate) {
                 plate.initFrom(placedFrom, placedId);
             } else if (station instanceof TeapotStation teapot) {
@@ -326,8 +326,15 @@ public class StationListener implements Listener {
                 oilPot.initFrom(placedFrom);
             } else if (station instanceof de.emrion.kaleidoscopeCookery.station.basket.FruitBasketStation basket) {
                 basket.initFrom(placedFrom);
+            } else if (station instanceof de.emrion.kaleidoscopeCookery.station.decor.StrawBlockStation straw) {
+                straw.initAxis(face);
             }
         });
+        if (!placed.canSurvive()) {
+            // z. B. Chili-Kette ohne Halt darüber
+            stations.remove(placed);
+            return false;
+        }
         if (player.getGameMode() != GameMode.CREATIVE) {
             item.subtract();
         }
