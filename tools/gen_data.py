@@ -2,8 +2,8 @@
 """
 Erzeugt aus den Mod-Quellen die Daten des Plugins:
 
-  src/main/resources/items.yml     alle Items (Modell, Sprach-Key, Stapelgroesse, Nahrungswerte)
-  src/main/resources/recipes.yml   Rezepte aller Stationen (fuer Admins anpassbar, wird ins
+  core/src/main/resources/items.yml     alle Items (Modell, Sprach-Key, Stapelgroesse, Nahrungswerte)
+  core/src/main/resources/recipes.yml   Rezepte aller Stationen (fuer Admins anpassbar, wird ins
                                    Plugin-Verzeichnis kopiert)
   resourcepack/custom/assets/<ns>/lang/de_de.json   deutsche Namen (tools/lang/de_de_*.json)
 
@@ -21,7 +21,7 @@ COOKERY = CACHE / "cookery"
 GRILLING = CACHE / "grilling"
 IMPORTED = ROOT / "resourcepack" / "imported" / "assets"
 CUSTOM = ROOT / "resourcepack" / "custom" / "assets"
-RESOURCES = ROOT / "src" / "main" / "resources"
+RESOURCES = ROOT / "core" / "src" / "main" / "resources"
 COOKERY_JAVA = COOKERY / "src/main/java/com/github/ysbbbbbb/kaleidoscopecookery"
 
 RECIPE_DIRS = [

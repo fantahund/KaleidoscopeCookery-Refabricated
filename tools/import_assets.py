@@ -9,7 +9,7 @@ Konvertierung:
   * NeoForge-Felder entfernen (render_type, neoforge_data, ...)
   * neoforge:separate_transforms -> Item-Model-Definition mit select auf display_context
   * Item-Overrides (predicate) -> range_dispatch auf custom_model_data (Index pro Property,
-    siehe src/main/resources/generated/model_properties.yml)
+    siehe core/src/main/resources/generated/model_properties.yml)
   * Fuer jedes Modell eine Item-Model-Definition unter assets/<ns>/items/
   * sounds.json pro Namespace zusammenfuehren
 
@@ -26,7 +26,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "resourcepack" / "imported"
-PROPERTIES_OUT = ROOT / "src" / "main" / "resources" / "generated" / "model_properties.yml"
+PROPERTIES_OUT = ROOT / "core" / "src" / "main" / "resources" / "generated" / "model_properties.yml"
 
 SOURCES = {
     "cookery": ("https://github.com/KaleidoscopeMods/KaleidoscopeCookery.git", "1.21.1-neoforge",

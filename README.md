@@ -17,7 +17,7 @@ Phase 1: Projekt, Resourcepack-Pipeline, Station-Framework, Schneidebrett, Öl-D
 
 1. **CubesideUtils** muss installiert sein, **CubesideNMSUtils** ist optional.
 2. `mvn package` (braucht `python3`, lädt beim ersten Mal den 26.3-Client für die Pack-Prüfung) und
-   `target/KaleidoscopeCookery-*.jar` nach `plugins/` kopieren.
+   `core/target/KaleidoscopeCookery-*.jar` nach `plugins/` kopieren.
 3. Server starten. Das Plugin legt `config.yml`, `recipes.yml` und das Pack-Zip an und startet einen kleinen Webserver
    (Standard: Port 8163), über den die Spieler das Pack laden. Für einen öffentlichen Server `resource-pack.public-host`
    auf die erreichbare Adresse setzen oder `resource-pack.external-url` nutzen.
