@@ -81,7 +81,8 @@ public class CookeryItems {
                 Material prototype = entry.getString("prototype") == null ? null : Material.matchMaterial(entry.getString("prototype"));
                 items.put(key, new CookeryItem(key, base, prototype, Key.key(entry.getString("model", id)), entry.getString("name", id), entry.getString("tooltip"),
                         Math.clamp(entry.getInt("max-stack", 64), 1, 99), Math.max(0, entry.getInt("max-damage", 0)), food, plate,
-                        entry.getBoolean("sneak-place"), loadWearable(id, entry, logger)));
+                        entry.getBoolean("sneak-place"), loadWearable(id, entry, logger),
+                        entry.getString("repair") == null ? null : Material.matchMaterial(entry.getString("repair")), entry.getBoolean("attributes", true)));
             }
         }
         return new CookeryItems(items);
@@ -218,6 +219,14 @@ public class CookeryItems {
         stack.setData(DataComponentTypes.ITEM_MODEL, item.model());
         if (item.maxDamage() > 0) {
             stack.setData(DataComponentTypes.MAX_DAMAGE, item.maxDamage());
+        }
+        if (!item.attributes()) {
+            stack.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, io.papermc.paper.datacomponent.item.ItemAttributeModifiers.itemAttributes().build());
+        }
+        if (item.repair() != null) {
+            stack.setData(DataComponentTypes.REPAIRABLE, io.papermc.paper.datacomponent.item.Repairable.repairable(
+                    io.papermc.paper.registry.set.RegistrySet.keySet(io.papermc.paper.registry.RegistryKey.ITEM,
+                            io.papermc.paper.registry.TypedKey.create(io.papermc.paper.registry.RegistryKey.ITEM, item.repair().key()))));
         }
         stack.setData(DataComponentTypes.ITEM_NAME, Text.noItalic(Lang.raw(item.nameKey())));
         if (item.tooltipKey() != null) {

@@ -1042,6 +1042,7 @@ items:
     model: "kaleidoscope_cookery:fruit_basket"
     name: block.kaleidoscope_cookery.fruit_basket
     tooltip: tooltip.kaleidoscope_cookery.fruit_basket
+    max-stack: 1
   "kaleidoscope_cookery:gold_kitchen_knife":
     model: "kaleidoscope_cookery:gold_kitchen_knife"
     name: item.kaleidoscope_cookery.gold_kitchen_knife
@@ -1576,6 +1577,11 @@ items:
     model: "kaleidoscope_cookery:sickle"
     name: item.kaleidoscope_cookery.sickle
     tooltip: tooltip.kaleidoscope_cookery.sickle
+    base: STRUCTURE_BLOCK
+    prototype: STONE_SWORD
+    max-damage: 2000
+    repair: FLINT
+    attributes: false
   "kaleidoscope_cookery:slime_ball_meal":
     model: "kaleidoscope_cookery:slime_ball_meal"
     name: block.kaleidoscope_cookery.slime_ball_meal

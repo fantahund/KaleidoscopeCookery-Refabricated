@@ -24,6 +24,8 @@ public final class Keys {
     public static final NamespacedKey STATION_OWNER = key("station_owner");
     /** Display einer Station: Name des Teils (z. B. body, ingredient) */
     public static final NamespacedKey STATION_PART = key("station_part");
+    /** Sitz-Entity (Mülleimer, später Stühle) */
+    public static final NamespacedKey SEAT = key("seat");
 
     private Keys() {
     }

@@ -324,6 +324,8 @@ public class StationListener implements Listener {
                 cup.initFrom(placedId);
             } else if (station instanceof OilPotStation oilPot) {
                 oilPot.initFrom(placedFrom);
+            } else if (station instanceof de.emrion.kaleidoscopeCookery.station.basket.FruitBasketStation basket) {
+                basket.initFrom(placedFrom);
             }
         });
         if (player.getGameMode() != GameMode.CREATIVE) {
@@ -384,7 +386,7 @@ public class StationListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (checking) {
+        if (checking || event instanceof de.emrion.kaleidoscopeCookery.util.BreakPermissionCheck) {
             return;
         }
         Station station = stations.at(event.getBlock());

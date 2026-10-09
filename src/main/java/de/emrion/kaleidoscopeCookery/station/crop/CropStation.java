@@ -263,6 +263,24 @@ public class CropStation extends Station {
         return true;
     }
 
+    /**
+     * Ernte mit der Sichel (SickleItem#harvest): reife Pflanze abbauen und neu anfangen.
+     *
+     * @return true, wenn geerntet wurde
+     */
+    public boolean sickleHarvest() {
+        if (!isMature()) {
+            return false;
+        }
+        for (ItemStack drop : loot(0)) {
+            world().dropItemNaturally(center(), drop);
+        }
+        world().playSound(center(), Sound.BLOCK_CROP_BREAK, SoundCategory.BLOCKS, 1, 1);
+        world().spawnParticle(Particle.BLOCK, center(), 20, 0.25, 0.25, 0.25, 0, Material.WHEAT.createBlockData());
+        grow(0);
+        return true;
+    }
+
     private boolean bonemeal(Player player, ItemStack held) {
         if (isMature()) {
             return false;

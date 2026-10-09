@@ -21,9 +21,11 @@ import java.util.List;
  * @param plate    Gericht, das man als Teller hinstellen und bissweise essen kann, sonst null
  * @param sneakToPlace nur beim Schleichen platzieren (Teetassen, Teekanne – sonst trinken bzw. benutzen)
  * @param wearable Kleidung, sonst null
+ * @param repair   Reparatur-Material im Amboss statt dem des Prototyps, sonst null
+ * @param attributes Angriffs-Attribute des Prototyps behalten (Sichel: nein)
  */
 public record CookeryItem(Key id, Material base, @Nullable Material prototype, Key model, String nameKey, @Nullable String tooltipKey, int maxStack, int maxDamage, @Nullable Food food,
-                          @Nullable Plate plate, boolean sneakToPlace, @Nullable Wearable wearable) {
+                          @Nullable Plate plate, boolean sneakToPlace, @Nullable Wearable wearable, @Nullable Material repair, boolean attributes) {
 
     /**
      * Kleidung (Strohhut, Bauernkleidung).

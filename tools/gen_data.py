@@ -217,8 +217,12 @@ BASE_MATERIALS = {
     "kaleidoscope_cookery:gold_kitchen_knife": "JIGSAW",
     "kaleidoscope_cookery:diamond_kitchen_knife": "JIGSAW",
     "kaleidoscope_cookery:netherite_kitchen_knife": "JIGSAW",
+    # Sichel: Konstruktionsblock (ebenfalls nicht erhältlich und ohne OP nicht platzierbar), eigene Verzauberung "Schwung"
+    "kaleidoscope_cookery:sickle": "STRUCTURE_BLOCK",
 }
-MAX_DAMAGE = {"kaleidoscope_cookery:stockpot_lid": 120}
+MAX_DAMAGE = {"kaleidoscope_cookery:stockpot_lid": 120, "kaleidoscope_cookery:sickle": 2000}
+# SickleItem: SwordItem ohne Angriffs-Attribute, Reparatur mit Feuerstein (SICKLE_TIER)
+EXTRA_ITEM_DATA = {"kaleidoscope_cookery:sickle": {"repair": "FLINT", "attributes": False}}
 # Kleidung (ArmorMaterial FARMER im Mod): Basis Lederrüstung (Verzauberungen), Rüstungswerte wie im Mod, ohne Haltbarkeit.
 # Strohhüte ohne Equipment-Asset: der Client zeigt dann das 3D-Itemmodell auf dem Kopf.
 WEARABLES = {
@@ -233,6 +237,7 @@ PROTOTYPES = {
     "kaleidoscope_cookery:gold_kitchen_knife": "GOLDEN_SWORD",
     "kaleidoscope_cookery:diamond_kitchen_knife": "DIAMOND_SWORD",
     "kaleidoscope_cookery:netherite_kitchen_knife": "NETHERITE_SWORD",
+    "kaleidoscope_cookery:sickle": "STONE_SWORD",
 }
 
 
@@ -271,6 +276,7 @@ def collect_items(foods: dict, bites: dict) -> dict:
                     entry["prototype"] = PROTOTYPES[full_id]
                 if full_id in MAX_DAMAGE:
                     entry["max-damage"] = MAX_DAMAGE[full_id]
+                entry.update(EXTRA_ITEM_DATA.get(full_id, {}))
             elif full_id in stack_sizes:
                 entry["max-stack"] = stack_sizes[full_id]
             if ns == "kaleidoscope_cookery" and item_id in foods:
@@ -283,8 +289,8 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry["armor"] = armor
                 entry["unbreakable"] = True
                 entry.pop("max-stack", None)
-            if full_id == "kaleidoscope_cookery:oil_pot":
-                entry["max-stack"] = 1  # OilPotItem: stacksTo(1)
+            if full_id in ("kaleidoscope_cookery:oil_pot", "kaleidoscope_cookery:fruit_basket"):
+                entry["max-stack"] = 1  # OilPotItem, FruitBasketItem: stacksTo(1)
             if full_id == "kaleidoscope_cookery:teapot":
                 entry["sneak-place"] = True  # TeapotItem#useOn: nur beim Schleichen platzieren
                 entry["max-stack"] = 1

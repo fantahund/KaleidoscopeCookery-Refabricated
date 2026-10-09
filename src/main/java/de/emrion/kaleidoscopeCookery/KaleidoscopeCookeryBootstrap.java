@@ -1,6 +1,7 @@
 package de.emrion.kaleidoscopeCookery;
 
 import de.emrion.kaleidoscopeCookery.item.QuickKnifeListener;
+import de.emrion.kaleidoscopeCookery.item.SickleListener;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -31,6 +32,7 @@ import java.util.List;
 public class KaleidoscopeCookeryBootstrap implements PluginBootstrap {
 
     public static final TypedKey<Enchantment> QUICK_KNIFE = TypedKey.create(RegistryKey.ENCHANTMENT, QuickKnifeListener.KEY);
+    public static final TypedKey<Enchantment> SWEEP = TypedKey.create(RegistryKey.ENCHANTMENT, SickleListener.SWEEP);
 
     @Override
     public void bootstrap(BootstrapContext context) {
@@ -47,13 +49,26 @@ public class KaleidoscopeCookeryBootstrap implements PluginBootstrap {
                         .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(21, 11))
                         .anvilCost(2)
                         .activeSlots(EquipmentSlotGroup.MAINHAND))));
+        // Sichel (Konstruktionsblock): "Schwung" vergrößert den Ernte-Bereich (data/kaleidoscope_cookery/enchantment/sweep.json)
+        List<TypedKey<ItemType>> sickleBases = List.of(ItemTypeKeys.STRUCTURE_BLOCK);
+        context.getLifecycleManager().registerEventHandler(RegistryEvents.ENCHANTMENT.compose().newHandler(event ->
+                event.registry().register(SWEEP, builder -> builder
+                        .description(Component.translatable("enchantment.kaleidoscope_cookery.sweep"))
+                        .supportedItems(RegistrySet.keySet(RegistryKey.ITEM, sickleBases))
+                        .primaryItems(RegistrySet.keySet(RegistryKey.ITEM, sickleBases))
+                        .weight(5)
+                        .maxLevel(3)
+                        .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 11))
+                        .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(21, 11))
+                        .anvilCost(2)
+                        .activeSlots(EquipmentSlotGroup.MAINHAND))));
         // Wie im Mod stehen die Küchenmesser in #minecraft:swords: alle Schwert-Verzauberungen gelten auch für sie
         context.getLifecycleManager().registerEventHandler(LifecycleEvents.TAGS.preFlatten(RegistryKey.ITEM), event ->
-                event.registrar().addToTag(ItemTypeTagKeys.SWORDS, List.of(TagEntry.valueEntry(ItemTypeKeys.JIGSAW))));
+                event.registrar().addToTag(ItemTypeTagKeys.SWORDS, List.of(TagEntry.valueEntry(ItemTypeKeys.JIGSAW), TagEntry.valueEntry(ItemTypeKeys.STRUCTURE_BLOCK))));
         // Wie im Mod: am Zaubertisch erhältlich, kein Schatz
         context.getLifecycleManager().registerEventHandler(LifecycleEvents.TAGS.postFlatten(RegistryKey.ENCHANTMENT), event -> {
-            event.registrar().addToTag(EnchantmentTagKeys.IN_ENCHANTING_TABLE, List.of(QUICK_KNIFE));
-            event.registrar().addToTag(EnchantmentTagKeys.NON_TREASURE, List.of(QUICK_KNIFE));
+            event.registrar().addToTag(EnchantmentTagKeys.IN_ENCHANTING_TABLE, List.of(QUICK_KNIFE, SWEEP));
+            event.registrar().addToTag(EnchantmentTagKeys.NON_TREASURE, List.of(QUICK_KNIFE, SWEEP));
         });
     }
 }

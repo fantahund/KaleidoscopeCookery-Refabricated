@@ -20,6 +20,12 @@ import de.emrion.kaleidoscopeCookery.station.crop.CropKind;
 import de.emrion.kaleidoscopeCookery.station.crop.CropListener;
 import de.emrion.kaleidoscopeCookery.station.bambootray.BambooTrayStation;
 import de.emrion.kaleidoscopeCookery.station.millstone.MillstoneListener;
+import de.emrion.kaleidoscopeCookery.item.SickleListener;
+import de.emrion.kaleidoscopeCookery.station.basket.FruitBasketStation;
+import de.emrion.kaleidoscopeCookery.station.racks.KitchenwareRacksStation;
+import de.emrion.kaleidoscopeCookery.station.seat.Seats;
+import de.emrion.kaleidoscopeCookery.station.trash.TrashCanListener;
+import de.emrion.kaleidoscopeCookery.station.trash.TrashCanStation;
 import de.emrion.kaleidoscopeCookery.station.shawarma.ShawarmaSpitStation;
 import de.emrion.kaleidoscopeCookery.station.millstone.MillstoneStation;
 import de.emrion.kaleidoscopeCookery.station.crop.CropStation;
@@ -55,6 +61,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     private Recipes recipes;
     private VanillaRecipes vanillaRecipes;
     private StationManager stations;
+    private Seats seats;
     private FoodService foodService;
     private EffectManager effects;
     private VanillaFoodAdjuster vanillaFood;
@@ -99,6 +106,9 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         stations.register(MillstoneStation.type());
         stations.register(BambooTrayStation.type());
         stations.register(ShawarmaSpitStation.type());
+        stations.register(KitchenwareRacksStation.type());
+        stations.register(FruitBasketStation.type());
+        stations.register(TrashCanStation.type());
         for (CropKind kind : CropKind.values()) {
             stations.register(CropStation.type(kind));
         }
@@ -117,6 +127,10 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         pluginManager.registerEvents(new TeapotItems(this), this);
         pluginManager.registerEvents(new CropListener(this, stations), this);
         pluginManager.registerEvents(new MillstoneListener(stations), this);
+        pluginManager.registerEvents(new SickleListener(stations), this);
+        seats = new Seats(this);
+        pluginManager.registerEvents(seats, this);
+        pluginManager.registerEvents(new TrashCanListener(stations, seats), this);
 
         stations.start();
         foodService.start();
@@ -129,6 +143,9 @@ public final class KaleidoscopeCookery extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (seats != null) {
+            seats.removeAll();
+        }
         if (stations != null) {
             stations.stop();
         }

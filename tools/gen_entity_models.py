@@ -1,32 +1,30 @@
 #!/usr/bin/env python3
 """
-Baut das Mühlstein-Modell aus dem Java-Entity-Modell des Mods (MillstoneModel#createBodyLayer)
-als drei Item-Modelle nach: Sockel (fest), Rad mit Deichsel (dreht sich um die Blockmitte)
-und Walze (rollt zusätzlich um ihre eigene Achse).
+Baut Java-Entity-Modelle des Mods (createBodyLayer) als Item-Modelle nach:
+- Mühlstein (MillstoneModel): Sockel (fest), Rad mit Deichsel (dreht sich um die Blockmitte)
+  und Walze (rollt zusätzlich um ihre eigene Achse)
+- Mülleimer (TrashCanModel): ein Modell in Ruhestellung
 
-Koordinaten: Das Mod-Renderer legt das Modell mit translate(0.5, 1.5, 0.5) und ZN(180) in den Block
+Koordinaten: Die Mod-Renderer legen die Modelle mit translate(0.5, 1.5, 0.5) und ZN(180) in den Block
 (Ausrichtung Norden). Ein Modellpunkt (x, y, z) in Pixeln liegt damit bei (8 - x, 24 - y, 8 + z)
-relativ zur Blockecke. Die Teile sind 3 Blöcke groß, Blockmodelle erlauben aber nur -16..32 –
+relativ zur Blockecke. Die Mühlstein-Teile sind 3 Blöcke groß, Blockmodelle erlauben aber nur -16..32 –
 deshalb werden sie um den Ankerpunkt auf 1/4 verkleinert und im Display mit Faktor 4 skaliert.
 
-Ausgabe nach resourcepack/custom/assets/kaleidoscope_cookery/{models,items}/block/millstone_*.json
+Ausgabe nach resourcepack/custom/assets/kaleidoscope_cookery/{models,items}/block/*.json
 """
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "resourcepack" / "custom" / "assets" / "kaleidoscope_cookery"
-SCALE = 4
-TEXTURE_SIZE = 128
-TEXTURE = "kaleidoscope_cookery:block/millstone"
 
 
 def cube(tex, box, size, grow=0.0):
     return {"tex": tex, "box": box, "size": size, "grow": grow}
 
 
-# Teile wie in MillstoneModel: (Name, Pivot relativ zum Elternteil, Rotation in Grad (x, y, z), Würfel, Kinder)
-MODEL = [
+# Teile wie in den Mod-Modellen: (Name, Pivot relativ zum Elternteil, Rotation in Grad (x, y, z), Würfel, Kinder)
+MILLSTONE = [
     ("base", (8, 24, -8), (0, 0, 0), [
         cube((6, 8), (-13, -15, -10), (2, 3, 5)),
         cube((5, 8), (-5, -15, -10), (2, 3, 5)),
@@ -49,18 +47,34 @@ MODEL = [
     ]),
 ]
 
+TRASH_CAN = [
+    ("root", (0, 24, 0), (0, 0, 0), [], [
+        ("bone", (0, -6, 0), (0, 0, 0), [cube((16, 40), (-6, -6, -6), (12, 12, 12))], []),
+        ("bone2", (0, -14.75, 0), (0, 0, 0), [cube((8, 0), (-7, -0.25, -7), (14, 3, 14))], [
+            ("cube_r1", (0, -1.75, 0), (0, -90, 0), [
+                cube((6, 26), (-1, -0.5, -3), (2, 2, 0)),
+                cube((0, 20), (-1, -0.5, -3), (2, 0, 6)),
+                cube((6, 26), (-1, -0.5, 3), (2, 2, 0)),
+            ], []),
+        ]),
+        ("eye", (0, -8.5, 0), (0, 0, 0), [cube((24, 22), (-5, -1.5, -5), (10, 3, 10))], [
+            ("bone3", (0, 1.5, -0.1), (0, 0, 0), [cube((34, 36), (-5, -3, -5), (10, 3, 0))], []),
+        ]),
+    ]),
+]
+
 
 def to_world(point):
     x, y, z = point
     return (8 - x, 24 - y, 8 + z)
 
 
-def uv(u0, v0, u1, v1):
-    factor = 16 / TEXTURE_SIZE
+def uv(u0, v0, u1, v1, texture_size):
+    factor = 16 / texture_size
     return [round(u0 * factor, 4), round(v0 * factor, 4), round(u1 * factor, 4), round(v1 * factor, 4)]
 
 
-def faces(u, v, w, h, d):
+def faces(u, v, w, h, d, texture_size):
     """
     Box-UV von ModelPart.Cube auf Blockmodell-Flächen. Durch ZN(180) liegt die Entity-Westseite (minX)
     im Osten und die Entity-Unterseite (minY) oben.
@@ -68,14 +82,22 @@ def faces(u, v, w, h, d):
     f4, f5, f6, f7, f8, f9 = u, u + d, u + d + w, u + d + 2 * w, u + 2 * d + w, u + 2 * d + 2 * w
     f10, f11, f12 = v, v + d, v + d + h
     tex = "#texture"
-    return {
-        "north": {"uv": uv(f5, f11, f6, f12), "texture": tex},
-        "south": {"uv": uv(f8, f11, f9, f12), "texture": tex},
-        "east": {"uv": uv(f4, f11, f5, f12), "texture": tex},
-        "west": {"uv": uv(f6, f11, f8, f12), "texture": tex},
-        "up": {"uv": uv(f6, f11, f5, f10), "texture": tex},
-        "down": {"uv": uv(f7, f10, f6, f11), "texture": tex},
+    result = {
+        "north": {"uv": uv(f5, f11, f6, f12, texture_size), "texture": tex},
+        "south": {"uv": uv(f8, f11, f9, f12, texture_size), "texture": tex},
+        "east": {"uv": uv(f4, f11, f5, f12, texture_size), "texture": tex},
+        "west": {"uv": uv(f6, f11, f8, f12, texture_size), "texture": tex},
+        "up": {"uv": uv(f6, f11, f5, f10, texture_size), "texture": tex},
+        "down": {"uv": uv(f7, f10, f6, f11, texture_size), "texture": tex},
     }
+    # Flache Würfel (Breite, Höhe oder Tiefe 0): nur die beiden großen Flächen
+    if d == 0:
+        result = {k: result[k] for k in ("north", "south")}
+    elif h == 0:
+        result = {k: result[k] for k in ("up", "down")}
+    elif w == 0:
+        result = {k: result[k] for k in ("east", "west")}
+    return result
 
 
 def collect(parts, offset, path, out):
@@ -87,9 +109,9 @@ def collect(parts, offset, path, out):
         collect(children, absolute, path + [name], out)
 
 
-def element(pivot, rotation, c, anchor):
+def element(pivot, rotation, c, anchor, scale, texture_size):
     def scaled(point):
-        return [round(8 + (a - b) / SCALE, 4) for a, b in zip(point, anchor)]
+        return [round(8 + (a - b) / scale, 4) for a, b in zip(point, anchor)]
 
     bx, by, bz = c["box"]
     w, h, d = c["size"]
@@ -101,7 +123,7 @@ def element(pivot, rotation, c, anchor):
     result = {
         "from": scaled([min(a[i], b[i]) for i in range(3)]),
         "to": scaled([max(a[i], b[i]) for i in range(3)]),
-        "faces": faces(c["tex"][0], c["tex"][1], w, h, d),
+        "faces": faces(c["tex"][0], c["tex"][1], w, h, d, texture_size),
     }
     rx, ry, rz = rotation
     if rx or ry or rz:
@@ -110,8 +132,12 @@ def element(pivot, rotation, c, anchor):
     return result
 
 
-def write_model(name, elements):
-    model = {"textures": {"texture": TEXTURE, "particle": TEXTURE}, "elements": elements}
+def write_model(name, elements, texture):
+    for e in elements:
+        for value in e["from"] + e["to"]:
+            if not -16 <= value <= 32:
+                raise SystemExit(f"{name}: Koordinate {value} außerhalb -16..32")
+    model = {"textures": {"texture": texture, "particle": texture}, "elements": elements}
     (OUT / "models" / "block").mkdir(parents=True, exist_ok=True)
     (OUT / "items" / "block").mkdir(parents=True, exist_ok=True)
     (OUT / "models" / "block" / f"{name}.json").write_text(json.dumps(model, indent=2) + "\n", encoding="utf-8")
@@ -125,24 +151,28 @@ ROLL_CENTER = to_world((0, 3, -8))
 
 
 def main():
+    # Mühlstein: drei Teile, auf 1/4 verkleinert
+    texture = "kaleidoscope_cookery:block/millstone"
     cubes = []
-    collect(MODEL, (0, 0, 0), [], cubes)
+    collect(MILLSTONE, (0, 0, 0), [], cubes)
     groups = {"millstone_base": [], "millstone_wheel": [], "millstone_roll": []}
     for path, pivot, rotation, c in cubes:
         if path[0] == "base":
-            groups["millstone_base"].append(element(pivot, rotation, c, BLOCK_CENTER))
+            groups["millstone_base"].append(element(pivot, rotation, c, BLOCK_CENTER, 4, 128))
         elif "roll" in path:
-            groups["millstone_roll"].append(element(pivot, rotation, c, ROLL_CENTER))
+            groups["millstone_roll"].append(element(pivot, rotation, c, ROLL_CENTER, 4, 128))
         else:
-            groups["millstone_wheel"].append(element(pivot, rotation, c, BLOCK_CENTER))
+            groups["millstone_wheel"].append(element(pivot, rotation, c, BLOCK_CENTER, 4, 128))
     for name, elements in groups.items():
-        for e in elements:
-            for value in e["from"] + e["to"]:
-                if not -16 <= value <= 32:
-                    raise SystemExit(f"{name}: Koordinate {value} außerhalb -16..32")
-        write_model(name, elements)
+        write_model(name, elements, texture)
         print(f"{name}: {len(elements)} Elemente")
-    print(f"Walzenmitte (Welt-Pixel, Norden): {ROLL_CENTER}")
+
+    # Mülleimer: ein Modell in Originalgröße
+    cubes = []
+    collect(TRASH_CAN, (0, 0, 0), [], cubes)
+    elements = [element(pivot, rotation, c, BLOCK_CENTER, 1, 64) for path, pivot, rotation, c in cubes]
+    write_model("trash_can_model", elements, "kaleidoscope_cookery:block/trash_can")
+    print(f"trash_can_model: {len(elements)} Elemente")
 
 
 if __name__ == "__main__":
