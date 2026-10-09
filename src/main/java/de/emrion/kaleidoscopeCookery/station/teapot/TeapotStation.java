@@ -40,7 +40,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public class TeapotStation extends Station {
 
     public static final Key ITEM = Key.key("kaleidoscope_cookery", "teapot");
-    private static final Key MODEL = Key.key("kaleidoscope_cookery", "block/teapot");
+    /** Das Blockmodell ist im Mod leer (Kanne per Code gezeichnet) – das 3D-Item-Modell zeigt dieselbe Kanne */
+    private static final Key MODEL = Key.key("kaleidoscope_cookery", "teapot_3d");
+    /** TeapotRecipe#OUTPUT_COUNT: jede Kanne ergibt 12 Tassen */
+    private static final int OUTPUT_COUNT = 12;
     private static final Key MYSTERY_TEA = Key.key("kaleidoscope_cookery", "mystery_tea");
 
     public static final int PUT_INGREDIENT = 0;
@@ -146,7 +149,7 @@ public class TeapotStation extends Station {
                 return;
             }
             TeapotRecipe recipe = plugin().getRecipes().findTeapot(input, fluid);
-            ItemStack created = recipe == null ? null : recipe.result().create(items());
+            ItemStack created = recipe == null ? null : items().create(recipe.result().item(), OUTPUT_COUNT);
             if (created != null) {
                 result = created;
                 currentTick = recipe.time();

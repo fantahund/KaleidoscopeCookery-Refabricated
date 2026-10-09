@@ -409,7 +409,6 @@ public class EffectManager implements Listener {
             return;
         }
         player.setVelocity(player.getVelocity().add(new Vector(0, 0.75, 0)));
-        player.setFallDistance(0);
         player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 6, 0.2, 0.05, 0.2, 0.01);
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_LLAMA_SPIT, SoundCategory.PLAYERS, 0.8f, 0.6f);
     }
