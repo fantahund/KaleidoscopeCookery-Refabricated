@@ -84,7 +84,14 @@ public final class ItemIcons {
             return null;
         }
         Key id = CookeryItems.idOf(stack);
-        return BIG_ICONS.get(id != null ? id : stack.getType().key());
+        Component icon = BIG_ICONS.get(id != null ? id : stack.getType().key());
+        if (icon == null) {
+            // Eigene Items mit Vanilla-Aussehen (Kochbuch = Buch): Bild des Modells
+            @SuppressWarnings("UnstableApiUsage")
+            Key model = stack.getData(io.papermc.paper.datacomponent.DataComponentTypes.ITEM_MODEL);
+            icon = model == null ? null : BIG_ICONS.get(model);
+        }
+        return icon;
     }
 
     /**

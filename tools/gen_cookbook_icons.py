@@ -43,6 +43,9 @@ BLANK_SLOT_CHAR = 0xE216
 BLANK_DIAGRAM_CHAR = 0xE217
 # Stations-Bilder im Rezept-Diagramm (Reihenfolge = CROPS)
 DIAGRAM_CHAR = 0xE220
+# Ziffern 0-9 für Mengen im Slot und 6/12/18 Pixel zurück
+DIGIT_CHAR = 0xE240
+DIGIT_BACK_CHAR = 0xE250
 
 
 def main():
@@ -87,6 +90,17 @@ def main():
     providers.append({"type": "space", "advances": {chr(BACK_CHAR): -18, chr(GAP_CHAR): 1, chr(SPACE_CHAR): 4,
                                                     chr(BLANK_ARROW_CHAR): 17, chr(BLANK_SLOT_CHAR): 19,
                                                     chr(BLANK_DIAGRAM_CHAR): 33}})
+    # Mengen in den Slots wie im Inventar: Ziffern aus der Vanilla-Schrift (minecraft:font/ascii.png, nicht kopiert),
+    # unten rechts im Slot; dazu Rückwärts-Abstände für 1 bis 3 Ziffern (je 6 Pixel)
+    grid = []
+    for row in range(16):
+        line = ""
+        for column in range(16):
+            code = row * 16 + column
+            line += chr(DIGIT_CHAR + code - 0x30) if 0x30 <= code <= 0x39 else "\u0000"
+        grid.append(line)
+    providers.append({"type": "bitmap", "file": "minecraft:font/ascii.png", "height": 8, "ascent": -2, "chars": grid})
+    providers.append({"type": "space", "advances": {chr(DIGIT_BACK_CHAR + i): -6 * (i + 1) for i in range(3)}})
     (OUT / "font").mkdir(parents=True, exist_ok=True)
     (OUT / "font" / "cookbook.json").write_text(json.dumps({"providers": providers}, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
 

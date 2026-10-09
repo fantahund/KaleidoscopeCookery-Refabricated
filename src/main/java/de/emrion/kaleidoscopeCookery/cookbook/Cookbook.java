@@ -39,7 +39,7 @@ public class Cookbook {
     private static final int PER_PAGE = 24;
     private static final int COLUMNS = 2;
     /** Breit genug für lange Gerichtsnamen mit Bild */
-    private static final int BUTTON_WIDTH = 200;
+    private static final int BUTTON_WIDTH = 240;
     private static final ClickCallback.Options CALLBACK = ClickCallback.Options.builder().uses(ClickCallback.UNLIMITED_USES).build();
 
     private final KaleidoscopeCookery plugin;
@@ -48,6 +48,10 @@ public class Cookbook {
 
     public Cookbook(KaleidoscopeCookery plugin) {
         this.plugin = plugin;
+    }
+
+    private static Cookbook instance() {
+        return KaleidoscopeCookery.getInstance().getCookbook();
     }
 
     /**
@@ -179,14 +183,13 @@ public class Cookbook {
             body = new ArrayList<>(body);
             body.add(DialogBody.plainMessage(Lang.get("cookbook.no_results").color(NamedTextColor.GRAY)));
         }
-        if (current > 0) {
-            buttons.add(button(Lang.get("cookbook.previous"), null, (response, audience) -> show(audience, pageOf.apply(current - 1))));
-        }
-        if (current < pages - 1) {
-            buttons.add(button(Lang.get("cookbook.next"), null, (response, audience) -> show(audience, pageOf.apply(current + 1))));
+        List<ActionButton> paging = new ArrayList<>();
+        if (pages > 1) {
+            paging.add(current > 0 ? button(Lang.get("cookbook.previous"), null, (response, audience) -> show(audience, pageOf.apply(current - 1))) : null);
+            paging.add(current < pages - 1 ? button(Lang.get("cookbook.next"), null, (response, audience) -> show(audience, pageOf.apply(current + 1))) : null);
         }
         Component fullTitle = pages > 1 ? title.append(Component.text(" ")).append(Lang.get("cookbook.page", current + 1, pages)) : title;
-        return dialog(fullTitle, body, List.of(), buttons, back);
+        return dialog(fullTitle, body, List.of(), List.of(), buttons, paging, back, self);
     }
 
     private Dialog entryPage(CookbookEntry entry, Supplier<Dialog> back) {
@@ -214,14 +217,15 @@ public class Cookbook {
         body.add(DialogBody.plainMessage(info, 300));
 
         List<ActionButton> buttons = new ArrayList<>();
+        List<ActionButton> toggle = new ArrayList<>();
         if (variants.size() > 1) {
             int min = variants.stream().mapToInt(other -> other.main().amount()).min().orElse(1);
             int max = variants.stream().mapToInt(other -> other.main().amount()).max().orElse(1);
             body.add(DialogBody.plainMessage(Lang.get(min != max ? "cookbook.variants.amounts" : "cookbook.variants.ingredients", variants.size(), min, max)
                     .color(NamedTextColor.YELLOW), 300));
-            buttons.add(button(Lang.get("cookbook.variant.previous"), null, (response, audience) ->
+            toggle.add(button(Lang.get("cookbook.variant.previous"), null, (response, audience) ->
                     show(audience, entryPage(variants, (variant - 1 + variants.size()) % variants.size(), back))));
-            buttons.add(button(Lang.get("cookbook.variant.next"), null, (response, audience) ->
+            toggle.add(button(Lang.get("cookbook.variant.next"), null, (response, audience) ->
                     show(audience, entryPage(variants, (variant + 1) % variants.size(), back))));
         }
         Set<Key> asked = new LinkedHashSet<>();
@@ -240,9 +244,8 @@ public class Cookbook {
             buttons.add(button(ItemIcons.withIcon(stack(result, 1), Lang.get("cookbook.used_in", name(result))), null,
                     (response, audience) -> show(audience, usesPage(result, self))));
         }
-        buttons.add(button(Lang.get("cookbook.overview"), null, (response, audience) -> show(audience, mainPage())));
         Component title = variants.size() > 1 ? name(result).append(Component.text(" ")).append(Lang.get("cookbook.page", variant + 1, variants.size())) : name(result);
-        return dialog(title, body, List.of(), buttons, back);
+        return dialog(title, body, List.of(), toggle, buttons, List.of(), back, self);
     }
 
     private static final Key FONT = Key.key("kaleidoscope", "cookbook");
@@ -276,11 +279,10 @@ public class Cookbook {
             }
             columns = 3;
         } else {
-            int total = entry.inputs().stream().mapToInt(CookbookEntry.Input::amount).sum();
+            // Eine Zutat = ein Slot, die Menge steht wie im Inventar unten rechts
             for (CookbookEntry.Input input : entry.inputs()) {
-                ItemStack stack = stack(input.ingredient().items().iterator().next(), 1);
-                for (int i = 0; i < (total <= MAX_INPUT_SLOTS ? input.amount() : 1) && cells.size() < MAX_INPUT_SLOTS; i++) {
-                    cells.add(stack);
+                if (cells.size() < MAX_INPUT_SLOTS) {
+                    cells.add(stack(input.ingredient().items().iterator().next(), input.amount()));
                 }
             }
             columns = Math.clamp(cells.size(), 1, 3);
@@ -322,14 +324,8 @@ public class Cookbook {
      */
     private static @Nullable Component amounts(CookbookEntry entry) {
         List<Component> parts = new ArrayList<>();
-        int total = entry.inputs().stream().mapToInt(CookbookEntry.Input::amount).sum();
-        if (entry.grid() == null && total > MAX_INPUT_SLOTS) {
-            for (CookbookEntry.Input input : entry.inputs()) {
-                parts.add(name(input.ingredient().items().iterator().next()).append(Component.text(" ×" + input.amount())));
-            }
-        }
         for (CookbookEntry.Output output : entry.outputs()) {
-            if (output.amount() > 1 || output.chance() < 1 || entry.outputs().size() > 1) {
+            if (output.chance() < 1) {
                 Component part = Component.text("→ ").append(name(output.item())).append(Component.text(" ×" + output.amount()));
                 if (output.chance() < 1) {
                     part = part.append(Component.text(" (")).append(Lang.get("cookbook.chance", Math.round(output.chance() * 100))).append(Component.text(")"));
@@ -345,14 +341,25 @@ public class Cookbook {
     }
 
     /**
-     * Ein Slot (Vorschub 19), darin das Item-Bild (16 Pixel, 1 Pixel Rand rundum).
+     * Ein Slot (Vorschub 19), darin das Item-Bild (16 Pixel, 1 Pixel Rand rundum) und ab 2 Stück die Menge unten rechts.
      */
     private static Component slot(@Nullable ItemStack stack) {
         Component icon = ItemIcons.big(stack);
         if (icon == null) {
             return SLOT;
         }
-        return Component.text().append(SLOT).append(BACK).append(icon.hoverEvent(stack.asHoverEvent())).append(GAP).build();
+        var cell = Component.text().append(SLOT).append(BACK).append(icon.hoverEvent(stack.asHoverEvent()));
+        int amount = stack.getAmount();
+        if (amount > 1) {
+            String digits = String.valueOf(Math.min(amount, 999));
+            StringBuilder glyphs = new StringBuilder();
+            for (char digit : digits.toCharArray()) {
+                glyphs.appendCodePoint(0xE240 + digit - '0');
+            }
+            // 6 Pixel je Ziffer zurück, dann die Ziffern: sie enden am rechten Rand des Bildes
+            cell.append(glyph(0xE250 + digits.length() - 1)).append(Component.text(glyphs.toString()).font(FONT).color(NamedTextColor.WHITE));
+        }
+        return cell.append(GAP).build();
     }
 
     private Dialog usesPage(Key item, Supplier<Dialog> back) {
@@ -393,19 +400,55 @@ public class Cookbook {
     }
 
     private static Dialog dialog(Component title, List<DialogBody> body, List<DialogInput> inputs, List<ActionButton> buttons, @Nullable Supplier<Dialog> back) {
-        // Escape löst die Exit-Aktion aus: die schließt immer das ganze Kochbuch, "Zurück" ist ein normaler Knopf
-        ActionButton exit = button(Lang.get("cookbook.close"), null, (response, audience) -> audience.closeDialog());
+        return dialog(title, body, inputs, List.of(), buttons, List.of(), back, null);
+    }
+
+    /**
+     * Knöpfe in festen Paaren (2 Spalten): oben "Zurück | Übersicht", dann ein Umschalter-Paar (Varianten), dann der
+     * Inhalt und unten "◀ | ▶" zum Blättern. Fehlende Plätze füllt ein leerer Knopf, damit nichts verrutscht.
+     *
+     * @param toggle  Paar oben (z. B. Varianten), leer = keins
+     * @param paging  vorherige/nächste Seite, null-Einträge = Platzhalter; leer = kein Blättern
+     * @param self    diese Seite (für die Platzhalter-Knöpfe)
+     */
+    private static Dialog dialog(Component title, List<DialogBody> body, List<DialogInput> inputs, List<ActionButton> toggle,
+                                 List<ActionButton> content, List<@Nullable ActionButton> paging, @Nullable Supplier<Dialog> back,
+                                 @Nullable Supplier<Dialog> self) {
+        List<ActionButton> all = new ArrayList<>();
         if (back != null) {
-            buttons = new ArrayList<>(buttons);
-            // Ganz vorne, damit man ihn ohne Scrollen findet
-            buttons.addFirst(button(Lang.get("cookbook.back").color(NamedTextColor.YELLOW), null, (response, audience) -> show(audience, back.get())));
+            all.add(button(Lang.get("cookbook.back").color(NamedTextColor.YELLOW), null, (response, audience) -> show(audience, back.get())));
+            all.add(button(Lang.get("cookbook.overview"), null, (response, audience) -> show(audience, Cookbook.instance().mainPage())));
         }
-        List<ActionButton> allButtons = buttons;
+        all.addAll(toggle);
+        all.addAll(content);
+        if (!paging.isEmpty()) {
+            if (content.size() % COLUMNS != 0) {
+                all.add(blank(self));
+            }
+            for (ActionButton button : paging) {
+                all.add(button != null ? button : blank(self));
+            }
+        }
+        // Escape bzw. "Schließen": ohne Server-Aktion, damit sofort zu ist (kein "Warte auf Server")
+        ActionButton exit = ActionButton.builder(Lang.get("cookbook.close")).width(BUTTON_WIDTH).build();
         // Nach einem Klick offen bleiben, bis die nächste Seite kommt: so springt der Mauszeiger nicht in die Mitte
         return Dialog.create(builder -> builder.empty()
                 .base(DialogBase.builder(title).canCloseWithEscape(true).afterAction(DialogBase.DialogAfterAction.WAIT_FOR_RESPONSE)
                         .body(body).inputs(inputs).build())
-                .type(DialogType.multiAction(allButtons).columns(COLUMNS).exitAction(exit).build()));
+                .type(DialogType.multiAction(all).columns(COLUMNS).exitAction(exit).build()));
+    }
+
+    /**
+     * Leerer Platzhalter-Knopf; ein Klick zeigt dieselbe Seite wieder.
+     */
+    private static ActionButton blank(@Nullable Supplier<Dialog> self) {
+        return button(Component.empty(), null, (response, audience) -> {
+            if (self != null) {
+                show(audience, self.get());
+            } else {
+                audience.closeDialog();
+            }
+        });
     }
 
     /**
@@ -417,6 +460,15 @@ public class Cookbook {
     }
 
     public static ItemStack stack(Key item, int amount) {
+        // Mengen über der Stapelgröße (z. B. 12 Teeblätter) nur für die Anzeige
+        if (amount > 1) {
+            ItemStack one = stack(item, 1);
+            if (one.getMaxStackSize() < amount) {
+                one.setData(io.papermc.paper.datacomponent.DataComponentTypes.MAX_STACK_SIZE, Math.min(99, amount));
+            }
+            one.setAmount(Math.min(99, amount));
+            return one;
+        }
         if (!item.namespace().equals("minecraft")) {
             ItemStack created = KaleidoscopeCookery.getInstance().getItems().create(item, Math.max(1, amount));
             if (created != null) {
