@@ -1,0 +1,6 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/fish/fish_skewer_geo",
+  "textures": {
+    "1": "kaleidoscope_grilling:item/fixed_skewers/fish_skewer_stage_2"
+  }
+}

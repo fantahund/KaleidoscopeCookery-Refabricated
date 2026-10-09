@@ -1,0 +1,6 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/meatball/meatball_skewer_geo",
+  "textures": {
+    "10": "kaleidoscope_grilling:item/fixed_skewers/meatball_skewer_cooked"
+  }
+}

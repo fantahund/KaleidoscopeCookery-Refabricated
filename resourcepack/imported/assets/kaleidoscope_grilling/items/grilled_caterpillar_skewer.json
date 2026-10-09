@@ -1,0 +1,27 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "minecraft:custom_model_data",
+    "index": 7,
+    "entries": [
+      {
+        "threshold": 0.25,
+        "model": {
+          "type": "minecraft:model",
+          "model": "kaleidoscope_grilling:item/fixed_skewers/caterpillar/caterpillar_skewer_bite_1"
+        }
+      },
+      {
+        "threshold": 0.5,
+        "model": {
+          "type": "minecraft:model",
+          "model": "kaleidoscope_grilling:item/fixed_skewers/caterpillar/caterpillar_skewer_bite_2"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "kaleidoscope_grilling:item/grilled_caterpillar_skewer"
+    }
+  }
+}

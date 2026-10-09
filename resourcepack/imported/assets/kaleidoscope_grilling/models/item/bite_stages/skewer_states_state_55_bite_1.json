@@ -1,0 +1,1712 @@
+{
+  "ambientocclusion": false,
+  "gui_light": "front",
+  "textures": {
+    "stick": "kaleidoscope_grilling:item/secret_skewer_stick",
+    "food": "minecraft:block/white_concrete",
+    "particle": "#stick"
+  },
+  "elements": [
+    {
+      "name": "wood",
+      "from": [
+        7.75,
+        0.75,
+        0
+      ],
+      "to": [
+        8.25,
+        1.25,
+        12.5
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          1,
+          6
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            9,
+            7,
+            10,
+            8
+          ],
+          "texture": "#stick"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            13,
+            1
+          ],
+          "texture": "#stick"
+        },
+        "south": {
+          "uv": [
+            10,
+            7,
+            11,
+            8
+          ],
+          "texture": "#stick"
+        },
+        "west": {
+          "uv": [
+            0,
+            1,
+            13,
+            2
+          ],
+          "texture": "#stick"
+        },
+        "up": {
+          "uv": [
+            1,
+            15,
+            0,
+            2
+          ],
+          "texture": "#stick"
+        },
+        "down": {
+          "uv": [
+            2,
+            2,
+            1,
+            15
+          ],
+          "texture": "#stick"
+        }
+      }
+    },
+    {
+      "name": "food1_model3_pixel_0_0_0",
+      "from": [
+        6.76,
+        0.01,
+        2.75
+      ],
+      "to": [
+        8,
+        1.1250000000000002,
+        3.833333333333333
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          6.75,
+          0,
+          3.25
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            13,
+            0,
+            14,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 32
+        },
+        "west": {
+          "uv": [
+            11,
+            7,
+            12,
+            8
+          ],
+          "texture": "#food",
+          "tintindex": 64
+        },
+        "down": {
+          "uv": [
+            13,
+            9,
+            12,
+            10
+          ],
+          "texture": "#food",
+          "tintindex": 16
+        }
+      }
+    },
+    {
+      "name": "food1_model3_pixel_1_0_0",
+      "from": [
+        8,
+        0.01,
+        2.75
+      ],
+      "to": [
+        9.24,
+        1.1250000000000002,
+        3.833333333333333
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          6.75,
+          0,
+          3.25
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            14,
+            0,
+            15,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 35
+        },
+        "east": {
+          "uv": [
+            6,
+            11,
+            7,
+            12
+          ],
+          "texture": "#food",
+          "tintindex": 80
+        },
+        "down": {
+          "uv": [
+            12,
+            9,
+            11,
+            10
+          ],
+          "texture": "#food",
+          "tintindex": 19
+        }
+      }
+    },
+    {
+      "name": "food1_model3_pixel_0_1_0",
+      "from": [
+        6.76,
+        1.1250000000000002,
+        2.75
+      ],
+      "to": [
+        8,
+        2.24,
+        3.833333333333333
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          6.75,
+          0,
+          3.25
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            13,
+            1,
+            14,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 44
+        },
+        "west": {
+          "uv": [
+            11,
+            8,
+            12,
+            9
+          ],
+          "texture": "#food",
+          "tintindex": 76
+        },
+        "up": {
+          "uv": [
+            11,
+            14,
+            10,
+            13
+          ],
+          "texture": "#food",
+          "tintindex": 0
+        }
+      }
+    },
+    {
+      "name": "food1_model3_pixel_1_1_0",
+      "from": [
+        8,
+        1.1250000000000002,
+        2.75
+      ],
+      "to": [
+        9.24,
+        2.24,
+        3.833333333333333
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          6.75,
+          0,
+          3.25
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            14,
+            1,
+            15,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 47
+        },
+        "east": {
+          "uv": [
+            6,
+            12,
+            7,
+            13
+          ],
+          "texture": "#food",
+          "tintindex": 92
+        },
+        "up": {
+          "uv": [
+            10,
+            14,
+            9,
+            13
+          ],
+          "texture": "#food",
+          "tintindex": 3
+        }
+      }
+    },
+    {
+      "name": "food1_model3_pixel_0_0_1",
+      "from": [
+        6.76,
+        0.01,
+        3.833333333333333
+      ],
+      "to": [
+        8,
+        1.1250000000000002,
+        4.916666666666666
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          6.75,
+          0,
+          3.25
+        ]
+      },
+      "faces": {
+        "west": {
+          "uv": [
+            12,
+            7,
+            13,
+            8
+          ],
+          "texture": "#food",
+          "tintindex": 66
+        },
+        "down": {
+          "uv": [
+            13,
+            10,
+            12,
+            11
+          ],
+          "texture": "#food",
+          "tintindex": 24
+        }
+      }
+    },
+    {
+      "name": "food1_model3_pixel_1_0_1",
+      "from": [
+        8,
+        0.01,
+        3.833333333333333
+      ],
+      "to": [
+        9.24,
+        1.1250000000000002,
+        4.916666666666666
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          6.75,
+          0,
+          3.25
+        ]
+      },
+      "faces": {
+        "east": {
+          "uv": [
+            7,
+            11,
+            8,
+            12
+          ],
+          "texture": "#food",
+          "tintindex": 82
+        },
+        "down": {
+          "uv": [
+            12,
+            10,
+            11,
+            11
+          ],
+          "texture": "#food",
+          "tintindex": 27
+        }
+      }
+    },
+    {
+      "name": "food1_model3_pixel_0_1_1",
+      "from": [
+        6.76,
+        1.1250000000000002,
+        3.833333333333333
+      ],
+      "to": [
+        8,
+        2.24,
+        4.916666666666666
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          6.75,
+          0,
+          3.25
+        ]
+      },
+      "faces": {
+        "west": {
+          "uv": [
+            12,
+            8,
+            13,
+            9
+          ],
+          "texture": "#food",
+          "tintindex": 78
+        },
+        "up": {
+          "uv": [
+            11,
+            13,
+            10,
+            12
+          ],
+          "texture": "#food",
+          "tintindex": 8
+        }
+      }
+    },
+    {
+      "name": "food1_model3_pixel_1_1_1",
+      "from": [
+        8,
+        1.1250000000000002,
+        3.833333333333333
+      ],
+      "to": [
+        9.24,
+        2.24,
+        4.916666666666666
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          6.75,
+          0,
+          3.25
+        ]
+      },
+      "faces": {
+        "east": {
+          "uv": [
+            7,
+            12,
+            8,
+            13
+          ],
+          "texture": "#food",
+          "tintindex": 94
+        },
+        "up": {
+          "uv": [
+            10,
+            13,
+            9,
+            12
+          ],
+          "texture": "#food",
+          "tintindex": 11
+        }
+      }
+    },
+    {
+      "name": "food1_model3_pixel_0_0_2",
+      "from": [
+        6.76,
+        0.01,
+        4.916666666666666
+      ],
+      "to": [
+        8,
+        1.1250000000000002,
+        6
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          6.75,
+          0,
+          3.25
+        ]
+      },
+      "faces": {
+        "south": {
+          "uv": [
+            2,
+            13,
+            3,
+            14
+          ],
+          "texture": "#food",
+          "tintindex": 48
+        },
+        "west": {
+          "uv": [
+            13,
+            7,
+            14,
+            8
+          ],
+          "texture": "#food",
+          "tintindex": 67
+        },
+        "down": {
+          "uv": [
+            13,
+            11,
+            12,
+            12
+          ],
+          "texture": "#food",
+          "tintindex": 28
+        }
+      }
+    },
+    {
+      "name": "food1_model3_pixel_1_0_2",
+      "from": [
+        8,
+        0.01,
+        4.916666666666666
+      ],
+      "to": [
+        9.24,
+        1.1250000000000002,
+        6
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          6.75,
+          0,
+          3.25
+        ]
+      },
+      "faces": {
+        "east": {
+          "uv": [
+            8,
+            11,
+            9,
+            12
+          ],
+          "texture": "#food",
+          "tintindex": 83
+        },
+        "south": {
+          "uv": [
+            3,
+            13,
+            4,
+            14
+          ],
+          "texture": "#food",
+          "tintindex": 51
+        },
+        "down": {
+          "uv": [
+            12,
+            11,
+            11,
+            12
+          ],
+          "texture": "#food",
+          "tintindex": 31
+        }
+      }
+    },
+    {
+      "name": "food1_model3_pixel_0_1_2",
+      "from": [
+        6.76,
+        1.1250000000000002,
+        4.916666666666666
+      ],
+      "to": [
+        8,
+        2.24,
+        6
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          6.75,
+          0,
+          3.25
+        ]
+      },
+      "faces": {
+        "south": {
+          "uv": [
+            2,
+            14,
+            3,
+            15
+          ],
+          "texture": "#food",
+          "tintindex": 60
+        },
+        "west": {
+          "uv": [
+            13,
+            8,
+            14,
+            9
+          ],
+          "texture": "#food",
+          "tintindex": 79
+        },
+        "up": {
+          "uv": [
+            11,
+            12,
+            10,
+            11
+          ],
+          "texture": "#food",
+          "tintindex": 12
+        }
+      }
+    },
+    {
+      "name": "food1_model3_pixel_1_1_2",
+      "from": [
+        8,
+        1.1250000000000002,
+        4.916666666666666
+      ],
+      "to": [
+        9.24,
+        2.24,
+        6
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          6.75,
+          0,
+          3.25
+        ]
+      },
+      "faces": {
+        "east": {
+          "uv": [
+            8,
+            12,
+            9,
+            13
+          ],
+          "texture": "#food",
+          "tintindex": 95
+        },
+        "south": {
+          "uv": [
+            3,
+            14,
+            4,
+            15
+          ],
+          "texture": "#food",
+          "tintindex": 63
+        },
+        "up": {
+          "uv": [
+            10,
+            12,
+            9,
+            11
+          ],
+          "texture": "#food",
+          "tintindex": 15
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_0_0_0",
+      "from": [
+        7,
+        0,
+        5.25
+      ],
+      "to": [
+        8,
+        1.125,
+        6.416666666666667
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 160
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 192
+        },
+        "down": {
+          "uv": [
+            0,
+            0.25,
+            1,
+            1.25
+          ],
+          "texture": "#food",
+          "tintindex": 144
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_1_0_0",
+      "from": [
+        8,
+        0,
+        5.25
+      ],
+      "to": [
+        9,
+        1.125,
+        6.416666666666667
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            0,
+            2,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 162
+        },
+        "down": {
+          "uv": [
+            1,
+            0.25,
+            2,
+            1.25
+          ],
+          "texture": "#food",
+          "tintindex": 146
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_2_0_0",
+      "from": [
+        9,
+        0,
+        5.25
+      ],
+      "to": [
+        10,
+        1.125,
+        6.416666666666667
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            0,
+            3,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 163
+        },
+        "east": {
+          "uv": [
+            0.25,
+            0,
+            1.25,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 208
+        },
+        "down": {
+          "uv": [
+            2,
+            0.25,
+            3,
+            1.25
+          ],
+          "texture": "#food",
+          "tintindex": 147
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_0_1_0",
+      "from": [
+        7,
+        1.125,
+        5.25
+      ],
+      "to": [
+        8,
+        2.25,
+        6.416666666666667
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            1,
+            1,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 172
+        },
+        "west": {
+          "uv": [
+            0,
+            1,
+            1,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 204
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 128
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_1_1_0",
+      "from": [
+        8,
+        1.125,
+        5.25
+      ],
+      "to": [
+        9,
+        2.25,
+        6.416666666666667
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            1,
+            2,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 174
+        },
+        "up": {
+          "uv": [
+            1,
+            0,
+            2,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 130
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_2_1_0",
+      "from": [
+        9,
+        1.125,
+        5.25
+      ],
+      "to": [
+        10,
+        2.25,
+        6.416666666666667
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            1,
+            3,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 175
+        },
+        "east": {
+          "uv": [
+            0.25,
+            1,
+            1.25,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 220
+        },
+        "up": {
+          "uv": [
+            2,
+            0,
+            3,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 131
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_0_0_1",
+      "from": [
+        7,
+        0,
+        6.416666666666667
+      ],
+      "to": [
+        8,
+        1.125,
+        7.583333333333334
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "west": {
+          "uv": [
+            1,
+            0,
+            2,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 194
+        },
+        "down": {
+          "uv": [
+            0,
+            1.25,
+            1,
+            2.25
+          ],
+          "texture": "#food",
+          "tintindex": 152
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_1_0_1",
+      "from": [
+        8,
+        0,
+        6.416666666666667
+      ],
+      "to": [
+        9,
+        1.125,
+        7.583333333333334
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "down": {
+          "uv": [
+            1,
+            1.25,
+            2,
+            2.25
+          ],
+          "texture": "#food",
+          "tintindex": 154
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_2_0_1",
+      "from": [
+        9,
+        0,
+        6.416666666666667
+      ],
+      "to": [
+        10,
+        1.125,
+        7.583333333333334
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "east": {
+          "uv": [
+            1.25,
+            0,
+            2.25,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 210
+        },
+        "down": {
+          "uv": [
+            2,
+            1.25,
+            3,
+            2.25
+          ],
+          "texture": "#food",
+          "tintindex": 155
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_0_1_1",
+      "from": [
+        7,
+        1.125,
+        6.416666666666667
+      ],
+      "to": [
+        8,
+        2.25,
+        7.583333333333334
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "west": {
+          "uv": [
+            1,
+            1,
+            2,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 206
+        },
+        "up": {
+          "uv": [
+            0,
+            1,
+            1,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 136
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_1_1_1",
+      "from": [
+        8,
+        1.125,
+        6.416666666666667
+      ],
+      "to": [
+        9,
+        2.25,
+        7.583333333333334
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "up": {
+          "uv": [
+            1,
+            1,
+            2,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 138
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_2_1_1",
+      "from": [
+        9,
+        1.125,
+        6.416666666666667
+      ],
+      "to": [
+        10,
+        2.25,
+        7.583333333333334
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "east": {
+          "uv": [
+            1.25,
+            1,
+            2.25,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 222
+        },
+        "up": {
+          "uv": [
+            2,
+            1,
+            3,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 139
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_0_0_2",
+      "from": [
+        7,
+        0,
+        7.583333333333334
+      ],
+      "to": [
+        8,
+        1.125,
+        8.75
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "south": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 176
+        },
+        "west": {
+          "uv": [
+            2,
+            0,
+            3,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 195
+        },
+        "down": {
+          "uv": [
+            0,
+            2.25,
+            1,
+            3.25
+          ],
+          "texture": "#food",
+          "tintindex": 156
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_1_0_2",
+      "from": [
+        8,
+        0,
+        7.583333333333334
+      ],
+      "to": [
+        9,
+        1.125,
+        8.75
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "south": {
+          "uv": [
+            1,
+            0,
+            2,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 178
+        },
+        "down": {
+          "uv": [
+            1,
+            2.25,
+            2,
+            3.25
+          ],
+          "texture": "#food",
+          "tintindex": 158
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_2_0_2",
+      "from": [
+        9,
+        0,
+        7.583333333333334
+      ],
+      "to": [
+        10,
+        1.125,
+        8.75
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "east": {
+          "uv": [
+            2.25,
+            0,
+            3.25,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 211
+        },
+        "south": {
+          "uv": [
+            2,
+            0,
+            3,
+            1
+          ],
+          "texture": "#food",
+          "tintindex": 179
+        },
+        "down": {
+          "uv": [
+            2,
+            2.25,
+            3,
+            3.25
+          ],
+          "texture": "#food",
+          "tintindex": 159
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_0_1_2",
+      "from": [
+        7,
+        1.125,
+        7.583333333333334
+      ],
+      "to": [
+        8,
+        2.25,
+        8.75
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "south": {
+          "uv": [
+            0,
+            1,
+            1,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 188
+        },
+        "west": {
+          "uv": [
+            2,
+            1,
+            3,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 207
+        },
+        "up": {
+          "uv": [
+            0,
+            2,
+            1,
+            3
+          ],
+          "texture": "#food",
+          "tintindex": 140
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_1_1_2",
+      "from": [
+        8,
+        1.125,
+        7.583333333333334
+      ],
+      "to": [
+        9,
+        2.25,
+        8.75
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "south": {
+          "uv": [
+            1,
+            1,
+            2,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 190
+        },
+        "up": {
+          "uv": [
+            1,
+            2,
+            2,
+            3
+          ],
+          "texture": "#food",
+          "tintindex": 142
+        }
+      }
+    },
+    {
+      "name": "food2_model1_pixel_2_1_2",
+      "from": [
+        9,
+        1.125,
+        7.583333333333334
+      ],
+      "to": [
+        10,
+        2.25,
+        8.75
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7,
+          0,
+          5.25
+        ]
+      },
+      "color": 4,
+      "faces": {
+        "east": {
+          "uv": [
+            2.25,
+            1,
+            3.25,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 223
+        },
+        "south": {
+          "uv": [
+            2,
+            1,
+            3,
+            2
+          ],
+          "texture": "#food",
+          "tintindex": 191
+        },
+        "up": {
+          "uv": [
+            2,
+            2,
+            3,
+            3
+          ],
+          "texture": "#food",
+          "tintindex": 143
+        }
+      }
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        -98.57,
+        1.45,
+        -174.51
+      ],
+      "translation": [
+        0.75,
+        6.25,
+        5.5
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        -98.57,
+        1.45,
+        -174.51
+      ],
+      "translation": [
+        0.75,
+        6.25,
+        5.5
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        -95,
+        -7,
+        -163
+      ],
+      "translation": [
+        -1,
+        7.75,
+        7.25
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        -94,
+        0,
+        -165
+      ],
+      "translation": [
+        -1.5,
+        7.25,
+        7
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "gui": {
+      "rotation": [
+        90,
+        135,
+        0
+      ],
+      "translation": [
+        1.75,
+        1.75,
+        0
+      ],
+      "scale": [
+        1.5,
+        1.5,
+        1.5
+      ]
+    },
+    "head": {
+      "rotation": [
+        0,
+        -180,
+        0
+      ],
+      "translation": [
+        0,
+        14.5,
+        -2
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        -90,
+        0,
+        -180
+      ],
+      "translation": [
+        0,
+        2.25,
+        9.75
+      ],
+      "scale": [
+        1.5,
+        1.5,
+        1.5
+      ]
+    },
+    "on_shelf": {
+      "rotation": [
+        -90,
+        0,
+        -180
+      ],
+      "translation": [
+        0,
+        14.25,
+        6.5
+      ],
+      "scale": [
+        1.5,
+        1.5,
+        1.5
+      ]
+    }
+  }
+}

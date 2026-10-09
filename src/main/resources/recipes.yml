@@ -1,0 +1,1591 @@
+# Rezepte der Kochstationen, erzeugt aus den Mod-Daten (tools/gen_data.py).
+# Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert
+# und kann dort angepasst werden (/kc reload).
+# Zutaten: Item-ID, "#tag" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.
+tags:
+  "c:bricks/normal":
+    - "minecraft:brick"
+  "c:cobblestones":
+    - "minecraft:cobblestone"
+    - "minecraft:cobbled_deepslate"
+    - "minecraft:mossy_cobblestone"
+  "c:crops/tomato":
+    - "kaleidoscope_cookery:tomato"
+  "c:crops/wheat":
+    - "minecraft:wheat"
+  "c:dough":
+    - "kaleidoscope_cookery:raw_dough"
+  "c:dusts/redstone":
+    - "minecraft:redstone"
+  "c:fences/wooden":
+    - "#minecraft:wooden_fences"
+  "c:gems/diamond":
+    - "minecraft:diamond"
+  "c:glass_blocks/colorless":
+    - "minecraft:glass"
+  "c:grain/rice":
+    - "kaleidoscope_cookery:rice"
+  "c:ingots/copper":
+    - "minecraft:copper_ingot"
+  "c:ingots/gold":
+    - "minecraft:gold_ingot"
+  "c:ingots/iron":
+    - "minecraft:iron_ingot"
+  "c:nuggets/iron":
+    - "minecraft:iron_nugget"
+  "c:raw_meats":
+    - "kaleidoscope_cookery:raw_cow_offal"
+    - "minecraft:beef"
+    - "kaleidoscope_grilling:beef_chunks"
+    - "minecraft:chicken"
+    - "kaleidoscope_grilling:chicken_skin"
+    - "kaleidoscope_grilling:chicken_wing"
+    - "kaleidoscope_cookery:raw_pork_belly"
+    - "minecraft:porkchop"
+    - "kaleidoscope_cookery:raw_lamb_chops"
+    - "minecraft:mutton"
+    - "minecraft:cod"
+    - "minecraft:salmon"
+    - "kaleidoscope_cookery:sashimi"
+    - "kaleidoscope_cookery:raw_cut_small_meats"
+  "c:vegetables":
+    - "kaleidoscope_cookery:red_chili"
+    - "kaleidoscope_cookery:green_chili"
+    - "kaleidoscope_cookery:tomato"
+    - "kaleidoscope_cookery:lettuce"
+    - "kaleidoscope_grilling:onion"
+    - "kaleidoscope_grilling:sweet_potato"
+    - "kaleidoscope_grilling:houttuynia"
+  "kaleidoscope_cookery:straw_bale":
+    - "minecraft:hay_block"
+    - "kaleidoscope_cookery:straw_block"
+  "kaleidoscope_cookery:straw_hat":
+    - "kaleidoscope_cookery:straw_hat"
+    - "kaleidoscope_cookery:straw_hat_flower"
+  "kaleidoscope_grilling:ingredients/chicken_wings":
+    - "kaleidoscope_grilling:chicken_wing"
+  "kaleidoscope_grilling:ingredients/houttuynia":
+    - "kaleidoscope_grilling:houttuynia"
+  "kaleidoscope_grilling:ingredients/sweet_potatoes":
+    - "kaleidoscope_grilling:sweet_potato"
+chopping-board:
+  "kaleidoscope_cookery:bone_from_cod":
+    ingredient: "minecraft:cooked_cod"
+    cuts: 4
+    model: "kaleidoscope_cookery:cooked_cod"
+    results:
+      - item: "minecraft:bone"
+        count: 3
+  "kaleidoscope_cookery:bone_from_salmon":
+    ingredient: "minecraft:cooked_salmon"
+    cuts: 4
+    model: "kaleidoscope_cookery:cooked_salmon"
+    results:
+      - item: "minecraft:bone"
+        count: 3
+  "kaleidoscope_cookery:cooked_cow_offal":
+    ingredient: "minecraft:cooked_beef"
+    cuts: 4
+    model: "kaleidoscope_cookery:cooked_cow_offal"
+    results:
+      - item: "kaleidoscope_cookery:cooked_cow_offal"
+        count: 3
+  "kaleidoscope_cookery:cooked_cut_small_meats_from_chicken":
+    ingredient: "minecraft:cooked_chicken"
+    cuts: 4
+    model: "kaleidoscope_cookery:cooked_chicken"
+    results:
+      - item: "kaleidoscope_cookery:cooked_cut_small_meats"
+        count: 3
+      - "minecraft:bone"
+  "kaleidoscope_cookery:cooked_cut_small_meats_from_rabbit":
+    ingredient: "minecraft:cooked_rabbit"
+    cuts: 4
+    model: "kaleidoscope_cookery:cooked_rabbit"
+    results:
+      - item: "kaleidoscope_cookery:cooked_cut_small_meats"
+        count: 3
+      - "minecraft:bone"
+  "kaleidoscope_cookery:cooked_lamb_chops":
+    ingredient: "minecraft:cooked_mutton"
+    cuts: 4
+    model: "kaleidoscope_cookery:cooked_lamb_chops"
+    results:
+      - item: "kaleidoscope_cookery:cooked_lamb_chops"
+        count: 3
+  "kaleidoscope_cookery:cooked_pork_belly":
+    ingredient: "minecraft:cooked_porkchop"
+    cuts: 4
+    model: "kaleidoscope_cookery:cooked_pork_belly"
+    results:
+      - item: "kaleidoscope_cookery:cooked_pork_belly"
+        count: 3
+  "kaleidoscope_cookery:raw_cow_offal":
+    ingredient: "minecraft:beef"
+    cuts: 4
+    model: "kaleidoscope_cookery:raw_cow_offal"
+    results:
+      - item: "kaleidoscope_grilling:beef_chunks"
+        count: 2
+  "kaleidoscope_cookery:raw_cut_small_meats_from_chicken":
+    ingredient: "minecraft:chicken"
+    cuts: 4
+    model: "kaleidoscope_cookery:raw_chicken"
+    results:
+      - item: "kaleidoscope_cookery:raw_cut_small_meats"
+        count: 3
+      - "minecraft:bone"
+  "kaleidoscope_cookery:raw_cut_small_meats_from_rabbit":
+    ingredient: "minecraft:rabbit"
+    cuts: 4
+    model: "kaleidoscope_cookery:raw_rabbit"
+    results:
+      - item: "kaleidoscope_cookery:raw_cut_small_meats"
+        count: 3
+      - "minecraft:bone"
+  "kaleidoscope_cookery:raw_lamb_chops":
+    ingredient: "minecraft:mutton"
+    cuts: 4
+    model: "kaleidoscope_cookery:raw_lamb_chops"
+    results:
+      - item: "kaleidoscope_cookery:raw_lamb_chops"
+        count: 3
+  "kaleidoscope_cookery:raw_noodles_from_raw_dough":
+    ingredient: "#c:dough"
+    cuts: 4
+    model: "kaleidoscope_cookery:raw_dough"
+    results:
+      - item: "kaleidoscope_cookery:raw_noodles"
+        count: 3
+  "kaleidoscope_cookery:raw_pork_belly":
+    ingredient: "minecraft:porkchop"
+    cuts: 4
+    model: "kaleidoscope_cookery:raw_pork_belly"
+    results:
+      - item: "kaleidoscope_cookery:raw_pork_belly"
+        count: 3
+  "kaleidoscope_cookery:sashimi_from_cod":
+    ingredient: "minecraft:cod"
+    cuts: 4
+    model: "kaleidoscope_cookery:cod"
+    results:
+      - item: "kaleidoscope_cookery:sashimi"
+        count: 3
+  "kaleidoscope_cookery:sashimi_from_salmon":
+    ingredient: "minecraft:salmon"
+    cuts: 4
+    model: "kaleidoscope_cookery:salmon"
+    results:
+      - item: "kaleidoscope_cookery:sashimi"
+        count: 3
+  "kaleidoscope_cookery:sashimi_from_tropical_fish":
+    ingredient: "minecraft:tropical_fish"
+    cuts: 4
+    model: "kaleidoscope_cookery:sashimi"
+    results:
+      - item: "kaleidoscope_cookery:sashimi"
+        count: 3
+  "kaleidoscope_grilling:carrot_dice":
+    ingredient: "minecraft:carrot"
+    cuts: 4
+    model: "kaleidoscope_grilling:carrot_dice"
+    results:
+      - item: "kaleidoscope_grilling:carrot_dice"
+        count: 3
+  "kaleidoscope_grilling:minced_houttuynia":
+    ingredient: "#kaleidoscope_grilling:ingredients/houttuynia"
+    cuts: 4
+    model: "kaleidoscope_grilling:houttuynia"
+    results:
+      - "kaleidoscope_grilling:minced_houttuynia"
+  "kaleidoscope_grilling:potato_slice":
+    ingredient: "minecraft:potato"
+    cuts: 4
+    model: "kaleidoscope_grilling:potato_slice"
+    results:
+      - item: "kaleidoscope_grilling:potato_slice"
+        count: 3
+  "kaleidoscope_grilling:raw_mantou_slice":
+    ingredient: "kaleidoscope_cookery:mantou"
+    cuts: 4
+    model: "kaleidoscope_grilling:raw_mantou_slice"
+    results:
+      - item: "kaleidoscope_grilling:raw_mantou_slice"
+        count: 3
+  "kaleidoscope_grilling:raw_sweet_potato_sheet":
+    ingredient: "kaleidoscope_grilling:sweet_potato_powder"
+    cuts: 4
+    model: "kaleidoscope_grilling:raw_sweet_potato_sheet"
+    results:
+      - "kaleidoscope_grilling:raw_sweet_potato_sheet"
+vanilla:
+  "kaleidoscope_cookery:apple_platter":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:apple"
+      - "minecraft:apple"
+      - "minecraft:apple"
+      - "minecraft:apple"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:apple_platter"
+  "kaleidoscope_cookery:bamboo_tray":
+    type: crafting_shaped
+    pattern:
+      - " S "
+      - STS
+      - " S "
+    key:
+      S: "minecraft:string"
+      T: "minecraft:bamboo_trapdoor"
+    result: "kaleidoscope_cookery:bamboo_tray"
+  "kaleidoscope_cookery:baozi_plate":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:baozi"
+      - "kaleidoscope_cookery:baozi"
+      - "kaleidoscope_cookery:baozi"
+      - "kaleidoscope_cookery:baozi"
+      - "kaleidoscope_cookery:baozi"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:baozi_plate"
+  "kaleidoscope_cookery:barley_tea_bag":
+    type: crafting_shaped
+    pattern:
+      - LLL
+      - LCL
+      - LLL
+    key:
+      C: "minecraft:wheat_seeds"
+      L: "kaleidoscope_cookery:dried_tea_leaves"
+    result: "kaleidoscope_cookery:barley_tea_bag"
+  "kaleidoscope_cookery:berry_platter":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:sweet_berries"
+      - "minecraft:sweet_berries"
+      - "minecraft:sweet_berries"
+      - "minecraft:sweet_berries"
+      - "minecraft:glow_berries"
+      - "minecraft:glow_berries"
+      - "minecraft:glow_berries"
+      - "minecraft:glow_berries"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:berry_platter"
+  "kaleidoscope_cookery:biluochun_tea_bag":
+    type: crafting_shaped
+    pattern:
+      - LLL
+      - LCL
+      - LLL
+    key:
+      C: "minecraft:nautilus_shell"
+      L: "kaleidoscope_cookery:dried_tea_leaves"
+    result: "kaleidoscope_cookery:biluochun_tea_bag"
+  "kaleidoscope_cookery:butter_tea_bag":
+    type: crafting_shaped
+    pattern:
+      - LLL
+      - LCL
+      - LLL
+    key:
+      C: "kaleidoscope_cookery:oil"
+      L: "kaleidoscope_cookery:dried_tea_leaves"
+    result: "kaleidoscope_cookery:butter_tea_bag"
+  "kaleidoscope_cookery:chair_acacia":
+    type: crafting_shaped
+    pattern:
+      - "F  "
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:acacia_fence"
+      S: "minecraft:acacia_slab"
+    result: "kaleidoscope_cookery:chair_acacia"
+  "kaleidoscope_cookery:chair_bamboo":
+    type: crafting_shaped
+    pattern:
+      - "F  "
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:bamboo_block"
+      S: "minecraft:bamboo_slab"
+    result: "kaleidoscope_cookery:chair_bamboo"
+  "kaleidoscope_cookery:chair_birch":
+    type: crafting_shaped
+    pattern:
+      - "F  "
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:birch_fence"
+      S: "minecraft:birch_slab"
+    result: "kaleidoscope_cookery:chair_birch"
+  "kaleidoscope_cookery:chair_cherry":
+    type: crafting_shaped
+    pattern:
+      - "F  "
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:cherry_fence"
+      S: "minecraft:cherry_slab"
+    result: "kaleidoscope_cookery:chair_cherry"
+  "kaleidoscope_cookery:chair_crimson":
+    type: crafting_shaped
+    pattern:
+      - "F  "
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:crimson_fence"
+      S: "minecraft:crimson_slab"
+    result: "kaleidoscope_cookery:chair_crimson"
+  "kaleidoscope_cookery:chair_dark_oak":
+    type: crafting_shaped
+    pattern:
+      - "F  "
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:dark_oak_fence"
+      S: "minecraft:dark_oak_slab"
+    result: "kaleidoscope_cookery:chair_dark_oak"
+  "kaleidoscope_cookery:chair_jungle":
+    type: crafting_shaped
+    pattern:
+      - "F  "
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:jungle_fence"
+      S: "minecraft:jungle_slab"
+    result: "kaleidoscope_cookery:chair_jungle"
+  "kaleidoscope_cookery:chair_mangrove":
+    type: crafting_shaped
+    pattern:
+      - "F  "
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:mangrove_fence"
+      S: "minecraft:mangrove_slab"
+    result: "kaleidoscope_cookery:chair_mangrove"
+  "kaleidoscope_cookery:chair_oak":
+    type: crafting_shaped
+    pattern:
+      - "F  "
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:oak_fence"
+      S: "minecraft:oak_slab"
+    result: "kaleidoscope_cookery:chair_oak"
+  "kaleidoscope_cookery:chair_spruce":
+    type: crafting_shaped
+    pattern:
+      - "F  "
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:spruce_fence"
+      S: "minecraft:spruce_slab"
+    result: "kaleidoscope_cookery:chair_spruce"
+  "kaleidoscope_cookery:chair_warped":
+    type: crafting_shaped
+    pattern:
+      - "F  "
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:warped_fence"
+      S: "minecraft:warped_slab"
+    result: "kaleidoscope_cookery:chair_warped"
+  "kaleidoscope_cookery:chili_ristra":
+    type: crafting_shaped
+    pattern:
+      - CC
+      - CC
+      - CC
+    key:
+      C: "kaleidoscope_cookery:red_chili"
+    result: "kaleidoscope_cookery:chili_ristra"
+  "kaleidoscope_cookery:chopping_board":
+    type: crafting_shaped
+    pattern:
+      - PPP
+      - PPP
+    key:
+      P: "#minecraft:wooden_pressure_plates"
+    result: "kaleidoscope_cookery:chopping_board"
+  "kaleidoscope_cookery:chorus_fruit_platter":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:chorus_fruit"
+      - "minecraft:chorus_fruit"
+      - "minecraft:chorus_fruit"
+      - "minecraft:chorus_fruit"
+      - "minecraft:chorus_fruit"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:chorus_fruit_platter"
+  "kaleidoscope_cookery:cold_cut_ham_slices":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:cooked_pork_belly"
+      - "kaleidoscope_cookery:cooked_pork_belly"
+      - "kaleidoscope_cookery:cooked_pork_belly"
+      - "kaleidoscope_cookery:cooked_pork_belly"
+      - "kaleidoscope_cookery:cooked_pork_belly"
+      - "kaleidoscope_cookery:cooked_pork_belly"
+      - "kaleidoscope_cookery:cooked_pork_belly"
+      - "kaleidoscope_cookery:cooked_pork_belly"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:cold_cut_ham_slices"
+  "kaleidoscope_cookery:cold_roasted_meat":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:cooked_beef"
+      - "minecraft:cooked_beef"
+      - "minecraft:cooked_beef"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:cold_roasted_meat"
+  "kaleidoscope_cookery:cold_style_sashimi":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:snowball"
+      - "minecraft:snowball"
+      - "minecraft:snowball"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:cold_style_sashimi"
+  "kaleidoscope_cookery:cook_stool_acacia":
+    type: crafting_shaped
+    pattern:
+      - "   "
+      - "###"
+      - "# #"
+    key:
+      "#": "minecraft:acacia_planks"
+    result: "kaleidoscope_cookery:cook_stool_acacia"
+  "kaleidoscope_cookery:cook_stool_bamboo":
+    type: crafting_shaped
+    pattern:
+      - "   "
+      - "###"
+      - "# #"
+    key:
+      "#": "minecraft:bamboo_block"
+    result: "kaleidoscope_cookery:cook_stool_bamboo"
+  "kaleidoscope_cookery:cook_stool_birch":
+    type: crafting_shaped
+    pattern:
+      - "   "
+      - "###"
+      - "# #"
+    key:
+      "#": "minecraft:birch_planks"
+    result: "kaleidoscope_cookery:cook_stool_birch"
+  "kaleidoscope_cookery:cook_stool_cherry":
+    type: crafting_shaped
+    pattern:
+      - "   "
+      - "###"
+      - "# #"
+    key:
+      "#": "minecraft:cherry_planks"
+    result: "kaleidoscope_cookery:cook_stool_cherry"
+  "kaleidoscope_cookery:cook_stool_crimson":
+    type: crafting_shaped
+    pattern:
+      - "   "
+      - "###"
+      - "# #"
+    key:
+      "#": "minecraft:crimson_planks"
+    result: "kaleidoscope_cookery:cook_stool_crimson"
+  "kaleidoscope_cookery:cook_stool_dark_oak":
+    type: crafting_shaped
+    pattern:
+      - "   "
+      - "###"
+      - "# #"
+    key:
+      "#": "minecraft:dark_oak_planks"
+    result: "kaleidoscope_cookery:cook_stool_dark_oak"
+  "kaleidoscope_cookery:cook_stool_jungle":
+    type: crafting_shaped
+    pattern:
+      - "   "
+      - "###"
+      - "# #"
+    key:
+      "#": "minecraft:jungle_planks"
+    result: "kaleidoscope_cookery:cook_stool_jungle"
+  "kaleidoscope_cookery:cook_stool_mangrove":
+    type: crafting_shaped
+    pattern:
+      - "   "
+      - "###"
+      - "# #"
+    key:
+      "#": "minecraft:mangrove_planks"
+    result: "kaleidoscope_cookery:cook_stool_mangrove"
+  "kaleidoscope_cookery:cook_stool_oak":
+    type: crafting_shaped
+    pattern:
+      - "   "
+      - "###"
+      - "# #"
+    key:
+      "#": "minecraft:oak_planks"
+    result: "kaleidoscope_cookery:cook_stool_oak"
+  "kaleidoscope_cookery:cook_stool_spruce":
+    type: crafting_shaped
+    pattern:
+      - "   "
+      - "###"
+      - "# #"
+    key:
+      "#": "minecraft:spruce_planks"
+    result: "kaleidoscope_cookery:cook_stool_spruce"
+  "kaleidoscope_cookery:cook_stool_warped":
+    type: crafting_shaped
+    pattern:
+      - "   "
+      - "###"
+      - "# #"
+    key:
+      "#": "minecraft:warped_planks"
+    result: "kaleidoscope_cookery:cook_stool_warped"
+  "kaleidoscope_cookery:desert_style_sashimi":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:cactus"
+      - "minecraft:cactus"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:desert_style_sashimi"
+  "kaleidoscope_cookery:diamond_kitchen_knife":
+    type: crafting_shaped
+    pattern:
+      - "##"
+      - "#S"
+    key:
+      "#": "#c:gems/diamond"
+      S: "minecraft:stick"
+    result: "kaleidoscope_cookery:diamond_kitchen_knife"
+  "kaleidoscope_cookery:eight_immortals_table":
+    type: crafting_shaped
+    pattern:
+      - FPF
+      - PPP
+      - FPF
+    key:
+      F: "minecraft:oak_fence"
+      P: "minecraft:oak_planks"
+    result: "kaleidoscope_cookery:eight_immortals_table"
+  "kaleidoscope_cookery:empty_cup":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:flower_pot"
+    result: "kaleidoscope_cookery:empty_cup"
+  "kaleidoscope_cookery:enamel_basin":
+    type: crafting_shaped
+    pattern:
+      - O
+      - I
+      - B
+    key:
+      B: "minecraft:bucket"
+      I: "minecraft:heavy_weighted_pressure_plate"
+      O: "minecraft:stone_button"
+    result: "kaleidoscope_cookery:enamel_basin"
+  "kaleidoscope_cookery:end_style_sashimi":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:chorus_fruit"
+      - "minecraft:chorus_fruit"
+      - "minecraft:chorus_fruit"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:end_style_sashimi"
+  "kaleidoscope_cookery:farmer_boots":
+    type: crafting_shaped
+    pattern:
+      - "I I"
+      - "L L"
+    key:
+      I: "#c:ingots/iron"
+      L: "minecraft:leather"
+    result: "kaleidoscope_cookery:farmer_boots"
+  "kaleidoscope_cookery:farmer_chest_plate":
+    type: crafting_shaped
+    pattern:
+      - "I I"
+      - LLL
+      - LLL
+    key:
+      I: "#c:ingots/iron"
+      L: "minecraft:leather"
+    result: "kaleidoscope_cookery:farmer_chest_plate"
+  "kaleidoscope_cookery:farmer_leggings":
+    type: crafting_shaped
+    pattern:
+      - LIL
+      - "L L"
+      - "L L"
+    key:
+      I: "#c:ingots/iron"
+      L: "minecraft:leather"
+    result: "kaleidoscope_cookery:farmer_leggings"
+  "kaleidoscope_cookery:fruit_basket":
+    type: crafting_shaped
+    pattern:
+      - " S "
+      - "#C#"
+      - "###"
+    key:
+      "#": "#minecraft:planks"
+      C: "minecraft:chest"
+      S: "minecraft:stick"
+    result: "kaleidoscope_cookery:fruit_basket"
+  "kaleidoscope_cookery:gold_kitchen_knife":
+    type: crafting_shaped
+    pattern:
+      - "##"
+      - "#S"
+    key:
+      "#": "#c:ingots/gold"
+      S: "minecraft:stick"
+    result: "kaleidoscope_cookery:gold_kitchen_knife"
+  "kaleidoscope_cookery:golden_salad":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:golden_apple"
+      - "minecraft:golden_apple"
+      - "minecraft:golden_carrot"
+      - "minecraft:golden_carrot"
+      - "minecraft:glistering_melon_slice"
+      - "minecraft:glistering_melon_slice"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:golden_salad"
+  "kaleidoscope_cookery:iron_kitchen_knife":
+    type: crafting_shaped
+    pattern:
+      - "##"
+      - "#S"
+    key:
+      "#": "#c:ingots/iron"
+      S: "minecraft:stick"
+    result: "kaleidoscope_cookery:iron_kitchen_knife"
+  "kaleidoscope_cookery:kitchen_shovel":
+    type: crafting_shaped
+    pattern:
+      - "I  "
+      - " N "
+      - "  S"
+    key:
+      I: "#c:ingots/iron"
+      N: "#c:nuggets/iron"
+      S: "minecraft:stick"
+    result: "kaleidoscope_cookery:kitchen_shovel"
+  "kaleidoscope_cookery:kitchenware_racks":
+    type: crafting_shaped
+    pattern:
+      - SSS
+      - INI
+    key:
+      I: "#c:ingots/iron"
+      N: "#c:nuggets/iron"
+      S: "minecraft:stick"
+    result: "kaleidoscope_cookery:kitchenware_racks"
+  "kaleidoscope_cookery:long_bench":
+    type: crafting_shaped
+    pattern:
+      - PPP
+      - FSF
+    key:
+      F: "minecraft:oak_fence"
+      P: "minecraft:oak_planks"
+      S: "minecraft:stick"
+    result: "kaleidoscope_cookery:long_bench"
+  "kaleidoscope_cookery:millstone":
+    type: crafting_shaped
+    pattern:
+      - " F "
+      - "SG "
+      - TTT
+    key:
+      F: "#c:fences/wooden"
+      G: "minecraft:grindstone"
+      S: "minecraft:stick"
+      T: "minecraft:smooth_stone"
+    result: "kaleidoscope_cookery:millstone"
+  "kaleidoscope_cookery:nether_style_sashimi":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:crimson_fungus"
+      - "minecraft:warped_fungus"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:nether_style_sashimi"
+  "kaleidoscope_cookery:oil":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:oil_block"
+    result:
+      item: "kaleidoscope_cookery:oil"
+      count: 9
+  "kaleidoscope_cookery:oil_block":
+    type: crafting_shaped
+    pattern:
+      - OOO
+      - OOO
+      - OOO
+    key:
+      O: "kaleidoscope_cookery:oil"
+    result: "kaleidoscope_cookery:oil_block"
+  "kaleidoscope_cookery:oil_pot":
+    type: crafting_shaped
+    pattern:
+      - "P "
+      - BS
+    key:
+      B: "minecraft:bucket"
+      P: "minecraft:heavy_weighted_pressure_plate"
+      S: "minecraft:stick"
+    result: "kaleidoscope_cookery:oil_pot"
+  "kaleidoscope_cookery:oolong_tea_bag":
+    type: crafting_shaped
+    pattern:
+      - LLL
+      - LCL
+      - LLL
+    key:
+      C: "minecraft:dragon_breath"
+      L: "kaleidoscope_cookery:dried_tea_leaves"
+    result: "kaleidoscope_cookery:oolong_tea_bag"
+  "kaleidoscope_cookery:pot":
+    type: crafting_shaped
+    pattern:
+      - "###"
+      - "###"
+      - " # "
+    key:
+      "#": "#c:ingots/iron"
+    result: "kaleidoscope_cookery:pot"
+  "kaleidoscope_cookery:qingtuan_plate":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:qingtuan"
+      - "kaleidoscope_cookery:qingtuan"
+      - "kaleidoscope_cookery:qingtuan"
+      - "kaleidoscope_cookery:qingtuan"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:qingtuan_plate"
+  "kaleidoscope_cookery:raw_bamboo_tube_rice":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:bamboo"
+      - "#c:grain/rice"
+      - "#c:raw_meats"
+    result: "kaleidoscope_cookery:raw_bamboo_tube_rice"
+  "kaleidoscope_cookery:raw_meatball":
+    type: crafting_shapeless
+    ingredients:
+      - "#c:raw_meats"
+      - "#c:raw_meats"
+      - "#c:vegetables"
+    result: "kaleidoscope_cookery:raw_meatball"
+  "kaleidoscope_cookery:raw_zongzi":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:rice"
+      - "minecraft:lily_pad"
+    result: "kaleidoscope_cookery:raw_zongzi"
+  "kaleidoscope_cookery:recipe_item":
+    type: crafting_shaped
+    pattern:
+      - PP
+      - PP
+    key:
+      P: "minecraft:paper"
+    result: "kaleidoscope_cookery:recipe_item"
+  "kaleidoscope_cookery:red_lantern":
+    type: crafting_shaped
+    pattern:
+      - PCP
+      - DLD
+      - PDP
+    key:
+      C: "minecraft:iron_chain"
+      D: "minecraft:red_dye"
+      L: "minecraft:candle"
+      P: "minecraft:paper"
+    result: "kaleidoscope_cookery:red_lantern"
+  "kaleidoscope_cookery:rice_panicle":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:straw_block"
+    result:
+      item: "kaleidoscope_cookery:rice_panicle"
+      count: 9
+  "kaleidoscope_cookery:sakura_fubuki_tea_bag":
+    type: crafting_shaped
+    pattern:
+      - LLL
+      - LCL
+      - LLL
+    key:
+      C: "minecraft:pink_petals"
+      L: "kaleidoscope_cookery:dried_tea_leaves"
+    result: "kaleidoscope_cookery:sakura_fubuki_tea_bag"
+  "kaleidoscope_cookery:scarecrow":
+    type: crafting_shaped
+    pattern:
+      - " H "
+      - SPS
+      - " # "
+    key:
+      "#": "#kaleidoscope_cookery:straw_bale"
+      H: "#kaleidoscope_cookery:straw_hat"
+      P: "minecraft:pumpkin"
+      S: "minecraft:stick"
+    result: "kaleidoscope_cookery:scarecrow"
+  "kaleidoscope_cookery:shawarma_spit":
+    type: crafting_shaped
+    pattern:
+      - ICI
+      - ICI
+    key:
+      C: "minecraft:campfire"
+      I: "minecraft:iron_chain"
+    result: "kaleidoscope_cookery:shawarma_spit"
+  "kaleidoscope_cookery:shengjian_mantou_plate":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:shengjian_mantou"
+      - "kaleidoscope_cookery:shengjian_mantou"
+      - "kaleidoscope_cookery:shengjian_mantou"
+      - "kaleidoscope_cookery:shengjian_mantou"
+      - "kaleidoscope_cookery:shengjian_mantou"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:shengjian_mantou_plate"
+  "kaleidoscope_cookery:sickle":
+    type: crafting_shaped
+    pattern:
+      - AAB
+      - " CA"
+      - "C  "
+    key:
+      A: "minecraft:flint"
+      B: "minecraft:string"
+      C: "minecraft:stick"
+    result: "kaleidoscope_cookery:sickle"
+  "kaleidoscope_cookery:steamer":
+    type: crafting_shaped
+    pattern:
+      - TTT
+      - BBB
+    key:
+      B: "minecraft:bamboo_block"
+      T: "minecraft:bamboo_trapdoor"
+    result: "kaleidoscope_cookery:steamer"
+  "kaleidoscope_cookery:sticky_candy_plate":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:sticky_candy"
+      - "kaleidoscope_cookery:sticky_candy"
+      - "kaleidoscope_cookery:sticky_candy"
+      - "kaleidoscope_cookery:sticky_candy"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:sticky_candy_plate"
+  "kaleidoscope_cookery:sticky_rice_cake_plate":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:sticky_rice_cake"
+      - "kaleidoscope_cookery:sticky_rice_cake"
+      - "kaleidoscope_cookery:sticky_rice_cake"
+      - "kaleidoscope_cookery:sticky_rice_cake"
+      - "kaleidoscope_cookery:sticky_rice_cake"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:sticky_rice_cake_plate"
+  "kaleidoscope_cookery:stockpot":
+    type: crafting_shaped
+    pattern:
+      - "B B"
+      - "I I"
+      - III
+    key:
+      B: "minecraft:brick"
+      I: "#c:ingots/iron"
+    result: "kaleidoscope_cookery:stockpot"
+  "kaleidoscope_cookery:stockpot_lid":
+    type: crafting_shaped
+    pattern:
+      - " B "
+      - III
+    key:
+      B: "minecraft:brick"
+      I: "#c:ingots/iron"
+    result: "kaleidoscope_cookery:stockpot_lid"
+  "kaleidoscope_cookery:stove_campfire":
+    type: crafting_shaped
+    pattern:
+      - "###"
+      - "#F#"
+      - "###"
+    key:
+      "#": "#c:cobblestones"
+      F: "minecraft:campfire"
+    result: "kaleidoscope_cookery:stove"
+  "kaleidoscope_cookery:stove_soul_campfire":
+    type: crafting_shaped
+    pattern:
+      - "###"
+      - "#F#"
+      - "###"
+    key:
+      "#": "#c:cobblestones"
+      F: "minecraft:soul_campfire"
+    result: "kaleidoscope_cookery:stove"
+  "kaleidoscope_cookery:straw_block":
+    type: crafting_shaped
+    pattern:
+      - RRR
+      - RRR
+      - RRR
+    key:
+      R: "kaleidoscope_cookery:rice_panicle"
+    result: "kaleidoscope_cookery:straw_block"
+  "kaleidoscope_cookery:straw_hat":
+    type: crafting_shaped
+    pattern:
+      - " W "
+      - " S "
+      - WWW
+    key:
+      S: "minecraft:string"
+      W: "minecraft:wheat"
+    result: "kaleidoscope_cookery:straw_hat"
+  "kaleidoscope_cookery:straw_hat_flower":
+    type: crafting_shaped
+    pattern:
+      - FFF
+      - FHF
+      - FFF
+    key:
+      F: "#minecraft:flowers"
+      H: "kaleidoscope_cookery:straw_hat"
+    result: "kaleidoscope_cookery:straw_hat_flower"
+  "kaleidoscope_cookery:strung_mushrooms":
+    type: crafting_shaped
+    pattern:
+      - MM
+      - MM
+      - MM
+    key:
+      M: "minecraft:brown_mushroom"
+    result: "kaleidoscope_cookery:strung_mushrooms"
+  "kaleidoscope_cookery:stuffed_dough_food":
+    type: crafting_shapeless
+    ingredients:
+      - "#c:raw_meats"
+      - "#c:vegetables"
+      - "#c:dough"
+    result: "kaleidoscope_cookery:stuffed_dough_food"
+  "kaleidoscope_cookery:table_acacia":
+    type: crafting_shaped
+    pattern:
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:acacia_fence"
+      S: "minecraft:acacia_slab"
+    result: "kaleidoscope_cookery:table_acacia"
+  "kaleidoscope_cookery:table_bamboo":
+    type: crafting_shaped
+    pattern:
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:bamboo_block"
+      S: "minecraft:bamboo_slab"
+    result: "kaleidoscope_cookery:table_bamboo"
+  "kaleidoscope_cookery:table_birch":
+    type: crafting_shaped
+    pattern:
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:birch_fence"
+      S: "minecraft:birch_slab"
+    result: "kaleidoscope_cookery:table_birch"
+  "kaleidoscope_cookery:table_cherry":
+    type: crafting_shaped
+    pattern:
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:cherry_fence"
+      S: "minecraft:cherry_slab"
+    result: "kaleidoscope_cookery:table_cherry"
+  "kaleidoscope_cookery:table_crimson":
+    type: crafting_shaped
+    pattern:
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:crimson_fence"
+      S: "minecraft:crimson_slab"
+    result: "kaleidoscope_cookery:table_crimson"
+  "kaleidoscope_cookery:table_dark_oak":
+    type: crafting_shaped
+    pattern:
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:dark_oak_fence"
+      S: "minecraft:dark_oak_slab"
+    result: "kaleidoscope_cookery:table_dark_oak"
+  "kaleidoscope_cookery:table_jungle":
+    type: crafting_shaped
+    pattern:
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:jungle_fence"
+      S: "minecraft:jungle_slab"
+    result: "kaleidoscope_cookery:table_jungle"
+  "kaleidoscope_cookery:table_mangrove":
+    type: crafting_shaped
+    pattern:
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:mangrove_fence"
+      S: "minecraft:mangrove_slab"
+    result: "kaleidoscope_cookery:table_mangrove"
+  "kaleidoscope_cookery:table_oak":
+    type: crafting_shaped
+    pattern:
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:oak_fence"
+      S: "minecraft:oak_slab"
+    result: "kaleidoscope_cookery:table_oak"
+  "kaleidoscope_cookery:table_spruce":
+    type: crafting_shaped
+    pattern:
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:spruce_fence"
+      S: "minecraft:spruce_slab"
+    result: "kaleidoscope_cookery:table_spruce"
+  "kaleidoscope_cookery:table_warped":
+    type: crafting_shaped
+    pattern:
+      - SSS
+      - "F F"
+    key:
+      F: "minecraft:warped_fence"
+      S: "minecraft:warped_slab"
+    result: "kaleidoscope_cookery:table_warped"
+  "kaleidoscope_cookery:tea_banner":
+    type: crafting_shaped
+    pattern:
+      - WWW
+      - WWW
+      - "S  "
+    key:
+      S: "minecraft:stick"
+      W: "minecraft:red_wool"
+    result: "kaleidoscope_cookery:tea_banner"
+  "kaleidoscope_cookery:teapot":
+    type: crafting_shaped
+    pattern:
+      - " I "
+      - IBI
+      - III
+    key:
+      B: "minecraft:bucket"
+      I: "#c:ingots/copper"
+    result: "kaleidoscope_cookery:teapot"
+  "kaleidoscope_cookery:tieguanyin_tea_bag":
+    type: crafting_shaped
+    pattern:
+      - LLL
+      - LCL
+      - LLL
+    key:
+      C: "minecraft:iron_nugget"
+      L: "kaleidoscope_cookery:dried_tea_leaves"
+    result: "kaleidoscope_cookery:tieguanyin_tea_bag"
+  "kaleidoscope_cookery:tomato_platter":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:tomato"
+      - "kaleidoscope_cookery:tomato"
+      - "kaleidoscope_cookery:tomato"
+      - "kaleidoscope_cookery:tomato"
+      - "kaleidoscope_cookery:tomato"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:tomato_platter"
+  "kaleidoscope_cookery:tomato_seed":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:tomato"
+    result: "kaleidoscope_cookery:tomato_seed"
+  "kaleidoscope_cookery:transmutation_lunch_bag":
+    type: crafting_shaped
+    pattern:
+      - " L "
+      - LSL
+      - LLL
+    key:
+      L: "minecraft:leather"
+      S: "minecraft:amethyst_shard"
+    result: "kaleidoscope_cookery:transmutation_lunch_bag"
+  "kaleidoscope_cookery:trash_can":
+    type: crafting_shaped
+    pattern:
+      - III
+      - ICI
+      - III
+    key:
+      C: "minecraft:composter"
+      I: "#c:ingots/iron"
+    result: "kaleidoscope_cookery:trash_can"
+  "kaleidoscope_cookery:tundra_style_sashimi":
+    type: crafting_shapeless
+    ingredients:
+      - "#minecraft:flowers"
+      - "#minecraft:flowers"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "kaleidoscope_cookery:sashimi"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:tundra_style_sashimi"
+  "kaleidoscope_cookery:watermelon_platter":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:melon_slice"
+      - "minecraft:melon_slice"
+      - "minecraft:melon_slice"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:watermelon_platter"
+  "kaleidoscope_cookery:zongzi_plate":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:zongzi"
+      - "kaleidoscope_cookery:zongzi"
+      - "kaleidoscope_cookery:zongzi"
+      - "kaleidoscope_cookery:zongzi"
+      - "minecraft:bowl"
+    result: "kaleidoscope_cookery:zongzi_plate"
+  "kaleidoscope_cookery:raw_dough_steamer":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:steamer"
+      - "kaleidoscope_cookery:raw_dough"
+      - "kaleidoscope_cookery:raw_dough"
+      - "kaleidoscope_cookery:raw_dough"
+      - "kaleidoscope_cookery:raw_dough"
+    result: "kaleidoscope_cookery:steamer"
+  "kaleidoscope_cookery:stuffed_dough_food_steamer":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:steamer"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    result: "kaleidoscope_cookery:steamer"
+  "kaleidoscope_cookery:chili_seed_from_green_chili":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:green_chili"
+    result: "kaleidoscope_cookery:chili_seed"
+  "kaleidoscope_cookery:chili_seed_from_red_chili":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:red_chili"
+    result: "kaleidoscope_cookery:chili_seed"
+  "kaleidoscope_cookery:cooked_cow_offal_from_campfire_cooking":
+    type: campfire_cooking
+    ingredient: "kaleidoscope_cookery:raw_cow_offal"
+    time: 600
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_cow_offal"
+  "kaleidoscope_cookery:cooked_cow_offal_from_smelting":
+    type: smelting
+    ingredient: "kaleidoscope_cookery:raw_cow_offal"
+    time: 200
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_cow_offal"
+  "kaleidoscope_cookery:cooked_cow_offal_from_smoking":
+    type: smoking
+    ingredient: "kaleidoscope_cookery:raw_cow_offal"
+    time: 100
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_cow_offal"
+  "kaleidoscope_cookery:cooked_cut_small_meats_from_campfire_cooking":
+    type: campfire_cooking
+    ingredient: "kaleidoscope_cookery:raw_cut_small_meats"
+    time: 600
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_cut_small_meats"
+  "kaleidoscope_cookery:cooked_cut_small_meats_from_smelting":
+    type: smelting
+    ingredient: "kaleidoscope_cookery:raw_cut_small_meats"
+    time: 200
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_cut_small_meats"
+  "kaleidoscope_cookery:cooked_cut_small_meats_from_smoking":
+    type: smoking
+    ingredient: "kaleidoscope_cookery:raw_cut_small_meats"
+    time: 100
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_cut_small_meats"
+  "kaleidoscope_cookery:cooked_lamb_chops_from_campfire_cooking":
+    type: campfire_cooking
+    ingredient: "kaleidoscope_cookery:raw_lamb_chops"
+    time: 600
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_lamb_chops"
+  "kaleidoscope_cookery:cooked_lamb_chops_from_smelting":
+    type: smelting
+    ingredient: "kaleidoscope_cookery:raw_lamb_chops"
+    time: 200
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_lamb_chops"
+  "kaleidoscope_cookery:cooked_lamb_chops_from_smoking":
+    type: smoking
+    ingredient: "kaleidoscope_cookery:raw_lamb_chops"
+    time: 100
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_lamb_chops"
+  "kaleidoscope_cookery:cooked_meatball_from_campfire_cooking":
+    type: campfire_cooking
+    ingredient: "kaleidoscope_cookery:raw_meatball"
+    time: 600
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_meatball"
+  "kaleidoscope_cookery:cooked_meatball_from_smelting":
+    type: smelting
+    ingredient: "kaleidoscope_cookery:raw_meatball"
+    time: 200
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_meatball"
+  "kaleidoscope_cookery:cooked_meatball_from_smoking":
+    type: smoking
+    ingredient: "kaleidoscope_cookery:raw_meatball"
+    time: 100
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_meatball"
+  "kaleidoscope_cookery:cooked_pork_belly_from_campfire_cooking":
+    type: campfire_cooking
+    ingredient: "kaleidoscope_cookery:raw_pork_belly"
+    time: 600
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_pork_belly"
+  "kaleidoscope_cookery:cooked_pork_belly_from_smelting":
+    type: smelting
+    ingredient: "kaleidoscope_cookery:raw_pork_belly"
+    time: 200
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_pork_belly"
+  "kaleidoscope_cookery:cooked_pork_belly_from_smoking":
+    type: smoking
+    ingredient: "kaleidoscope_cookery:raw_pork_belly"
+    time: 100
+    experience: 0.35
+    result: "kaleidoscope_cookery:cooked_pork_belly"
+  "kaleidoscope_cookery:dried_tea_leaves_from_campfire_cooking":
+    type: campfire_cooking
+    ingredient: "kaleidoscope_cookery:fresh_tea_leaves"
+    time: 600
+    experience: 0.1
+    result: "kaleidoscope_cookery:dried_tea_leaves"
+  "kaleidoscope_cookery:dried_tea_leaves_from_smelting":
+    type: smelting
+    ingredient: "kaleidoscope_cookery:fresh_tea_leaves"
+    time: 200
+    experience: 0.1
+    result: "kaleidoscope_cookery:dried_tea_leaves"
+  "kaleidoscope_cookery:flour_from_1_wheat":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:water_bucket"
+      - "kaleidoscope_cookery:flour"
+    result: "kaleidoscope_cookery:raw_dough"
+  "kaleidoscope_cookery:flour_from_2_wheat":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:water_bucket"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+    result:
+      item: "kaleidoscope_cookery:raw_dough"
+      count: 2
+  "kaleidoscope_cookery:flour_from_3_wheat":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:water_bucket"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+    result:
+      item: "kaleidoscope_cookery:raw_dough"
+      count: 3
+  "kaleidoscope_cookery:flour_from_4_wheat":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:water_bucket"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+    result:
+      item: "kaleidoscope_cookery:raw_dough"
+      count: 4
+  "kaleidoscope_cookery:flour_from_5_wheat":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:water_bucket"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+    result:
+      item: "kaleidoscope_cookery:raw_dough"
+      count: 5
+  "kaleidoscope_cookery:flour_from_6_wheat":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:water_bucket"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+    result:
+      item: "kaleidoscope_cookery:raw_dough"
+      count: 6
+  "kaleidoscope_cookery:flour_from_7_wheat":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:water_bucket"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+    result:
+      item: "kaleidoscope_cookery:raw_dough"
+      count: 7
+  "kaleidoscope_cookery:flour_from_8_wheat":
+    type: crafting_shapeless
+    ingredients:
+      - "minecraft:water_bucket"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+      - "kaleidoscope_cookery:flour"
+    result:
+      item: "kaleidoscope_cookery:raw_dough"
+      count: 8
+  "kaleidoscope_cookery:netherite_kitchen_knife_smithing":
+    type: smithing_transform
+    template: "minecraft:netherite_upgrade_smithing_template"
+    base: "kaleidoscope_cookery:diamond_kitchen_knife"
+    addition: "minecraft:netherite_ingot"
+    result: "kaleidoscope_cookery:netherite_kitchen_knife"
+  "kaleidoscope_cookery:reset_recipe_item":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_cookery:recipe_item"
+    result: "kaleidoscope_cookery:recipe_item"
+  "kaleidoscope_cookery:samsa_from_campfire_cooking":
+    type: campfire_cooking
+    ingredient: "kaleidoscope_cookery:stuffed_dough_food"
+    time: 600
+    experience: 0.35
+    result: "kaleidoscope_cookery:samsa"
+  "kaleidoscope_cookery:samsa_from_smelting":
+    type: smelting
+    ingredient: "kaleidoscope_cookery:stuffed_dough_food"
+    time: 200
+    experience: 0.35
+    result: "kaleidoscope_cookery:samsa"
+  "kaleidoscope_cookery:samsa_from_smoking":
+    type: smoking
+    ingredient: "kaleidoscope_cookery:stuffed_dough_food"
+    time: 100
+    experience: 0.35
+    result: "kaleidoscope_cookery:samsa"
+  "kaleidoscope_grilling:advanced_rack":
+    type: crafting_shaped
+    pattern:
+      - III
+      - " R "
+      - SSS
+    key:
+      I: "#c:ingots/iron"
+      S: "#minecraft:wooden_slabs"
+      R: "kaleidoscope_cookery:kitchenware_racks"
+    result: "kaleidoscope_grilling:advanced_rack"
+  "kaleidoscope_grilling:big_vat":
+    type: crafting_shaped
+    pattern:
+      - "B B"
+      - BUB
+      - BBB
+    key:
+      B: "#c:bricks/normal"
+      U: "minecraft:bucket"
+    result: "kaleidoscope_grilling:big_vat"
+  "kaleidoscope_grilling:clear_skewer_recipe_book":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_grilling:skewer_recipe_book"
+    result: "kaleidoscope_cookery:recipe_item"
+  "kaleidoscope_grilling:empty_seasoning_bottle":
+    type: crafting_shaped
+    pattern:
+      - " B "
+      - GGG
+      - GGG
+    key:
+      B: "#minecraft:wooden_buttons"
+      G: "#c:glass_blocks/colorless"
+    result: "kaleidoscope_grilling:empty_seasoning_bottle"
+  "kaleidoscope_grilling:grill":
+    type: crafting_shaped
+    pattern:
+      - III
+      - BCB
+      - "I I"
+    key:
+      I: "#c:ingots/iron"
+      B: "#c:bricks/normal"
+      C: "#minecraft:coals"
+    result: "kaleidoscope_grilling:grill"
+  "kaleidoscope_grilling:oak_planks_from_pepper_log":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_grilling:pepper_log"
+    result:
+      item: "minecraft:oak_planks"
+      count: 4
+  "kaleidoscope_grilling:oil_cake":
+    type: crafting_shaped
+    pattern:
+      - PPP
+      - PWP
+      - PPP
+    key:
+      P: "kaleidoscope_grilling:canola_powder"
+      W: "#c:crops/wheat"
+    result: "kaleidoscope_grilling:oil_cake"
+  "kaleidoscope_grilling:oil_press":
+    type: crafting_shaped
+    pattern:
+      - LIL
+      - "F F"
+      - LHL
+    key:
+      L: "#minecraft:logs"
+      I: "#c:ingots/iron"
+      F: "#minecraft:fences"
+      H: "minecraft:hopper"
+    result: "kaleidoscope_grilling:oil_press"
+  "kaleidoscope_grilling:pepper_honey":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_grilling:sichuan_pepper"
+      - "kaleidoscope_grilling:sichuan_pepper"
+      - "kaleidoscope_grilling:sichuan_pepper"
+      - "minecraft:honey_bottle"
+    result: "kaleidoscope_grilling:pepper_honey"
+  "kaleidoscope_grilling:premium_chili_oil":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_grilling:secret_chili_oil_bucket"
+      - "minecraft:lava_bucket"
+      - "#c:dusts/redstone"
+      - "kaleidoscope_grilling:houttuynia_powder"
+    result: "kaleidoscope_grilling:premium_chili_oil_bucket"
+  "kaleidoscope_grilling:roasted_chicken_wing":
+    type: smelting
+    ingredient: "#kaleidoscope_grilling:ingredients/chicken_wings"
+    time: 200
+    experience: 0.35
+    result: "kaleidoscope_grilling:roasted_chicken_wing"
+  "kaleidoscope_grilling:roasted_chicken_wing_campfire":
+    type: campfire_cooking
+    ingredient: "#kaleidoscope_grilling:ingredients/chicken_wings"
+    time: 600
+    experience: 0.35
+    result: "kaleidoscope_grilling:roasted_chicken_wing"
+  "kaleidoscope_grilling:roasted_chicken_wing_smoking":
+    type: smoking
+    ingredient: "#kaleidoscope_grilling:ingredients/chicken_wings"
+    time: 100
+    experience: 0.35
+    result: "kaleidoscope_grilling:roasted_chicken_wing"
+  "kaleidoscope_grilling:roasted_sweet_potato":
+    type: smelting
+    ingredient: "#kaleidoscope_grilling:ingredients/sweet_potatoes"
+    time: 200
+    experience: 0.35
+    result: "kaleidoscope_grilling:roasted_sweet_potato"
+  "kaleidoscope_grilling:roasted_sweet_potato_campfire":
+    type: campfire_cooking
+    ingredient: "#kaleidoscope_grilling:ingredients/sweet_potatoes"
+    time: 600
+    experience: 0.35
+    result: "kaleidoscope_grilling:roasted_sweet_potato"
+  "kaleidoscope_grilling:roasted_sweet_potato_smoking":
+    type: smoking
+    ingredient: "#kaleidoscope_grilling:ingredients/sweet_potatoes"
+    time: 100
+    experience: 0.35
+    result: "kaleidoscope_grilling:roasted_sweet_potato"
+  "kaleidoscope_grilling:secret_chili_oil":
+    type: crafting_shapeless
+    ingredients:
+      - "kaleidoscope_grilling:canola_oil_bucket"
+      - "kaleidoscope_grilling:red_chili_powder"
+      - "kaleidoscope_grilling:red_chili_powder"
+      - "kaleidoscope_grilling:red_chili_powder"
+    result: "kaleidoscope_grilling:secret_chili_oil_bucket"
+  "kaleidoscope_grilling:sugared_tomato":
+    type: crafting_shapeless
+    ingredients:
+      - "#c:crops/tomato"
+      - "minecraft:sugar"
+    result: "kaleidoscope_grilling:sugared_tomato"

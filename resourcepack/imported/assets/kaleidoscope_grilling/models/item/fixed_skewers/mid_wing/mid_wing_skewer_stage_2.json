@@ -1,0 +1,7 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/mid_wing/mid_wing_skewer_geo",
+  "textures": {
+    "1": "kaleidoscope_grilling:item/fixed_skewers/beef_skewer_stage_2",
+    "4": "kaleidoscope_grilling:item/fixed_skewers/mid_wing_skewer_stage_2"
+  }
+}

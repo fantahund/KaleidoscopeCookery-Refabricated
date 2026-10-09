@@ -1,0 +1,7 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/lamb/lamb_skewer_geo",
+  "textures": {
+    "1": "kaleidoscope_grilling:item/fixed_skewers/lamb_skewer_stage_3",
+    "particle": "kaleidoscope_grilling:item/fixed_skewers/lamb_skewer_stage_3"
+  }
+}

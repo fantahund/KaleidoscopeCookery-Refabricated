@@ -1,0 +1,355 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "#food",
+    "food": "kaleidoscope_grilling:item/failure_skewers/dark_food",
+    "stick": "kaleidoscope_grilling:item/fixed_skewers/skewer_stick"
+  },
+  "elements": [
+    {
+      "name": "wood",
+      "from": [
+        7.75,
+        0.75,
+        0
+      ],
+      "to": [
+        8.25,
+        1.25,
+        12.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            2,
+            3,
+            3
+          ],
+          "texture": "#stick"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            13,
+            1
+          ],
+          "texture": "#stick"
+        },
+        "south": {
+          "uv": [
+            2,
+            3,
+            3,
+            4
+          ],
+          "texture": "#stick"
+        },
+        "west": {
+          "uv": [
+            0,
+            1,
+            13,
+            2
+          ],
+          "texture": "#stick"
+        },
+        "up": {
+          "uv": [
+            1,
+            15,
+            0,
+            2
+          ],
+          "texture": "#stick"
+        },
+        "down": {
+          "uv": [
+            2,
+            2,
+            1,
+            15
+          ],
+          "texture": "#stick"
+        }
+      }
+    },
+    {
+      "name": "food1",
+      "from": [
+        6.625,
+        -0.375,
+        4.75
+      ],
+      "to": [
+        9.375,
+        2.625,
+        7.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            3,
+            3
+          ],
+          "texture": "#food"
+        },
+        "east": {
+          "uv": [
+            0,
+            3,
+            3,
+            6
+          ],
+          "texture": "#food"
+        },
+        "south": {
+          "uv": [
+            3,
+            0,
+            6,
+            3
+          ],
+          "texture": "#food"
+        },
+        "west": {
+          "uv": [
+            3,
+            3,
+            6,
+            6
+          ],
+          "texture": "#food"
+        },
+        "up": {
+          "uv": [
+            3,
+            9,
+            0,
+            6
+          ],
+          "texture": "#food"
+        },
+        "down": {
+          "uv": [
+            9,
+            0,
+            6,
+            3
+          ],
+          "texture": "#food"
+        }
+      }
+    },
+    {
+      "name": "food2_lower",
+      "from": [
+        7.25,
+        0.25,
+        3.25
+      ],
+      "to": [
+        8.75,
+        2,
+        4.75
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "z",
+        "origin": [
+          8,
+          1.125,
+          4
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            9,
+            6,
+            12,
+            8
+          ],
+          "texture": "#food"
+        },
+        "east": {
+          "uv": [
+            9,
+            8,
+            12,
+            10
+          ],
+          "texture": "#food"
+        },
+        "south": {
+          "uv": [
+            9,
+            10,
+            12,
+            12
+          ],
+          "texture": "#food"
+        },
+        "west": {
+          "uv": [
+            0,
+            12,
+            3,
+            14
+          ],
+          "texture": "#food"
+        },
+        "up": {
+          "uv": [
+            6,
+            9,
+            3,
+            6
+          ],
+          "texture": "#food"
+        },
+        "down": {
+          "uv": [
+            9,
+            3,
+            6,
+            6
+          ],
+          "texture": "#food"
+        }
+      }
+    }
+  ],
+  "gui_light": "front",
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        -98.57,
+        1.45,
+        -174.51
+      ],
+      "translation": [
+        0.75,
+        6.25,
+        5.5
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        -98.57,
+        1.45,
+        -174.51
+      ],
+      "translation": [
+        0.75,
+        6.25,
+        5.5
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        -95,
+        -7,
+        -163
+      ],
+      "translation": [
+        -1,
+        7.75,
+        7.25
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        -94,
+        0,
+        -165
+      ],
+      "translation": [
+        -1.5,
+        7.25,
+        7
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "gui": {
+      "rotation": [
+        90,
+        135,
+        0
+      ],
+      "translation": [
+        1.75,
+        1.75,
+        0
+      ],
+      "scale": [
+        1.5,
+        1.5,
+        1.5
+      ]
+    },
+    "head": {
+      "rotation": [
+        0,
+        -180,
+        0
+      ],
+      "translation": [
+        0,
+        14.5,
+        -2
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        -90,
+        0,
+        -180
+      ],
+      "translation": [
+        0,
+        2.25,
+        9.75
+      ],
+      "scale": [
+        1.5,
+        1.5,
+        1.5
+      ]
+    }
+  }
+}

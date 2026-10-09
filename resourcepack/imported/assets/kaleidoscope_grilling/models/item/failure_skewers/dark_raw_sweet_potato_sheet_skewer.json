@@ -1,0 +1,6 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/sweet_potato_sheet/sweet_potato_sheet_skewer",
+  "textures": {
+    "food": "kaleidoscope_grilling:item/failure_skewers/dark_food"
+  }
+}

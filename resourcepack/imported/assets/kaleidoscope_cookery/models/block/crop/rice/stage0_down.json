@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "kaleidoscope_cookery:block/crop/rice/stage0_down"
+  }
+}

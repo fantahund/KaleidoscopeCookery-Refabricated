@@ -1,0 +1,7 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/potato_slice/potato_slice_skewer",
+  "textures": {
+    "food_1": "kaleidoscope_grilling:item/failure_skewers/mysterious_food",
+    "food_2": "kaleidoscope_grilling:item/failure_skewers/mysterious_food"
+  }
+}

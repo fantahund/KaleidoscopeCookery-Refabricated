@@ -1,0 +1,7 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/chicken_skin/chicken_skin_skewer_geo",
+  "textures": {
+    "particle": "kaleidoscope_grilling:item/fixed_skewers/chicken_skin_skewer_raw",
+    "food": "kaleidoscope_grilling:item/fixed_skewers/chicken_skin_skewer_burnt"
+  }
+}

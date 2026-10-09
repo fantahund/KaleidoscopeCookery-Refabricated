@@ -1,0 +1,6 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/bun_slice/bun_slice_skewer_geo",
+  "textures": {
+    "8": "kaleidoscope_grilling:item/fixed_skewers/bun_slice_skewer_cooked"
+  }
+}

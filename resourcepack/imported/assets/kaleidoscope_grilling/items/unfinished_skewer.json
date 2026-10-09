@@ -1,0 +1,846 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "minecraft:custom_model_data",
+    "index": 9,
+    "entries": [
+      {
+        "threshold": 0.25,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_16"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_16"
+          }
+        }
+      },
+      {
+        "threshold": 0.3125,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_20"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_20"
+          }
+        }
+      },
+      {
+        "threshold": 0.328125,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_21"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_21"
+          }
+        }
+      },
+      {
+        "threshold": 0.34375,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_22"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_22"
+          }
+        }
+      },
+      {
+        "threshold": 0.359375,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_23"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_23"
+          }
+        }
+      },
+      {
+        "threshold": 0.375,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_24"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_24"
+          }
+        }
+      },
+      {
+        "threshold": 0.390625,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_25"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_25"
+          }
+        }
+      },
+      {
+        "threshold": 0.40625,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_26"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_26"
+          }
+        }
+      },
+      {
+        "threshold": 0.421875,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_27"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_27"
+          }
+        }
+      },
+      {
+        "threshold": 0.4375,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_28"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_28"
+          }
+        }
+      },
+      {
+        "threshold": 0.453125,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_29"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_29"
+          }
+        }
+      },
+      {
+        "threshold": 0.46875,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_30"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_30"
+          }
+        }
+      },
+      {
+        "threshold": 0.484375,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_31"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_31"
+          }
+        }
+      },
+      {
+        "threshold": 0.5,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_32"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_32"
+          }
+        }
+      },
+      {
+        "threshold": 0.5625,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_36"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_36"
+          }
+        }
+      },
+      {
+        "threshold": 0.578125,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_37"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_37"
+          }
+        }
+      },
+      {
+        "threshold": 0.59375,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_38"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_38"
+          }
+        }
+      },
+      {
+        "threshold": 0.609375,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_39"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_39"
+          }
+        }
+      },
+      {
+        "threshold": 0.625,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_40"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_40"
+          }
+        }
+      },
+      {
+        "threshold": 0.640625,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_41"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_41"
+          }
+        }
+      },
+      {
+        "threshold": 0.65625,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_42"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_42"
+          }
+        }
+      },
+      {
+        "threshold": 0.671875,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_43"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_43"
+          }
+        }
+      },
+      {
+        "threshold": 0.6875,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_44"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_44"
+          }
+        }
+      },
+      {
+        "threshold": 0.703125,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_45"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_45"
+          }
+        }
+      },
+      {
+        "threshold": 0.71875,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_46"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_46"
+          }
+        }
+      },
+      {
+        "threshold": 0.734375,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_47"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_47"
+          }
+        }
+      },
+      {
+        "threshold": 0.75,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_48"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_48"
+          }
+        }
+      },
+      {
+        "threshold": 0.8125,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_52"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_52"
+          }
+        }
+      },
+      {
+        "threshold": 0.828125,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_53"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_53"
+          }
+        }
+      },
+      {
+        "threshold": 0.84375,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_54"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_54"
+          }
+        }
+      },
+      {
+        "threshold": 0.859375,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_55"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_55"
+          }
+        }
+      },
+      {
+        "threshold": 0.875,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_56"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_56"
+          }
+        }
+      },
+      {
+        "threshold": 0.890625,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_57"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_57"
+          }
+        }
+      },
+      {
+        "threshold": 0.90625,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_58"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_58"
+          }
+        }
+      },
+      {
+        "threshold": 0.921875,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_59"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_59"
+          }
+        }
+      },
+      {
+        "threshold": 0.9375,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_60"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_60"
+          }
+        }
+      },
+      {
+        "threshold": 0.953125,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_61"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_61"
+          }
+        }
+      },
+      {
+        "threshold": 0.96875,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_62"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_62"
+          }
+        }
+      },
+      {
+        "threshold": 0.984375,
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 13,
+          "entries": [
+            {
+              "threshold": 1.0,
+              "model": {
+                "type": "minecraft:model",
+                "model": "kaleidoscope_grilling:item/skewer_states/outline_state_63"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/skewer_states/state_63"
+          }
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:range_dispatch",
+      "property": "minecraft:custom_model_data",
+      "index": 13,
+      "entries": [
+        {
+          "threshold": 1.0,
+          "model": {
+            "type": "minecraft:model",
+            "model": "kaleidoscope_grilling:item/unfinished_skewer"
+          }
+        }
+      ],
+      "fallback": {
+        "type": "minecraft:model",
+        "model": "kaleidoscope_grilling:item/unfinished_skewer"
+      }
+    }
+  }
+}

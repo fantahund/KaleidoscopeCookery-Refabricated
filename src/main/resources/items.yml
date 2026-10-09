@@ -1,0 +1,1253 @@
+# Generiert von tools/gen_data.py aus den Mod-Quellen - nicht von Hand bearbeiten.
+items:
+  "kaleidoscope_cookery:apple_platter":
+    model: "kaleidoscope_cookery:apple_platter"
+    name: block.kaleidoscope_cookery.apple_platter
+  "kaleidoscope_cookery:bamboo_tray":
+    model: "kaleidoscope_cookery:bamboo_tray"
+    name: block.kaleidoscope_cookery.bamboo_tray
+  "kaleidoscope_cookery:bamboo_tube_rice":
+    model: "kaleidoscope_cookery:bamboo_tube_rice"
+    name: block.kaleidoscope_cookery.bamboo_tube_rice
+    food:
+      nutrition: 10
+      saturation: 10.0
+      always-edible: true
+  "kaleidoscope_cookery:baozi":
+    model: "kaleidoscope_cookery:baozi"
+    name: item.kaleidoscope_cookery.baozi
+    food:
+      nutrition: 8
+      saturation: 16.0
+      always-edible: true
+      effects:
+        - effect: "minecraft:absorption"
+          duration: 1600
+  "kaleidoscope_cookery:baozi_plate":
+    model: "kaleidoscope_cookery:baozi_plate"
+    name: block.kaleidoscope_cookery.baozi_plate
+  "kaleidoscope_cookery:barley_tea":
+    model: "kaleidoscope_cookery:barley_tea"
+    name: block.kaleidoscope_cookery.barley_tea
+  "kaleidoscope_cookery:barley_tea_bag":
+    model: "kaleidoscope_cookery:barley_tea_bag"
+    name: item.kaleidoscope_cookery.barley_tea_bag
+  "kaleidoscope_cookery:beef_meatball_soup":
+    model: "kaleidoscope_cookery:beef_meatball_soup"
+    name: item.kaleidoscope_cookery.beef_meatball_soup
+    food:
+      nutrition: 6
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 9600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:beef_noodle":
+    model: "kaleidoscope_cookery:beef_noodle"
+    name: item.kaleidoscope_cookery.beef_noodle
+    food:
+      nutrition: 14
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:vitality"
+          duration: 9600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:berry_platter":
+    model: "kaleidoscope_cookery:berry_platter"
+    name: block.kaleidoscope_cookery.berry_platter
+  "kaleidoscope_cookery:biluochun":
+    model: "kaleidoscope_cookery:biluochun"
+    name: block.kaleidoscope_cookery.biluochun
+  "kaleidoscope_cookery:biluochun_tea_bag":
+    model: "kaleidoscope_cookery:biluochun_tea_bag"
+    name: item.kaleidoscope_cookery.biluochun_tea_bag
+  "kaleidoscope_cookery:blaze_lamb_chop":
+    model: "kaleidoscope_cookery:blaze_lamb_chop"
+    name: block.kaleidoscope_cookery.blaze_lamb_chop
+  "kaleidoscope_cookery:borscht":
+    model: "kaleidoscope_cookery:borscht"
+    name: item.kaleidoscope_cookery.borscht
+    food:
+      nutrition: 6
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:flatulence"
+          duration: 3600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:braised_beef":
+    model: "kaleidoscope_cookery:braised_beef"
+    name: item.kaleidoscope_cookery.braised_beef
+    food:
+      nutrition: 9
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:vigor"
+          duration: 1800
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:braised_beef_rice_bowl":
+    model: "kaleidoscope_cookery:braised_beef_rice_bowl"
+    name: item.kaleidoscope_cookery.braised_beef_rice_bowl
+    food:
+      nutrition: 14
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:satiated_shield"
+          duration: 3600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:braised_beef_with_potatoes":
+    model: "kaleidoscope_cookery:braised_beef_with_potatoes"
+    name: item.kaleidoscope_cookery.braised_beef_with_potatoes
+    food:
+      nutrition: 6
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 9600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:braised_pork_ribs":
+    model: "kaleidoscope_cookery:braised_pork_ribs"
+    name: block.kaleidoscope_cookery.braised_pork_ribs
+  "kaleidoscope_cookery:brown_mushroom_pot_soup":
+    model: "kaleidoscope_cookery:brown_mushroom_pot_soup"
+    name: block.kaleidoscope_cookery.brown_mushroom_pot_soup
+  "kaleidoscope_cookery:buddha_jumps_over_the_wall":
+    model: "kaleidoscope_cookery:buddha_jumps_over_the_wall"
+    name: block.kaleidoscope_cookery.buddha_jumps_over_the_wall
+  "kaleidoscope_cookery:butter_tea":
+    model: "kaleidoscope_cookery:butter_tea"
+    name: block.kaleidoscope_cookery.butter_tea
+  "kaleidoscope_cookery:butter_tea_bag":
+    model: "kaleidoscope_cookery:butter_tea_bag"
+    name: item.kaleidoscope_cookery.butter_tea_bag
+  "kaleidoscope_cookery:candied_potato":
+    model: "kaleidoscope_cookery:candied_potato"
+    name: block.kaleidoscope_cookery.candied_potato
+  "kaleidoscope_cookery:caterpillar":
+    model: "kaleidoscope_cookery:caterpillar"
+    name: item.kaleidoscope_cookery.caterpillar
+    food:
+      nutrition: 18
+      saturation: 7.2
+      always-edible: true
+      effects:
+        - effect: "minecraft:nausea"
+          duration: 200
+  "kaleidoscope_cookery:chair_acacia":
+    model: "kaleidoscope_cookery:chair_acacia"
+    name: block.kaleidoscope_cookery.chair_acacia
+  "kaleidoscope_cookery:chair_bamboo":
+    model: "kaleidoscope_cookery:chair_bamboo"
+    name: block.kaleidoscope_cookery.chair_bamboo
+  "kaleidoscope_cookery:chair_birch":
+    model: "kaleidoscope_cookery:chair_birch"
+    name: block.kaleidoscope_cookery.chair_birch
+  "kaleidoscope_cookery:chair_cherry":
+    model: "kaleidoscope_cookery:chair_cherry"
+    name: block.kaleidoscope_cookery.chair_cherry
+  "kaleidoscope_cookery:chair_crimson":
+    model: "kaleidoscope_cookery:chair_crimson"
+    name: block.kaleidoscope_cookery.chair_crimson
+  "kaleidoscope_cookery:chair_dark_oak":
+    model: "kaleidoscope_cookery:chair_dark_oak"
+    name: block.kaleidoscope_cookery.chair_dark_oak
+  "kaleidoscope_cookery:chair_jungle":
+    model: "kaleidoscope_cookery:chair_jungle"
+    name: block.kaleidoscope_cookery.chair_jungle
+  "kaleidoscope_cookery:chair_mangrove":
+    model: "kaleidoscope_cookery:chair_mangrove"
+    name: block.kaleidoscope_cookery.chair_mangrove
+  "kaleidoscope_cookery:chair_oak":
+    model: "kaleidoscope_cookery:chair_oak"
+    name: block.kaleidoscope_cookery.chair_oak
+  "kaleidoscope_cookery:chair_spruce":
+    model: "kaleidoscope_cookery:chair_spruce"
+    name: block.kaleidoscope_cookery.chair_spruce
+  "kaleidoscope_cookery:chair_warped":
+    model: "kaleidoscope_cookery:chair_warped"
+    name: block.kaleidoscope_cookery.chair_warped
+  "kaleidoscope_cookery:chicken_and_mushroom_stew":
+    model: "kaleidoscope_cookery:chicken_and_mushroom_stew"
+    name: item.kaleidoscope_cookery.chicken_and_mushroom_stew
+    food:
+      nutrition: 6
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 9600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:chili_ristra":
+    model: "kaleidoscope_cookery:chili_ristra"
+    name: block.kaleidoscope_cookery.chili_ristra
+  "kaleidoscope_cookery:chili_seed":
+    model: "kaleidoscope_cookery:chili_seed"
+    name: item.kaleidoscope_cookery.chili_seed
+  "kaleidoscope_cookery:chopping_board":
+    model: "kaleidoscope_cookery:chopping_board"
+    name: block.kaleidoscope_cookery.chopping_board
+  "kaleidoscope_cookery:chorus_fried_egg":
+    model: "kaleidoscope_cookery:chorus_fried_egg"
+    name: block.kaleidoscope_cookery.chorus_fried_egg
+  "kaleidoscope_cookery:chorus_fruit_platter":
+    model: "kaleidoscope_cookery:chorus_fruit_platter"
+    name: block.kaleidoscope_cookery.chorus_fruit_platter
+  "kaleidoscope_cookery:clay_pot_milk_tea":
+    model: "kaleidoscope_cookery:clay_pot_milk_tea"
+    name: block.kaleidoscope_cookery.clay_pot_milk_tea
+  "kaleidoscope_cookery:cold_cut_ham_slices":
+    model: "kaleidoscope_cookery:cold_cut_ham_slices"
+    name: block.kaleidoscope_cookery.cold_cut_ham_slices
+  "kaleidoscope_cookery:cold_roasted_meat":
+    model: "kaleidoscope_cookery:cold_roasted_meat"
+    name: block.kaleidoscope_cookery.cold_roasted_meat
+  "kaleidoscope_cookery:cold_style_sashimi":
+    model: "kaleidoscope_cookery:cold_style_sashimi"
+    name: block.kaleidoscope_cookery.cold_style_sashimi
+  "kaleidoscope_cookery:cook_stool_acacia":
+    model: "kaleidoscope_cookery:cook_stool_acacia"
+    name: block.kaleidoscope_cookery.cook_stool_acacia
+  "kaleidoscope_cookery:cook_stool_bamboo":
+    model: "kaleidoscope_cookery:cook_stool_bamboo"
+    name: block.kaleidoscope_cookery.cook_stool_bamboo
+  "kaleidoscope_cookery:cook_stool_birch":
+    model: "kaleidoscope_cookery:cook_stool_birch"
+    name: block.kaleidoscope_cookery.cook_stool_birch
+  "kaleidoscope_cookery:cook_stool_cherry":
+    model: "kaleidoscope_cookery:cook_stool_cherry"
+    name: block.kaleidoscope_cookery.cook_stool_cherry
+  "kaleidoscope_cookery:cook_stool_crimson":
+    model: "kaleidoscope_cookery:cook_stool_crimson"
+    name: block.kaleidoscope_cookery.cook_stool_crimson
+  "kaleidoscope_cookery:cook_stool_dark_oak":
+    model: "kaleidoscope_cookery:cook_stool_dark_oak"
+    name: block.kaleidoscope_cookery.cook_stool_dark_oak
+  "kaleidoscope_cookery:cook_stool_jungle":
+    model: "kaleidoscope_cookery:cook_stool_jungle"
+    name: block.kaleidoscope_cookery.cook_stool_jungle
+  "kaleidoscope_cookery:cook_stool_mangrove":
+    model: "kaleidoscope_cookery:cook_stool_mangrove"
+    name: block.kaleidoscope_cookery.cook_stool_mangrove
+  "kaleidoscope_cookery:cook_stool_oak":
+    model: "kaleidoscope_cookery:cook_stool_oak"
+    name: block.kaleidoscope_cookery.cook_stool_oak
+  "kaleidoscope_cookery:cook_stool_spruce":
+    model: "kaleidoscope_cookery:cook_stool_spruce"
+    name: block.kaleidoscope_cookery.cook_stool_spruce
+  "kaleidoscope_cookery:cook_stool_warped":
+    model: "kaleidoscope_cookery:cook_stool_warped"
+    name: block.kaleidoscope_cookery.cook_stool_warped
+  "kaleidoscope_cookery:cooked_cow_offal":
+    model: "kaleidoscope_cookery:cooked_cow_offal"
+    name: item.kaleidoscope_cookery.cooked_cow_offal
+    food:
+      nutrition: 4
+      saturation: 6.4
+      always-edible: true
+  "kaleidoscope_cookery:cooked_cut_small_meats":
+    model: "kaleidoscope_cookery:cooked_cut_small_meats"
+    name: item.kaleidoscope_cookery.cooked_cut_small_meats
+    food:
+      nutrition: 4
+      saturation: 6.4
+      always-edible: true
+  "kaleidoscope_cookery:cooked_lamb_chops":
+    model: "kaleidoscope_cookery:cooked_lamb_chops"
+    name: item.kaleidoscope_cookery.cooked_lamb_chops
+    food:
+      nutrition: 3
+      saturation: 4.8
+      always-edible: true
+  "kaleidoscope_cookery:cooked_meatball":
+    model: "kaleidoscope_cookery:cooked_meatball"
+    name: item.kaleidoscope_cookery.cooked_meatball
+    food:
+      nutrition: 8
+      saturation: 12.8
+      always-edible: true
+  "kaleidoscope_cookery:cooked_pork_belly":
+    model: "kaleidoscope_cookery:cooked_pork_belly"
+    name: item.kaleidoscope_cookery.cooked_pork_belly
+    food:
+      nutrition: 4
+      saturation: 6.4
+      always-edible: true
+  "kaleidoscope_cookery:cooked_rice":
+    model: "kaleidoscope_cookery:cooked_rice"
+    name: item.kaleidoscope_cookery.cooked_rice
+    food:
+      nutrition: 6
+      saturation: 12.0
+      always-edible: true
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:crimson_fungus_pot_soup":
+    model: "kaleidoscope_cookery:crimson_fungus_pot_soup"
+    name: block.kaleidoscope_cookery.crimson_fungus_pot_soup
+  "kaleidoscope_cookery:crystal_lamb_chop":
+    model: "kaleidoscope_cookery:crystal_lamb_chop"
+    name: block.kaleidoscope_cookery.crystal_lamb_chop
+  "kaleidoscope_cookery:dark_cuisine":
+    model: "kaleidoscope_cookery:dark_cuisine"
+    name: block.kaleidoscope_cookery.dark_cuisine
+  "kaleidoscope_cookery:desert_style_sashimi":
+    model: "kaleidoscope_cookery:desert_style_sashimi"
+    name: block.kaleidoscope_cookery.desert_style_sashimi
+  "kaleidoscope_cookery:diamond_kitchen_knife":
+    model: "kaleidoscope_cookery:diamond_kitchen_knife"
+    name: item.kaleidoscope_cookery.diamond_kitchen_knife
+    base: DIAMOND_SWORD
+  "kaleidoscope_cookery:dongpo_pork":
+    model: "kaleidoscope_cookery:dongpo_pork"
+    name: block.kaleidoscope_cookery.dongpo_pork
+  "kaleidoscope_cookery:donkey_burger":
+    model: "kaleidoscope_cookery:donkey_burger"
+    name: item.kaleidoscope_cookery.donkey_burger
+    food:
+      nutrition: 12
+      saturation: 19.2
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:satiated_shield"
+          duration: 900
+  "kaleidoscope_cookery:dough_drop_soup":
+    model: "kaleidoscope_cookery:dough_drop_soup"
+    name: block.kaleidoscope_cookery.dough_drop_soup
+  "kaleidoscope_cookery:dried_tea_leaves":
+    model: "kaleidoscope_cookery:dried_tea_leaves"
+    name: item.kaleidoscope_cookery.dried_tea_leaves
+  "kaleidoscope_cookery:dumpling":
+    model: "kaleidoscope_cookery:dumpling"
+    name: item.kaleidoscope_cookery.dumpling
+    food:
+      nutrition: 8
+      saturation: 16.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 1600
+  "kaleidoscope_cookery:egg_fried_rice":
+    model: "kaleidoscope_cookery:egg_fried_rice"
+    name: item.kaleidoscope_cookery.egg_fried_rice
+    food:
+      nutrition: 8
+      saturation: 14.0
+      always-edible: true
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:eight_immortals_table":
+    model: "kaleidoscope_cookery:eight_immortals_table"
+    name: block.kaleidoscope_cookery.eight_immortals_table
+  "kaleidoscope_cookery:empty_cup":
+    model: "kaleidoscope_cookery:empty_cup"
+    name: block.kaleidoscope_cookery.empty_cup
+  "kaleidoscope_cookery:enamel_basin":
+    model: "kaleidoscope_cookery:enamel_basin"
+    name: block.kaleidoscope_cookery.enamel_basin
+  "kaleidoscope_cookery:end_style_sashimi":
+    model: "kaleidoscope_cookery:end_style_sashimi"
+    name: block.kaleidoscope_cookery.end_style_sashimi
+  "kaleidoscope_cookery:farmer_boots":
+    model: "kaleidoscope_cookery:farmer_boots"
+    name: item.kaleidoscope_cookery.farmer_boots
+    max-stack: 1
+  "kaleidoscope_cookery:farmer_chest_plate":
+    model: "kaleidoscope_cookery:farmer_chest_plate"
+    name: item.kaleidoscope_cookery.farmer_chest_plate
+    max-stack: 1
+  "kaleidoscope_cookery:farmer_leggings":
+    model: "kaleidoscope_cookery:farmer_leggings"
+    name: item.kaleidoscope_cookery.farmer_leggings
+    max-stack: 1
+  "kaleidoscope_cookery:fearsome_thick_soup":
+    model: "kaleidoscope_cookery:fearsome_thick_soup"
+    name: item.kaleidoscope_cookery.fearsome_thick_soup
+    food:
+      nutrition: 4
+      saturation: 0.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:sulfur"
+          duration: 9600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:fish_flavored_shredded_pork":
+    model: "kaleidoscope_cookery:fish_flavored_shredded_pork"
+    name: item.kaleidoscope_cookery.fish_flavored_shredded_pork
+    food:
+      nutrition: 9
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:vigor"
+          duration: 1800
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:fish_flavored_shredded_pork_rice_bowl":
+    model: "kaleidoscope_cookery:fish_flavored_shredded_pork_rice_bowl"
+    name: item.kaleidoscope_cookery.fish_flavored_shredded_pork_rice_bowl
+    food:
+      nutrition: 14
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:satiated_shield"
+          duration: 3600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:flour":
+    model: "kaleidoscope_cookery:flour"
+    name: item.kaleidoscope_cookery.flour
+  "kaleidoscope_cookery:flower_tea":
+    model: "kaleidoscope_cookery:flower_tea"
+    name: block.kaleidoscope_cookery.flower_tea
+  "kaleidoscope_cookery:fondant_pie":
+    model: "kaleidoscope_cookery:fondant_pie"
+    name: block.kaleidoscope_cookery.fondant_pie
+  "kaleidoscope_cookery:fondant_spider_eye":
+    model: "kaleidoscope_cookery:fondant_spider_eye"
+    name: block.kaleidoscope_cookery.fondant_spider_eye
+  "kaleidoscope_cookery:four_joy_meatball_soup":
+    model: "kaleidoscope_cookery:four_joy_meatball_soup"
+    name: block.kaleidoscope_cookery.four_joy_meatball_soup
+  "kaleidoscope_cookery:fresh_tea_leaves":
+    model: "kaleidoscope_cookery:fresh_tea_leaves"
+    name: item.kaleidoscope_cookery.fresh_tea_leaves
+  "kaleidoscope_cookery:fried_caterpillar":
+    model: "kaleidoscope_cookery:fried_caterpillar"
+    name: block.kaleidoscope_cookery.fried_caterpillar
+  "kaleidoscope_cookery:fried_egg":
+    model: "kaleidoscope_cookery:fried_egg"
+    name: item.kaleidoscope_cookery.fried_egg
+    food:
+      nutrition: 4
+      saturation: 4.0
+      always-edible: true
+  "kaleidoscope_cookery:fried_spring_roll":
+    model: "kaleidoscope_cookery:fried_spring_roll"
+    name: block.kaleidoscope_cookery.fried_spring_roll
+  "kaleidoscope_cookery:frost_lamb_chop":
+    model: "kaleidoscope_cookery:frost_lamb_chop"
+    name: block.kaleidoscope_cookery.frost_lamb_chop
+  "kaleidoscope_cookery:fruit_basket":
+    model: "kaleidoscope_cookery:fruit_basket"
+    name: block.kaleidoscope_cookery.fruit_basket
+  "kaleidoscope_cookery:gold_kitchen_knife":
+    model: "kaleidoscope_cookery:gold_kitchen_knife"
+    name: item.kaleidoscope_cookery.gold_kitchen_knife
+    base: GOLDEN_SWORD
+  "kaleidoscope_cookery:golden_salad":
+    model: "kaleidoscope_cookery:golden_salad"
+    name: block.kaleidoscope_cookery.golden_salad
+  "kaleidoscope_cookery:green_chili":
+    model: "kaleidoscope_cookery:green_chili"
+    name: item.kaleidoscope_cookery.green_chili
+  "kaleidoscope_cookery:hot_dry_noodles":
+    model: "kaleidoscope_cookery:hot_dry_noodles"
+    name: item.kaleidoscope_cookery.hot_dry_noodles
+    food:
+      nutrition: 14
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:vitality"
+          duration: 9600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:hui_noodle":
+    model: "kaleidoscope_cookery:hui_noodle"
+    name: item.kaleidoscope_cookery.hui_noodle
+    food:
+      nutrition: 14
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:vitality"
+          duration: 9600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:iron_kitchen_knife":
+    model: "kaleidoscope_cookery:iron_kitchen_knife"
+    name: item.kaleidoscope_cookery.iron_kitchen_knife
+    base: IRON_SWORD
+  "kaleidoscope_cookery:kitchen_shovel":
+    model: "kaleidoscope_cookery:kitchen_shovel"
+    name: item.kaleidoscope_cookery.kitchen_shovel
+  "kaleidoscope_cookery:kitchenware_racks":
+    model: "kaleidoscope_cookery:kitchenware_racks"
+    name: block.kaleidoscope_cookery.kitchenware_racks
+  "kaleidoscope_cookery:laba_congee":
+    model: "kaleidoscope_cookery:laba_congee"
+    name: item.kaleidoscope_cookery.laba_congee
+    food:
+      nutrition: 12
+      saturation: 12.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 6000
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:lamb_and_radish_soup":
+    model: "kaleidoscope_cookery:lamb_and_radish_soup"
+    name: item.kaleidoscope_cookery.lamb_and_radish_soup
+    food:
+      nutrition: 6
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:tundra_strider"
+          duration: 6000
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:lettuce":
+    model: "kaleidoscope_cookery:lettuce"
+    name: item.kaleidoscope_cookery.lettuce
+    food:
+      nutrition: 2
+      saturation: 0.0
+      always-edible: true
+  "kaleidoscope_cookery:lettuce_seed":
+    model: "kaleidoscope_cookery:lettuce_seed"
+    name: item.kaleidoscope_cookery.lettuce_seed
+  "kaleidoscope_cookery:long_bench":
+    model: "kaleidoscope_cookery:long_bench"
+    name: block.kaleidoscope_cookery.long_bench
+  "kaleidoscope_cookery:mantou":
+    model: "kaleidoscope_cookery:mantou"
+    name: item.kaleidoscope_cookery.mantou
+    food:
+      nutrition: 6
+      saturation: 10.8
+      always-edible: true
+      eat-seconds: 0.8
+  "kaleidoscope_cookery:meat_pie":
+    model: "kaleidoscope_cookery:meat_pie"
+    name: item.kaleidoscope_cookery.meat_pie
+    food:
+      nutrition: 8
+      saturation: 16.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 1600
+  "kaleidoscope_cookery:millstone":
+    model: "kaleidoscope_cookery:millstone"
+    name: block.kaleidoscope_cookery.millstone
+  "kaleidoscope_cookery:mystery_tea":
+    model: "kaleidoscope_cookery:mystery_tea"
+    name: block.kaleidoscope_cookery.mystery_tea
+  "kaleidoscope_cookery:nether_style_sashimi":
+    model: "kaleidoscope_cookery:nether_style_sashimi"
+    name: block.kaleidoscope_cookery.nether_style_sashimi
+  "kaleidoscope_cookery:netherite_kitchen_knife":
+    model: "kaleidoscope_cookery:netherite_kitchen_knife"
+    name: item.kaleidoscope_cookery.netherite_kitchen_knife
+    base: NETHERITE_SWORD
+  "kaleidoscope_cookery:numbing_spicy_chicken":
+    model: "kaleidoscope_cookery:numbing_spicy_chicken"
+    name: block.kaleidoscope_cookery.numbing_spicy_chicken
+  "kaleidoscope_cookery:oil":
+    model: "kaleidoscope_cookery:oil"
+    name: item.kaleidoscope_cookery.oil
+  "kaleidoscope_cookery:oil_block":
+    model: "kaleidoscope_cookery:oil_block"
+    name: block.kaleidoscope_cookery.oil_block
+  "kaleidoscope_cookery:oil_pot":
+    model: "kaleidoscope_cookery:oil_pot"
+    name: block.kaleidoscope_cookery.oil_pot
+  "kaleidoscope_cookery:oil_splashed_fish":
+    model: "kaleidoscope_cookery:oil_splashed_fish"
+    name: block.kaleidoscope_cookery.oil_splashed_fish
+  "kaleidoscope_cookery:oolong":
+    model: "kaleidoscope_cookery:oolong"
+    name: block.kaleidoscope_cookery.oolong
+  "kaleidoscope_cookery:oolong_tea_bag":
+    model: "kaleidoscope_cookery:oolong_tea_bag"
+    name: item.kaleidoscope_cookery.oolong_tea_bag
+  "kaleidoscope_cookery:pan_seared_knight_steak":
+    model: "kaleidoscope_cookery:pan_seared_knight_steak"
+    name: block.kaleidoscope_cookery.pan_seared_knight_steak
+  "kaleidoscope_cookery:pork_bone_soup":
+    model: "kaleidoscope_cookery:pork_bone_soup"
+    name: item.kaleidoscope_cookery.pork_bone_soup
+    food:
+      nutrition: 6
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:vigor"
+          duration: 6000
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:pot":
+    model: "kaleidoscope_cookery:pot"
+    name: block.kaleidoscope_cookery.pot
+  "kaleidoscope_cookery:pufferfish_soup":
+    model: "kaleidoscope_cookery:pufferfish_soup"
+    name: item.kaleidoscope_cookery.pufferfish_soup
+    food:
+      nutrition: 4
+      saturation: 0.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:mustard"
+          duration: 12000
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:qingtuan":
+    model: "kaleidoscope_cookery:qingtuan"
+    name: item.kaleidoscope_cookery.qingtuan
+    food:
+      nutrition: 5
+      saturation: 6.0
+      always-edible: true
+  "kaleidoscope_cookery:qingtuan_plate":
+    model: "kaleidoscope_cookery:qingtuan_plate"
+    name: block.kaleidoscope_cookery.qingtuan_plate
+  "kaleidoscope_cookery:raw_bamboo_tube_rice":
+    model: "kaleidoscope_cookery:raw_bamboo_tube_rice"
+    name: item.kaleidoscope_cookery.raw_bamboo_tube_rice
+  "kaleidoscope_cookery:raw_cow_offal":
+    model: "kaleidoscope_cookery:raw_cow_offal"
+    name: item.kaleidoscope_cookery.raw_cow_offal
+    food:
+      nutrition: 2
+      saturation: 1.2
+      always-edible: true
+  "kaleidoscope_cookery:raw_cut_small_meats":
+    model: "kaleidoscope_cookery:raw_cut_small_meats"
+    name: item.kaleidoscope_cookery.raw_cut_small_meats
+    food:
+      nutrition: 2
+      saturation: 1.2
+      always-edible: true
+  "kaleidoscope_cookery:raw_dough":
+    model: "kaleidoscope_cookery:raw_dough"
+    name: item.kaleidoscope_cookery.raw_dough
+  "kaleidoscope_cookery:raw_lamb_chops":
+    model: "kaleidoscope_cookery:raw_lamb_chops"
+    name: item.kaleidoscope_cookery.raw_lamb_chops
+    food:
+      nutrition: 1
+      saturation: 1.0
+      always-edible: true
+  "kaleidoscope_cookery:raw_meatball":
+    model: "kaleidoscope_cookery:raw_meatball"
+    name: item.kaleidoscope_cookery.raw_meatball
+    food:
+      nutrition: 4
+      saturation: 2.4
+      always-edible: true
+  "kaleidoscope_cookery:raw_noodles":
+    model: "kaleidoscope_cookery:raw_noodles"
+    name: item.kaleidoscope_cookery.raw_noodles
+  "kaleidoscope_cookery:raw_pork_belly":
+    model: "kaleidoscope_cookery:raw_pork_belly"
+    name: item.kaleidoscope_cookery.raw_pork_belly
+    food:
+      nutrition: 2
+      saturation: 1.2
+      always-edible: true
+  "kaleidoscope_cookery:raw_zongzi":
+    model: "kaleidoscope_cookery:raw_zongzi"
+    name: item.kaleidoscope_cookery.raw_zongzi
+  "kaleidoscope_cookery:recipe_item":
+    model: "kaleidoscope_cookery:recipe_item"
+    name: block.kaleidoscope_cookery.recipe_block
+  "kaleidoscope_cookery:red_chili":
+    model: "kaleidoscope_cookery:red_chili"
+    name: item.kaleidoscope_cookery.red_chili
+  "kaleidoscope_cookery:red_lantern":
+    model: "kaleidoscope_cookery:red_lantern"
+    name: block.kaleidoscope_cookery.red_lantern
+  "kaleidoscope_cookery:red_mushroom_pot_soup":
+    model: "kaleidoscope_cookery:red_mushroom_pot_soup"
+    name: block.kaleidoscope_cookery.red_mushroom_pot_soup
+  "kaleidoscope_cookery:rice":
+    model: "kaleidoscope_cookery:rice"
+    name: item.kaleidoscope_cookery.rice
+  "kaleidoscope_cookery:rice_panicle":
+    model: "kaleidoscope_cookery:rice_panicle"
+    name: item.kaleidoscope_cookery.rice_panicle
+  "kaleidoscope_cookery:sakura_fubuki":
+    model: "kaleidoscope_cookery:sakura_fubuki"
+    name: block.kaleidoscope_cookery.sakura_fubuki
+  "kaleidoscope_cookery:sakura_fubuki_tea_bag":
+    model: "kaleidoscope_cookery:sakura_fubuki_tea_bag"
+    name: item.kaleidoscope_cookery.sakura_fubuki_tea_bag
+  "kaleidoscope_cookery:samsa":
+    model: "kaleidoscope_cookery:samsa"
+    name: item.kaleidoscope_cookery.samsa
+    food:
+      nutrition: 8
+      saturation: 16.0
+      always-edible: true
+      effects:
+        - effect: "minecraft:haste"
+          duration: 2000
+          amplifier: 1
+  "kaleidoscope_cookery:sashimi":
+    model: "kaleidoscope_cookery:sashimi"
+    name: item.kaleidoscope_cookery.sashimi
+    food:
+      nutrition: 1
+      saturation: 1.0
+      always-edible: true
+  "kaleidoscope_cookery:scarecrow":
+    model: "kaleidoscope_cookery:scarecrow"
+    name: item.kaleidoscope_cookery.scarecrow
+  "kaleidoscope_cookery:scramble_egg_with_tomatoes":
+    model: "kaleidoscope_cookery:scramble_egg_with_tomatoes"
+    name: item.kaleidoscope_cookery.scramble_egg_with_tomatoes
+    food:
+      nutrition: 9
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:vigor"
+          duration: 1800
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:scramble_egg_with_tomatoes_rice_bowl":
+    model: "kaleidoscope_cookery:scramble_egg_with_tomatoes_rice_bowl"
+    name: item.kaleidoscope_cookery.scramble_egg_with_tomatoes_rice_bowl
+    food:
+      nutrition: 14
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:satiated_shield"
+          duration: 3600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:seafood_miso_soup":
+    model: "kaleidoscope_cookery:seafood_miso_soup"
+    name: item.kaleidoscope_cookery.seafood_miso_soup
+    food:
+      nutrition: 6
+      always-edible: true
+      effects:
+        - effect: "minecraft:water_breathing"
+          duration: 9600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:shawarma_spit":
+    model: "kaleidoscope_cookery:shawarma_spit"
+    name: block.kaleidoscope_cookery.shawarma_spit
+  "kaleidoscope_cookery:shengjian_mantou":
+    model: "kaleidoscope_cookery:shengjian_mantou"
+    name: item.kaleidoscope_cookery.shengjian_mantou
+    food:
+      nutrition: 8
+      saturation: 16.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 1600
+  "kaleidoscope_cookery:shengjian_mantou_plate":
+    model: "kaleidoscope_cookery:shengjian_mantou_plate"
+    name: block.kaleidoscope_cookery.shengjian_mantou_plate
+  "kaleidoscope_cookery:sickle":
+    model: "kaleidoscope_cookery:sickle"
+    name: item.kaleidoscope_cookery.sickle
+  "kaleidoscope_cookery:slime_ball_meal":
+    model: "kaleidoscope_cookery:slime_ball_meal"
+    name: block.kaleidoscope_cookery.slime_ball_meal
+  "kaleidoscope_cookery:spicy_blood_stew":
+    model: "kaleidoscope_cookery:spicy_blood_stew"
+    name: block.kaleidoscope_cookery.spicy_blood_stew
+  "kaleidoscope_cookery:spicy_chicken":
+    model: "kaleidoscope_cookery:spicy_chicken"
+    name: block.kaleidoscope_cookery.spicy_chicken
+  "kaleidoscope_cookery:spicy_rabbit_head":
+    model: "kaleidoscope_cookery:spicy_rabbit_head"
+    name: block.kaleidoscope_cookery.spicy_rabbit_head
+  "kaleidoscope_cookery:stargazy_pie":
+    model: "kaleidoscope_cookery:stargazy_pie"
+    name: block.kaleidoscope_cookery.stargazy_pie
+  "kaleidoscope_cookery:steamer":
+    model: "kaleidoscope_cookery:steamer"
+    name: block.kaleidoscope_cookery.steamer
+  "kaleidoscope_cookery:sticky_candy":
+    model: "kaleidoscope_cookery:sticky_candy"
+    name: item.kaleidoscope_cookery.sticky_candy
+    food:
+      nutrition: 6
+      saturation: 12.0
+      always-edible: true
+  "kaleidoscope_cookery:sticky_candy_plate":
+    model: "kaleidoscope_cookery:sticky_candy_plate"
+    name: block.kaleidoscope_cookery.sticky_candy_plate
+  "kaleidoscope_cookery:sticky_rice_cake":
+    model: "kaleidoscope_cookery:sticky_rice_cake"
+    name: item.kaleidoscope_cookery.sticky_rice_cake
+    food:
+      nutrition: 8
+      saturation: 14.0
+      always-edible: true
+  "kaleidoscope_cookery:sticky_rice_cake_plate":
+    model: "kaleidoscope_cookery:sticky_rice_cake_plate"
+    name: block.kaleidoscope_cookery.sticky_rice_cake_plate
+  "kaleidoscope_cookery:stir_fried_pork_with_peppers":
+    model: "kaleidoscope_cookery:stir_fried_pork_with_peppers"
+    name: item.kaleidoscope_cookery.stir_fried_pork_with_peppers
+    food:
+      nutrition: 9
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:vigor"
+          duration: 1800
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:stir_fried_pork_with_peppers_rice_bowl":
+    model: "kaleidoscope_cookery:stir_fried_pork_with_peppers_rice_bowl"
+    name: item.kaleidoscope_cookery.stir_fried_pork_with_peppers_rice_bowl
+    food:
+      nutrition: 14
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:satiated_shield"
+          duration: 3600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:stockpot":
+    model: "kaleidoscope_cookery:stockpot"
+    name: block.kaleidoscope_cookery.stockpot
+  "kaleidoscope_cookery:stockpot_lid":
+    model: "kaleidoscope_cookery:stockpot_lid"
+    name: item.kaleidoscope_cookery.stockpot_lid
+  "kaleidoscope_cookery:stove":
+    model: "kaleidoscope_cookery:stove"
+    name: block.kaleidoscope_cookery.stove
+  "kaleidoscope_cookery:straw_block":
+    model: "kaleidoscope_cookery:straw_block"
+    name: block.kaleidoscope_cookery.straw_block
+  "kaleidoscope_cookery:straw_hat":
+    model: "kaleidoscope_cookery:straw_hat"
+    name: item.kaleidoscope_cookery.straw_hat
+  "kaleidoscope_cookery:straw_hat_flower":
+    model: "kaleidoscope_cookery:straw_hat_flower"
+    name: item.kaleidoscope_cookery.straw_hat_flower
+  "kaleidoscope_cookery:strung_mushrooms":
+    model: "kaleidoscope_cookery:strung_mushrooms"
+    name: block.kaleidoscope_cookery.strung_mushrooms
+  "kaleidoscope_cookery:stuffed_dough_food":
+    model: "kaleidoscope_cookery:stuffed_dough_food"
+    name: item.kaleidoscope_cookery.stuffed_dough_food
+  "kaleidoscope_cookery:stuffed_tiger_skin_pepper":
+    model: "kaleidoscope_cookery:stuffed_tiger_skin_pepper"
+    name: block.kaleidoscope_cookery.stuffed_tiger_skin_pepper
+  "kaleidoscope_cookery:suspicious_stir_fry":
+    model: "kaleidoscope_cookery:suspicious_stir_fry"
+    name: block.kaleidoscope_cookery.suspicious_stir_fry
+  "kaleidoscope_cookery:sweet_and_sour_ender_pearls":
+    model: "kaleidoscope_cookery:sweet_and_sour_ender_pearls"
+    name: block.kaleidoscope_cookery.sweet_and_sour_ender_pearls
+  "kaleidoscope_cookery:sweet_and_sour_pork":
+    model: "kaleidoscope_cookery:sweet_and_sour_pork"
+    name: item.kaleidoscope_cookery.sweet_and_sour_pork
+    food:
+      nutrition: 9
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:vigor"
+          duration: 1800
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:sweet_and_sour_pork_rice_bowl":
+    model: "kaleidoscope_cookery:sweet_and_sour_pork_rice_bowl"
+    name: item.kaleidoscope_cookery.sweet_and_sour_pork_rice_bowl
+    food:
+      nutrition: 14
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:satiated_shield"
+          duration: 3600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:table_acacia":
+    model: "kaleidoscope_cookery:table_acacia"
+    name: block.kaleidoscope_cookery.table_acacia
+  "kaleidoscope_cookery:table_bamboo":
+    model: "kaleidoscope_cookery:table_bamboo"
+    name: block.kaleidoscope_cookery.table_bamboo
+  "kaleidoscope_cookery:table_birch":
+    model: "kaleidoscope_cookery:table_birch"
+    name: block.kaleidoscope_cookery.table_birch
+  "kaleidoscope_cookery:table_cherry":
+    model: "kaleidoscope_cookery:table_cherry"
+    name: block.kaleidoscope_cookery.table_cherry
+  "kaleidoscope_cookery:table_crimson":
+    model: "kaleidoscope_cookery:table_crimson"
+    name: block.kaleidoscope_cookery.table_crimson
+  "kaleidoscope_cookery:table_dark_oak":
+    model: "kaleidoscope_cookery:table_dark_oak"
+    name: block.kaleidoscope_cookery.table_dark_oak
+  "kaleidoscope_cookery:table_jungle":
+    model: "kaleidoscope_cookery:table_jungle"
+    name: block.kaleidoscope_cookery.table_jungle
+  "kaleidoscope_cookery:table_mangrove":
+    model: "kaleidoscope_cookery:table_mangrove"
+    name: block.kaleidoscope_cookery.table_mangrove
+  "kaleidoscope_cookery:table_oak":
+    model: "kaleidoscope_cookery:table_oak"
+    name: block.kaleidoscope_cookery.table_oak
+  "kaleidoscope_cookery:table_spruce":
+    model: "kaleidoscope_cookery:table_spruce"
+    name: block.kaleidoscope_cookery.table_spruce
+  "kaleidoscope_cookery:table_warped":
+    model: "kaleidoscope_cookery:table_warped"
+    name: block.kaleidoscope_cookery.table_warped
+  "kaleidoscope_cookery:tea_banner":
+    model: "kaleidoscope_cookery:tea_banner"
+    name: block.kaleidoscope_cookery.tea_banner
+  "kaleidoscope_cookery:tea_egg":
+    model: "kaleidoscope_cookery:tea_egg"
+    name: item.kaleidoscope_cookery.tea_egg
+    food:
+      nutrition: 4
+      saturation: 4.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:sulfur"
+          duration: 1200
+  "kaleidoscope_cookery:tea_seed":
+    model: "kaleidoscope_cookery:tea_seed"
+    name: item.kaleidoscope_cookery.tea_seed
+  "kaleidoscope_cookery:teapot":
+    model: "kaleidoscope_cookery:teapot"
+    name: block.kaleidoscope_cookery.teapot
+  "kaleidoscope_cookery:tieguanyin":
+    model: "kaleidoscope_cookery:tieguanyin"
+    name: block.kaleidoscope_cookery.tieguanyin
+  "kaleidoscope_cookery:tieguanyin_tea_bag":
+    model: "kaleidoscope_cookery:tieguanyin_tea_bag"
+    name: item.kaleidoscope_cookery.tieguanyin_tea_bag
+  "kaleidoscope_cookery:tomato":
+    model: "kaleidoscope_cookery:tomato"
+    name: item.kaleidoscope_cookery.tomato
+    food:
+      nutrition: 2
+      saturation: 2.0
+      always-edible: true
+  "kaleidoscope_cookery:tomato_platter":
+    model: "kaleidoscope_cookery:tomato_platter"
+    name: block.kaleidoscope_cookery.tomato_platter
+  "kaleidoscope_cookery:tomato_seed":
+    model: "kaleidoscope_cookery:tomato_seed"
+    name: item.kaleidoscope_cookery.tomato_seed
+  "kaleidoscope_cookery:transmutation_lunch_bag":
+    model: "kaleidoscope_cookery:transmutation_lunch_bag"
+    name: item.kaleidoscope_cookery.transmutation_lunch_bag
+  "kaleidoscope_cookery:trash_can":
+    model: "kaleidoscope_cookery:trash_can"
+    name: block.kaleidoscope_cookery.trash_can
+  "kaleidoscope_cookery:tundra_style_sashimi":
+    model: "kaleidoscope_cookery:tundra_style_sashimi"
+    name: block.kaleidoscope_cookery.tundra_style_sashimi
+  "kaleidoscope_cookery:udon_noodle":
+    model: "kaleidoscope_cookery:udon_noodle"
+    name: item.kaleidoscope_cookery.udon_noodle
+    food:
+      nutrition: 14
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:vitality"
+          duration: 9600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:warped_fungus_pot_soup":
+    model: "kaleidoscope_cookery:warped_fungus_pot_soup"
+    name: block.kaleidoscope_cookery.warped_fungus_pot_soup
+  "kaleidoscope_cookery:watermelon_platter":
+    model: "kaleidoscope_cookery:watermelon_platter"
+    name: block.kaleidoscope_cookery.watermelon_platter
+  "kaleidoscope_cookery:wild_mushroom_rabbit_soup":
+    model: "kaleidoscope_cookery:wild_mushroom_rabbit_soup"
+    name: item.kaleidoscope_cookery.wild_mushroom_rabbit_soup
+    food:
+      nutrition: 6
+      always-edible: true
+      effects:
+        - effect: "minecraft:speed"
+          duration: 9600
+      remainder: "minecraft:bowl"
+  "kaleidoscope_cookery:wild_rice":
+    model: "kaleidoscope_cookery:wild_rice"
+    name: item.kaleidoscope_cookery.wild_rice
+  "kaleidoscope_cookery:zongzi":
+    model: "kaleidoscope_cookery:zongzi"
+    name: item.kaleidoscope_cookery.zongzi
+    food:
+      nutrition: 8
+      saturation: 10.0
+      always-edible: true
+      effects:
+        - effect: "minecraft:regeneration"
+          duration: 400
+  "kaleidoscope_cookery:zongzi_plate":
+    model: "kaleidoscope_cookery:zongzi_plate"
+    name: block.kaleidoscope_cookery.zongzi_plate
+  "kaleidoscope_grilling:advanced_rack":
+    model: "kaleidoscope_grilling:advanced_rack"
+    name: block.kaleidoscope_grilling.advanced_rack
+  "kaleidoscope_grilling:beef_chunks":
+    model: "kaleidoscope_grilling:beef_chunks"
+    name: item.kaleidoscope_grilling.beef_chunks
+  "kaleidoscope_grilling:big_vat":
+    model: "kaleidoscope_grilling:big_vat"
+    name: block.kaleidoscope_grilling.big_vat
+  "kaleidoscope_grilling:braised_chicken_wings":
+    model: "kaleidoscope_grilling:braised_chicken_wings"
+    name: item.kaleidoscope_grilling.braised_chicken_wings
+  "kaleidoscope_grilling:canola_oil_brush":
+    model: "kaleidoscope_grilling:canola_oil_brush"
+    name: item.kaleidoscope_grilling.canola_oil_brush
+  "kaleidoscope_grilling:canola_oil_bucket":
+    model: "kaleidoscope_grilling:canola_oil_bucket"
+    name: item.kaleidoscope_grilling.canola_oil_bucket
+  "kaleidoscope_grilling:canola_powder":
+    model: "kaleidoscope_grilling:canola_powder"
+    name: item.kaleidoscope_grilling.canola_powder
+  "kaleidoscope_grilling:canola_seeds":
+    model: "kaleidoscope_grilling:canola_seeds"
+    name: item.kaleidoscope_grilling.canola_seeds
+  "kaleidoscope_grilling:carrot_dice":
+    model: "kaleidoscope_grilling:carrot_dice"
+    name: item.kaleidoscope_grilling.carrot_dice
+  "kaleidoscope_grilling:chicken_skin":
+    model: "kaleidoscope_grilling:chicken_skin"
+    name: item.kaleidoscope_grilling.chicken_skin
+  "kaleidoscope_grilling:chicken_wing":
+    model: "kaleidoscope_grilling:chicken_wing"
+    name: item.kaleidoscope_grilling.chicken_wing
+  "kaleidoscope_grilling:cold_houttuynia":
+    model: "kaleidoscope_grilling:cold_houttuynia"
+    name: item.kaleidoscope_grilling.cold_houttuynia
+  "kaleidoscope_grilling:dark_grilling":
+    model: "kaleidoscope_grilling:dark_grilling"
+    name: item.kaleidoscope_grilling.dark_grilling
+  "kaleidoscope_grilling:dragon_egg_powder":
+    model: "kaleidoscope_grilling:dragon_egg_powder"
+    name: item.kaleidoscope_grilling.dragon_egg_powder
+  "kaleidoscope_grilling:empty_seasoning_bottle":
+    model: "kaleidoscope_grilling:empty_seasoning_bottle"
+    name: item.kaleidoscope_grilling.empty_seasoning_bottle
+  "kaleidoscope_grilling:green_chili_powder":
+    model: "kaleidoscope_grilling:green_chili_powder"
+    name: item.kaleidoscope_grilling.green_chili_powder
+  "kaleidoscope_grilling:green_pepper_squid_tentacles":
+    model: "kaleidoscope_grilling:green_pepper_squid_tentacles"
+    name: item.kaleidoscope_grilling.green_pepper_squid_tentacles
+  "kaleidoscope_grilling:grill":
+    model: "kaleidoscope_grilling:grill"
+    name: block.kaleidoscope_grilling.grill
+  "kaleidoscope_grilling:grilled_beef_skewer":
+    model: "kaleidoscope_grilling:grilled_beef_skewer"
+    name: item.kaleidoscope_grilling.grilled_beef_skewer
+  "kaleidoscope_grilling:grilled_bun_slice_skewer":
+    model: "kaleidoscope_grilling:grilled_bun_slice_skewer"
+    name: item.kaleidoscope_grilling.grilled_bun_slice_skewer
+  "kaleidoscope_grilling:grilled_caterpillar_skewer":
+    model: "kaleidoscope_grilling:grilled_caterpillar_skewer"
+    name: item.kaleidoscope_grilling.grilled_caterpillar_skewer
+  "kaleidoscope_grilling:grilled_chicken_skin_skewer":
+    model: "kaleidoscope_grilling:grilled_chicken_skin_skewer"
+    name: item.kaleidoscope_grilling.grilled_chicken_skin_skewer
+  "kaleidoscope_grilling:grilled_ender_pearl_skewer":
+    model: "kaleidoscope_grilling:grilled_ender_pearl_skewer"
+    name: item.kaleidoscope_grilling.grilled_ender_pearl_skewer
+  "kaleidoscope_grilling:grilled_fish_skewer":
+    model: "kaleidoscope_grilling:grilled_fish_skewer"
+    name: item.kaleidoscope_grilling.grilled_fish_skewer
+  "kaleidoscope_grilling:grilled_fried_egg_skewer":
+    model: "kaleidoscope_grilling:grilled_fried_egg_skewer"
+    name: item.kaleidoscope_grilling.grilled_fried_egg_skewer
+  "kaleidoscope_grilling:grilled_gluten_skewer":
+    model: "kaleidoscope_grilling:grilled_gluten_skewer"
+    name: item.kaleidoscope_grilling.grilled_gluten_skewer
+  "kaleidoscope_grilling:grilled_golden_skewer":
+    model: "kaleidoscope_grilling:grilled_golden_skewer"
+    name: item.kaleidoscope_grilling.grilled_golden_skewer
+  "kaleidoscope_grilling:grilled_lamb_skewer":
+    model: "kaleidoscope_grilling:grilled_lamb_skewer"
+    name: item.kaleidoscope_grilling.grilled_lamb_skewer
+  "kaleidoscope_grilling:grilled_meat_and_bone_skewer":
+    model: "kaleidoscope_grilling:grilled_meat_and_bone_skewer"
+    name: item.kaleidoscope_grilling.grilled_meat_and_bone_skewer
+  "kaleidoscope_grilling:grilled_meatball_skewer":
+    model: "kaleidoscope_grilling:grilled_meatball_skewer"
+    name: item.kaleidoscope_grilling.grilled_meatball_skewer
+  "kaleidoscope_grilling:grilled_mid_wing_skewer":
+    model: "kaleidoscope_grilling:grilled_mid_wing_skewer"
+    name: item.kaleidoscope_grilling.grilled_mid_wing_skewer
+  "kaleidoscope_grilling:grilled_mushroom_skewer":
+    model: "kaleidoscope_grilling:grilled_mushroom_skewer"
+    name: item.kaleidoscope_grilling.grilled_mushroom_skewer
+  "kaleidoscope_grilling:grilled_pork_belly_skewer":
+    model: "kaleidoscope_grilling:grilled_pork_belly_skewer"
+    name: item.kaleidoscope_grilling.grilled_pork_belly_skewer
+  "kaleidoscope_grilling:grilled_potato_slice_skewer":
+    model: "kaleidoscope_grilling:grilled_potato_slice_skewer"
+    name: item.kaleidoscope_grilling.grilled_potato_slice_skewer
+  "kaleidoscope_grilling:grilled_slime_skewer":
+    model: "kaleidoscope_grilling:grilled_slime_skewer"
+    name: item.kaleidoscope_grilling.grilled_slime_skewer
+  "kaleidoscope_grilling:grilled_squid_tentacle_skewer":
+    model: "kaleidoscope_grilling:grilled_squid_tentacle_skewer"
+    name: item.kaleidoscope_grilling.grilled_squid_tentacle_skewer
+  "kaleidoscope_grilling:grilled_sweet_potato_sheet_skewer":
+    model: "kaleidoscope_grilling:grilled_sweet_potato_sheet_skewer"
+    name: item.kaleidoscope_grilling.grilled_sweet_potato_sheet_skewer
+  "kaleidoscope_grilling:houttuynia":
+    model: "kaleidoscope_grilling:houttuynia"
+    name: item.kaleidoscope_grilling.houttuynia
+  "kaleidoscope_grilling:houttuynia_powder":
+    model: "kaleidoscope_grilling:houttuynia_powder"
+    name: item.kaleidoscope_grilling.houttuynia_powder
+  "kaleidoscope_grilling:houttuynia_stir_fried_pork":
+    model: "kaleidoscope_grilling:houttuynia_stir_fried_pork"
+    name: item.kaleidoscope_grilling.houttuynia_stir_fried_pork
+  "kaleidoscope_grilling:minced_houttuynia":
+    model: "kaleidoscope_grilling:minced_houttuynia"
+    name: item.kaleidoscope_grilling.minced_houttuynia
+  "kaleidoscope_grilling:mysterious_skewer":
+    model: "kaleidoscope_grilling:mysterious_skewer"
+    name: item.kaleidoscope_grilling.mysterious_skewer
+  "kaleidoscope_grilling:oil_cake":
+    model: "kaleidoscope_grilling:oil_cake"
+    name: item.kaleidoscope_grilling.oil_cake
+  "kaleidoscope_grilling:oil_press":
+    model: "kaleidoscope_grilling:oil_press"
+    name: block.kaleidoscope_grilling.oil_press
+  "kaleidoscope_grilling:oil_residue":
+    model: "kaleidoscope_grilling:oil_residue"
+    name: item.kaleidoscope_grilling.oil_residue
+  "kaleidoscope_grilling:onion":
+    model: "kaleidoscope_grilling:onion"
+    name: item.kaleidoscope_grilling.onion
+  "kaleidoscope_grilling:onion_powder":
+    model: "kaleidoscope_grilling:onion_powder"
+    name: item.kaleidoscope_grilling.onion_powder
+  "kaleidoscope_grilling:ordinary_skewer":
+    model: "kaleidoscope_grilling:ordinary_skewer"
+    name: item.kaleidoscope_grilling.ordinary_skewer
+  "kaleidoscope_grilling:pending_seasoning":
+    model: "kaleidoscope_grilling:pending_seasoning"
+    name: item.kaleidoscope_grilling.pending_seasoning
+  "kaleidoscope_grilling:pepper_honey":
+    model: "kaleidoscope_grilling:pepper_honey"
+    name: item.kaleidoscope_grilling.pepper_honey
+  "kaleidoscope_grilling:pepper_leaves":
+    model: "kaleidoscope_grilling:pepper_leaves"
+    name: block.kaleidoscope_grilling.pepper_leaves
+  "kaleidoscope_grilling:pepper_log":
+    model: "kaleidoscope_grilling:pepper_log"
+    name: block.kaleidoscope_grilling.pepper_log
+  "kaleidoscope_grilling:pepper_sapling":
+    model: "kaleidoscope_grilling:pepper_sapling"
+    name: block.kaleidoscope_grilling.pepper_sapling
+  "kaleidoscope_grilling:potato_beef_stew":
+    model: "kaleidoscope_grilling:potato_beef_stew"
+    name: item.kaleidoscope_grilling.potato_beef_stew
+  "kaleidoscope_grilling:potato_slice":
+    model: "kaleidoscope_grilling:potato_slice"
+    name: item.kaleidoscope_grilling.potato_slice
+  "kaleidoscope_grilling:premium_chili_oil_brush":
+    model: "kaleidoscope_grilling:premium_chili_oil_brush"
+    name: item.kaleidoscope_grilling.premium_chili_oil_brush
+  "kaleidoscope_grilling:premium_chili_oil_bucket":
+    model: "kaleidoscope_grilling:premium_chili_oil_bucket"
+    name: item.kaleidoscope_grilling.premium_chili_oil_bucket
+  "kaleidoscope_grilling:raw_beef_skewer":
+    model: "kaleidoscope_grilling:raw_beef_skewer"
+    name: item.kaleidoscope_grilling.raw_beef_skewer
+  "kaleidoscope_grilling:raw_bun_slice_skewer":
+    model: "kaleidoscope_grilling:raw_bun_slice_skewer"
+    name: item.kaleidoscope_grilling.raw_bun_slice_skewer
+  "kaleidoscope_grilling:raw_caterpillar_skewer":
+    model: "kaleidoscope_grilling:raw_caterpillar_skewer"
+    name: item.kaleidoscope_grilling.raw_caterpillar_skewer
+  "kaleidoscope_grilling:raw_chicken_skin_skewer":
+    model: "kaleidoscope_grilling:raw_chicken_skin_skewer"
+    name: item.kaleidoscope_grilling.raw_chicken_skin_skewer
+  "kaleidoscope_grilling:raw_ender_pearl_skewer":
+    model: "kaleidoscope_grilling:raw_ender_pearl_skewer"
+    name: item.kaleidoscope_grilling.raw_ender_pearl_skewer
+  "kaleidoscope_grilling:raw_fish_skewer":
+    model: "kaleidoscope_grilling:raw_fish_skewer"
+    name: item.kaleidoscope_grilling.raw_fish_skewer
+  "kaleidoscope_grilling:raw_fried_egg_skewer":
+    model: "kaleidoscope_grilling:raw_fried_egg_skewer"
+    name: item.kaleidoscope_grilling.raw_fried_egg_skewer
+  "kaleidoscope_grilling:raw_gluten_skewer":
+    model: "kaleidoscope_grilling:raw_gluten_skewer"
+    name: item.kaleidoscope_grilling.raw_gluten_skewer
+  "kaleidoscope_grilling:raw_golden_skewer":
+    model: "kaleidoscope_grilling:raw_golden_skewer"
+    name: item.kaleidoscope_grilling.raw_golden_skewer
+  "kaleidoscope_grilling:raw_lamb_skewer":
+    model: "kaleidoscope_grilling:raw_lamb_skewer"
+    name: item.kaleidoscope_grilling.raw_lamb_skewer
+  "kaleidoscope_grilling:raw_mantou_slice":
+    model: "kaleidoscope_grilling:raw_mantou_slice"
+    name: item.kaleidoscope_grilling.raw_mantou_slice
+  "kaleidoscope_grilling:raw_meat_and_bone_skewer":
+    model: "kaleidoscope_grilling:raw_meat_and_bone_skewer"
+    name: item.kaleidoscope_grilling.raw_meat_and_bone_skewer
+  "kaleidoscope_grilling:raw_meatball_skewer":
+    model: "kaleidoscope_grilling:raw_meatball_skewer"
+    name: item.kaleidoscope_grilling.raw_meatball_skewer
+  "kaleidoscope_grilling:raw_mid_wing_skewer":
+    model: "kaleidoscope_grilling:raw_mid_wing_skewer"
+    name: item.kaleidoscope_grilling.raw_mid_wing_skewer
+  "kaleidoscope_grilling:raw_mushroom_skewer":
+    model: "kaleidoscope_grilling:raw_mushroom_skewer"
+    name: item.kaleidoscope_grilling.raw_mushroom_skewer
+  "kaleidoscope_grilling:raw_pork_belly_skewer":
+    model: "kaleidoscope_grilling:raw_pork_belly_skewer"
+    name: item.kaleidoscope_grilling.raw_pork_belly_skewer
+  "kaleidoscope_grilling:raw_potato_slice_skewer":
+    model: "kaleidoscope_grilling:raw_potato_slice_skewer"
+    name: item.kaleidoscope_grilling.raw_potato_slice_skewer
+  "kaleidoscope_grilling:raw_slime_skewer":
+    model: "kaleidoscope_grilling:raw_slime_skewer"
+    name: item.kaleidoscope_grilling.raw_slime_skewer
+  "kaleidoscope_grilling:raw_squid_tentacle_skewer":
+    model: "kaleidoscope_grilling:raw_squid_tentacle_skewer"
+    name: item.kaleidoscope_grilling.raw_squid_tentacle_skewer
+  "kaleidoscope_grilling:raw_sweet_potato_sheet":
+    model: "kaleidoscope_grilling:raw_sweet_potato_sheet"
+    name: item.kaleidoscope_grilling.raw_sweet_potato_sheet
+  "kaleidoscope_grilling:raw_sweet_potato_sheet_skewer":
+    model: "kaleidoscope_grilling:raw_sweet_potato_sheet_skewer"
+    name: item.kaleidoscope_grilling.raw_sweet_potato_sheet_skewer
+  "kaleidoscope_grilling:red_chili_powder":
+    model: "kaleidoscope_grilling:red_chili_powder"
+    name: item.kaleidoscope_grilling.red_chili_powder
+  "kaleidoscope_grilling:red_sweet_potato_porridge":
+    model: "kaleidoscope_grilling:red_sweet_potato_porridge"
+    name: item.kaleidoscope_grilling.red_sweet_potato_porridge
+  "kaleidoscope_grilling:roasted_chicken_wing":
+    model: "kaleidoscope_grilling:roasted_chicken_wing"
+    name: item.kaleidoscope_grilling.roasted_chicken_wing
+  "kaleidoscope_grilling:roasted_sweet_potato":
+    model: "kaleidoscope_grilling:roasted_sweet_potato"
+    name: item.kaleidoscope_grilling.roasted_sweet_potato
+  "kaleidoscope_grilling:secret_chili_oil_brush":
+    model: "kaleidoscope_grilling:secret_chili_oil_brush"
+    name: item.kaleidoscope_grilling.secret_chili_oil_brush
+  "kaleidoscope_grilling:secret_chili_oil_bucket":
+    model: "kaleidoscope_grilling:secret_chili_oil_bucket"
+    name: item.kaleidoscope_grilling.secret_chili_oil_bucket
+  "kaleidoscope_grilling:secret_skewer":
+    model: "kaleidoscope_grilling:secret_skewer"
+    name: item.kaleidoscope_grilling.secret_skewer
+  "kaleidoscope_grilling:sichuan_pepper":
+    model: "kaleidoscope_grilling:sichuan_pepper"
+    name: item.kaleidoscope_grilling.sichuan_pepper
+  "kaleidoscope_grilling:skewer_plate":
+    model: "kaleidoscope_grilling:skewer_plate"
+    name: item.kaleidoscope_grilling.skewer_plate
+  "kaleidoscope_grilling:skewer_recipe_book":
+    model: "kaleidoscope_grilling:skewer_recipe_book"
+    name: item.kaleidoscope_grilling.skewer_recipe_book
+  "kaleidoscope_grilling:sour_spicy_noodles":
+    model: "kaleidoscope_grilling:sour_spicy_noodles"
+    name: item.kaleidoscope_grilling.sour_spicy_noodles
+  "kaleidoscope_grilling:special_seasoning":
+    model: "kaleidoscope_grilling:special_seasoning"
+    name: item.kaleidoscope_grilling.special_seasoning
+  "kaleidoscope_grilling:squid_tentacle":
+    model: "kaleidoscope_grilling:squid_tentacle"
+    name: item.kaleidoscope_grilling.squid_tentacle
+  "kaleidoscope_grilling:sugared_tomato":
+    model: "kaleidoscope_grilling:sugared_tomato"
+    name: item.kaleidoscope_grilling.sugared_tomato
+  "kaleidoscope_grilling:sweet_potato":
+    model: "kaleidoscope_grilling:sweet_potato"
+    name: item.kaleidoscope_grilling.sweet_potato
+  "kaleidoscope_grilling:sweet_potato_powder":
+    model: "kaleidoscope_grilling:sweet_potato_powder"
+    name: item.kaleidoscope_grilling.sweet_potato_powder
+  "kaleidoscope_grilling:totem_powder":
+    model: "kaleidoscope_grilling:totem_powder"
+    name: item.kaleidoscope_grilling.totem_powder
+  "kaleidoscope_grilling:unfinished_skewer":
+    model: "kaleidoscope_grilling:unfinished_skewer"
+    name: item.kaleidoscope_grilling.unfinished_skewer
+  "kaleidoscope_grilling:wedding_candy":
+    model: "kaleidoscope_grilling:wedding_candy"
+    name: item.kaleidoscope_grilling.wedding_candy

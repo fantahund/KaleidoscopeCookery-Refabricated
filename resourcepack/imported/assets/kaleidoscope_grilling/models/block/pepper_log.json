@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "kaleidoscope_grilling:block/pepper_log_top",
+    "side": "kaleidoscope_grilling:block/pepper_log"
+  }
+}

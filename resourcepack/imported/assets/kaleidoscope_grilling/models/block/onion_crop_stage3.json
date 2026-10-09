@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "kaleidoscope_grilling:block/crop/onion/stage3"
+  }
+}

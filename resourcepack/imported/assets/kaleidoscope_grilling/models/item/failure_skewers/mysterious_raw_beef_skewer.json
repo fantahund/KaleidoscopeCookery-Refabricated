@@ -1,0 +1,6 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/beef/beef_skewer",
+  "textures": {
+    "food": "kaleidoscope_grilling:item/failure_skewers/mysterious_food"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/mushroom/mushroom_skewer_geo",
+  "textures": {
+    "3": "kaleidoscope_grilling:item/fixed_skewers/mushroom_skewer_stage_3",
+    "particle": "#3"
+  }
+}

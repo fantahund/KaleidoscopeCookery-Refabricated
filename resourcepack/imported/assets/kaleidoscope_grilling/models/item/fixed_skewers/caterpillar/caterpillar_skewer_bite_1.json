@@ -1,0 +1,7 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/caterpillar/caterpillar_skewer_bite_1_geo",
+  "textures": {
+    "particle": "kaleidoscope_grilling:item/fixed_skewers/caterpillar_skewer_raw",
+    "food": "kaleidoscope_grilling:item/fixed_skewers/caterpillar_skewer_cooked"
+  }
+}

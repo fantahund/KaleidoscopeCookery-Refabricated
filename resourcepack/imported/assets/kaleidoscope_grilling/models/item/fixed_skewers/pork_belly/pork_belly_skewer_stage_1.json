@@ -1,0 +1,7 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/pork_belly/pork_belly_skewer_geo",
+  "textures": {
+    "5": "kaleidoscope_grilling:item/fixed_skewers/pork_belly_skewer_stage_1",
+    "particle": "#5"
+  }
+}

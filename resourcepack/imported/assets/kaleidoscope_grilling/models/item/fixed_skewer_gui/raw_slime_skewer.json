@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "kaleidoscope_grilling:item/fixed_skewer_gui/raw_slime_skewer"
+  }
+}

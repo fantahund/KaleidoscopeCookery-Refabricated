@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "kaleidoscope_cookery:block/chili_ristra/body_sheared"
+  }
+}

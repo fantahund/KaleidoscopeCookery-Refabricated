@@ -1,0 +1,6 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/fried_egg/fried_egg_skewer_geo",
+  "textures": {
+    "4": "kaleidoscope_grilling:item/fixed_skewers/fried_egg_skewer_stage_3"
+  }
+}

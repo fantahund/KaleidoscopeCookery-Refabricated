@@ -1,0 +1,6 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/squid_tentacle/squid_tentacle_skewer_geo",
+  "textures": {
+    "1": "kaleidoscope_grilling:item/fixed_skewers/squid_tentacle_skewer_cooked"
+  }
+}

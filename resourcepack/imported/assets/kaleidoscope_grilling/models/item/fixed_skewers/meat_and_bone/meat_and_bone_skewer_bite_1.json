@@ -1,0 +1,6 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/meat_and_bone/meat_and_bone_skewer_bite_1_geo",
+  "textures": {
+    "5": "kaleidoscope_grilling:item/fixed_skewers/meat_and_bone_skewer_cooked"
+  }
+}

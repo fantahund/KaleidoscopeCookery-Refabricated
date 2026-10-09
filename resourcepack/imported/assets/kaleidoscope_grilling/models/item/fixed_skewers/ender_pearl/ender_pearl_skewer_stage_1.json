@@ -1,0 +1,6 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/ender_pearl/ender_pearl_skewer_geo",
+  "textures": {
+    "5": "kaleidoscope_grilling:item/fixed_skewers/ender_pearl_skewer_stage_1"
+  }
+}

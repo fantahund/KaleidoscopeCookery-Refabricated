@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "kaleidoscope_grilling:block/pot_oil_premium_chili",
+    "oil": "kaleidoscope_grilling:block/pot_oil_premium_chili"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        1.2,
+        3
+      ],
+      "to": [
+        13,
+        1.2,
+        13
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            2,
+            3,
+            12,
+            13
+          ],
+          "texture": "#oil"
+        }
+      }
+    }
+  ]
+}

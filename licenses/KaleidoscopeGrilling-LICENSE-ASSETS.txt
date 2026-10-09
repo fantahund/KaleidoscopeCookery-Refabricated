@@ -1,0 +1,22 @@
+Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+
+Copyright (c) 2026, breezeth
+
+The resource files in this repository are licensed under the Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International License.
+
+You are free to share and adapt these resources under the following terms:
+
+- Attribution: Give appropriate credit, provide a link to the license, and
+  indicate whether changes were made.
+- NonCommercial: Do not use the resources for commercial purposes.
+- ShareAlike: Distribute adaptations under the same license.
+- No additional restrictions: Do not apply legal or technological measures
+  that restrict rights granted by this license.
+
+This project contains adapted or reused resources from Kaleidoscope Cookery,
+copyright (c) 2025, Kaleidoscope Official Production Team, also licensed under
+CC BY-NC-SA 4.0.
+
+Full license text:
+https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode

@@ -1,0 +1,7 @@
+{
+  "parent": "kaleidoscope_grilling:item/fixed_skewers/golden/golden_skewer_piece_3_geo",
+  "textures": {
+    "1": "kaleidoscope_grilling:item/fixed_skewers/golden_skewer_raw",
+    "particle": "kaleidoscope_grilling:item/fixed_skewers/golden_skewer_raw"
+  }
+}

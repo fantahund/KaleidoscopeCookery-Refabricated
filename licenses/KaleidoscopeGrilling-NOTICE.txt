@@ -1,0 +1,11 @@
+Kaleidoscope Grilling is an extension for Kaleidoscope Cookery.
+
+Kaleidoscope Cookery
+Copyright (c) 2025, Kaleidoscope Official Production Team
+https://github.com/KaleidoscopeMods/KaleidoscopeCookery
+
+Kaleidoscope Cookery source code is licensed under the BSD 3-Clause License.
+Its resource files are licensed under CC BY-NC-SA 4.0. Portions of this project
+interoperate with, adapt, or reuse material from Kaleidoscope Cookery under
+those terms. No endorsement by the Kaleidoscope Official Production Team is
+implied.

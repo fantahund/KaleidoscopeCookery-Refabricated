@@ -1,0 +1,51 @@
+name: KaleidoscopeCookery
+description: '${project.description}'
+version: '${version}'
+
+main: de.emrion.kaleidoscopeCookery.KaleidoscopeCookery
+api-version: '26.3'
+load: POSTWORLD
+
+authors: [ Tobi ]
+
+dependencies:
+  server:
+    CubesideUtils:
+      load: BEFORE
+      required: true
+      join-classpath: true
+    CubesideNMSUtils:
+      load: BEFORE
+      required: false
+      join-classpath: true
+
+# Der Befehl /kaleidoscope (Aliase /kc, /kochen) wird zur Laufzeit über CubesideUtils (CommandUtil) registriert.
+permissions:
+  kaleidoscope.use:
+    description: Kochstationen platzieren und benutzen, /kc pack
+    default: true
+  kaleidoscope.admin:
+    description: Alle KaleidoscopeCookery-Befehle
+    default: op
+    children:
+      kaleidoscope.use: true
+      kaleidoscope.admin.give: true
+      kaleidoscope.admin.repair: true
+      kaleidoscope.admin.reload: true
+      kaleidoscope.admin.info: true
+      kaleidoscope.admin.place: true
+  kaleidoscope.admin.give:
+    description: /kc give
+    default: op
+  kaleidoscope.admin.repair:
+    description: /kc repair
+    default: op
+  kaleidoscope.admin.reload:
+    description: /kc reload
+    default: op
+  kaleidoscope.admin.info:
+    description: /kc info, /kc list
+    default: op
+  kaleidoscope.admin.place:
+    description: /kc place
+    default: op
