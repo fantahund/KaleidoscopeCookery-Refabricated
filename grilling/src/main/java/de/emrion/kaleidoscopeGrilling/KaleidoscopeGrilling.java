@@ -13,6 +13,8 @@ public class KaleidoscopeGrilling extends JavaPlugin {
     @Override
     public void onEnable() {
         cookery = KaleidoscopeCookery.getInstance();
+        // Grilling-Items und -Rezepte (inkl. Änderungen an Cookery-Rezepten) beim Core anmelden
+        cookery.registerAddon(this);
         getLogger().info("Grilling-Addon für KaleidoscopeCookery " + cookery.getPluginMeta().getVersion() + " geladen");
     }
 

@@ -39,16 +39,21 @@ import java.util.Map;
 public class VanillaRecipes implements Listener {
 
     private final Plugin plugin;
-    private final CookeryItems items;
     private final List<NamespacedKey> registered = new ArrayList<>();
     private final java.util.Map<NamespacedKey, Ingredient> smithingBases = new java.util.HashMap<>();
     /** Ein Rezept für alle Reisschalen: zwei beliebige Mod-Items, das Ergebnis bestimmt onPrepareRiceBowl */
     private static final NamespacedKey RICE_BOWL = Keys.key("rice_bowl");
     private @Nullable Recipes recipes;
 
-    public VanillaRecipes(Plugin plugin, CookeryItems items) {
+    public VanillaRecipes(Plugin plugin) {
         this.plugin = plugin;
-        this.items = items;
+    }
+
+    /**
+     * Immer die aktuellen Items (Addons fügen eigene hinzu).
+     */
+    private CookeryItems items() {
+        return de.emrion.kaleidoscopeCookery.KaleidoscopeCookery.getInstance().getItems();
     }
 
     public static boolean isOwn(@Nullable Recipe recipe) {
@@ -70,7 +75,7 @@ public class VanillaRecipes implements Listener {
         }
         // Zuletzt registrieren, damit genauere Rezepte mit zwei Mod-Items zuerst passen
         if (!recipes.riceBowl().isEmpty()) {
-            ItemStack icon = recipes.riceBowl().getFirst().result().create(items);
+            ItemStack icon = recipes.riceBowl().getFirst().result().create(items());
             if (icon != null) {
                 // Mod-Items mit Qualität/Wärme passen auf keine ExactChoice – deshalb Basis-Material und eigene Prüfung
                 ShapelessRecipe riceBowl = new ShapelessRecipe(RICE_BOWL, icon);
@@ -120,7 +125,7 @@ public class VanillaRecipes implements Listener {
                 boolean firstRice = recipes.cookedRice().test(inputs.get(0)) && recipe.ingredient().test(inputs.get(1));
                 boolean secondRice = recipes.cookedRice().test(inputs.get(1)) && recipe.ingredient().test(inputs.get(0));
                 if (firstRice || secondRice) {
-                    result = recipe.result().create(items);
+                    result = recipe.result().create(items());
                     break;
                 }
             }
@@ -150,7 +155,7 @@ public class VanillaRecipes implements Listener {
 
     private @Nullable Recipe toBukkit(VanillaRecipe recipe) {
         NamespacedKey key = Keys.key(recipe.id().replace(':', '/'));
-        ItemStack result = recipe.result().create(items);
+        ItemStack result = recipe.result().create(items());
         if (result == null) {
             throw new IllegalArgumentException("unbekanntes Ergebnis " + recipe.result().item());
         }
@@ -187,7 +192,7 @@ public class VanillaRecipes implements Listener {
     private RecipeChoice materialChoice(Ingredient ingredient) {
         List<Material> materials = new ArrayList<>();
         for (Key id : ingredient.items()) {
-            ItemStack stack = items.create(id, 1);
+            ItemStack stack = items().create(id, 1);
             if (stack != null && !materials.contains(stack.getType())) {
                 materials.add(stack.getType());
             }
@@ -222,7 +227,7 @@ public class VanillaRecipes implements Listener {
         }
         List<ItemStack> stacks = new ArrayList<>();
         for (Key id : ingredient.items()) {
-            ItemStack stack = items.create(id, 1);
+            ItemStack stack = items().create(id, 1);
             if (stack != null) {
                 stacks.add(stack);
             }
@@ -249,7 +254,7 @@ public class VanillaRecipes implements Listener {
             event.setResult(null);
             return;
         }
-        ItemStack result = items.create(CookeryItems.typeOf(event.getResult()), 1);
+        ItemStack result = items().create(CookeryItems.typeOf(event.getResult()), 1);
         if (result == null) {
             return;
         }

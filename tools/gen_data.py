@@ -501,7 +501,7 @@ def collect_recipes(tags: dict) -> dict:
 
 
 # Bei jeder inhaltlichen Aenderung der erzeugten recipes.yml erhoehen: das Plugin ersetzt dann alte Kopien (mit Backup)
-DATA_VERSION = 10
+DATA_VERSION = 11
 STOCKPOT_DEFAULT_TIME = 300
 POT_DEFAULT_TIME = 200
 POT_DEFAULT_STIR_FRY = 3
@@ -739,21 +739,57 @@ def write_german_lang():
             print(f"Ohne deutsche Übersetzung ({ns}): {', '.join(missing)}")
 
 
+GRILLING_RESOURCES = ROOT / "grilling" / "src" / "main" / "resources"
+# Bei jeder inhaltlichen Aenderung der Grilling-recipes.yml erhoehen
+GRILLING_DATA_VERSION = 1
+
+
+def split_recipes(core: dict, full: dict) -> dict:
+    """Was Grilling dazubringt oder an Cookery-Rezepten aendert (gleiche ID = ueberschreiben)."""
+    addon = {}
+    for section, values in full.items():
+        if not isinstance(values, dict):
+            continue
+        base = core.get(section, {})
+        changed = {key: value for key, value in values.items() if base.get(key) != value}
+        if changed:
+            addon[section] = changed
+    return addon
+
+
 def main():
+    global RECIPE_DIRS, VANILLA_RECIPE_DIRS, TAG_DIRS
     raw_foods = parse_cookery_foods()
     foods = parse_cookery_item_foods(raw_foods)
     items = collect_items(foods, parse_food_bites(raw_foods))
+    core_items = {k: v for k, v in items.items() if not k.startswith("kaleidoscope_grilling:")}
+    grilling_items = {k: v for k, v in items.items() if k.startswith("kaleidoscope_grilling:")}
     header = "# Generiert von tools/gen_data.py aus den Mod-Quellen - nicht von Hand bearbeiten.\n"
-    (RESOURCES / "items.yml").write_text(header + to_yaml({"items": items}) + "\n", encoding="utf-8")
+    (RESOURCES / "items.yml").write_text(header + to_yaml({"items": core_items}) + "\n", encoding="utf-8")
+    GRILLING_RESOURCES.mkdir(parents=True, exist_ok=True)
+    (GRILLING_RESOURCES / "items.yml").write_text(header + to_yaml({"items": grilling_items}) + "\n", encoding="utf-8")
 
+    all_dirs, all_vanilla, all_tags = RECIPE_DIRS, VANILLA_RECIPE_DIRS, TAG_DIRS
+    RECIPE_DIRS = [d for d in all_dirs if "grilling" not in str(d)]
+    VANILLA_RECIPE_DIRS = [d for d in all_vanilla if "grilling" not in str(d[0])]
+    TAG_DIRS = [d for d in all_tags if "grilling" not in str(d)]
     recipes = collect_recipes(load_tags())
+    RECIPE_DIRS, VANILLA_RECIPE_DIRS, TAG_DIRS = all_dirs, all_vanilla, all_tags
+    grilling_recipes = split_recipes(recipes, collect_recipes(load_tags()))
+    grilling_recipes["data-version"] = GRILLING_DATA_VERSION
     recipe_header = ("# Rezepte der Kochstationen, erzeugt aus den Mod-Daten (tools/gen_data.py).\n"
                      "# Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert\n"
                      "# und kann dort angepasst werden (/kc reload).\n"
                      "# Zutaten: Item-ID, \"#tag\" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.\n")
     (RESOURCES / "recipes.yml").write_text(recipe_header + to_yaml(recipes) + "\n", encoding="utf-8")
+    grilling_header = ("# Rezepte aus Kaleidoscope Grilling (tools/gen_data.py): neue Rezepte und Aenderungen an Cookery-Rezepten.\n"
+                       "# Wird nach plugins/KaleidoscopeGrilling/recipes.yml kopiert; KaleidoscopeCookery mischt sie in seine Rezepte\n"
+                       "# (gleiche ID = ersetzt). Format wie die recipes.yml von KaleidoscopeCookery.\n")
+    (GRILLING_RESOURCES / "recipes.yml").write_text(grilling_header + to_yaml(grilling_recipes) + "\n", encoding="utf-8")
     write_german_lang()
-    print(f"Items: {len(items)}, Teller: {sum(1 for i in items.values() if 'plate' in i)}, Wok: {len(recipes['pot'])}+{len(recipes['flex-pot'])} flex, Suppentopf: {len(recipes['stockpot'])}+{len(recipes['flex-stockpot'])} flex, Schneidebrett-Rezepte: {len(recipes['chopping-board'])}, Vanilla-Rezepte: {len(recipes['vanilla'])}, Tags: {len(recipes['tags'])}")
+    print(f"Cookery: {len(core_items)} Items, Wok {len(recipes['pot'])}+{len(recipes['flex-pot'])}, Suppentopf {len(recipes['stockpot'])}+{len(recipes['flex-stockpot'])}, "
+          f"Schneidebrett {len(recipes['chopping-board'])}, Vanilla {len(recipes['vanilla'])}, Tags {len(recipes['tags'])}")
+    print(f"Grilling: {len(grilling_items)} Items, Rezepte: " + ", ".join(f"{k} {len(v)}" for k, v in grilling_recipes.items() if isinstance(v, dict)))
 
 
 if __name__ == "__main__":

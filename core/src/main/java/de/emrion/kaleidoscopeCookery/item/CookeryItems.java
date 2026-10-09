@@ -89,6 +89,15 @@ public class CookeryItems {
         return new CookeryItems(items);
     }
 
+    /**
+     * Diese Items plus die eines Addons (gleiche IDs werden vom Addon überschrieben).
+     */
+    public CookeryItems merge(CookeryItems other) {
+        Map<Key, CookeryItem> merged = new LinkedHashMap<>(items);
+        merged.putAll(other.items);
+        return new CookeryItems(merged);
+    }
+
     public static CookeryItems loadBundled(org.bukkit.plugin.Plugin plugin) {
         try (Reader reader = new InputStreamReader(plugin.getResource("items.yml"), StandardCharsets.UTF_8)) {
             return load(reader, plugin.getLogger());

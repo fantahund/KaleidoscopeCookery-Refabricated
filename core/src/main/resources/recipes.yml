@@ -2,10 +2,8 @@
 # Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert
 # und kann dort angepasst werden (/kc reload).
 # Zutaten: Item-ID, "#tag" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.
-data-version: 10
+data-version: 11
 tags:
-  "c:bricks/normal":
-    - "minecraft:brick"
   "c:cobblestones":
     - "minecraft:cobblestone"
     - "minecraft:cobbled_deepslate"
@@ -17,12 +15,8 @@ tags:
     - "kaleidoscope_cookery:lettuce"
   "c:crops/tomato":
     - "kaleidoscope_cookery:tomato"
-  "c:crops/wheat":
-    - "minecraft:wheat"
   "c:dough":
     - "kaleidoscope_cookery:raw_dough"
-  "c:dusts/redstone":
-    - "minecraft:redstone"
   "c:eggs":
     - "kaleidoscope_cookery:fried_egg"
     - "minecraft:egg"
@@ -36,11 +30,8 @@ tags:
   "c:foods/raw_beef":
     - "kaleidoscope_cookery:raw_cow_offal"
     - "minecraft:beef"
-    - "kaleidoscope_grilling:beef_chunks"
   "c:foods/raw_chicken":
     - "minecraft:chicken"
-    - "kaleidoscope_grilling:chicken_skin"
-    - "kaleidoscope_grilling:chicken_wing"
   "c:foods/raw_mutton":
     - "kaleidoscope_cookery:raw_lamb_chops"
     - "minecraft:mutton"
@@ -49,8 +40,6 @@ tags:
     - "minecraft:porkchop"
   "c:gems/diamond":
     - "minecraft:diamond"
-  "c:glass_blocks/colorless":
-    - "minecraft:glass"
   "c:grain/rice":
     - "kaleidoscope_cookery:rice"
   "c:gravels":
@@ -73,10 +62,7 @@ tags:
   "c:raw_meats":
     - "kaleidoscope_cookery:raw_cow_offal"
     - "minecraft:beef"
-    - "kaleidoscope_grilling:beef_chunks"
     - "minecraft:chicken"
-    - "kaleidoscope_grilling:chicken_skin"
-    - "kaleidoscope_grilling:chicken_wing"
     - "kaleidoscope_cookery:raw_pork_belly"
     - "minecraft:porkchop"
     - "kaleidoscope_cookery:raw_lamb_chops"
@@ -101,9 +87,6 @@ tags:
     - "kaleidoscope_cookery:green_chili"
     - "kaleidoscope_cookery:tomato"
     - "kaleidoscope_cookery:lettuce"
-    - "kaleidoscope_grilling:onion"
-    - "kaleidoscope_grilling:sweet_potato"
-    - "kaleidoscope_grilling:houttuynia"
   "kaleidoscope_cookery:caterpillars":
     - "kaleidoscope_cookery:caterpillar"
   "kaleidoscope_cookery:flower_tea_ingredients":
@@ -125,24 +108,6 @@ tags:
     - "kaleidoscope_cookery:sakura_fubuki_tea_bag"
     - "kaleidoscope_cookery:barley_tea_bag"
     - "kaleidoscope_cookery:butter_tea_bag"
-  "kaleidoscope_grilling:ingredients/beef_chunks":
-    - "kaleidoscope_grilling:beef_chunks"
-  "kaleidoscope_grilling:ingredients/canola_seeds":
-    - "kaleidoscope_grilling:canola_seeds"
-  "kaleidoscope_grilling:ingredients/carrot_dice":
-    - "kaleidoscope_grilling:carrot_dice"
-  "kaleidoscope_grilling:ingredients/chicken_wings":
-    - "kaleidoscope_grilling:chicken_wing"
-  "kaleidoscope_grilling:ingredients/houttuynia":
-    - "kaleidoscope_grilling:houttuynia"
-  "kaleidoscope_grilling:ingredients/leafy_greens":
-    - "kaleidoscope_cookery:lettuce"
-  "kaleidoscope_grilling:ingredients/onions":
-    - "kaleidoscope_grilling:onion"
-  "kaleidoscope_grilling:ingredients/squid_tentacles":
-    - "kaleidoscope_grilling:squid_tentacle"
-  "kaleidoscope_grilling:ingredients/sweet_potatoes":
-    - "kaleidoscope_grilling:sweet_potato"
 chopping-board:
   "kaleidoscope_cookery:chopping_board/bone_from_cod":
     ingredient: "minecraft:cooked_cod"
@@ -200,8 +165,8 @@ chopping-board:
     cuts: 4
     model: "kaleidoscope_cookery:raw_cow_offal"
     results:
-      - item: "kaleidoscope_grilling:beef_chunks"
-        count: 2
+      - item: "kaleidoscope_cookery:raw_cow_offal"
+        count: 3
   "kaleidoscope_cookery:chopping_board/raw_cut_small_meats_from_chicken":
     ingredient: "minecraft:chicken"
     cuts: 4
@@ -260,39 +225,6 @@ chopping-board:
     results:
       - item: "kaleidoscope_cookery:sashimi"
         count: 3
-  "kaleidoscope_grilling:chopping_board/carrot_dice":
-    ingredient: "minecraft:carrot"
-    cuts: 4
-    model: "kaleidoscope_grilling:carrot_dice"
-    results:
-      - item: "kaleidoscope_grilling:carrot_dice"
-        count: 3
-  "kaleidoscope_grilling:chopping_board/minced_houttuynia":
-    ingredient: "#kaleidoscope_grilling:ingredients/houttuynia"
-    cuts: 4
-    model: "kaleidoscope_grilling:houttuynia"
-    results:
-      - "kaleidoscope_grilling:minced_houttuynia"
-  "kaleidoscope_grilling:chopping_board/potato_slice":
-    ingredient: "minecraft:potato"
-    cuts: 4
-    model: "kaleidoscope_grilling:potato_slice"
-    results:
-      - item: "kaleidoscope_grilling:potato_slice"
-        count: 3
-  "kaleidoscope_grilling:chopping_board/raw_mantou_slice":
-    ingredient: "kaleidoscope_cookery:mantou"
-    cuts: 4
-    model: "kaleidoscope_grilling:raw_mantou_slice"
-    results:
-      - item: "kaleidoscope_grilling:raw_mantou_slice"
-        count: 3
-  "kaleidoscope_grilling:chopping_board/raw_sweet_potato_sheet":
-    ingredient: "kaleidoscope_grilling:sweet_potato_powder"
-    cuts: 4
-    model: "kaleidoscope_grilling:raw_sweet_potato_sheet"
-    results:
-      - "kaleidoscope_grilling:raw_sweet_potato_sheet"
 pot:
   "kaleidoscope_cookery:pot/beef_to_cooked_beef":
     ingredients:
@@ -665,35 +597,6 @@ pot:
       - "#c:foods/raw_pork"
     carrier: "minecraft:bowl"
     result: "kaleidoscope_cookery:sweet_and_sour_pork"
-  "kaleidoscope_grilling:pot/braised_chicken_wings":
-    ingredients:
-      - "#kaleidoscope_grilling:ingredients/chicken_wings"
-      - "#kaleidoscope_grilling:ingredients/chicken_wings"
-      - "#kaleidoscope_grilling:ingredients/chicken_wings"
-      - "minecraft:sugar"
-      - "minecraft:sugar"
-      - "minecraft:sugar"
-    carrier: "minecraft:bowl"
-    result: "kaleidoscope_grilling:braised_chicken_wings"
-  "kaleidoscope_grilling:pot/green_pepper_squid_tentacles":
-    ingredients:
-      - "kaleidoscope_cookery:green_chili"
-      - "kaleidoscope_cookery:green_chili"
-      - "#kaleidoscope_grilling:ingredients/squid_tentacles"
-      - "#kaleidoscope_grilling:ingredients/squid_tentacles"
-      - "#kaleidoscope_grilling:ingredients/onions"
-    carrier: "minecraft:bowl"
-    result: "kaleidoscope_grilling:green_pepper_squid_tentacles"
-  "kaleidoscope_grilling:pot/houttuynia_stir_fried_pork":
-    ingredients:
-      - "#kaleidoscope_grilling:ingredients/houttuynia"
-      - "#kaleidoscope_grilling:ingredients/houttuynia"
-      - "#kaleidoscope_grilling:ingredients/houttuynia"
-      - "minecraft:porkchop"
-      - "minecraft:porkchop"
-      - "minecraft:porkchop"
-    carrier: "minecraft:bowl"
-    result: "kaleidoscope_grilling:houttuynia_stir_fried_pork"
 flex-pot:
   "kaleidoscope_cookery:flex_pot/blaze_lamb_chop":
     ingredients:
@@ -857,25 +760,6 @@ flex-pot:
       - "minecraft:sugar"
     carrier: "minecraft:bowl"
     result: "kaleidoscope_cookery:sweet_and_sour_pork"
-  "kaleidoscope_grilling:flex_pot/braised_chicken_wings":
-    ingredients:
-      - "#kaleidoscope_grilling:ingredients/chicken_wings"
-      - "minecraft:sugar"
-    carrier: "minecraft:bowl"
-    result: "kaleidoscope_grilling:braised_chicken_wings"
-  "kaleidoscope_grilling:flex_pot/green_pepper_squid_tentacles":
-    ingredients:
-      - "kaleidoscope_cookery:green_chili"
-      - "#kaleidoscope_grilling:ingredients/squid_tentacles"
-      - "#kaleidoscope_grilling:ingredients/onions"
-    carrier: "minecraft:bowl"
-    result: "kaleidoscope_grilling:green_pepper_squid_tentacles"
-  "kaleidoscope_grilling:flex_pot/houttuynia_stir_fried_pork":
-    ingredients:
-      - "#kaleidoscope_grilling:ingredients/houttuynia"
-      - "minecraft:porkchop"
-    carrier: "minecraft:bowl"
-    result: "kaleidoscope_grilling:houttuynia_stir_fried_pork"
 stockpot:
   "kaleidoscope_cookery:stockpot/beef_meatball_soup":
     ingredients:
@@ -1697,32 +1581,6 @@ stockpot:
     result:
       item: "kaleidoscope_cookery:zongzi"
       count: 9
-  "kaleidoscope_grilling:stockpot/potato_beef_stew":
-    ingredients:
-      - "#kaleidoscope_grilling:ingredients/beef_chunks"
-      - "#kaleidoscope_grilling:ingredients/beef_chunks"
-      - "minecraft:potato"
-      - "#kaleidoscope_grilling:ingredients/carrot_dice"
-      - "#kaleidoscope_grilling:ingredients/onions"
-    result: "kaleidoscope_grilling:potato_beef_stew"
-  "kaleidoscope_grilling:stockpot/red_sweet_potato_porridge":
-    ingredients:
-      - "#kaleidoscope_grilling:ingredients/sweet_potatoes"
-      - "#kaleidoscope_grilling:ingredients/sweet_potatoes"
-      - "#kaleidoscope_grilling:ingredients/sweet_potatoes"
-      - "kaleidoscope_cookery:rice"
-      - "kaleidoscope_cookery:rice"
-      - "kaleidoscope_cookery:rice"
-    result: "kaleidoscope_grilling:red_sweet_potato_porridge"
-  "kaleidoscope_grilling:stockpot/sour_spicy_noodles":
-    ingredients:
-      - "kaleidoscope_tavern:vinegar"
-      - "kaleidoscope_cookery:red_chili"
-      - "kaleidoscope_cookery:red_chili"
-      - "kaleidoscope_grilling:raw_sweet_potato_sheet"
-      - "kaleidoscope_grilling:raw_sweet_potato_sheet"
-      - "#kaleidoscope_grilling:ingredients/leafy_greens"
-    result: "kaleidoscope_grilling:sour_spicy_noodles"
 flex-stockpot:
   "kaleidoscope_cookery:flex_stockpot/beef_meatball_soup":
     ingredients:
@@ -1870,28 +1728,6 @@ flex-stockpot:
       - "minecraft:rabbit"
       - "#c:mushrooms"
     result: "kaleidoscope_cookery:wild_mushroom_rabbit_soup"
-  "kaleidoscope_grilling:flex_stockpot/potato_beef_stew":
-    ingredients:
-      - "#kaleidoscope_grilling:ingredients/beef_chunks"
-      - "minecraft:potato"
-      - "#kaleidoscope_grilling:ingredients/carrot_dice"
-      - "#kaleidoscope_grilling:ingredients/onions"
-    carrier: "minecraft:bowl"
-    result: "kaleidoscope_grilling:potato_beef_stew"
-  "kaleidoscope_grilling:flex_stockpot/red_sweet_potato_porridge":
-    ingredients:
-      - "#kaleidoscope_grilling:ingredients/sweet_potatoes"
-      - "kaleidoscope_cookery:rice"
-    carrier: "minecraft:bowl"
-    result: "kaleidoscope_grilling:red_sweet_potato_porridge"
-  "kaleidoscope_grilling:flex_stockpot/sour_spicy_noodles":
-    ingredients:
-      - "kaleidoscope_tavern:vinegar"
-      - "kaleidoscope_cookery:red_chili"
-      - "kaleidoscope_grilling:raw_sweet_potato_sheet"
-      - "#kaleidoscope_grilling:ingredients/leafy_greens"
-    carrier: "minecraft:bowl"
-    result: "kaleidoscope_grilling:sour_spicy_noodles"
 steamer:
   "kaleidoscope_cookery:steamer/bamboo_tube_rice":
     ingredient: "kaleidoscope_cookery:raw_bamboo_tube_rice"
@@ -2348,34 +2184,6 @@ millstone:
     results:
       - item: "minecraft:yellow_dye"
         count: 3
-  "kaleidoscope_grilling:millstone/canola_powder":
-    ingredient: "#kaleidoscope_grilling:ingredients/canola_seeds"
-    results:
-      - "kaleidoscope_grilling:canola_powder"
-  "kaleidoscope_grilling:millstone/green_chili_powder":
-    ingredient: "kaleidoscope_cookery:green_chili"
-    results:
-      - "kaleidoscope_grilling:green_chili_powder"
-  "kaleidoscope_grilling:millstone/houttuynia_powder":
-    ingredient: "#kaleidoscope_grilling:ingredients/houttuynia"
-    results:
-      - "kaleidoscope_grilling:houttuynia_powder"
-  "kaleidoscope_grilling:millstone/onion_powder":
-    ingredient: "#kaleidoscope_grilling:ingredients/onions"
-    results:
-      - "kaleidoscope_grilling:onion_powder"
-  "kaleidoscope_grilling:millstone/red_chili_powder":
-    ingredient: "kaleidoscope_cookery:red_chili"
-    results:
-      - "kaleidoscope_grilling:red_chili_powder"
-  "kaleidoscope_grilling:millstone/sweet_potato_powder":
-    ingredient: "#kaleidoscope_grilling:ingredients/sweet_potatoes"
-    results:
-      - "kaleidoscope_grilling:sweet_potato_powder"
-  "kaleidoscope_grilling:millstone/totem_powder":
-    ingredient: "minecraft:totem_of_undying"
-    results:
-      - "kaleidoscope_grilling:totem_powder"
 bamboo-tray:
   "kaleidoscope_cookery:bamboo_tray/drying/fresh_tea_leaves_to_dried_tea_leaves":
     type: drying
@@ -3761,145 +3569,3 @@ vanilla:
     time: 100
     experience: 0.35
     result: "kaleidoscope_cookery:samsa"
-  "kaleidoscope_grilling:advanced_rack":
-    type: crafting_shaped
-    pattern:
-      - III
-      - " R "
-      - SSS
-    key:
-      I: "#c:ingots/iron"
-      S: "#minecraft:wooden_slabs"
-      R: "kaleidoscope_cookery:kitchenware_racks"
-    result: "kaleidoscope_grilling:advanced_rack"
-  "kaleidoscope_grilling:big_vat":
-    type: crafting_shaped
-    pattern:
-      - "B B"
-      - BUB
-      - BBB
-    key:
-      B: "#c:bricks/normal"
-      U: "minecraft:bucket"
-    result: "kaleidoscope_grilling:big_vat"
-  "kaleidoscope_grilling:clear_skewer_recipe_book":
-    type: crafting_shapeless
-    ingredients:
-      - "kaleidoscope_grilling:skewer_recipe_book"
-    result: "kaleidoscope_cookery:recipe_item"
-  "kaleidoscope_grilling:empty_seasoning_bottle":
-    type: crafting_shaped
-    pattern:
-      - " B "
-      - GGG
-      - GGG
-    key:
-      B: "#minecraft:wooden_buttons"
-      G: "#c:glass_blocks/colorless"
-    result: "kaleidoscope_grilling:empty_seasoning_bottle"
-  "kaleidoscope_grilling:grill":
-    type: crafting_shaped
-    pattern:
-      - III
-      - BCB
-      - "I I"
-    key:
-      I: "#c:ingots/iron"
-      B: "#c:bricks/normal"
-      C: "#minecraft:coals"
-    result: "kaleidoscope_grilling:grill"
-  "kaleidoscope_grilling:oak_planks_from_pepper_log":
-    type: crafting_shapeless
-    ingredients:
-      - "kaleidoscope_grilling:pepper_log"
-    result:
-      item: "minecraft:oak_planks"
-      count: 4
-  "kaleidoscope_grilling:oil_cake":
-    type: crafting_shaped
-    pattern:
-      - PPP
-      - PWP
-      - PPP
-    key:
-      P: "kaleidoscope_grilling:canola_powder"
-      W: "#c:crops/wheat"
-    result: "kaleidoscope_grilling:oil_cake"
-  "kaleidoscope_grilling:oil_press":
-    type: crafting_shaped
-    pattern:
-      - LIL
-      - "F F"
-      - LHL
-    key:
-      L: "#minecraft:logs"
-      I: "#c:ingots/iron"
-      F: "#minecraft:fences"
-      H: "minecraft:hopper"
-    result: "kaleidoscope_grilling:oil_press"
-  "kaleidoscope_grilling:pepper_honey":
-    type: crafting_shapeless
-    ingredients:
-      - "kaleidoscope_grilling:sichuan_pepper"
-      - "kaleidoscope_grilling:sichuan_pepper"
-      - "kaleidoscope_grilling:sichuan_pepper"
-      - "minecraft:honey_bottle"
-    result: "kaleidoscope_grilling:pepper_honey"
-  "kaleidoscope_grilling:premium_chili_oil":
-    type: crafting_shapeless
-    ingredients:
-      - "kaleidoscope_grilling:secret_chili_oil_bucket"
-      - "minecraft:lava_bucket"
-      - "#c:dusts/redstone"
-      - "kaleidoscope_grilling:houttuynia_powder"
-    result: "kaleidoscope_grilling:premium_chili_oil_bucket"
-  "kaleidoscope_grilling:roasted_chicken_wing":
-    type: smelting
-    ingredient: "#kaleidoscope_grilling:ingredients/chicken_wings"
-    time: 200
-    experience: 0.35
-    result: "kaleidoscope_grilling:roasted_chicken_wing"
-  "kaleidoscope_grilling:roasted_chicken_wing_campfire":
-    type: campfire_cooking
-    ingredient: "#kaleidoscope_grilling:ingredients/chicken_wings"
-    time: 600
-    experience: 0.35
-    result: "kaleidoscope_grilling:roasted_chicken_wing"
-  "kaleidoscope_grilling:roasted_chicken_wing_smoking":
-    type: smoking
-    ingredient: "#kaleidoscope_grilling:ingredients/chicken_wings"
-    time: 100
-    experience: 0.35
-    result: "kaleidoscope_grilling:roasted_chicken_wing"
-  "kaleidoscope_grilling:roasted_sweet_potato":
-    type: smelting
-    ingredient: "#kaleidoscope_grilling:ingredients/sweet_potatoes"
-    time: 200
-    experience: 0.35
-    result: "kaleidoscope_grilling:roasted_sweet_potato"
-  "kaleidoscope_grilling:roasted_sweet_potato_campfire":
-    type: campfire_cooking
-    ingredient: "#kaleidoscope_grilling:ingredients/sweet_potatoes"
-    time: 600
-    experience: 0.35
-    result: "kaleidoscope_grilling:roasted_sweet_potato"
-  "kaleidoscope_grilling:roasted_sweet_potato_smoking":
-    type: smoking
-    ingredient: "#kaleidoscope_grilling:ingredients/sweet_potatoes"
-    time: 100
-    experience: 0.35
-    result: "kaleidoscope_grilling:roasted_sweet_potato"
-  "kaleidoscope_grilling:secret_chili_oil":
-    type: crafting_shapeless
-    ingredients:
-      - "kaleidoscope_grilling:canola_oil_bucket"
-      - "kaleidoscope_grilling:red_chili_powder"
-      - "kaleidoscope_grilling:red_chili_powder"
-      - "kaleidoscope_grilling:red_chili_powder"
-    result: "kaleidoscope_grilling:secret_chili_oil_bucket"
-  "kaleidoscope_grilling:sugared_tomato":
-    type: crafting_shapeless
-    ingredients:
-      - "#c:crops/tomato"
-      - "minecraft:sugar"
-    result: "kaleidoscope_grilling:sugared_tomato"

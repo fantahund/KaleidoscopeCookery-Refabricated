@@ -59,6 +59,8 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     private ResourcePackService resourcePack;
     private CookeryItems items;
     private Recipes recipes;
+    /** Angemeldete Addons (registerAddon), deren Rezepte beim Laden dazukommen */
+    private final java.util.List<org.bukkit.plugin.Plugin> addons = new java.util.ArrayList<>();
     private VanillaRecipes vanillaRecipes;
     private StationManager stations;
     private Seats seats;
@@ -72,7 +74,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         instance = this;
         PluginManager pluginManager = getServer().getPluginManager();
         saveDefaultConfig();
-        updateRecipeFile();
+        updateRecipeFile(this);
 
         resourcePack = new ResourcePackService(this);
         try (ZipFile pack = new ZipFile(resourcePack.extract().toFile())) {
@@ -86,7 +88,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         items = CookeryItems.loadBundled(this);
         ModelProperties.load(this);
         recipes = loadRecipes();
-        vanillaRecipes = new VanillaRecipes(this, items);
+        vanillaRecipes = new VanillaRecipes(this);
         vanillaRecipes.register(recipes);
 
         foodService = new FoodService(this);
@@ -187,32 +189,73 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     }
 
     /**
-     * recipes.yml anlegen bzw. ersetzen, wenn die mitgelieferte Version neuer ist (alte Datei bleibt als Backup).
+     * recipes.yml eines Plugins (Core oder Addon) anlegen bzw. ersetzen, wenn die mitgelieferte Version neuer ist
+     * (alte Datei bleibt als Backup).
      */
-    private void updateRecipeFile() {
-        File file = new File(getDataFolder(), "recipes.yml");
+    private static void updateRecipeFile(org.bukkit.plugin.Plugin plugin) {
+        File file = new File(plugin.getDataFolder(), "recipes.yml");
         if (!file.exists()) {
-            saveResource("recipes.yml", false);
+            plugin.saveResource("recipes.yml", false);
             return;
         }
         int bundled;
-        try (java.io.Reader reader = new java.io.InputStreamReader(getResource("recipes.yml"), java.nio.charset.StandardCharsets.UTF_8)) {
+        try (java.io.Reader reader = new java.io.InputStreamReader(plugin.getResource("recipes.yml"), java.nio.charset.StandardCharsets.UTF_8)) {
             bundled = YamlConfiguration.loadConfiguration(reader).getInt("data-version");
         } catch (IOException | NullPointerException e) {
             return;
         }
         int current = YamlConfiguration.loadConfiguration(file).getInt("data-version");
         if (current < bundled) {
-            File backup = new File(getDataFolder(), "recipes.yml.v" + current + ".bak");
+            File backup = new File(plugin.getDataFolder(), "recipes.yml.v" + current + ".bak");
             if (file.renameTo(backup)) {
-                saveResource("recipes.yml", true);
-                getLogger().warning("recipes.yml war veraltet (Version " + current + ", neu " + bundled + ") und wurde ersetzt. Alte Datei: " + backup.getName());
+                plugin.saveResource("recipes.yml", true);
+                plugin.getLogger().warning("recipes.yml war veraltet (Version " + current + ", neu " + bundled + ") und wurde ersetzt. Alte Datei: " + backup.getName());
             }
         }
     }
 
+    /**
+     * Rezepte des Cores und aller Addons: deren Abschnitte (Tags, Stationen) werden in die des Cores gemischt,
+     * gleiche IDs überschreibt das Addon.
+     */
     private Recipes loadRecipes() {
-        return Recipes.load(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "recipes.yml")), getLogger());
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "recipes.yml"));
+        for (org.bukkit.plugin.Plugin addon : addons) {
+            YamlConfiguration extra = YamlConfiguration.loadConfiguration(new File(addon.getDataFolder(), "recipes.yml"));
+            for (String section : extra.getKeys(false)) {
+                org.bukkit.configuration.ConfigurationSection source = extra.getConfigurationSection(section);
+                if (source == null) {
+                    continue;
+                }
+                org.bukkit.configuration.ConfigurationSection target = config.getConfigurationSection(section);
+                if (target == null) {
+                    target = config.createSection(section);
+                }
+                for (java.util.Map.Entry<String, Object> entry : source.getValues(false).entrySet()) {
+                    target.set(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        return Recipes.load(config, getLogger());
+    }
+
+    /**
+     * Addon anmelden (KaleidoscopeGrilling): dessen items.yml und recipes.yml kommen dazu, Rezepte werden neu geladen.
+     */
+    public void registerAddon(org.bukkit.plugin.Plugin addon) {
+        if (addons.contains(addon)) {
+            return;
+        }
+        addons.add(addon);
+        if (addon.getResource("items.yml") != null) {
+            items = items.merge(CookeryItems.loadBundled(addon));
+        }
+        if (addon.getResource("recipes.yml") != null) {
+            updateRecipeFile(addon);
+        }
+        recipes = loadRecipes();
+        vanillaRecipes.register(recipes);
+        getLogger().info("Addon " + addon.getName() + " angemeldet: " + items.all().size() + " Items");
     }
 
     /**
