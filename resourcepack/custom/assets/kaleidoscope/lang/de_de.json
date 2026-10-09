@@ -58,5 +58,12 @@
   "kaleidoscope.hud.bamboo_tray.idle": "Wartet · trocknet unter freiem Himmel ohne Regen, befeuchtet im Regen oder unter tropfendem Tropfstein",
   "kaleidoscope.hud.bamboo_tray.drying": "Trocknet · %s%%",
   "kaleidoscope.hud.bamboo_tray.wetting": "Wird befeuchtet · %s%%",
-  "kaleidoscope.hud.bamboo_tray.done": "Fertig · mit leerer Hand herausnehmen (Schleichen: alles)"
+  "kaleidoscope.hud.bamboo_tray.done": "Fertig · mit leerer Hand herausnehmen (Schleichen: alles)",
+  "kaleidoscope.hud.shawarma.on": "Dreht sich (Vorsicht heiß!)",
+  "kaleidoscope.hud.shawarma.off": "Aus · braucht ein Redstone-Signal",
+  "kaleidoscope.hud.shawarma.upper": "Oben:",
+  "kaleidoscope.hud.shawarma.lower": "Unten:",
+  "kaleidoscope.hud.shawarma.empty": "leer",
+  "kaleidoscope.hud.shawarma.cooking": "%s× %s · %s s",
+  "kaleidoscope.hud.shawarma.done": "%s× %s fertig"
 }

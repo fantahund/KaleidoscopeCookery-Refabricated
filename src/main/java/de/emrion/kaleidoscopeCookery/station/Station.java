@@ -379,7 +379,7 @@ public abstract class Station {
      * Größe der Displays fürs Culling (große Modelle wie der Mühlstein brauchen mehr).
      */
     protected float displaySize() {
-        return 1.5f + 2 * context.type().radius();
+        return 1.5f + 2 * context.type().radius() + context.type().height() - 1;
     }
 
     @SuppressWarnings("UnstableApiUsage")

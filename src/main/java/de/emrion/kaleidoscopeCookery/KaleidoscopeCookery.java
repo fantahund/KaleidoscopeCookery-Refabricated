@@ -20,6 +20,7 @@ import de.emrion.kaleidoscopeCookery.station.crop.CropKind;
 import de.emrion.kaleidoscopeCookery.station.crop.CropListener;
 import de.emrion.kaleidoscopeCookery.station.bambootray.BambooTrayStation;
 import de.emrion.kaleidoscopeCookery.station.millstone.MillstoneListener;
+import de.emrion.kaleidoscopeCookery.station.shawarma.ShawarmaSpitStation;
 import de.emrion.kaleidoscopeCookery.station.millstone.MillstoneStation;
 import de.emrion.kaleidoscopeCookery.station.crop.CropStation;
 import de.emrion.kaleidoscopeCookery.station.oil.EnamelBasinStation;
@@ -97,6 +98,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         stations.register(OilBlockStation.type());
         stations.register(MillstoneStation.type());
         stations.register(BambooTrayStation.type());
+        stations.register(ShawarmaSpitStation.type());
         for (CropKind kind : CropKind.values()) {
             stations.register(CropStation.type(kind));
         }
