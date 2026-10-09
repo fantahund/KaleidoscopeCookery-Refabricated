@@ -24,7 +24,10 @@ public record CommandRegistration(KaleidoscopeCookery plugin) {
         router.addCommandMapping(new RepairCommand(plugin), "repair");
         router.addCommandMapping(new ReloadCommand(plugin), "reload");
         router.addCommandMapping(new PackCommand(plugin), "pack");
-        router.addCommandMapping(new DialogTestCommand(plugin), "dialogtest");
+        router.addCommandMapping(new CookbookCommand(plugin, false), "rezepte");
+        router.addCommandMapping(new CookbookCommand(plugin, false), "recipes");
+        router.addCommandMapping(new CookbookCommand(plugin, true), "rezept");
+        router.addCommandMapping(new CookbookCommand(plugin, true), "recipe");
 
         if (CommandUtil.registerCommand(plugin, COMMAND, ALIASES, router) == null) {
             plugin.getLogger().warning("/" + COMMAND + " war schon belegt und ist nur als /" + plugin.getPluginMeta().getName().toLowerCase() + ":" + COMMAND + " erreichbar");

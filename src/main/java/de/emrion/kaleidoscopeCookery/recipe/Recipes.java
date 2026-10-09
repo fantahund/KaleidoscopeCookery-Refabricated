@@ -314,6 +314,10 @@ public class Recipes {
         return bambooTray;
     }
 
+    public List<TeapotRecipe> teapot() {
+        return teapot;
+    }
+
     public List<SteamerRecipe> steamer() {
         return steamer;
     }

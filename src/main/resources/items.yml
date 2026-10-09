@@ -1,5 +1,10 @@
 # Generiert von tools/gen_data.py aus den Mod-Quellen - nicht von Hand bearbeiten.
 items:
+  "kaleidoscope:cookbook":
+    model: "minecraft:book"
+    name: kaleidoscope.cookbook.item
+    tooltip: kaleidoscope.cookbook.item.tooltip
+    max-stack: 1
   "kaleidoscope_cookery:apple_platter":
     model: "kaleidoscope_cookery:apple_platter"
     name: block.kaleidoscope_cookery.apple_platter

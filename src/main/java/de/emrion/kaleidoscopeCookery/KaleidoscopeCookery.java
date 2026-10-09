@@ -62,6 +62,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     private VanillaRecipes vanillaRecipes;
     private StationManager stations;
     private Seats seats;
+    private de.emrion.kaleidoscopeCookery.cookbook.Cookbook cookbook;
     private FoodService foodService;
     private EffectManager effects;
     private VanillaFoodAdjuster vanillaFood;
@@ -76,6 +77,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         resourcePack = new ResourcePackService(this);
         try (ZipFile pack = new ZipFile(resourcePack.extract().toFile())) {
             Lang.load(pack, getLogger());
+            de.emrion.kaleidoscopeCookery.util.ItemIcons.load(pack);
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Resourcepack/Sprachdateien konnten nicht geladen werden", e);
         }
@@ -139,6 +141,10 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         pluginManager.registerEvents(new de.emrion.kaleidoscopeCookery.item.DoughListener(this), this);
         pluginManager.registerEvents(new de.emrion.kaleidoscopeCookery.item.LunchBag(this), this);
         pluginManager.registerEvents(new de.emrion.kaleidoscopeCookery.item.RecipeItems(this), this);
+        cookbook = new de.emrion.kaleidoscopeCookery.cookbook.Cookbook(this);
+        // Einträge erst nach dem Laden aller Rezepte aufbauen (auch die Lagerfeuer-Rezepte anderer Plugins)
+        getServer().getScheduler().runTask(this, () -> getLogger().info("Kochbuch: " + cookbook.size() + " Rezepte"));
+        pluginManager.registerEvents(new de.emrion.kaleidoscopeCookery.cookbook.CookbookListener(this), this);
         pluginManager.registerEvents(new de.emrion.kaleidoscopeCookery.station.decor.StrawBlockListener(stations), this);
         seats = new Seats(this);
         pluginManager.registerEvents(seats, this);
@@ -242,6 +248,10 @@ public final class KaleidoscopeCookery extends JavaPlugin {
 
     public StationManager getStations() {
         return stations;
+    }
+
+    public de.emrion.kaleidoscopeCookery.cookbook.Cookbook getCookbook() {
+        return cookbook;
     }
 
     public FoodService getFoodService() {

@@ -310,6 +310,9 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry["food"] = bite.pop("item-food")
                 entry["plate"] = bite
             items[full_id] = entry
+    # Eigene Items des Plugins (nicht aus den Mods)
+    items["kaleidoscope:cookbook"] = {"model": "minecraft:book", "name": "kaleidoscope.cookbook.item",
+                                      "tooltip": "kaleidoscope.cookbook.item.tooltip", "max-stack": 1}
     for full_id, name_key in EXTRA_ITEMS.items():
         ns, item_id = full_id.split(":")
         entry = {"model": full_id, "name": name_key, "tooltip": f"tooltip.{ns}.{item_id}"}
@@ -498,7 +501,7 @@ def collect_recipes(tags: dict) -> dict:
 
 
 # Bei jeder inhaltlichen Aenderung der erzeugten recipes.yml erhoehen: das Plugin ersetzt dann alte Kopien (mit Backup)
-DATA_VERSION = 7
+DATA_VERSION = 8
 STOCKPOT_DEFAULT_TIME = 300
 POT_DEFAULT_TIME = 200
 POT_DEFAULT_STIR_FRY = 3
@@ -653,7 +656,10 @@ VANILLA_RECIPE_DIRS = [
 
 
 def collect_vanilla_recipes(used_tags: set) -> dict:
-    recipes = {}
+    # Kochbuch des Plugins: Buch + Tomate
+    recipes = {"kaleidoscope:cookbook": {"type": "crafting_shapeless",
+                                         "ingredients": ["minecraft:book", "kaleidoscope_cookery:tomato"],
+                                         "result": "kaleidoscope:cookbook"}}
     for folder, namespace in VANILLA_RECIPE_DIRS:
         if not folder.exists():
             continue

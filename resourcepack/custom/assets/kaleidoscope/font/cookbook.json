@@ -1,0 +1,67 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/pot.png",
+      "height": 32,
+      "ascent": 24,
+      "chars": [
+        "\ue200"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/stockpot.png",
+      "height": 32,
+      "ascent": 24,
+      "chars": [
+        "\ue201"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/steamer.png",
+      "height": 32,
+      "ascent": 24,
+      "chars": [
+        "\ue202"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/chopping_board.png",
+      "height": 32,
+      "ascent": 24,
+      "chars": [
+        "\ue203"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/teapot.png",
+      "height": 32,
+      "ascent": 24,
+      "chars": [
+        "\ue204"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/millstone.png",
+      "height": 32,
+      "ascent": 24,
+      "chars": [
+        "\ue205"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/bamboo_tray.png",
+      "height": 32,
+      "ascent": 24,
+      "chars": [
+        "\ue206"
+      ]
+    }
+  ]
+}

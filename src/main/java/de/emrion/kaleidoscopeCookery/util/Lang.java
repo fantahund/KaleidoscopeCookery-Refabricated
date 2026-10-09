@@ -118,4 +118,12 @@ public final class Lang {
         }
         return result;
     }
+
+    /**
+     * Text für die Suche: in der Sprache des Spielers gerendert, ohne Formatierung (unbekannte Schlüssel bleiben stehen).
+     */
+    public static String plain(Component component, Locale locale) {
+        return net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText()
+                .serialize(net.kyori.adventure.translation.GlobalTranslator.render(component, locale));
+    }
 }
