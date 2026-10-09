@@ -11,7 +11,9 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.PrepareSmithingEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.BlastingRecipe;
 import org.bukkit.inventory.CampfireRecipe;
 import org.bukkit.inventory.FurnaceRecipe;
@@ -62,7 +64,18 @@ public class VanillaRecipes implements Listener {
             }
         }
         Bukkit.updateRecipes();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.discoverRecipes(registered);
+        }
         plugin.getLogger().info(registered.size() + " Werkbank-/Ofen-Rezepte registriert");
+    }
+
+    /**
+     * Plugin-Rezepte stehen erst im Rezeptbuch, wenn der Spieler sie kennt.
+     */
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        event.getPlayer().discoverRecipes(registered);
     }
 
     public void unregister() {
