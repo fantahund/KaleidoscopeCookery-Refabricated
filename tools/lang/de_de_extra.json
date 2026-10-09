@@ -62,7 +62,9 @@
     "tip.kaleidoscope_cookery.pot.done": "Fertig gekocht, kann serviert werden!",
     "tip.kaleidoscope_cookery.pot.need_carrier": "Rechtsklick mit %s zum Servieren!",
     "tip.kaleidoscope_cookery.pot.carrier_count_not_enough": "Du brauchst %s× %s zum Servieren!",
-    "tip.kaleidoscope_cookery.pot.need_kitchen_shovel": "Schleichen + Rechtsklick mit dem Pfannenwender zum Servieren!"
+    "tip.kaleidoscope_cookery.pot.need_kitchen_shovel": "Schleichen + Rechtsklick mit dem Pfannenwender zum Servieren!",
+    "enchantment.kaleidoscope_cookery.quick_knife": "Schnelles Messer",
+    "enchantment.kaleidoscope_cookery.sweep": "Schwung"
   },
   "kaleidoscope_grilling": {
     "hud.kaleidoscope_grilling.pot.state.need_heat": "Wartet auf Hitzequelle",

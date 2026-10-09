@@ -139,6 +139,8 @@
   "effect.kaleidoscope_cookery.vitality": "Vitalität",
   "effect.kaleidoscope_cookery.warmth": "Wärme",
   "effect.kaleidoscope_cookery.warmth.description": "Regeneriert langsam Leben in der Nähe von Hitzequellen wie Herd, Lagerfeuer oder Lava.",
+  "enchantment.kaleidoscope_cookery.quick_knife": "Schnelles Messer",
+  "enchantment.kaleidoscope_cookery.sweep": "Schwung",
   "item.kaleidoscope_cookery.baozi": "Baozi",
   "item.kaleidoscope_cookery.barley_tea_bag": "Weizen-Oolong-Teebeutel",
   "item.kaleidoscope_cookery.beef_meatball_soup": "Rindfleischbällchensuppe",

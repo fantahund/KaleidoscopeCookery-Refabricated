@@ -3,6 +3,7 @@ description: '${project.description}'
 version: '${version}'
 
 main: de.emrion.kaleidoscopeCookery.KaleidoscopeCookery
+bootstrapper: de.emrion.kaleidoscopeCookery.KaleidoscopeCookeryBootstrap
 api-version: '26.3'
 load: POSTWORLD
 

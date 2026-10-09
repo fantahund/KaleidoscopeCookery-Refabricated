@@ -7,6 +7,7 @@ import de.emrion.kaleidoscopeCookery.food.FoodService;
 import de.emrion.kaleidoscopeCookery.food.VanillaFoodAdjuster;
 import de.emrion.kaleidoscopeCookery.item.CookeryItems;
 import de.emrion.kaleidoscopeCookery.item.ItemProtectionListener;
+import de.emrion.kaleidoscopeCookery.item.QuickKnifeListener;
 import de.emrion.kaleidoscopeCookery.loot.OilDropListener;
 import de.emrion.kaleidoscopeCookery.pack.ResourcePackService;
 import de.emrion.kaleidoscopeCookery.recipe.Recipes;
@@ -76,6 +77,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         pluginManager.registerEvents(stations, this);
         pluginManager.registerEvents(new StationListener(this, stations), this);
         pluginManager.registerEvents(new ItemProtectionListener(), this);
+        pluginManager.registerEvents(new QuickKnifeListener(), this);
         pluginManager.registerEvents(vanillaRecipes, this);
         pluginManager.registerEvents(new OilDropListener(this), this);
         pluginManager.registerEvents(foodService, this);

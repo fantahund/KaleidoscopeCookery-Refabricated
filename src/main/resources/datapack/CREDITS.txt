@@ -1,0 +1,3 @@
+Die Verzauberung "quick_knife" stammt aus Kaleidoscope Cookery (c) 2025 Kaleidoscope Official Production Team,
+https://github.com/KaleidoscopeMods/KaleidoscopeCookery – lizenziert unter CC BY-NC-SA 4.0.
+Geändert: Die Item-Tags zeigen auf die Vanilla-Schwerter, auf denen die Küchenmesser dieses Plugins basieren.

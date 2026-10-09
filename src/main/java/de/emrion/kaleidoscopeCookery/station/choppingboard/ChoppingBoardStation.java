@@ -1,6 +1,7 @@
 package de.emrion.kaleidoscopeCookery.station.choppingboard;
 
 import de.emrion.kaleidoscopeCookery.config.CookeryConfig;
+import de.emrion.kaleidoscopeCookery.item.QuickKnifeListener;
 import de.emrion.kaleidoscopeCookery.recipe.ChoppingBoardRecipe;
 import de.emrion.kaleidoscopeCookery.recipe.RecipeResult;
 import de.emrion.kaleidoscopeCookery.station.Station;
@@ -190,7 +191,8 @@ public class ChoppingBoardStation extends Station {
         }
         CookeryConfig.Cutting cutting = plugin().getCookeryConfig().cutting();
         ItemStack tool = player.getInventory().getItemInMainHand();
-        int perHit = cutting.cuts(tool);
+        // Mod: 1 << Stufe von "Schnelles Messer" (max. II) Schnitte pro Hieb
+        int perHit = cutting.cuts(tool) * (1 << Math.clamp(QuickKnifeListener.level(tool), 0, 2));
         if (perHit <= 0) {
             context.manager().actionBar(player, Lang.get("chopping_board.need_tool").color(NamedTextColor.GOLD));
             return false;
