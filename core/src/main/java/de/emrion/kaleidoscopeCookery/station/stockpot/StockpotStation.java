@@ -551,7 +551,7 @@ public class StockpotStation extends Station {
             }
         }
         ItemStack portion = result.asOne();
-        plugin().getFoodService().makeHot(portion, world(), plugin().getCookeryConfig().food().stockpotHotSeconds());
+        new de.emrion.kaleidoscopeCookery.api.DishServedEvent(player, this, portion).callEvent();
         give(player, portion);
         takeoutCount--;
         if (takeoutCount <= 0) {

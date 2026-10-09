@@ -147,7 +147,12 @@ public class PlateStation extends Station {
             context.manager().breakStation(this, player);
             return true;
         }
-        if (!plugin().getFoodService().eatBite(player, plate.food(), quality == null ? 1 : quality.ratio())) {
+        ItemStack dishStack = dish == null ? null : items().create(dish, 1);
+        if (dishStack != null && quality != null) {
+            plugin().getFoodService().setQuality(dishStack, quality);
+        }
+        if (!plugin().getFoodService().eatBite(player, plate.food(), quality == null ? 1 : quality.ratio(),
+                dishStack == null ? ItemStack.empty() : dishStack)) {
             return false;
         }
         bites++;

@@ -54,26 +54,19 @@ import java.util.concurrent.ThreadLocalRandom;
 public class FoodService implements Listener {
 
     public static final NamespacedKey QUALITY = Keys.key("quality");
-    public static final NamespacedKey HOT_UNTIL = Keys.key("hot_until");
-    private static final long HEAT_BUCKET_TICKS = 5 * 20;
-    private static final int LORE_UPDATE_INTERVAL = 100;
 
     private final KaleidoscopeCookery plugin;
     private final Set<UUID> eatingCake = new HashSet<>();
-    private BukkitTask loreTask;
+    private final List<de.emrion.kaleidoscopeCookery.api.FoodLoreExtension> loreExtensions = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     public FoodService(KaleidoscopeCookery plugin) {
         this.plugin = plugin;
     }
 
     public void start() {
-        loreTask = plugin.getServer().getScheduler().runTaskTimer(plugin, this::updateHeldLore, LORE_UPDATE_INTERVAL, LORE_UPDATE_INTERVAL);
     }
 
     public void stop() {
-        if (loreTask != null) {
-            loreTask.cancel();
-        }
     }
 
     // ---- Qualität ----
@@ -97,43 +90,21 @@ public class FoodService implements Listener {
         refreshLore(stack, null);
     }
 
-    // ---- Hitze ----
-
     /**
-     * Essen heiß machen (烟火气).
+     * Zusätzliche Beschreibungs-Zeilen (Addons, z. B. "heiß" von Grilling).
      */
-    public void makeHot(ItemStack stack, World world, int seconds) {
-        if (seconds <= 0 || !plugin.getCookeryConfig().food().hotEnabled()) {
-            return;
-        }
-        long until = world.getGameTime() + seconds * 20L;
-        until -= Math.floorMod(until, HEAT_BUCKET_TICKS);
-        long finalUntil = until;
-        stack.editPersistentDataContainer(pdc -> pdc.set(HOT_UNTIL, PersistentDataType.LONG, finalUntil));
-        refreshLore(stack, world);
-    }
-
-    public static long hotUntil(ItemStack stack) {
-        return stack.getPersistentDataContainer().getOrDefault(HOT_UNTIL, PersistentDataType.LONG, 0L);
-    }
-
-    public static boolean isHot(ItemStack stack, World world) {
-        return hotUntil(stack) > world.getGameTime();
+    public void addLoreExtension(de.emrion.kaleidoscopeCookery.api.FoodLoreExtension extension) {
+        loreExtensions.add(extension);
     }
 
     /**
-     * Lore neu aufbauen: Beschreibung, Qualität, Hitze. Abgelaufene Hitze wird entfernt.
+     * Lore neu aufbauen: Beschreibung, Spruch, Qualität und die Zeilen der Addons.
      *
      * @return true, wenn sich etwas geändert hat
      */
     @SuppressWarnings("UnstableApiUsage")
     public boolean refreshLore(ItemStack stack, @Nullable World world) {
         CookeryItem item = plugin.getItems().get(CookeryItems.typeOf(stack));
-        long hotUntil = hotUntil(stack);
-        if (hotUntil > 0 && world != null && hotUntil <= world.getGameTime()) {
-            stack.editPersistentDataContainer(pdc -> pdc.remove(HOT_UNTIL));
-            hotUntil = 0;
-        }
         List<Component> lore = new ArrayList<>();
         if (item != null) {
             lore.addAll(CookeryItems.tooltipLines(item));
@@ -142,10 +113,8 @@ public class FoodService implements Listener {
         if (quality != null) {
             lore.add(Text.noItalic(Lang.raw(quality.translationKey()).color(quality.color())));
         }
-        if (hotUntil > 0 && world != null) {
-            long seconds = Math.max(0, (hotUntil - world.getGameTime()) / 20);
-            lore.add(Text.noItalic(Lang.raw("tooltip.kaleidoscope_grilling.hot_food", seconds / 60, String.format("%02d", seconds % 60))
-                    .color(NamedTextColor.GOLD)));
+        for (de.emrion.kaleidoscopeCookery.api.FoodLoreExtension extension : loreExtensions) {
+            extension.extend(stack, world, lore);
         }
         ItemLore current = stack.getData(DataComponentTypes.LORE);
         if (current != null && current.lines().equals(lore) || current == null && lore.isEmpty()) {
@@ -159,25 +128,6 @@ public class FoodService implements Listener {
         return true;
     }
 
-    /**
-     * Restzeit der Hitze im Inventar aktualisieren (alle 5 s).
-     */
-    private void updateHeldLore() {
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
-            // Beim Essen das Item nicht austauschen, sonst bricht der Client das Essen samt Animation ab
-            if (player.hasActiveItem()) {
-                continue;
-            }
-            ItemStack[] contents = player.getInventory().getContents();
-            for (int slot = 0; slot < contents.length; slot++) {
-                ItemStack stack = contents[slot];
-                if (stack != null && hotUntil(stack) > 0 && refreshLore(stack, player.getWorld())) {
-                    player.getInventory().setItem(slot, stack);
-                }
-            }
-        }
-    }
-
     // ---- Essen ----
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -188,10 +138,11 @@ public class FoodService implements Listener {
         Set<PotionEffectType> before = harmfulEffects(player);
         if (item != null && item.food() != null) {
             Quality quality = quality(stack);
-            applyModEffects(player, item.food(), quality == null ? 1 : quality.ratio());
-            if (isHot(stack, player.getWorld())) {
-                applyHotBonus(player, (float) (item.food().saturation() * (quality == null ? 1 : quality.ratio())));
-            }
+            double ratio = quality == null ? 1 : quality.ratio();
+            applyModEffects(player, item.food(), ratio);
+            ItemStack eaten = stack.clone();
+            plugin.getServer().getScheduler().runTask(plugin, () -> new de.emrion.kaleidoscopeCookery.api.CookeryFoodEatenEvent(player, eaten, item.food(), ratio,
+                    de.emrion.kaleidoscopeCookery.api.CookeryFoodEatenEvent.Source.HAND).callEvent());
         } else if (item == null && stack.hasData(DataComponentTypes.FOOD)) {
             nerfVanilla(player, stack);
         }
@@ -207,7 +158,7 @@ public class FoodService implements Listener {
      *
      * @return false, wenn der Spieler gerade nicht essen kann
      */
-    public boolean eatBite(Player player, CookeryItem.Food food, double ratio) {
+    public boolean eatBite(Player player, CookeryItem.Food food, double ratio, ItemStack dish) {
         if (!food.alwaysEdible() && player.getFoodLevel() >= 20) {
             return false;
         }
@@ -226,6 +177,8 @@ public class FoodService implements Listener {
             }
         }
         applyModEffects(player, food, ratio);
+        new de.emrion.kaleidoscopeCookery.api.CookeryFoodEatenEvent(player, dish, food, ratio,
+                de.emrion.kaleidoscopeCookery.api.CookeryFoodEatenEvent.Source.PLATE_BITE).callEvent();
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GENERIC_EAT, SoundCategory.PLAYERS, 0.5f, ThreadLocalRandom.current().nextFloat() * 0.1f + 0.9f);
         return true;
     }
@@ -274,10 +227,10 @@ public class FoodService implements Listener {
         CookeryItem item = plugin.getItems().get(CookeryItems.typeOf(stack));
         if (item != null && item.food() != null) {
             Quality quality = quality(stack);
-            applyModEffects(player, item.food(), quality == null ? 1 : quality.ratio());
-            if (isHot(stack, player.getWorld())) {
-                applyHotBonus(player, (float) (item.food().saturation() * (quality == null ? 1 : quality.ratio())));
-            }
+            double ratio = quality == null ? 1 : quality.ratio();
+            applyModEffects(player, item.food(), ratio);
+            new de.emrion.kaleidoscopeCookery.api.CookeryFoodEatenEvent(player, stack.clone(), item.food(), ratio,
+                    de.emrion.kaleidoscopeCookery.api.CookeryFoodEatenEvent.Source.LUNCH_BAG).callEvent();
         }
         io.papermc.paper.datacomponent.item.UseRemainder remainder = stack.getData(DataComponentTypes.USE_REMAINDER);
         if (remainder != null) {
@@ -293,15 +246,6 @@ public class FoodService implements Listener {
                 plugin.getEffects().apply(player, cookeryEffect, (int) Math.round(effect.duration() * ratio), effect.amplifier());
             }
         }
-    }
-
-    private void applyHotBonus(Player player, float saturation) {
-        int percent = plugin.getCookeryConfig().food().hotSaturationPercent();
-        float bonus = saturation * (percent - 100) / 100f;
-        if (bonus <= 0) {
-            return;
-        }
-        plugin.getServer().getScheduler().runTask(plugin, () -> player.setSaturation(Math.min(player.getFoodLevel(), player.getSaturation() + bonus)));
     }
 
     private static Set<PotionEffectType> harmfulEffects(Player player) {

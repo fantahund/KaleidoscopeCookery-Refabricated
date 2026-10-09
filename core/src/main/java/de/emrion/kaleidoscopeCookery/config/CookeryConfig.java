@@ -52,8 +52,7 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
     /**
      * @param vanillaPercents Prozent je Material, sonst vanillaDefaultPercent
      */
-    public record Food(boolean vanillaNerfEnabled, int vanillaDefaultPercent, Map<Material, Integer> vanillaPercents,
-                       boolean hotEnabled, int hotSaturationPercent, int wokHotSeconds, int stockpotHotSeconds) {
+    public record Food(boolean vanillaNerfEnabled, int vanillaDefaultPercent, Map<Material, Integer> vanillaPercents) {
 
         public int vanillaPercent(Material material) {
             return vanillaPercents.getOrDefault(material, vanillaDefaultPercent);
@@ -108,9 +107,7 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
             }
         }
         Food food = new Food(config.getBoolean("food.vanilla.enabled", true), Math.max(0, config.getInt("food.vanilla.default-percent", 50)),
-                Collections.unmodifiableMap(percents), config.getBoolean("food.hot.enabled", true),
-                Math.max(100, config.getInt("food.hot.saturation-percent", 125)), Math.max(0, config.getInt("food.hot.wok-seconds", 60)),
-                Math.max(0, config.getInt("food.hot.stockpot-seconds", 60)));
+                Collections.unmodifiableMap(percents));
         return new CookeryConfig(pack, cutting, oilDrops, food);
     }
 }

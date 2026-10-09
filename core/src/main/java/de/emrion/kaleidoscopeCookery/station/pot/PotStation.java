@@ -581,8 +581,8 @@ public class PotStation extends Station {
 
     private void finishTakeOut(Player player, ItemStack product) {
         if (status == FINISHED) {
-            // 烟火气: frisch aus dem Wok ist das Gericht heiß
-            plugin().getFoodService().makeHot(product, world(), plugin().getCookeryConfig().food().wokHotSeconds());
+            // Addons können das Gericht anpassen (Grilling: frisch aus dem Wok ist es heiß)
+            new de.emrion.kaleidoscopeCookery.api.DishServedEvent(player, this, product).callEvent();
         }
         give(player, product);
         reset();

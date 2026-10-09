@@ -57,12 +57,3 @@ food:
       CHORUS_FRUIT: 100
       DRIED_KELP: 70
       CAKE: 60
-  # Heißes Essen (烟火气, Kaleidoscope Grilling): frisch gekochte Gerichte sättigen eine Zeit lang stärker
-  hot:
-    enabled: true
-    # Sättigung heißer Gerichte in Prozent
-    saturation-percent: 125
-    # So lange bleiben Gerichte aus dem Wok heiß (Sekunden, Mod: normales Öl 60 s)
-    wok-seconds: 60
-    # So lange bleiben Suppen aus dem Suppentopf heiß (Sekunden, Mod: 60 s)
-    stockpot-seconds: 60
