@@ -37,5 +37,12 @@
   "kaleidoscope.hud.pot.cooking": "Cooking · %s s",
   "kaleidoscope.hud.pot.done": "Done! Burns in %s s",
   "kaleidoscope.hud.pot.burnt": "Burnt · %s s",
-  "kaleidoscope.hud.plate.bites": "%s/%s bites"
+  "kaleidoscope.hud.plate.bites": "%s/%s bites",
+  "kaleidoscope.hud.stockpot.need_soup": "Needs broth (water, milk, lava or fish bucket)",
+  "kaleidoscope.hud.stockpot.add": "Ingredients %s/%s · put the lid on to cook",
+  "kaleidoscope.hud.stockpot.lid_wait": "Lid on · no ingredients",
+  "kaleidoscope.hud.stockpot.cooking": "Cooking · %s s",
+  "kaleidoscope.hud.stockpot.need_lid": "Lid missing – not cooking",
+  "kaleidoscope.hud.stockpot.open": "Done! Take the lid off",
+  "kaleidoscope.hud.stockpot.portions": "Done · %s servings"
 }

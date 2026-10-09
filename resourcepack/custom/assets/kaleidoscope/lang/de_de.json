@@ -37,5 +37,12 @@
   "kaleidoscope.hud.pot.cooking": "Kocht · %s s",
   "kaleidoscope.hud.pot.done": "Fertig! Brennt in %s s an",
   "kaleidoscope.hud.pot.burnt": "Angebrannt · %s s",
-  "kaleidoscope.hud.plate.bites": "%s/%s Bissen"
+  "kaleidoscope.hud.plate.bites": "%s/%s Bissen",
+  "kaleidoscope.hud.stockpot.need_soup": "Brühe fehlt (Wasser-, Milch-, Lava- oder Fischeimer)",
+  "kaleidoscope.hud.stockpot.add": "Zutaten %s/%s · Deckel drauf zum Kochen",
+  "kaleidoscope.hud.stockpot.lid_wait": "Deckel drauf · Zutaten fehlen",
+  "kaleidoscope.hud.stockpot.cooking": "Kocht · %s s",
+  "kaleidoscope.hud.stockpot.need_lid": "Deckel fehlt – kocht nicht",
+  "kaleidoscope.hud.stockpot.open": "Fertig! Deckel abnehmen",
+  "kaleidoscope.hud.stockpot.portions": "Fertig · %s Portionen"
 }
