@@ -271,14 +271,18 @@ public class Cookbook {
     }
 
     private static Dialog dialog(Component title, List<DialogBody> body, List<DialogInput> inputs, List<ActionButton> buttons, @Nullable Supplier<Dialog> back) {
-        ActionButton exit = back == null
-                ? button(Lang.get("cookbook.close"), null, (response, audience) -> audience.closeDialog())
-                : button(Lang.get("cookbook.back"), null, (response, audience) -> show(audience, back.get()));
+        // Escape löst die Exit-Aktion aus: die schließt immer das ganze Kochbuch, "Zurück" ist ein normaler Knopf
+        ActionButton exit = button(Lang.get("cookbook.close"), null, (response, audience) -> audience.closeDialog());
+        if (back != null) {
+            buttons = new ArrayList<>(buttons);
+            buttons.add(button(Lang.get("cookbook.back"), null, (response, audience) -> show(audience, back.get())));
+        }
+        List<ActionButton> allButtons = buttons;
         // Nach einem Klick offen bleiben, bis die nächste Seite kommt: so springt der Mauszeiger nicht in die Mitte
         return Dialog.create(builder -> builder.empty()
                 .base(DialogBase.builder(title).canCloseWithEscape(true).afterAction(DialogBase.DialogAfterAction.WAIT_FOR_RESPONSE)
                         .body(body).inputs(inputs).build())
-                .type(DialogType.multiAction(buttons).columns(COLUMNS).exitAction(exit).build()));
+                .type(DialogType.multiAction(allButtons).columns(COLUMNS).exitAction(exit).build()));
     }
 
     /**
