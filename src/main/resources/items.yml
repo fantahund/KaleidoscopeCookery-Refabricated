@@ -2038,6 +2038,7 @@ items:
   "kaleidoscope_cookery:transmutation_lunch_bag":
     model: "kaleidoscope_cookery:transmutation_lunch_bag"
     name: item.kaleidoscope_cookery.transmutation_lunch_bag
+    max-stack: 1
   "kaleidoscope_cookery:trash_can":
     model: "kaleidoscope_cookery:trash_can"
     name: block.kaleidoscope_cookery.trash_can

@@ -291,8 +291,8 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry.pop("max-stack", None)
             if full_id == "kaleidoscope_cookery:raw_dough":
                 entry["use-animation"] = "bow"  # RawDoughItem: gedrückt halten wie einen Bogen, dann werden es Nudeln
-            if full_id in ("kaleidoscope_cookery:oil_pot", "kaleidoscope_cookery:fruit_basket"):
-                entry["max-stack"] = 1  # OilPotItem, FruitBasketItem: stacksTo(1)
+            if full_id in ("kaleidoscope_cookery:oil_pot", "kaleidoscope_cookery:fruit_basket", "kaleidoscope_cookery:transmutation_lunch_bag"):
+                entry["max-stack"] = 1  # OilPotItem, FruitBasketItem, TransmutationLunchBagItem: stacksTo(1)
             if full_id == "kaleidoscope_cookery:teapot":
                 entry["sneak-place"] = True  # TeapotItem#useOn: nur beim Schleichen platzieren
                 entry["max-stack"] = 1

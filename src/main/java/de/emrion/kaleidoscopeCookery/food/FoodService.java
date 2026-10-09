@@ -226,6 +226,62 @@ public class FoodService implements Listener {
         return true;
     }
 
+    /**
+     * Ein Stück aus dem Lunchbeutel essen bzw. trinken (TransmutationLunchBagItem#consumeOne): Nährwerte, Wirkungen
+     * und Mod-Effekte wie beim normalen Essen, aber ohne Animation.
+     *
+     * @return was übrig bleibt (Schüssel, Flasche ...), sonst null
+     */
+    @SuppressWarnings("UnstableApiUsage")
+    public @Nullable ItemStack eatFromBag(Player player, ItemStack stack) {
+        io.papermc.paper.datacomponent.item.FoodProperties food = stack.getData(DataComponentTypes.FOOD);
+        if (food != null) {
+            player.setFoodLevel(Math.min(20, player.getFoodLevel() + food.nutrition()));
+            player.setSaturation(Math.min(player.getFoodLevel(), player.getSaturation() + food.saturation()));
+        }
+        io.papermc.paper.datacomponent.item.Consumable consumable = stack.getData(DataComponentTypes.CONSUMABLE);
+        if (consumable != null) {
+            for (io.papermc.paper.datacomponent.item.consumable.ConsumeEffect effect : consumable.consumeEffects()) {
+                switch (effect) {
+                    case io.papermc.paper.datacomponent.item.consumable.ConsumeEffect.ApplyStatusEffects apply -> {
+                        if (ThreadLocalRandom.current().nextFloat() < apply.probability()) {
+                            player.addPotionEffects(apply.effects());
+                        }
+                    }
+                    case io.papermc.paper.datacomponent.item.consumable.ConsumeEffect.RemoveStatusEffects remove ->
+                            remove.removeEffects().resolve(io.papermc.paper.registry.RegistryAccess.registryAccess()
+                                    .getRegistry(io.papermc.paper.registry.RegistryKey.MOB_EFFECT)).forEach(player::removePotionEffect);
+                    case io.papermc.paper.datacomponent.item.consumable.ConsumeEffect.ClearAllStatusEffects ignored -> player.clearActivePotionEffects();
+                    default -> {
+                    }
+                }
+            }
+        }
+        io.papermc.paper.datacomponent.item.PotionContents potion = stack.getData(DataComponentTypes.POTION_CONTENTS);
+        if (potion != null) {
+            for (PotionEffect effect : potion.allEffects()) {
+                if (effect.getType().isInstant()) {
+                    effect.getType().createEffect(1, effect.getAmplifier()).apply(player);
+                } else {
+                    player.addPotionEffect(effect);
+                }
+            }
+        }
+        CookeryItem item = plugin.getItems().get(CookeryItems.typeOf(stack));
+        if (item != null && item.food() != null) {
+            Quality quality = quality(stack);
+            applyModEffects(player, item.food(), quality == null ? 1 : quality.ratio());
+            if (isHot(stack, player.getWorld())) {
+                applyHotBonus(player, (float) (item.food().saturation() * (quality == null ? 1 : quality.ratio())));
+            }
+        }
+        io.papermc.paper.datacomponent.item.UseRemainder remainder = stack.getData(DataComponentTypes.USE_REMAINDER);
+        if (remainder != null) {
+            return remainder.transformInto().clone();
+        }
+        return potion != null && stack.getType() == org.bukkit.Material.POTION ? ItemStack.of(org.bukkit.Material.GLASS_BOTTLE) : null;
+    }
+
     private void applyModEffects(Player player, CookeryItem.Food food, double ratio) {
         for (CookeryItem.FoodEffect effect : food.effects()) {
             CookeryEffect cookeryEffect = CookeryEffect.byKey(effect.effect());

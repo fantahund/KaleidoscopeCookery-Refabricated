@@ -42,7 +42,6 @@ public class FruitBasketStation extends Station {
 
     public static final Key ITEM = Key.key("kaleidoscope_cookery", "fruit_basket");
     private static final Key MODEL = Key.key("kaleidoscope_cookery", "block/fruit_basket");
-    private static final Key LUNCH_BAG = Key.key("kaleidoscope_cookery", "transmutation_lunch_bag");
     private static final int SLOTS = 8;
     /** Inhalt im Korb-Item (FRUIT_BASKET_ITEMS im Mod) */
     public static final NamespacedKey ITEM_CONTENTS = Keys.key("basket_items");
@@ -182,7 +181,18 @@ public class FruitBasketStation extends Station {
             return takeOut(player);
         }
         ItemStack held = player.getInventory().getItemInMainHand();
-        if (held.isEmpty() || LUNCH_BAG.equals(CookeryItems.idOf(held))) {
+        if (de.emrion.kaleidoscopeCookery.item.LunchBag.isBag(held)) {
+            List<ItemStack> basket = new ArrayList<>(Arrays.asList(items));
+            de.emrion.kaleidoscopeCookery.item.LunchBag.exchange(player, held, basket);
+            for (int i = 0; i < SLOTS; i++) {
+                items[i] = basket.get(i);
+            }
+            player.getInventory().setItemInMainHand(held);
+            markDirty();
+            updateDisplay();
+            return true;
+        }
+        if (held.isEmpty()) {
             return false;
         }
         putOn(held);
