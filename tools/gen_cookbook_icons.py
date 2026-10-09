@@ -6,7 +6,8 @@ Ausgabe:
 - resourcepack/custom/assets/kaleidoscope/textures/gui/sprites/cookbook/<station>.png
   -> Sprite "kaleidoscope:cookbook/<station>" im Atlas minecraft:gui (kleine Bilder im Text und auf Knöpfen)
 - resourcepack/custom/assets/kaleidoscope/font/cookbook.json
-  -> große Bilder als Schriftzeichen U+E200 ... (Überschrift der Stations-Seiten)
+  -> große Bilder als Schriftzeichen U+E200 ... (Überschrift der Stations-Seiten),
+     Slot-Kästchen U+E210 und Abstände U+E211/U+E212 fürs Werkbank-Raster
 """
 import json
 from pathlib import Path
@@ -31,6 +32,10 @@ CROPS = {
 # und reicht nach unten (Dialoge schneiden alles über der ersten Zeile ab), darunter Leerzeilen freihalten
 FIRST_CHAR = 0xE200
 BIG_HEIGHT = 32
+# Slot-Kästchen, 10 Pixel zurück, 1 Pixel Abstand (siehe Cookbook#craftingGrid)
+SLOT_CHAR = 0xE210
+BACK_CHAR = 0xE211
+GAP_CHAR = 0xE212
 
 
 def main():
@@ -48,6 +53,18 @@ def main():
         providers.append({"type": "bitmap", "file": f"kaleidoscope:gui/sprites/cookbook/{name}.png",
                           "height": BIG_HEIGHT, "ascent": 7, "chars": [chr(FIRST_CHAR + index)]})
         print(f"{name}: {square.size[0]} px, Zeichen U+{FIRST_CHAR + index:04X}")
+    # Werkbank-Raster: Slot-Kästchen (10x10 wie ein Inventar-Slot) und Rückwärts-Leerzeichen, um ein Item-Bild hineinzusetzen
+    slot = Image.new("RGBA", (10, 10), (139, 139, 139, 255))
+    for i in range(10):
+        slot.putpixel((i, 0), (55, 55, 55, 255))
+        slot.putpixel((0, i), (55, 55, 55, 255))
+        slot.putpixel((i, 9), (255, 255, 255, 255))
+        slot.putpixel((9, i), (255, 255, 255, 255))
+    slot.putpixel((0, 9), (139, 139, 139, 255))
+    slot.putpixel((9, 0), (139, 139, 139, 255))
+    slot.save(sprites / "slot.png")
+    providers.append({"type": "bitmap", "file": "kaleidoscope:gui/sprites/cookbook/slot.png", "height": 10, "ascent": 8, "chars": [chr(SLOT_CHAR)]})
+    providers.append({"type": "space", "advances": {chr(BACK_CHAR): -10, chr(GAP_CHAR): 1}})
     (OUT / "font").mkdir(parents=True, exist_ok=True)
     (OUT / "font" / "cookbook.json").write_text(json.dumps({"providers": providers}, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
 

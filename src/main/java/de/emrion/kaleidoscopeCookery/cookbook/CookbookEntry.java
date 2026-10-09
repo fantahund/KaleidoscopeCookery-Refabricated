@@ -14,8 +14,14 @@ import java.util.List;
  * @param inputs   Zutaten mit Anzahl
  * @param outputs  Ergebnisse (erstes = Hauptergebnis)
  * @param info     Zeilen unter den Zutaten (Zeit, Umrühren, Behälter ...)
+ * @param grid     Werkbank: 9 Felder (zeilenweise, null = leer), sonst null
  */
-public record CookbookEntry(Category category, String id, List<Input> inputs, List<Output> outputs, List<Component> info) {
+public record CookbookEntry(Category category, String id, List<Input> inputs, List<Output> outputs, List<Component> info,
+                            @org.jspecify.annotations.Nullable List<@org.jspecify.annotations.Nullable Ingredient> grid) {
+
+    public CookbookEntry(Category category, String id, List<Input> inputs, List<Output> outputs, List<Component> info) {
+        this(category, id, inputs, outputs, info, null);
+    }
 
     public record Input(Ingredient ingredient, int amount) {
     }

@@ -62,6 +62,22 @@
       "chars": [
         "\ue206"
       ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/slot.png",
+      "height": 10,
+      "ascent": 8,
+      "chars": [
+        "\ue210"
+      ]
+    },
+    {
+      "type": "space",
+      "advances": {
+        "\ue211": -10,
+        "\ue212": 1
+      }
     }
   ]
 }

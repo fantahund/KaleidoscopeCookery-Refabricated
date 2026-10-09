@@ -93,7 +93,8 @@ public final class CookbookEntries {
         }
         for (RiceBowlRecipe recipe : recipes.riceBowl()) {
             add(Category.CRAFTING, recipe.id(), List.of(new CookbookEntry.Input(recipe.ingredient(), 1), new CookbookEntry.Input(recipes.cookedRice(), 1)),
-                    List.of(output(recipe.result())), List.of(Lang.get("cookbook.info.shapeless"), Lang.get("cookbook.info.best_quality")));
+                    List.of(output(recipe.result())), List.of(Lang.get("cookbook.info.shapeless"), Lang.get("cookbook.info.best_quality")),
+                    shapelessGrid(List.of(recipe.ingredient(), recipes.cookedRice())));
         }
         for (VanillaRecipe recipe : recipes.vanilla()) {
             addVanilla(recipe);
@@ -108,6 +109,7 @@ public final class CookbookEntries {
         List<Component> info = new ArrayList<>();
         Category category = Category.CRAFTING;
         List<CookbookEntry.Input> inputs;
+        List<Ingredient> grid = null;
         switch (recipe.type()) {
             case CRAFTING_SHAPED -> {
                 Map<Character, Integer> counts = new LinkedHashMap<>();
@@ -126,10 +128,18 @@ public final class CookbookEntries {
                     }
                 }
                 info.add(Lang.get("cookbook.info.shaped"));
+                grid = new ArrayList<>(java.util.Collections.nCopies(9, null));
+                for (int row = 0; row < Math.min(3, recipe.pattern().size()); row++) {
+                    String line = recipe.pattern().get(row);
+                    for (int column = 0; column < Math.min(3, line.length()); column++) {
+                        grid.set(row * 3 + column, recipe.key().get(line.charAt(column)));
+                    }
+                }
             }
             case CRAFTING_SHAPELESS -> {
                 inputs = inputs(recipe.ingredients());
                 info.add(Lang.get("cookbook.info.shapeless"));
+                grid = shapelessGrid(recipe.ingredients());
             }
             case SMITHING_TRANSFORM -> {
                 inputs = inputs(recipe.ingredients());
@@ -156,7 +166,15 @@ public final class CookbookEntries {
                 info.add(Lang.get("cookbook.info.time", seconds(recipe.time())));
             }
         }
-        add(category, recipe.id(), inputs, List.of(output(recipe.result())), info);
+        add(category, recipe.id(), inputs, List.of(output(recipe.result())), info, grid);
+    }
+
+    private static List<Ingredient> shapelessGrid(List<Ingredient> ingredients) {
+        List<Ingredient> grid = new ArrayList<>(java.util.Collections.nCopies(9, null));
+        for (int i = 0; i < Math.min(9, ingredients.size()); i++) {
+            grid.set(i, ingredients.get(i));
+        }
+        return grid;
     }
 
     /**
@@ -184,10 +202,16 @@ public final class CookbookEntries {
     }
 
     private void add(Category category, String id, List<CookbookEntry.Input> inputs, List<CookbookEntry.Output> outputs, List<Component> info) {
+        add(category, id, inputs, outputs, info, null);
+    }
+
+    private void add(Category category, String id, List<CookbookEntry.Input> inputs, List<CookbookEntry.Output> outputs, List<Component> info,
+                     @org.jspecify.annotations.Nullable List<Ingredient> grid) {
         if (outputs.isEmpty()) {
             return;
         }
-        byCategory.get(category).add(new CookbookEntry(category, id, inputs, outputs, List.copyOf(info)));
+        byCategory.get(category).add(new CookbookEntry(category, id, inputs, outputs, List.copyOf(info),
+                grid == null ? null : java.util.Collections.unmodifiableList(grid)));
     }
 
     /**
