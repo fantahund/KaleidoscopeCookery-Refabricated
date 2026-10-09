@@ -31,7 +31,7 @@ public final class Lang {
 
     private static final List<String> NAMESPACES = List.of(Keys.NAMESPACE, "kaleidoscope_cookery", "kaleidoscope_grilling");
     private static final Map<String, Locale> LANGUAGES = Map.of("en_us", Locale.US, "de_de", Locale.GERMANY);
-    private static final Pattern MINECRAFT_ARGUMENT = Pattern.compile("%(?:(\\d+)\\$)?s");
+    private static final Pattern MINECRAFT_ARGUMENT = Pattern.compile("%(?:(\\d+)\\$)?[sd]");
 
     private static TranslationStore.StringBased<MessageFormat> store;
 

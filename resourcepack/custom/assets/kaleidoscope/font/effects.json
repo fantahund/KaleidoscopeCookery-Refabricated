@@ -1,0 +1,118 @@
+{
+  "providers": [
+    {
+      "type": "space",
+      "advances": {
+        " ": 4
+      }
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope_cookery:mob_effect/flatulence.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue100"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope_cookery:mob_effect/tundra_strider.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue101"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope_cookery:mob_effect/warmth.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue102"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope_cookery:mob_effect/satiated_shield.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue103"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope_cookery:mob_effect/vigor.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue104"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope_cookery:mob_effect/sulfur.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue105"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope_cookery:mob_effect/mustard.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue106"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope_cookery:mob_effect/preservation.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue107"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope_cookery:mob_effect/hinder.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue108"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope_cookery:mob_effect/projectile_dodge.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue109"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope_cookery:mob_effect/instant_smelting.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue10a"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope_cookery:mob_effect/vitality.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue10b"
+      ]
+    }
+  ]
+}

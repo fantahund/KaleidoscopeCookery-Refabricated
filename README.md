@@ -29,10 +29,10 @@ Phase 1: Projekt, Resourcepack-Pipeline, Station-Framework, Schneidebrett, Öl-D
 | Rechtsklick mit Stations-Item auf einen Block | Station platzieren (zeigt zum Spieler) |
 | Schleichen + Linksklick auf eine Station | Station abbauen, Inhalt und Item fallen heraus |
 | Schneidebrett: Rechtsklick mit Zutat | Zutat auflegen |
-| Schneidebrett: Linksklick mit Schwert/Küchenmesser | Schneiden (Schnitte pro Hieb siehe `cutting.tools`) |
+| Schneidebrett: Linksklick mit Küchenmesser | Schneiden (1 Schnitt pro Hieb wie im Mod, siehe `cutting.tools`) |
 | Schneidebrett: Klick, wenn fertig | Ergebnisse fallen heraus |
 | Schneidebrett: Schleichen + Rechtsklick vor dem ersten Schnitt | Zutat zurücknehmen |
-| Schwein, Hoglin, Piglin, Zoglin mit Schwert/Messer töten | Öl |
+| Schwein, Hoglin, Piglin, Zoglin mit Küchenmesser töten | Öl |
 
 ## Befehle und Rechte
 

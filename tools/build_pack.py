@@ -182,6 +182,16 @@ class PackBuilder:
             if key != "model" or isinstance(value, (dict, list)):
                 self.walk_item_model(origin, value)
 
+    def check_fonts(self):
+        for name in self.files:
+            parts = name.split("/")
+            if len(parts) > 3 and parts[2] == "font" and name.endswith(".json"):
+                for provider in self.read(name).get("providers", []):
+                    if provider.get("type") == "bitmap":
+                        ns, path = norm(provider["file"])
+                        if not self.exists(f"assets/{ns}/textures/{path}"):
+                            self.errors.append(f"{name}: Textur {provider['file']} fehlt")
+
     def check_sounds(self):
         for name in self.files:
             if not name.endswith("/sounds.json"):
@@ -241,6 +251,7 @@ class PackBuilder:
             self.check_models()
             self.check_item_definitions()
             self.check_sounds()
+            self.check_fonts()
         for warning in self.warnings:
             print("WARNUNG: " + warning)
         if self.errors:

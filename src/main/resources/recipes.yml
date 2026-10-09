@@ -2,6 +2,7 @@
 # Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert
 # und kann dort angepasst werden (/kc reload).
 # Zutaten: Item-ID, "#tag" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.
+data-version: 2
 tags:
   "c:bricks/normal":
     - "minecraft:brick"
@@ -9,6 +10,9 @@ tags:
     - "minecraft:cobblestone"
     - "minecraft:cobbled_deepslate"
     - "minecraft:mossy_cobblestone"
+  "c:crops/chilipepper":
+    - "kaleidoscope_cookery:red_chili"
+    - "kaleidoscope_cookery:green_chili"
   "c:crops/tomato":
     - "kaleidoscope_cookery:tomato"
   "c:crops/wheat":
@@ -17,8 +21,28 @@ tags:
     - "kaleidoscope_cookery:raw_dough"
   "c:dusts/redstone":
     - "minecraft:redstone"
+  "c:eggs":
+    - "kaleidoscope_cookery:fried_egg"
+    - "minecraft:egg"
+    - "minecraft:turtle_egg"
   "c:fences/wooden":
     - "#minecraft:wooden_fences"
+  "c:foods/cooked_rice":
+    - "kaleidoscope_cookery:cooked_rice"
+  "c:foods/raw_beef":
+    - "kaleidoscope_cookery:raw_cow_offal"
+    - "minecraft:beef"
+    - "kaleidoscope_grilling:beef_chunks"
+  "c:foods/raw_chicken":
+    - "minecraft:chicken"
+    - "kaleidoscope_grilling:chicken_skin"
+    - "kaleidoscope_grilling:chicken_wing"
+  "c:foods/raw_mutton":
+    - "kaleidoscope_cookery:raw_lamb_chops"
+    - "minecraft:mutton"
+  "c:foods/raw_pork":
+    - "kaleidoscope_cookery:raw_pork_belly"
+    - "minecraft:porkchop"
   "c:gems/diamond":
     - "minecraft:diamond"
   "c:glass_blocks/colorless":
@@ -31,8 +55,15 @@ tags:
     - "minecraft:gold_ingot"
   "c:ingots/iron":
     - "minecraft:iron_ingot"
+  "c:mushrooms":
+    - "minecraft:brown_mushroom"
+    - "minecraft:red_mushroom"
   "c:nuggets/iron":
     - "minecraft:iron_nugget"
+  "c:raw_fishes":
+    - "minecraft:cod"
+    - "minecraft:salmon"
+    - "kaleidoscope_cookery:sashimi"
   "c:raw_meats":
     - "kaleidoscope_cookery:raw_cow_offal"
     - "minecraft:beef"
@@ -56,6 +87,8 @@ tags:
     - "kaleidoscope_grilling:onion"
     - "kaleidoscope_grilling:sweet_potato"
     - "kaleidoscope_grilling:houttuynia"
+  "kaleidoscope_cookery:caterpillars":
+    - "kaleidoscope_cookery:caterpillar"
   "kaleidoscope_cookery:straw_bale":
     - "minecraft:hay_block"
     - "kaleidoscope_cookery:straw_block"
@@ -66,31 +99,35 @@ tags:
     - "kaleidoscope_grilling:chicken_wing"
   "kaleidoscope_grilling:ingredients/houttuynia":
     - "kaleidoscope_grilling:houttuynia"
+  "kaleidoscope_grilling:ingredients/onions":
+    - "kaleidoscope_grilling:onion"
+  "kaleidoscope_grilling:ingredients/squid_tentacles":
+    - "kaleidoscope_grilling:squid_tentacle"
   "kaleidoscope_grilling:ingredients/sweet_potatoes":
     - "kaleidoscope_grilling:sweet_potato"
 chopping-board:
-  "kaleidoscope_cookery:bone_from_cod":
+  "kaleidoscope_cookery:chopping_board/bone_from_cod":
     ingredient: "minecraft:cooked_cod"
     cuts: 4
     model: "kaleidoscope_cookery:cooked_cod"
     results:
       - item: "minecraft:bone"
         count: 3
-  "kaleidoscope_cookery:bone_from_salmon":
+  "kaleidoscope_cookery:chopping_board/bone_from_salmon":
     ingredient: "minecraft:cooked_salmon"
     cuts: 4
     model: "kaleidoscope_cookery:cooked_salmon"
     results:
       - item: "minecraft:bone"
         count: 3
-  "kaleidoscope_cookery:cooked_cow_offal":
+  "kaleidoscope_cookery:chopping_board/cooked_cow_offal":
     ingredient: "minecraft:cooked_beef"
     cuts: 4
     model: "kaleidoscope_cookery:cooked_cow_offal"
     results:
       - item: "kaleidoscope_cookery:cooked_cow_offal"
         count: 3
-  "kaleidoscope_cookery:cooked_cut_small_meats_from_chicken":
+  "kaleidoscope_cookery:chopping_board/cooked_cut_small_meats_from_chicken":
     ingredient: "minecraft:cooked_chicken"
     cuts: 4
     model: "kaleidoscope_cookery:cooked_chicken"
@@ -98,7 +135,7 @@ chopping-board:
       - item: "kaleidoscope_cookery:cooked_cut_small_meats"
         count: 3
       - "minecraft:bone"
-  "kaleidoscope_cookery:cooked_cut_small_meats_from_rabbit":
+  "kaleidoscope_cookery:chopping_board/cooked_cut_small_meats_from_rabbit":
     ingredient: "minecraft:cooked_rabbit"
     cuts: 4
     model: "kaleidoscope_cookery:cooked_rabbit"
@@ -106,28 +143,28 @@ chopping-board:
       - item: "kaleidoscope_cookery:cooked_cut_small_meats"
         count: 3
       - "minecraft:bone"
-  "kaleidoscope_cookery:cooked_lamb_chops":
+  "kaleidoscope_cookery:chopping_board/cooked_lamb_chops":
     ingredient: "minecraft:cooked_mutton"
     cuts: 4
     model: "kaleidoscope_cookery:cooked_lamb_chops"
     results:
       - item: "kaleidoscope_cookery:cooked_lamb_chops"
         count: 3
-  "kaleidoscope_cookery:cooked_pork_belly":
+  "kaleidoscope_cookery:chopping_board/cooked_pork_belly":
     ingredient: "minecraft:cooked_porkchop"
     cuts: 4
     model: "kaleidoscope_cookery:cooked_pork_belly"
     results:
       - item: "kaleidoscope_cookery:cooked_pork_belly"
         count: 3
-  "kaleidoscope_cookery:raw_cow_offal":
+  "kaleidoscope_cookery:chopping_board/raw_cow_offal":
     ingredient: "minecraft:beef"
     cuts: 4
     model: "kaleidoscope_cookery:raw_cow_offal"
     results:
       - item: "kaleidoscope_grilling:beef_chunks"
         count: 2
-  "kaleidoscope_cookery:raw_cut_small_meats_from_chicken":
+  "kaleidoscope_cookery:chopping_board/raw_cut_small_meats_from_chicken":
     ingredient: "minecraft:chicken"
     cuts: 4
     model: "kaleidoscope_cookery:raw_chicken"
@@ -135,7 +172,7 @@ chopping-board:
       - item: "kaleidoscope_cookery:raw_cut_small_meats"
         count: 3
       - "minecraft:bone"
-  "kaleidoscope_cookery:raw_cut_small_meats_from_rabbit":
+  "kaleidoscope_cookery:chopping_board/raw_cut_small_meats_from_rabbit":
     ingredient: "minecraft:rabbit"
     cuts: 4
     model: "kaleidoscope_cookery:raw_rabbit"
@@ -143,81 +180,664 @@ chopping-board:
       - item: "kaleidoscope_cookery:raw_cut_small_meats"
         count: 3
       - "minecraft:bone"
-  "kaleidoscope_cookery:raw_lamb_chops":
+  "kaleidoscope_cookery:chopping_board/raw_lamb_chops":
     ingredient: "minecraft:mutton"
     cuts: 4
     model: "kaleidoscope_cookery:raw_lamb_chops"
     results:
       - item: "kaleidoscope_cookery:raw_lamb_chops"
         count: 3
-  "kaleidoscope_cookery:raw_noodles_from_raw_dough":
+  "kaleidoscope_cookery:chopping_board/raw_noodles_from_raw_dough":
     ingredient: "#c:dough"
     cuts: 4
     model: "kaleidoscope_cookery:raw_dough"
     results:
       - item: "kaleidoscope_cookery:raw_noodles"
         count: 3
-  "kaleidoscope_cookery:raw_pork_belly":
+  "kaleidoscope_cookery:chopping_board/raw_pork_belly":
     ingredient: "minecraft:porkchop"
     cuts: 4
     model: "kaleidoscope_cookery:raw_pork_belly"
     results:
       - item: "kaleidoscope_cookery:raw_pork_belly"
         count: 3
-  "kaleidoscope_cookery:sashimi_from_cod":
+  "kaleidoscope_cookery:chopping_board/sashimi_from_cod":
     ingredient: "minecraft:cod"
     cuts: 4
     model: "kaleidoscope_cookery:cod"
     results:
       - item: "kaleidoscope_cookery:sashimi"
         count: 3
-  "kaleidoscope_cookery:sashimi_from_salmon":
+  "kaleidoscope_cookery:chopping_board/sashimi_from_salmon":
     ingredient: "minecraft:salmon"
     cuts: 4
     model: "kaleidoscope_cookery:salmon"
     results:
       - item: "kaleidoscope_cookery:sashimi"
         count: 3
-  "kaleidoscope_cookery:sashimi_from_tropical_fish":
+  "kaleidoscope_cookery:chopping_board/sashimi_from_tropical_fish":
     ingredient: "minecraft:tropical_fish"
     cuts: 4
     model: "kaleidoscope_cookery:sashimi"
     results:
       - item: "kaleidoscope_cookery:sashimi"
         count: 3
-  "kaleidoscope_grilling:carrot_dice":
+  "kaleidoscope_grilling:chopping_board/carrot_dice":
     ingredient: "minecraft:carrot"
     cuts: 4
     model: "kaleidoscope_grilling:carrot_dice"
     results:
       - item: "kaleidoscope_grilling:carrot_dice"
         count: 3
-  "kaleidoscope_grilling:minced_houttuynia":
+  "kaleidoscope_grilling:chopping_board/minced_houttuynia":
     ingredient: "#kaleidoscope_grilling:ingredients/houttuynia"
     cuts: 4
     model: "kaleidoscope_grilling:houttuynia"
     results:
       - "kaleidoscope_grilling:minced_houttuynia"
-  "kaleidoscope_grilling:potato_slice":
+  "kaleidoscope_grilling:chopping_board/potato_slice":
     ingredient: "minecraft:potato"
     cuts: 4
     model: "kaleidoscope_grilling:potato_slice"
     results:
       - item: "kaleidoscope_grilling:potato_slice"
         count: 3
-  "kaleidoscope_grilling:raw_mantou_slice":
+  "kaleidoscope_grilling:chopping_board/raw_mantou_slice":
     ingredient: "kaleidoscope_cookery:mantou"
     cuts: 4
     model: "kaleidoscope_grilling:raw_mantou_slice"
     results:
       - item: "kaleidoscope_grilling:raw_mantou_slice"
         count: 3
-  "kaleidoscope_grilling:raw_sweet_potato_sheet":
+  "kaleidoscope_grilling:chopping_board/raw_sweet_potato_sheet":
     ingredient: "kaleidoscope_grilling:sweet_potato_powder"
     cuts: 4
     model: "kaleidoscope_grilling:raw_sweet_potato_sheet"
     results:
       - "kaleidoscope_grilling:raw_sweet_potato_sheet"
+pot:
+  "kaleidoscope_cookery:pot/beef_to_cooked_beef":
+    ingredients:
+      - "minecraft:beef"
+    result: "minecraft:cooked_beef"
+    per-item: true
+  "kaleidoscope_cookery:pot/blaze_lamb_chop":
+    ingredients:
+      - "minecraft:blaze_powder"
+      - "minecraft:blaze_powder"
+      - "minecraft:blaze_powder"
+      - "#c:foods/raw_mutton"
+      - "#c:foods/raw_mutton"
+      - "#c:foods/raw_mutton"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:blaze_lamb_chop"
+  "kaleidoscope_cookery:pot/braised_beef":
+    ingredients:
+      - "#c:foods/raw_beef"
+      - "#c:foods/raw_beef"
+      - "#c:foods/raw_beef"
+      - "kaleidoscope_cookery:red_chili"
+      - "kaleidoscope_cookery:red_chili"
+      - "kaleidoscope_cookery:red_chili"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:braised_beef"
+  "kaleidoscope_cookery:pot/braised_pork_ribs":
+    ingredients:
+      - "minecraft:bone"
+      - "minecraft:bone"
+      - "minecraft:bone"
+      - "minecraft:bone"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:braised_pork_ribs"
+  "kaleidoscope_cookery:pot/candied_potato":
+    ingredients:
+      - "minecraft:potato"
+      - "minecraft:potato"
+      - "minecraft:potato"
+      - "minecraft:potato"
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:candied_potato"
+  "kaleidoscope_cookery:pot/chicken_to_cooked_chicken":
+    ingredients:
+      - "minecraft:chicken"
+    result: "minecraft:cooked_chicken"
+    per-item: true
+  "kaleidoscope_cookery:pot/chorus_fried_egg":
+    ingredients:
+      - "minecraft:chorus_fruit"
+      - "minecraft:chorus_fruit"
+      - "minecraft:chorus_fruit"
+      - "#c:eggs"
+      - "#c:eggs"
+      - "#c:eggs"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:chorus_fried_egg"
+  "kaleidoscope_cookery:pot/chorus_fruit_to_popped_chorus_fruit":
+    ingredients:
+      - "minecraft:chorus_fruit"
+    result: "minecraft:popped_chorus_fruit"
+    per-item: true
+  "kaleidoscope_cookery:pot/cod_to_cooked_cod":
+    ingredients:
+      - "minecraft:cod"
+    result: "minecraft:cooked_cod"
+    per-item: true
+  "kaleidoscope_cookery:pot/cooked_rice_to_sticky_rice_cake":
+    ingredients:
+      - "kaleidoscope_cookery:cooked_rice"
+    result: "kaleidoscope_cookery:sticky_rice_cake"
+    per-item: true
+  "kaleidoscope_cookery:pot/crystal_lamb_chop":
+    ingredients:
+      - "minecraft:amethyst_shard"
+      - "minecraft:amethyst_shard"
+      - "minecraft:amethyst_shard"
+      - "#c:foods/raw_mutton"
+      - "#c:foods/raw_mutton"
+      - "#c:foods/raw_mutton"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:crystal_lamb_chop"
+  "kaleidoscope_cookery:pot/dongpo_pork":
+    ingredients:
+      - "minecraft:bamboo"
+      - "minecraft:bamboo"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:dongpo_pork"
+  "kaleidoscope_cookery:pot/donkey_burger":
+    ingredients:
+      - "#c:crops/chilipepper"
+      - "#c:crops/chilipepper"
+      - "#c:dough"
+      - "#c:dough"
+      - "kaleidoscope_cookery:raw_cut_small_meats"
+      - "kaleidoscope_cookery:raw_cut_small_meats"
+    result: "kaleidoscope_cookery:donkey_burger"
+  "kaleidoscope_cookery:pot/egg_fried_rice":
+    ingredients:
+      - "#c:eggs"
+      - "#c:eggs"
+      - "#c:foods/cooked_rice"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:egg_fried_rice"
+  "kaleidoscope_cookery:pot/egg_to_fried_egg":
+    ingredients:
+      - "#c:eggs"
+    result: "kaleidoscope_cookery:fried_egg"
+    per-item: true
+  "kaleidoscope_cookery:pot/fish_flavored_shredded_pork":
+    ingredients:
+      - "#c:mushrooms"
+      - "#c:mushrooms"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:crops/chilipepper"
+      - "#c:crops/chilipepper"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:fish_flavored_shredded_pork"
+  "kaleidoscope_cookery:pot/fondant_pie":
+    ingredients:
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+      - "minecraft:pumpkin_pie"
+      - "minecraft:pumpkin_pie"
+      - "minecraft:pumpkin_pie"
+      - "minecraft:pumpkin_pie"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:fondant_pie"
+  "kaleidoscope_cookery:pot/fondant_spider_eye":
+    ingredients:
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+      - "minecraft:spider_eye"
+      - "minecraft:spider_eye"
+      - "minecraft:spider_eye"
+      - "minecraft:spider_eye"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:fondant_spider_eye"
+  "kaleidoscope_cookery:pot/fresh_tea_leaves_to_dried_tea_leaves":
+    ingredients:
+      - "kaleidoscope_cookery:fresh_tea_leaves"
+    result: "kaleidoscope_cookery:dried_tea_leaves"
+    per-item: true
+  "kaleidoscope_cookery:pot/fried_caterpillar":
+    ingredients:
+      - "#kaleidoscope_cookery:caterpillars"
+      - "#kaleidoscope_cookery:caterpillars"
+      - "#kaleidoscope_cookery:caterpillars"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:fried_caterpillar"
+  "kaleidoscope_cookery:pot/fried_spring_roll":
+    ingredients:
+      - "minecraft:phantom_membrane"
+      - "minecraft:phantom_membrane"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:mushrooms"
+      - "#c:mushrooms"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:fried_spring_roll"
+  "kaleidoscope_cookery:pot/frost_lamb_chop":
+    ingredients:
+      - "minecraft:blue_ice"
+      - "minecraft:blue_ice"
+      - "minecraft:blue_ice"
+      - "#c:foods/raw_mutton"
+      - "#c:foods/raw_mutton"
+      - "#c:foods/raw_mutton"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:frost_lamb_chop"
+  "kaleidoscope_cookery:pot/kelp_to_dried_kelp":
+    ingredients:
+      - "minecraft:kelp"
+    result: "minecraft:dried_kelp"
+    per-item: true
+  "kaleidoscope_cookery:pot/mutton_to_cooked_mutton":
+    ingredients:
+      - "minecraft:mutton"
+    result: "minecraft:cooked_mutton"
+    per-item: true
+  "kaleidoscope_cookery:pot/oil_splashed_fish":
+    ingredients:
+      - "#c:raw_fishes"
+      - "#c:raw_fishes"
+      - "#c:raw_fishes"
+      - "#c:raw_fishes"
+      - "#c:raw_fishes"
+      - "#c:raw_fishes"
+      - "#c:crops/chilipepper"
+      - "#c:crops/chilipepper"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:oil_splashed_fish"
+  "kaleidoscope_cookery:pot/pan_seared_knight_steak":
+    ingredients:
+      - "minecraft:bone"
+      - "minecraft:bone"
+      - "minecraft:bone"
+      - "minecraft:sweet_berries"
+      - "minecraft:sweet_berries"
+      - "minecraft:sweet_berries"
+      - "#c:foods/raw_beef"
+      - "#c:foods/raw_beef"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:pan_seared_knight_steak"
+  "kaleidoscope_cookery:pot/porkchop_to_cooked_porkchop":
+    ingredients:
+      - "minecraft:porkchop"
+    result: "minecraft:cooked_porkchop"
+    per-item: true
+  "kaleidoscope_cookery:pot/potato_to_baked_potato":
+    ingredients:
+      - "minecraft:potato"
+    result: "minecraft:baked_potato"
+    per-item: true
+  "kaleidoscope_cookery:pot/rabbit_to_cooked_rabbit":
+    ingredients:
+      - "minecraft:rabbit"
+    result: "minecraft:cooked_rabbit"
+    per-item: true
+  "kaleidoscope_cookery:pot/raw_cow_offal_to_cooked_cow_offal":
+    ingredients:
+      - "kaleidoscope_cookery:raw_cow_offal"
+    result: "kaleidoscope_cookery:cooked_cow_offal"
+    per-item: true
+  "kaleidoscope_cookery:pot/raw_cut_small_meats_to_cooked_cut_small_meats":
+    ingredients:
+      - "kaleidoscope_cookery:raw_cut_small_meats"
+    result: "kaleidoscope_cookery:cooked_cut_small_meats"
+    per-item: true
+  "kaleidoscope_cookery:pot/raw_lamb_chops_to_cooked_lamb_chops":
+    ingredients:
+      - "kaleidoscope_cookery:raw_lamb_chops"
+    result: "kaleidoscope_cookery:cooked_lamb_chops"
+    per-item: true
+  "kaleidoscope_cookery:pot/raw_meatball_to_cooked_meatball":
+    ingredients:
+      - "kaleidoscope_cookery:raw_meatball"
+    result: "kaleidoscope_cookery:cooked_meatball"
+    per-item: true
+  "kaleidoscope_cookery:pot/raw_pork_belly_to_cooked_pork_belly":
+    ingredients:
+      - "kaleidoscope_cookery:raw_pork_belly"
+    result: "kaleidoscope_cookery:cooked_pork_belly"
+    per-item: true
+  "kaleidoscope_cookery:pot/salmon_to_cooked_salmon":
+    ingredients:
+      - "minecraft:salmon"
+    result: "minecraft:cooked_salmon"
+    per-item: true
+  "kaleidoscope_cookery:pot/scramble_egg_with_tomatoes":
+    ingredients:
+      - "#c:eggs"
+      - "#c:eggs"
+      - "#c:eggs"
+      - "#c:crops/tomato"
+      - "#c:crops/tomato"
+      - "#c:crops/tomato"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:scramble_egg_with_tomatoes"
+  "kaleidoscope_cookery:pot/slime_ball_meal":
+    ingredients:
+      - "minecraft:slime_ball"
+      - "minecraft:slime_ball"
+      - "minecraft:slime_ball"
+      - "minecraft:slime_ball"
+      - "minecraft:slime_ball"
+      - "minecraft:slime_ball"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:slime_ball_meal"
+  "kaleidoscope_cookery:pot/spicy_chicken":
+    ingredients:
+      - "#c:foods/raw_chicken"
+      - "#c:foods/raw_chicken"
+      - "#c:foods/raw_chicken"
+      - "#c:foods/raw_chicken"
+      - "#c:crops/chilipepper"
+      - "#c:crops/chilipepper"
+      - "#c:crops/chilipepper"
+      - "#c:crops/chilipepper"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:spicy_chicken"
+  "kaleidoscope_cookery:pot/spicy_rabbit_head":
+    ingredients:
+      - "minecraft:rabbit"
+      - "minecraft:rabbit"
+      - "minecraft:rabbit"
+      - "#c:crops/chilipepper"
+      - "#c:crops/chilipepper"
+      - "#c:crops/chilipepper"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:spicy_rabbit_head"
+  "kaleidoscope_cookery:pot/stargazy_pie":
+    ingredients:
+      - "minecraft:pumpkin_pie"
+      - "#c:raw_fishes"
+      - "#c:raw_fishes"
+      - "#c:raw_fishes"
+      - "#c:raw_fishes"
+      - "#c:raw_fishes"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:stargazy_pie"
+  "kaleidoscope_cookery:pot/sticky_candy":
+    ingredients:
+      - "minecraft:leather"
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+    result: "kaleidoscope_cookery:sticky_candy"
+  "kaleidoscope_cookery:pot/stir_fried_pork_with_peppers":
+    ingredients:
+      - "kaleidoscope_cookery:green_chili"
+      - "kaleidoscope_cookery:green_chili"
+      - "kaleidoscope_cookery:green_chili"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:stir_fried_pork_with_peppers"
+  "kaleidoscope_cookery:pot/stuffed_dough_food_to_meat_pie":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    result: "kaleidoscope_cookery:meat_pie"
+    per-item: true
+  "kaleidoscope_cookery:pot/stuffed_tiger_skin_pepper":
+    ingredients:
+      - "kaleidoscope_cookery:green_chili"
+      - "kaleidoscope_cookery:green_chili"
+      - "kaleidoscope_cookery:green_chili"
+      - "kaleidoscope_cookery:green_chili"
+      - "kaleidoscope_cookery:raw_cut_small_meats"
+      - "kaleidoscope_cookery:raw_cut_small_meats"
+      - "kaleidoscope_cookery:raw_cut_small_meats"
+      - "kaleidoscope_cookery:raw_cut_small_meats"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:stuffed_tiger_skin_pepper"
+  "kaleidoscope_cookery:pot/sweet_and_sour_ender_pearls":
+    ingredients:
+      - "minecraft:ender_pearl"
+      - "minecraft:ender_pearl"
+      - "minecraft:ender_eye"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:sweet_and_sour_ender_pearls"
+  "kaleidoscope_cookery:pot/sweet_and_sour_pork":
+    ingredients:
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:sweet_and_sour_pork"
+  "kaleidoscope_grilling:pot/braised_chicken_wings":
+    ingredients:
+      - "#kaleidoscope_grilling:ingredients/chicken_wings"
+      - "#kaleidoscope_grilling:ingredients/chicken_wings"
+      - "#kaleidoscope_grilling:ingredients/chicken_wings"
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_grilling:braised_chicken_wings"
+  "kaleidoscope_grilling:pot/green_pepper_squid_tentacles":
+    ingredients:
+      - "kaleidoscope_cookery:green_chili"
+      - "kaleidoscope_cookery:green_chili"
+      - "#kaleidoscope_grilling:ingredients/squid_tentacles"
+      - "#kaleidoscope_grilling:ingredients/squid_tentacles"
+      - "#kaleidoscope_grilling:ingredients/onions"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_grilling:green_pepper_squid_tentacles"
+  "kaleidoscope_grilling:pot/houttuynia_stir_fried_pork":
+    ingredients:
+      - "#kaleidoscope_grilling:ingredients/houttuynia"
+      - "#kaleidoscope_grilling:ingredients/houttuynia"
+      - "#kaleidoscope_grilling:ingredients/houttuynia"
+      - "minecraft:porkchop"
+      - "minecraft:porkchop"
+      - "minecraft:porkchop"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_grilling:houttuynia_stir_fried_pork"
+flex-pot:
+  "kaleidoscope_cookery:flex_pot/blaze_lamb_chop":
+    ingredients:
+      - "minecraft:blaze_powder"
+      - "#c:foods/raw_mutton"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:blaze_lamb_chop"
+  "kaleidoscope_cookery:flex_pot/braised_beef":
+    ingredients:
+      - "#c:foods/raw_beef"
+      - "#c:crops/chilipepper"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:braised_beef"
+  "kaleidoscope_cookery:flex_pot/braised_pork_ribs":
+    ingredients:
+      - "minecraft:bone"
+      - "#c:foods/raw_pork"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:braised_pork_ribs"
+  "kaleidoscope_cookery:flex_pot/candied_potato":
+    ingredients:
+      - "minecraft:sugar"
+      - "minecraft:potato"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:candied_potato"
+  "kaleidoscope_cookery:flex_pot/chorus_fried_egg":
+    ingredients:
+      - "#c:eggs"
+      - "minecraft:chorus_fruit"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:chorus_fried_egg"
+  "kaleidoscope_cookery:flex_pot/crystal_lamb_chop":
+    ingredients:
+      - "minecraft:amethyst_shard"
+      - "#c:foods/raw_mutton"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:crystal_lamb_chop"
+  "kaleidoscope_cookery:flex_pot/dongpo_pork":
+    ingredients:
+      - "#c:foods/raw_pork"
+      - "minecraft:bamboo"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:dongpo_pork"
+  "kaleidoscope_cookery:flex_pot/donkey_burger":
+    ingredients:
+      - "#c:crops/chilipepper"
+      - "#c:dough"
+      - "kaleidoscope_cookery:raw_cut_small_meats"
+    result: "kaleidoscope_cookery:donkey_burger"
+  "kaleidoscope_cookery:flex_pot/egg_fried_rice":
+    ingredients:
+      - "#c:eggs"
+      - "#c:foods/cooked_rice"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:egg_fried_rice"
+  "kaleidoscope_cookery:flex_pot/fish_flavored_shredded_pork":
+    ingredients:
+      - "#c:foods/raw_pork"
+      - "#c:crops/chilipepper"
+      - "#c:mushrooms"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:fish_flavored_shredded_pork"
+  "kaleidoscope_cookery:flex_pot/fondant_pie":
+    ingredients:
+      - "minecraft:sugar"
+      - "minecraft:pumpkin_pie"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:fondant_pie"
+  "kaleidoscope_cookery:flex_pot/fondant_spider_eye":
+    ingredients:
+      - "minecraft:sugar"
+      - "minecraft:spider_eye"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:fondant_spider_eye"
+  "kaleidoscope_cookery:flex_pot/fried_caterpillar":
+    ingredients:
+      - "#kaleidoscope_cookery:caterpillars"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:fried_caterpillar"
+  "kaleidoscope_cookery:flex_pot/fried_spring_roll":
+    ingredients:
+      - "minecraft:phantom_membrane"
+      - "#c:foods/raw_pork"
+      - "#c:mushrooms"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:fried_spring_roll"
+  "kaleidoscope_cookery:flex_pot/frost_lamb_chop":
+    ingredients:
+      - "minecraft:blue_ice"
+      - "#c:foods/raw_mutton"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:frost_lamb_chop"
+  "kaleidoscope_cookery:flex_pot/oil_splashed_fish":
+    ingredients:
+      - "#c:raw_fishes"
+      - "#c:crops/chilipepper"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:oil_splashed_fish"
+  "kaleidoscope_cookery:flex_pot/pan_seared_knight_steak":
+    ingredients:
+      - "minecraft:sweet_berries"
+      - "#c:foods/raw_beef"
+      - "minecraft:bone"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:pan_seared_knight_steak"
+  "kaleidoscope_cookery:flex_pot/scramble_egg_with_tomatoes":
+    ingredients:
+      - "#c:eggs"
+      - "#c:crops/tomato"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:scramble_egg_with_tomatoes"
+  "kaleidoscope_cookery:flex_pot/slime_ball_meal":
+    ingredients:
+      - "minecraft:slime_ball"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:slime_ball_meal"
+  "kaleidoscope_cookery:flex_pot/spicy_chicken":
+    ingredients:
+      - "#c:foods/raw_chicken"
+      - "#c:crops/chilipepper"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:spicy_chicken"
+  "kaleidoscope_cookery:flex_pot/spicy_rabbit_head":
+    ingredients:
+      - "minecraft:rabbit"
+      - "#c:crops/chilipepper"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:spicy_rabbit_head"
+  "kaleidoscope_cookery:flex_pot/stargazy_pie":
+    ingredients:
+      - "#c:raw_fishes"
+      - "minecraft:pumpkin_pie"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:stargazy_pie"
+  "kaleidoscope_cookery:flex_pot/sticky_candy":
+    ingredients:
+      - "minecraft:leather"
+      - "minecraft:sugar"
+    result: "kaleidoscope_cookery:sticky_candy"
+  "kaleidoscope_cookery:flex_pot/stir_fried_pork_with_peppers":
+    ingredients:
+      - "#c:foods/raw_pork"
+      - "#c:crops/chilipepper"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:stir_fried_pork_with_peppers"
+  "kaleidoscope_cookery:flex_pot/stuffed_tiger_skin_pepper":
+    ingredients:
+      - "kaleidoscope_cookery:green_chili"
+      - "kaleidoscope_cookery:raw_cut_small_meats"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:stuffed_tiger_skin_pepper"
+  "kaleidoscope_cookery:flex_pot/sweet_and_sour_ender_pearls":
+    ingredients:
+      - "minecraft:ender_pearl"
+      - "minecraft:ender_eye"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:sweet_and_sour_ender_pearls"
+  "kaleidoscope_cookery:flex_pot/sweet_and_sour_pork":
+    ingredients:
+      - "#c:foods/raw_pork"
+      - "minecraft:sugar"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_cookery:sweet_and_sour_pork"
+  "kaleidoscope_grilling:flex_pot/braised_chicken_wings":
+    ingredients:
+      - "#kaleidoscope_grilling:ingredients/chicken_wings"
+      - "minecraft:sugar"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_grilling:braised_chicken_wings"
+  "kaleidoscope_grilling:flex_pot/green_pepper_squid_tentacles":
+    ingredients:
+      - "kaleidoscope_cookery:green_chili"
+      - "#kaleidoscope_grilling:ingredients/squid_tentacles"
+      - "#kaleidoscope_grilling:ingredients/onions"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_grilling:green_pepper_squid_tentacles"
+  "kaleidoscope_grilling:flex_pot/houttuynia_stir_fried_pork":
+    ingredients:
+      - "#kaleidoscope_grilling:ingredients/houttuynia"
+      - "minecraft:porkchop"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_grilling:houttuynia_stir_fried_pork"
 vanilla:
   "kaleidoscope_cookery:apple_platter":
     type: crafting_shapeless

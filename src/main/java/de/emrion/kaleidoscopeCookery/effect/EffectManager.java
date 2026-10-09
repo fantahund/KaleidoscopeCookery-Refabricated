@@ -1,0 +1,560 @@
+package de.emrion.kaleidoscopeCookery.effect;
+
+import de.emrion.kaleidoscopeCookery.KaleidoscopeCookery;
+import de.emrion.kaleidoscopeCookery.util.Keys;
+import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.Tag;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.Lightable;
+import org.bukkit.damage.DamageType;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Phantom;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.Zombie;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityExhaustionEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.FurnaceRecipe;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionEffectTypeCategory;
+import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+
+/**
+ * Die Effekte aus Kaleidoscope Cookery, nachgebaut wie im Mod (VigorEffect, WarmthEffect, SatiatedShieldEvent ...).
+ * Aktive Effekte stehen in einer Bossbar mit den Original-Icons. Beim Verlassen werden sie im Spieler-PDC gespeichert.
+ */
+public class EffectManager implements Listener {
+
+    private static final NamespacedKey SAVED = Keys.key("effects");
+    private static final int TICK_INTERVAL = 5;
+    /** Gesättigtes Schild: Mindest-Hunger und Erschöpfung pro abgefangenem Schaden (Mod-Standardwerte) */
+    private static final int SHIELD_MIN_FOOD_LEVEL = 4;
+    private static final float SHIELD_EXHAUSTION_PER_DAMAGE = 2f;
+    /** Projektil-Ausweichen kostet so viel Effektdauer (Ticks) */
+    private static final int DODGE_COST = 200;
+    private static final Set<Material> TUNDRA_BLOCKS = Set.of(Material.SNOW, Material.SNOW_BLOCK, Material.POWDER_SNOW,
+            Material.PACKED_ICE, Material.ICE, Material.FROSTED_ICE, Material.BLUE_ICE);
+    private static final Set<Material> WARMTH_BLOCKS = Set.of(Material.FIRE, Material.SOUL_FIRE, Material.LAVA, Material.MAGMA_BLOCK);
+
+    private record Active(long end, int amplifier) {
+    }
+
+    private final KaleidoscopeCookery plugin;
+    private final Map<UUID, EnumMap<CookeryEffect, Active>> active = new HashMap<>();
+    private final Map<UUID, BossBar> bars = new HashMap<>();
+    private BukkitTask task;
+    private long tick;
+
+    public EffectManager(KaleidoscopeCookery plugin) {
+        this.plugin = plugin;
+    }
+
+    public void start() {
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            load(player);
+        }
+        task = plugin.getServer().getScheduler().runTaskTimer(plugin, this::tick, TICK_INTERVAL, TICK_INTERVAL);
+    }
+
+    public void stop() {
+        if (task != null) {
+            task.cancel();
+        }
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            save(player);
+            hideBar(player);
+        }
+        active.clear();
+    }
+
+    // ---- API ----
+
+    /**
+     * Effekt geben. Wie bei Vanilla gewinnt die höhere Stufe bzw. bei gleicher Stufe die längere Dauer.
+     */
+    public void apply(Player player, CookeryEffect effect, int durationTicks, int amplifier) {
+        if (durationTicks <= 0) {
+            return;
+        }
+        EnumMap<CookeryEffect, Active> effects = active.computeIfAbsent(player.getUniqueId(), k -> new EnumMap<>(CookeryEffect.class));
+        long end = tick + durationTicks;
+        Active old = effects.get(effect);
+        if (old == null || amplifier > old.amplifier() || (amplifier == old.amplifier() && end > old.end())) {
+            effects.put(effect, new Active(end, amplifier));
+        }
+        updateBar(player);
+    }
+
+    public boolean has(Entity entity, CookeryEffect effect) {
+        EnumMap<CookeryEffect, Active> effects = active.get(entity.getUniqueId());
+        return effects != null && effects.containsKey(effect);
+    }
+
+    public int amplifier(Entity entity, CookeryEffect effect) {
+        EnumMap<CookeryEffect, Active> effects = active.get(entity.getUniqueId());
+        Active a = effects == null ? null : effects.get(effect);
+        return a == null ? -1 : a.amplifier();
+    }
+
+    public void remove(Player player, CookeryEffect effect) {
+        EnumMap<CookeryEffect, Active> effects = active.get(player.getUniqueId());
+        if (effects != null && effects.remove(effect) != null) {
+            updateBar(player);
+        }
+    }
+
+    public void clear(Player player) {
+        active.remove(player.getUniqueId());
+        hideBar(player);
+    }
+
+    // ---- Tick ----
+
+    private void tick() {
+        tick += TICK_INTERVAL;
+        for (Iterator<Map.Entry<UUID, EnumMap<CookeryEffect, Active>>> it = active.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<UUID, EnumMap<CookeryEffect, Active>> entry = it.next();
+            Player player = plugin.getServer().getPlayer(entry.getKey());
+            if (player == null) {
+                it.remove();
+                continue;
+            }
+            EnumMap<CookeryEffect, Active> effects = entry.getValue();
+            effects.values().removeIf(a -> a.end() <= tick);
+            if (effects.isEmpty()) {
+                it.remove();
+                hideBar(player);
+                continue;
+            }
+            if (player.isDead()) {
+                continue;
+            }
+            if (effects.containsKey(CookeryEffect.WARMTH) && tick % 20 == 0) {
+                warmth(player);
+            }
+            if (effects.containsKey(CookeryEffect.SULFUR)) {
+                sulfur(player);
+            }
+            if (effects.containsKey(CookeryEffect.MUSTARD) && tick % 10 == 0) {
+                mustard(player);
+            }
+            if (effects.containsKey(CookeryEffect.TUNDRA_STRIDER)) {
+                tundraStrider(player);
+            }
+            if (tick % 20 == 0) {
+                updateBar(player);
+            }
+        }
+    }
+
+    /**
+     * WarmthEffect: in 5x3x5 um den Spieler eine Hitzequelle -> 1 Herz pro Sekunde, im Nether manchmal ein halbes.
+     */
+    private void warmth(Player player) {
+        double max = player.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getValue();
+        if (player.getHealth() >= max) {
+            return;
+        }
+        Block base = player.getLocation().getBlock();
+        for (int x = -2; x <= 2; x++) {
+            for (int y = -1; y <= 1; y++) {
+                for (int z = -2; z <= 2; z++) {
+                    Block block = base.getRelative(x, y, z);
+                    boolean lit = block.getBlockData() instanceof Lightable lightable && lightable.isLit();
+                    if (lit || WARMTH_BLOCKS.contains(block.getType()) || plugin.getStations().isHeatSource(block)) {
+                        player.heal(1);
+                        return;
+                    }
+                }
+            }
+        }
+        if (player.getWorld().getEnvironment() == World.Environment.NETHER && ThreadLocalRandom.current().nextInt(4) == 0) {
+            player.heal(0.5);
+        }
+    }
+
+    /**
+     * SulfurEffect: Phantome in der Nähe verlieren den Spieler als Ziel.
+     */
+    private void sulfur(Player player) {
+        for (Phantom phantom : player.getWorld().getNearbyEntitiesByType(Phantom.class, player.getLocation(), 8, 16, 8)) {
+            if (player.equals(phantom.getTarget())) {
+                phantom.setTarget(null);
+            }
+        }
+    }
+
+    /**
+     * Senf: Creeper im Umkreis von 6 Blöcken fliehen (AvoidEntityGoal im Mod).
+     */
+    private void mustard(Player player) {
+        Location location = player.getLocation();
+        for (Creeper creeper : player.getWorld().getNearbyEntitiesByType(Creeper.class, location, 6)) {
+            if (player.equals(creeper.getTarget())) {
+                creeper.setTarget(null);
+            }
+            Vector away = creeper.getLocation().toVector().subtract(location.toVector()).setY(0);
+            if (away.lengthSquared() < 0.01) {
+                away = new Vector(1, 0, 0);
+            }
+            Location target = creeper.getLocation().add(away.normalize().multiply(7));
+            creeper.getPathfinder().moveTo(target, 1.2);
+        }
+    }
+
+    /**
+     * Tundraläufer: schneller auf Schnee und Eis (Mod: Block-Geschwindigkeitsfaktor).
+     */
+    private void tundraStrider(Player player) {
+        Block below = player.getLocation().subtract(0, 0.2, 0).getBlock();
+        if (TUNDRA_BLOCKS.contains(below.getType()) || TUNDRA_BLOCKS.contains(player.getLocation().getBlock().getType())) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, TICK_INTERVAL + 5, 0, true, false, false));
+        }
+    }
+
+    // ---- Anzeige ----
+
+    private void updateBar(Player player) {
+        EnumMap<CookeryEffect, Active> effects = active.get(player.getUniqueId());
+        if (effects == null || effects.isEmpty()) {
+            hideBar(player);
+            return;
+        }
+        TextComponent.Builder title = Component.text();
+        long longest = 0;
+        boolean first = true;
+        for (Map.Entry<CookeryEffect, Active> entry : effects.entrySet()) {
+            if (!first) {
+                title.append(Component.text("   "));
+            }
+            first = false;
+            CookeryEffect effect = entry.getKey();
+            long remaining = Math.max(0, entry.getValue().end() - tick);
+            longest = Math.max(longest, remaining);
+            title.append(Component.text(String.valueOf(effect.icon())).font(CookeryEffect.FONT).color(NamedTextColor.WHITE));
+            title.append(Component.text(" "));
+            Component name = Component.translatable(effect.translationKey()).color(effect.color());
+            if (entry.getValue().amplifier() > 0) {
+                name = name.append(Component.text(" " + roman(entry.getValue().amplifier() + 1)));
+            }
+            title.append(name);
+            title.append(Component.text(" " + formatTicks(remaining), NamedTextColor.GRAY));
+        }
+        BossBar bar = bars.get(player.getUniqueId());
+        float progress = (float) Math.clamp(longest / (20.0 * 60 * 5), 0, 1);
+        if (bar == null) {
+            bar = BossBar.bossBar(title.build(), progress, BossBar.Color.YELLOW, BossBar.Overlay.PROGRESS);
+            bars.put(player.getUniqueId(), bar);
+            player.showBossBar(bar);
+        } else {
+            bar.name(title.build());
+            bar.progress(progress);
+        }
+    }
+
+    private void hideBar(Player player) {
+        BossBar bar = bars.remove(player.getUniqueId());
+        if (bar != null) {
+            player.hideBossBar(bar);
+        }
+    }
+
+    public static String formatTicks(long ticks) {
+        long seconds = ticks / 20;
+        return seconds / 60 + ":" + String.format("%02d", seconds % 60);
+    }
+
+    private static String roman(int value) {
+        return switch (value) {
+            case 2 -> "II";
+            case 3 -> "III";
+            case 4 -> "IV";
+            case 5 -> "V";
+            default -> String.valueOf(value);
+        };
+    }
+
+    // ---- Speichern ----
+
+    private void save(Player player) {
+        EnumMap<CookeryEffect, Active> effects = active.get(player.getUniqueId());
+        if (effects == null || effects.isEmpty()) {
+            player.getPersistentDataContainer().remove(SAVED);
+            return;
+        }
+        List<String> entries = new ArrayList<>();
+        for (Map.Entry<CookeryEffect, Active> entry : effects.entrySet()) {
+            entries.add(entry.getKey().id() + ":" + (entry.getValue().end() - tick) + ":" + entry.getValue().amplifier());
+        }
+        player.getPersistentDataContainer().set(SAVED, PersistentDataType.STRING, String.join(";", entries));
+    }
+
+    private void load(Player player) {
+        String saved = player.getPersistentDataContainer().get(SAVED, PersistentDataType.STRING);
+        if (saved == null || saved.isEmpty()) {
+            return;
+        }
+        for (String entry : saved.split(";")) {
+            String[] parts = entry.split(":");
+            if (parts.length != 3) {
+                continue;
+            }
+            for (CookeryEffect effect : CookeryEffect.values()) {
+                if (effect.id().equals(parts[0])) {
+                    try {
+                        apply(player, effect, Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        load(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        save(event.getPlayer());
+        hideBar(event.getPlayer());
+        active.remove(event.getPlayer().getUniqueId());
+    }
+
+    /**
+     * Wie Vanilla-Effekte enden die Effekte mit dem Tod.
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onDeath(PlayerDeathEvent event) {
+        clear(event.getPlayer());
+    }
+
+    // ---- Effekt-Verhalten über Events ----
+
+    /**
+     * Elan: Sprinten kostet keinen Hunger.
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onExhaustion(EntityExhaustionEvent event) {
+        if (event.getExhaustionReason() == EntityExhaustionEvent.ExhaustionReason.SPRINT && has(event.getEntity(), CookeryEffect.VIGOR)) {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * Blähungen: Schleichen löst einen Sprung nach oben aus.
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onSneak(PlayerToggleSneakEvent event) {
+        Player player = event.getPlayer();
+        if (!event.isSneaking() || !has(player, CookeryEffect.FLATULENCE)) {
+            return;
+        }
+        player.setVelocity(player.getVelocity().add(new Vector(0, 0.75, 0)));
+        player.setFallDistance(0);
+        player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 6, 0.2, 0.05, 0.2, 0.01);
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_LLAMA_SPIT, SoundCategory.PLAYERS, 0.8f, 0.6f);
+    }
+
+    /**
+     * Sättigungsschild: Hunger fängt Schaden ab (Mod-Standard: 100 % bis 64 Schaden, 2 Erschöpfung pro Schadenspunkt,
+     * nur ab 4 Hunger und nicht mit Hunger-Effekt).
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player player) || !has(player, CookeryEffect.SATIATED_SHIELD)) {
+            return;
+        }
+        DamageType type = event.getDamageSource().getDamageType();
+        if (type == DamageType.OUT_OF_WORLD || type == DamageType.GENERIC_KILL || type == DamageType.STARVE) {
+            return;
+        }
+        if (player.hasPotionEffect(PotionEffectType.HUNGER) || player.getFoodLevel() < SHIELD_MIN_FOOD_LEVEL) {
+            return;
+        }
+        double damage = event.getDamage();
+        double reduced = Math.min(damage, 64);
+        event.setDamage(damage - reduced);
+        player.setExhaustion(player.getExhaustion() + Math.round(reduced * SHIELD_EXHAUSTION_PER_DAMAGE));
+    }
+
+    /**
+     * Behinderung: Treffer verlangsamen das Ziel (Langsamkeit II, 5 s).
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onHit(EntityDamageByEntityEvent event) {
+        if (event.getDamageSource().getCausingEntity() instanceof Player attacker && has(attacker, CookeryEffect.HINDER)
+                && event.getEntity() instanceof LivingEntity target) {
+            target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100, 1));
+        }
+    }
+
+    /**
+     * Projektil-Ausweichen: Projektile verfehlen, der Spieler teleportiert sich zufällig weg (kostet 10 s Effektdauer).
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onProjectileHit(ProjectileHitEvent event) {
+        if (!(event.getHitEntity() instanceof Player player) || !has(player, CookeryEffect.PROJECTILE_DODGE)) {
+            return;
+        }
+        event.setCancelled(true);
+        randomTeleport(player);
+        EnumMap<CookeryEffect, Active> effects = active.get(player.getUniqueId());
+        Active a = effects.get(CookeryEffect.PROJECTILE_DODGE);
+        if (a.end() - tick <= DODGE_COST) {
+            remove(player, CookeryEffect.PROJECTILE_DODGE);
+        } else {
+            effects.put(CookeryEffect.PROJECTILE_DODGE, new Active(a.end() - DODGE_COST, a.amplifier()));
+        }
+    }
+
+    private static void randomTeleport(Player player) {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        Location origin = player.getLocation();
+        for (int attempt = 0; attempt < 16; attempt++) {
+            Location target = origin.clone().add((random.nextDouble() - 0.5) * 6, random.nextInt(7) - 3, (random.nextDouble() - 0.5) * 6);
+            Block feet = target.getBlock();
+            if (feet.isPassable() && feet.getRelative(0, 1, 0).isPassable() && feet.getRelative(0, -1, 0).isSolid()) {
+                target.setY(feet.getY());
+                player.getWorld().playSound(origin, Sound.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1, 1);
+                player.teleport(target);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Vitalität: Getötete erwachsene Tiere hinterlassen ein Jungtier; Zombies einen Baby-Zombie (5 %: ein Dorfbewohner-Kind).
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onKill(EntityDeathEvent event) {
+        Player killer = event.getEntity().getKiller();
+        if (killer == null || !has(killer, CookeryEffect.VITALITY)) {
+            return;
+        }
+        LivingEntity dead = event.getEntity();
+        Location location = dead.getLocation();
+        if (dead instanceof Zombie zombie) {
+            if (!zombie.isAdult()) {
+                return;
+            }
+            if (ThreadLocalRandom.current().nextInt(20) == 0) {
+                location.getWorld().spawn(location, Villager.class, Villager::setBaby);
+            } else if (dead.getType() == EntityType.ZOMBIE) {
+                location.getWorld().spawn(location, Zombie.class, Zombie::setBaby);
+            }
+            return;
+        }
+        if (dead instanceof Ageable ageable && ageable.isAdult() && dead.getType().getEntityClass() != null) {
+            Entity baby = location.getWorld().spawn(location, dead.getType().getEntityClass());
+            if (baby instanceof Ageable babyAgeable) {
+                babyAgeable.setBaby();
+            }
+        }
+    }
+
+    /**
+     * Sofort-Schmelzen: Erze lassen bis zu (Stufe + 1) Drops geschmolzen fallen.
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBlockDrops(BlockDropItemEvent event) {
+        int amplifier = amplifier(event.getPlayer(), CookeryEffect.INSTANT_SMELTING);
+        if (amplifier < 0 || !isOre(event.getBlockState().getType())) {
+            return;
+        }
+        int remaining = amplifier + 1;
+        for (org.bukkit.entity.Item drop : event.getItems()) {
+            if (remaining <= 0) {
+                break;
+            }
+            ItemStack stack = drop.getItemStack();
+            ItemStack smelted = smelt(stack);
+            if (smelted == null) {
+                continue;
+            }
+            int count = Math.min(remaining, stack.getAmount());
+            remaining -= count;
+            ItemStack result = smelted.clone();
+            result.setAmount(smelted.getAmount() * count);
+            if (count >= stack.getAmount()) {
+                drop.setItemStack(result);
+            } else {
+                stack.setAmount(stack.getAmount() - count);
+                drop.setItemStack(stack);
+                drop.getWorld().dropItemNaturally(drop.getLocation(), result);
+            }
+        }
+    }
+
+    private static boolean isOre(Material material) {
+        return Tag.COAL_ORES.isTagged(material) || Tag.IRON_ORES.isTagged(material) || Tag.COPPER_ORES.isTagged(material)
+                || Tag.GOLD_ORES.isTagged(material) || Tag.REDSTONE_ORES.isTagged(material) || Tag.LAPIS_ORES.isTagged(material)
+                || Tag.DIAMOND_ORES.isTagged(material) || Tag.EMERALD_ORES.isTagged(material)
+                || material == Material.NETHER_QUARTZ_ORE || material == Material.NETHER_GOLD_ORE || material == Material.ANCIENT_DEBRIS;
+    }
+
+    private static ItemStack smelt(ItemStack input) {
+        Iterator<Recipe> recipes = org.bukkit.Bukkit.recipeIterator();
+        while (recipes.hasNext()) {
+            if (recipes.next() instanceof FurnaceRecipe recipe && recipe.getInputChoice().test(input)) {
+                return recipe.getResult();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Konservierung: schädliche Effekte von gegessenem Essen werden entfernt.
+     */
+    public void preserve(Player player, List<PotionEffectType> applied) {
+        if (!has(player, CookeryEffect.PRESERVATION)) {
+            return;
+        }
+        for (PotionEffectType type : applied) {
+            if (type.getCategory() == PotionEffectTypeCategory.HARMFUL) {
+                player.removePotionEffect(type);
+            }
+        }
+    }
+}

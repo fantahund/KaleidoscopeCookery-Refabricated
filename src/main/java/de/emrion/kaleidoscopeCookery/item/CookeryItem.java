@@ -14,9 +14,23 @@ import java.util.List;
  * @param model    Item-Model-Definition im Resourcepack (assets/&lt;ns&gt;/items/&lt;pfad&gt;.json)
  * @param nameKey  Übersetzungs-Key des Namens
  * @param maxStack Stapelgröße
+ * @param tooltipKey Beschreibung aus der Mod-Sprachdatei, sonst null
  * @param food     Nahrungswerte, null wenn nicht essbar
+ * @param plate    Gericht, das man als Teller hinstellen und bissweise essen kann, sonst null
  */
-public record CookeryItem(Key id, Material base, Key model, String nameKey, int maxStack, @Nullable Food food) {
+public record CookeryItem(Key id, Material base, Key model, String nameKey, @Nullable String tooltipKey, int maxStack, @Nullable Food food,
+                          @Nullable Plate plate) {
+
+    /**
+     * Teller-Gericht (FoodBiteBlock im Mod).
+     *
+     * @param food   Nährwert pro Biss
+     * @param loot   bleibt nach dem letzten Biss übrig (Schüssel, Knochen ...)
+     * @param wide   1x2-Gericht (zweite Hälfte links daneben)
+     * @param models Modelle je Teil ("main" bzw. "left"/"right") und Biss-Stufe
+     */
+    public record Plate(int maxBites, Food food, List<Key> loot, boolean wide, java.util.Map<String, List<Key>> models) {
+    }
 
     /**
      * Nahrungswerte wie im Mod.

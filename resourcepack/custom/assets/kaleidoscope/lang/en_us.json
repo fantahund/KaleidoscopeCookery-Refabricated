@@ -2,7 +2,7 @@
   "kaleidoscope.pack.prompt": "The cooking stations need the server resource pack (assets from Kaleidoscope Cookery & Grilling, CC BY-NC-SA 4.0).",
   "kaleidoscope.pack.declined": "You need the resource pack to play on this server.",
   "kaleidoscope.pack.failed": "The resource pack could not be loaded. Please try again.",
-  "kaleidoscope.chopping_board.need_tool": "Cut with a sword or kitchen knife (left click).",
+  "kaleidoscope.chopping_board.need_tool": "Cut with a kitchen knife (left click).",
   "kaleidoscope.chopping_board.no_recipe": "This can't be cut.",
   "kaleidoscope.chopping_board.progress": "Cutting: %s/%s",
   "kaleidoscope.command.usage": "Usage: %s",
@@ -31,5 +31,11 @@
   "kaleidoscope.command.place.unknown_world": "Unknown world.",
   "kaleidoscope.command.place.unknown_facing": "Facing: north, east, south or west.",
   "kaleidoscope.command.place.occupied": "There is no room there.",
-  "kaleidoscope.command.place.done": "Placed %s at %s."
+  "kaleidoscope.command.place.done": "Placed %s at %s.",
+  "kaleidoscope.hud.pot.add": "Ingredients %s/%s · %s s left",
+  "kaleidoscope.hud.pot.stir": "Stir %s more times · %s s",
+  "kaleidoscope.hud.pot.cooking": "Cooking · %s s",
+  "kaleidoscope.hud.pot.done": "Done! Burns in %s s",
+  "kaleidoscope.hud.pot.burnt": "Burnt · %s s",
+  "kaleidoscope.hud.plate.bites": "%s/%s bites"
 }

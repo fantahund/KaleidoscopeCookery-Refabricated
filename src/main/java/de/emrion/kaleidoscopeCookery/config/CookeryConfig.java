@@ -2,6 +2,7 @@ package de.emrion.kaleidoscopeCookery.config;
 
 import de.emrion.kaleidoscopeCookery.item.CookeryItems;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Locale;
@@ -19,13 +21,13 @@ import java.util.logging.Logger;
 /**
  * Geladene und geprüfte config.yml. Unveränderlich – /kc reload erzeugt eine neue Instanz.
  */
-public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, OilDrops oilDrops) {
+public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, OilDrops oilDrops, Food food) {
 
     public record ResourcePackSettings(boolean enabled, boolean required, String externalUrl, String bindAddress, int port, String publicHost) {
     }
 
     /**
-     * Schneidewerkzeuge (Schwerter, Küchenmesser) mit ihren Schnitten pro Hieb.
+     * Schneidewerkzeuge (Küchenmesser) mit ihren Schnitten pro Hieb.
      */
     public record Cutting(Map<Key, Integer> tools, double durabilityChance, int cooldownTicks) {
 
@@ -45,6 +47,17 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
     }
 
     public record OilDrops(boolean enabled, int min, int max, Set<EntityType> entities) {
+    }
+
+    /**
+     * @param vanillaPercents Prozent je Material, sonst vanillaDefaultPercent
+     */
+    public record Food(boolean vanillaNerfEnabled, int vanillaDefaultPercent, Map<Material, Integer> vanillaPercents,
+                       boolean hotEnabled, int hotSaturationPercent, int wokHotSeconds) {
+
+        public int vanillaPercent(Material material) {
+            return vanillaPercents.getOrDefault(material, vanillaDefaultPercent);
+        }
     }
 
     public static CookeryConfig load(FileConfiguration config, Logger logger) {
@@ -82,6 +95,21 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
         int min = Math.max(0, config.getInt("oil-drops.min", 1));
         OilDrops oilDrops = new OilDrops(config.getBoolean("oil-drops.enabled", true), min, Math.max(min, config.getInt("oil-drops.max", 2)),
                 Collections.unmodifiableSet(oilEntities));
-        return new CookeryConfig(pack, cutting, oilDrops);
+        Map<Material, Integer> percents = new EnumMap<>(Material.class);
+        ConfigurationSection percentSection = config.getConfigurationSection("food.vanilla.items");
+        if (percentSection != null) {
+            for (String name : percentSection.getKeys(false)) {
+                Material material = Material.matchMaterial(name);
+                if (material == null) {
+                    logger.warning("food.vanilla.items: unbekanntes Material " + name + " wird ignoriert");
+                    continue;
+                }
+                percents.put(material, Math.max(0, percentSection.getInt(name)));
+            }
+        }
+        Food food = new Food(config.getBoolean("food.vanilla.enabled", true), Math.max(0, config.getInt("food.vanilla.default-percent", 50)),
+                Collections.unmodifiableMap(percents), config.getBoolean("food.hot.enabled", true),
+                Math.max(100, config.getInt("food.hot.saturation-percent", 125)), Math.max(0, config.getInt("food.hot.wok-seconds", 60)));
+        return new CookeryConfig(pack, cutting, oilDrops, food);
     }
 }

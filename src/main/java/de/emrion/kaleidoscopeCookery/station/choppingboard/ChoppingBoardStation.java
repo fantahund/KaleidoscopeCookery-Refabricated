@@ -32,7 +32,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Schneidebrett (ChoppingBoardBlockEntity im Mod).
  * <ul>
  *     <li>Rechtsklick mit Zutat: auflegen (1 Stück)</li>
- *     <li>Linksklick mit Schwert/Küchenmesser: schneiden, Modell wechselt je Schnitt</li>
+ *     <li>Linksklick mit Küchenmesser: schneiden, Modell wechselt je Schnitt</li>
  *     <li>Fertig geschnitten: Klick lässt die Ergebnisse fallen</li>
  *     <li>Schleichen + Rechtsklick, solange noch nicht geschnitten: Zutat zurücknehmen</li>
  * </ul>
@@ -159,7 +159,7 @@ public class ChoppingBoardStation extends Station {
                 takeOut(player);
                 return true;
             }
-            player.sendActionBar(Lang.get("chopping_board.need_tool").color(NamedTextColor.GOLD));
+            context.manager().actionBar(player, Lang.get("chopping_board.need_tool").color(NamedTextColor.GOLD));
             return false;
         }
         if (held.isEmpty()) {
@@ -167,7 +167,7 @@ public class ChoppingBoardStation extends Station {
         }
         ChoppingBoardRecipe recipe = plugin().getRecipes().findChoppingBoard(held);
         if (recipe == null) {
-            player.sendActionBar(Lang.get("chopping_board.no_recipe").color(NamedTextColor.GRAY));
+            context.manager().actionBar(player, Lang.get("chopping_board.no_recipe").color(NamedTextColor.GRAY));
             return false;
         }
         putOn(recipe, held.asOne());
@@ -192,7 +192,7 @@ public class ChoppingBoardStation extends Station {
         ItemStack tool = player.getInventory().getItemInMainHand();
         int perHit = cutting.cuts(tool);
         if (perHit <= 0) {
-            player.sendActionBar(Lang.get("chopping_board.need_tool").color(NamedTextColor.GOLD));
+            context.manager().actionBar(player, Lang.get("chopping_board.need_tool").color(NamedTextColor.GOLD));
             return false;
         }
         long now = context.manager().serverTick();
@@ -207,7 +207,7 @@ public class ChoppingBoardStation extends Station {
             player.damageItemStack(EquipmentSlot.HAND, 1);
         }
         updateDisplay();
-        player.sendActionBar(Lang.get("chopping_board.progress", cuts, maxCuts).color(isDone() ? NamedTextColor.GREEN : NamedTextColor.YELLOW));
+        context.manager().actionBar(player, Lang.get("chopping_board.progress", cuts, maxCuts).color(isDone() ? NamedTextColor.GREEN : NamedTextColor.YELLOW));
         return true;
     }
 

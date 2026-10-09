@@ -21,11 +21,15 @@ public class Recipes {
     private final Map<String, List<String>> tags;
     private final List<ChoppingBoardRecipe> choppingBoard;
     private final List<VanillaRecipe> vanilla;
+    private final List<PotRecipe> pot;
+    private final int dataVersion;
 
-    private Recipes(Map<String, List<String>> tags, List<ChoppingBoardRecipe> choppingBoard, List<VanillaRecipe> vanilla) {
+    private Recipes(Map<String, List<String>> tags, List<ChoppingBoardRecipe> choppingBoard, List<VanillaRecipe> vanilla, List<PotRecipe> pot, int dataVersion) {
         this.tags = Collections.unmodifiableMap(tags);
         this.choppingBoard = List.copyOf(choppingBoard);
         this.vanilla = List.copyOf(vanilla);
+        this.pot = List.copyOf(pot);
+        this.dataVersion = dataVersion;
     }
 
     public static Recipes load(YamlConfiguration config, Logger logger) {
@@ -70,7 +74,28 @@ public class Recipes {
                 logger.warning("Rezept " + entry.getKey() + " ungültig: " + e.getMessage());
             }
         }
-        return new Recipes(tags, chopping, vanilla);
+        List<PotRecipe> pot = new ArrayList<>();
+        for (String kind : List.of("pot", "flex-pot")) {
+            for (Map.Entry<String, ConfigurationSection> entry : sections(config, kind).entrySet()) {
+                ConfigurationSection section = entry.getValue();
+                try {
+                    List<Ingredient> ingredients = new ArrayList<>();
+                    for (Object value : section.getList("ingredients", List.of())) {
+                        ingredients.add(Ingredient.parse(value, tags));
+                    }
+                    if (ingredients.isEmpty() || ingredients.size() > PotRecipe.SLOTS) {
+                        throw new IllegalArgumentException("1 bis " + PotRecipe.SLOTS + " Zutaten nötig");
+                    }
+                    Object carrier = section.get("carrier");
+                    pot.add(new PotRecipe(entry.getKey(), kind.equals("flex-pot"), List.copyOf(ingredients), section.getBoolean("per-item"),
+                            Math.max(1, section.getInt("time", 200)), Math.max(0, section.getInt("stir-fry", 3)),
+                            carrier == null ? null : Ingredient.parse(carrier, tags), RecipeResult.parse(section.get("result"))));
+                } catch (RuntimeException e) {
+                    logger.warning("Wok-Rezept " + entry.getKey() + " ungültig: " + e.getMessage());
+                }
+            }
+        }
+        return new Recipes(tags, chopping, vanilla, pot, config.getInt("data-version", 0));
     }
 
     /**
@@ -113,5 +138,27 @@ public class Recipes {
 
     public List<VanillaRecipe> vanilla() {
         return vanilla;
+    }
+
+    public List<PotRecipe> pot() {
+        return pot;
+    }
+
+    public int dataVersion() {
+        return dataVersion;
+    }
+
+    /**
+     * Erst exakte Wok-Rezepte, dann Flex-Rezepte (wie PotBlockEntity#startCooking).
+     */
+    public @Nullable PotRecipe findPot(List<ItemStack> inputs) {
+        for (boolean flex : new boolean[]{false, true}) {
+            for (PotRecipe recipe : pot) {
+                if (recipe.flex() == flex && recipe.match(inputs) > 0) {
+                    return recipe;
+                }
+            }
+        }
+        return null;
     }
 }

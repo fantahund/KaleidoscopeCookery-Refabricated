@@ -7,6 +7,7 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Interaction;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
@@ -15,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Transformation;
+import org.bukkit.util.Vector;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
@@ -36,8 +38,8 @@ public abstract class Station {
 
     protected final StationContext context;
     private final Map<String, ItemDisplay> parts = new HashMap<>();
-    private final Map<String, Key> partModels = new HashMap<>();
-    private final Map<String, Transformation> partTransforms = new HashMap<>();
+    private final Map<String, PartLook> partLooks = new HashMap<>();
+    private final Map<String, Interaction> hitboxes = new HashMap<>();
     private boolean dirty;
     private boolean removed;
 
@@ -91,10 +93,31 @@ public abstract class Station {
     }
 
     /**
+     * Item, das die Station beim Abbauen (außer im Kreativmodus) zurückgibt. null = keins.
+     */
+    public @Nullable ItemStack selfDrop() {
+        return items().create(context.type().item(), 1);
+    }
+
+    /**
      * Inhalt, der beim Abbauen fallen gelassen wird (ohne das Stations-Item selbst).
      */
     public List<ItemStack> contents() {
         return List.of();
+    }
+
+    /**
+     * Statuszeile, die ein Spieler in der Actionbar sieht, solange er die Station anschaut. null = keine.
+     */
+    public net.kyori.adventure.text.@Nullable Component hud(Player viewer) {
+        return null;
+    }
+
+    /**
+     * Alle Blöcke, die die Station belegt (Standard: nur ihr eigener).
+     */
+    public List<BlockKey> occupied() {
+        return List.of(position());
     }
 
     /**
@@ -153,31 +176,49 @@ public abstract class Station {
     }
 
     /**
-     * Teil anzeigen bzw. aktualisieren.
+     * Aussehen eines Teils: welches Item (bzw. Modell), wie dargestellt, wie hell.
      *
-     * @param model                 Item-Model-Definition im Resourcepack
-     * @param transformation        relativ zum Blockmittelpunkt
-     * @param interpolationTicks    0 = sofort, sonst flüssiger Übergang
+     * @param brightness null = Licht der Umgebung
      */
-    protected void showPart(String name, Key model, Transformation transformation, int interpolationTicks) {
+    public record PartLook(ItemStack stack, ItemDisplay.ItemDisplayTransform displayTransform, Transformation transformation,
+                              Display.@Nullable Brightness brightness) {
+    }
+
+    /**
+     * Teil anzeigen bzw. aktualisieren. Displays werden nur geändert, wenn sich etwas unterscheidet.
+     *
+     * @param interpolationTicks 0 = sofort, sonst flüssiger Übergang der Transformation
+     */
+    protected void showPart(String name, PartLook look, int interpolationTicks) {
         ItemDisplay display = parts.get(name);
         if (display == null || !display.isValid()) {
-            display = spawnPart(name, model, transformation);
-            parts.put(name, display);
-            partModels.put(name, model);
-            partTransforms.put(name, transformation);
+            parts.put(name, spawnPart(name, look));
+            partLooks.put(name, look);
             return;
         }
-        if (!model.equals(partModels.get(name))) {
-            display.setItemStack(modelStack(model));
-            partModels.put(name, model);
+        PartLook old = partLooks.get(name);
+        if (old == null || !old.stack().equals(look.stack())) {
+            display.setItemStack(look.stack());
         }
-        if (!transformation.equals(partTransforms.get(name))) {
+        if (old == null || old.displayTransform() != look.displayTransform()) {
+            display.setItemDisplayTransform(look.displayTransform());
+        }
+        if (old == null || !Objects.equals(old.brightness(), look.brightness())) {
+            display.setBrightness(look.brightness());
+        }
+        if (old == null || !old.transformation().equals(look.transformation())) {
             display.setInterpolationDelay(0);
             display.setInterpolationDuration(interpolationTicks);
-            display.setTransformation(transformation);
-            partTransforms.put(name, transformation);
+            display.setTransformation(look.transformation());
         }
+        partLooks.put(name, look);
+    }
+
+    /**
+     * Modell aus dem Resourcepack anzeigen (Blockmodelle, Schnittstufen ...).
+     */
+    protected void showPart(String name, Key model, Transformation transformation, int interpolationTicks) {
+        showPart(name, new PartLook(modelStack(model), ItemDisplay.ItemDisplayTransform.NONE, transformation, null), interpolationTicks);
     }
 
     protected void showPart(String name, Key model, Transformation transformation) {
@@ -185,25 +226,80 @@ public abstract class Station {
     }
 
     /**
-     * Teil mit einem echten Item anzeigen (z. B. Zutat ohne eigenes Modell).
+     * Echtes Item anzeigen (Zutaten), wie ein Item im Rahmen (FIXED).
      */
-    protected void showItemPart(String name, ItemStack stack, Transformation transformation) {
-        Key model = stack.getDataOrDefault(DataComponentTypes.ITEM_MODEL, stack.getType().key());
-        showPart(name, Objects.requireNonNull(model), transformation, 0);
+    protected void showItemPart(String name, ItemStack stack, Transformation transformation, int interpolationTicks, Display.@Nullable Brightness brightness) {
+        showPart(name, new PartLook(displayStack(stack), ItemDisplay.ItemDisplayTransform.FIXED, transformation, brightness), interpolationTicks);
     }
 
     protected void hidePart(String name) {
         ItemDisplay display = parts.remove(name);
-        partModels.remove(name);
-        partTransforms.remove(name);
+        partLooks.remove(name);
         if (display != null) {
             display.remove();
+        }
+    }
+
+    /**
+     * Alle Teile entfernen, deren Name mit prefix beginnt (z. B. "input_").
+     */
+    protected void hidePartsStartingWith(String prefix, int keep) {
+        for (String name : List.copyOf(parts.keySet())) {
+            if (name.startsWith(prefix)) {
+                try {
+                    if (Integer.parseInt(name.substring(prefix.length())) < keep) {
+                        continue;
+                    }
+                } catch (NumberFormatException ignored) {
+                }
+                hidePart(name);
+            }
         }
     }
 
     protected boolean hasPart(String name) {
         ItemDisplay display = parts.get(name);
         return display != null && display.isValid();
+    }
+
+    protected @Nullable PartLook partLook(String name) {
+        return partLooks.get(name);
+    }
+
+    /**
+     * Zusätzliche Klick-Hitbox (z. B. zweite Hälfte eines 1x2-Gerichts). Klicks darauf gehen an diese Station.
+     *
+     * @param offset Mitte der Unterseite relativ zur Blockmitte unten der Station
+     */
+    protected void showHitbox(String name, Vector offset, float width, float height) {
+        Interaction hitbox = hitboxes.get(name);
+        Location location = position().bottomCenter(world()).add(offset);
+        if (hitbox != null && hitbox.isValid()) {
+            if (hitbox.getInteractionWidth() != width || hitbox.getInteractionHeight() != height) {
+                hitbox.setInteractionWidth(width);
+                hitbox.setInteractionHeight(height);
+            }
+            return;
+        }
+        String owner = root().getUniqueId().toString();
+        hitbox = world().spawn(location, Interaction.class, interaction -> {
+            interaction.setInteractionWidth(width);
+            interaction.setInteractionHeight(height);
+            interaction.setResponsive(true);
+            interaction.setPersistent(true);
+            interaction.getPersistentDataContainer().set(Keys.STATION_OWNER, PersistentDataType.STRING, owner);
+            interaction.getPersistentDataContainer().set(Keys.STATION_PART, PersistentDataType.STRING, name);
+        });
+        hitboxes.put(name, hitbox);
+        context.manager().registerHitbox(hitbox, this);
+    }
+
+    protected void hideHitbox(String name) {
+        Interaction hitbox = hitboxes.remove(name);
+        if (hitbox != null) {
+            context.manager().unregisterHitbox(hitbox);
+            hitbox.remove();
+        }
     }
 
     /**
@@ -220,12 +316,13 @@ public abstract class Station {
         return new Transformation(new Vector3f(0, offsetY, 0), facing().rendererRotation(), new Vector3f(1, 1, 1), new Quaternionf());
     }
 
-    private ItemDisplay spawnPart(String name, Key model, Transformation transformation) {
+    private ItemDisplay spawnPart(String name, PartLook look) {
         String owner = root().getUniqueId().toString();
         return world().spawn(center(), ItemDisplay.class, display -> {
-            display.setItemStack(modelStack(model));
-            display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.NONE);
-            display.setTransformation(transformation);
+            display.setItemStack(look.stack());
+            display.setItemDisplayTransform(look.displayTransform());
+            display.setTransformation(look.transformation());
+            display.setBrightness(look.brightness());
             display.setPersistent(true);
             display.setDisplayWidth(1.5f);
             display.setDisplayHeight(1.5f);
@@ -235,10 +332,23 @@ public abstract class Station {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    private static ItemStack modelStack(Key model) {
+    public static ItemStack modelStack(Key model) {
         ItemStack stack = ItemStack.of(CookeryItems.BASE_MATERIAL);
         stack.setData(DataComponentTypes.ITEM_MODEL, model);
         return stack;
+    }
+
+    /**
+     * Item für ein Display: nur Aussehen (Modell, Glitzern), ohne Namen/PDC – spart Daten beim Senden.
+     */
+    @SuppressWarnings("UnstableApiUsage")
+    public static ItemStack displayStack(ItemStack stack) {
+        Key model = stack.getData(DataComponentTypes.ITEM_MODEL);
+        ItemStack result = modelStack(model != null ? DisplayModels.replace(CookeryItems.typeOf(stack), model) : stack.getType().key());
+        if (Boolean.TRUE.equals(stack.getData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE)) || !stack.getEnchantments().isEmpty()) {
+            result.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true);
+        }
+        return result;
     }
 
     // ---- intern (StationManager) ----
@@ -248,8 +358,16 @@ public abstract class Station {
         if (previous != null && previous != display) {
             previous.remove();
         }
-        partModels.put(name, display.getItemStack().getDataOrDefault(DataComponentTypes.ITEM_MODEL, null));
-        partTransforms.put(name, display.getTransformation());
+        partLooks.put(name, new PartLook(display.getItemStack(), display.getItemDisplayTransform(), display.getTransformation(), display.getBrightness()));
+    }
+
+    void adoptHitbox(String name, Interaction hitbox) {
+        Interaction previous = hitboxes.put(name, hitbox);
+        if (previous != null && previous != hitbox) {
+            context.manager().unregisterHitbox(previous);
+            previous.remove();
+        }
+        context.manager().registerHitbox(hitbox, this);
     }
 
     void loadState() {
@@ -282,11 +400,19 @@ public abstract class Station {
             display.remove();
         }
         parts.clear();
+        for (Interaction hitbox : hitboxes.values()) {
+            context.manager().unregisterHitbox(hitbox);
+            hitbox.remove();
+        }
+        hitboxes.clear();
         root().remove();
     }
 
-    @Nullable
     Map<String, ItemDisplay> parts() {
         return parts;
+    }
+
+    Map<String, Interaction> hitboxes() {
+        return hitboxes;
     }
 }

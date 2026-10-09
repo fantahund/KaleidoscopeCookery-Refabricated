@@ -14,28 +14,21 @@ resource-pack:
   # ... und die Adresse, unter der die Spieler ihn erreichen (für einen lokalen Testserver: 127.0.0.1)
   public-host: 127.0.0.1
 
-# Schneidebrett: Geschnitten wird per Linksklick mit einem Schwert oder Küchenmesser.
-# Schnitte pro Hieb je Werkzeug (Item-ID). Werkzeuge, die hier fehlen, können nicht schneiden.
-# Im Mod schafft ein Küchenmesser 1 Schnitt (mit "Schnelles Messer" 2 bzw. 4).
+# Schneidebrett: Geschnitten wird per Linksklick mit einem Küchenmesser (wie im Mod).
+# Schnitte pro Hieb je Werkzeug (Item-ID). Werkzeuge, die hier fehlen, können nicht schneiden und lösen auch keine Öl-Drops aus.
+# Mod: 1 Schnitt pro Hieb (mit "Schnelles Messer" I/II: 2/4).
 cutting:
   tools:
-    minecraft:wooden_sword: 1
-    minecraft:stone_sword: 1
-    minecraft:copper_sword: 1
-    minecraft:golden_sword: 1
-    minecraft:iron_sword: 1
-    minecraft:diamond_sword: 2
-    minecraft:netherite_sword: 2
-    kaleidoscope_cookery:iron_kitchen_knife: 2
-    kaleidoscope_cookery:gold_kitchen_knife: 2
-    kaleidoscope_cookery:diamond_kitchen_knife: 3
-    kaleidoscope_cookery:netherite_kitchen_knife: 4
+    kaleidoscope_cookery:iron_kitchen_knife: 1
+    kaleidoscope_cookery:gold_kitchen_knife: 1
+    kaleidoscope_cookery:diamond_kitchen_knife: 1
+    kaleidoscope_cookery:netherite_kitchen_knife: 1
   # Wahrscheinlichkeit, dass ein Schnitt 1 Haltbarkeit kostet (Mod: 25 %)
   durability-chance: 0.25
   # Mindestabstand zwischen zwei Schnitten in Ticks (gegen Auto-Klicker)
   cooldown-ticks: 4
 
-# Öl: Diese Tiere lassen Öl fallen, wenn sie mit einem Schneidewerkzeug (siehe cutting.tools) getötet werden.
+# Öl: Diese Tiere lassen Öl fallen, wenn sie mit einem Küchenmesser (siehe cutting.tools) getötet werden.
 # Menge: min..max, Plünderung erhöht pro Stufe um 0..1.
 oil-drops:
   enabled: true
@@ -48,3 +41,26 @@ oil-drops:
     - PIGLIN_BRUTE
     - ZOGLIN
     - ZOMBIFIED_PIGLIN
+
+food:
+  # Vanilla-Essen abschwächen: Hunger und Sättigung in Prozent (Gerichte aus den Kochstationen bleiben unverändert)
+  vanilla:
+    enabled: true
+    default-percent: 50
+    # Abweichungen je Item (Material-Name)
+    items:
+      GOLDEN_CARROT: 60
+      GOLDEN_APPLE: 100
+      ENCHANTED_GOLDEN_APPLE: 100
+      SUSPICIOUS_STEW: 100
+      HONEY_BOTTLE: 100
+      CHORUS_FRUIT: 100
+      DRIED_KELP: 70
+      CAKE: 60
+  # Heißes Essen (烟火气, Kaleidoscope Grilling): frisch gekochte Gerichte sättigen eine Zeit lang stärker
+  hot:
+    enabled: true
+    # Sättigung heißer Gerichte in Prozent
+    saturation-percent: 125
+    # So lange bleiben Gerichte aus dem Wok heiß (Sekunden, Mod: normales Öl 60 s)
+    wok-seconds: 60

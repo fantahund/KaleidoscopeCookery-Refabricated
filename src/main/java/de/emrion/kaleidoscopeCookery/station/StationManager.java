@@ -1,9 +1,12 @@
 package de.emrion.kaleidoscopeCookery.station;
 
 import de.emrion.kaleidoscopeCookery.KaleidoscopeCookery;
+import de.emrion.kaleidoscopeCookery.station.stove.StoveStation;
 import de.emrion.kaleidoscopeCookery.util.Keys;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Chunk;
+import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,6 +14,7 @@ import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Lightable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Interaction;
 import org.bukkit.entity.ItemDisplay;
@@ -25,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.RayTraceResult;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -46,14 +51,20 @@ import java.util.logging.Level;
 public class StationManager implements Listener {
 
     public static final int STATE_VERSION = 1;
+    private static final Set<Material> HEAT_SOURCES = Set.of(Material.FIRE, Material.SOUL_FIRE, Material.LAVA, Material.MAGMA_BLOCK);
     private static final int FLUSH_INTERVAL = 20;
+    private static final int HUD_INTERVAL = 10;
+    private static final double HUD_RANGE = 5;
 
     private final KaleidoscopeCookery plugin;
     private final Map<String, StationType> types = new LinkedHashMap<>();
     private final Map<Key, StationType> typesByItem = new HashMap<>();
     private final Map<UUID, Station> byRoot = new HashMap<>();
     private final Map<BlockKey, Station> byBlock = new HashMap<>();
+    /** Zusätzliche Hitboxen (Interaction mit STATION_OWNER) -> Station */
+    private final Map<UUID, Station> byHitbox = new HashMap<>();
     private final Set<Station> ticking = new LinkedHashSet<>();
+    private final Map<UUID, Long> hudPausedUntil = new HashMap<>();
     private BukkitTask task;
     private long serverTick;
 
@@ -72,6 +83,10 @@ public class StationManager implements Listener {
 
     public @Nullable StationType typeByItem(@Nullable Key item) {
         return item == null ? null : typesByItem.get(item);
+    }
+
+    public @Nullable StationType type(String id) {
+        return types.get(id);
     }
 
     public Collection<StationType> types() {
@@ -97,6 +112,7 @@ public class StationManager implements Listener {
         flushAll();
         byRoot.clear();
         byBlock.clear();
+        byHitbox.clear();
         ticking.clear();
     }
 
@@ -118,10 +134,53 @@ public class StationManager implements Listener {
         if (serverTick % FLUSH_INTERVAL == 0) {
             flushAll();
         }
+        if (serverTick % HUD_INTERVAL == 0) {
+            updateHud();
+        }
+    }
+
+    /**
+     * Statusanzeige: Wer eine Station anschaut (max. 5 Blöcke), sieht ihren Status in der Actionbar.
+     */
+    private void updateHud() {
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            if (byRoot.isEmpty()) {
+                return;
+            }
+            Long paused = hudPausedUntil.get(player.getUniqueId());
+            if (paused != null && paused > serverTick) {
+                continue;
+            }
+            RayTraceResult hit = player.getWorld().rayTraceEntities(player.getEyeLocation(), player.getEyeLocation().getDirection(), HUD_RANGE, 0,
+                    entity -> entity instanceof Interaction && byEntity(entity) != null);
+            if (hit == null || hit.getHitEntity() == null) {
+                continue;
+            }
+            RayTraceResult block = player.getWorld().rayTraceBlocks(player.getEyeLocation(), player.getEyeLocation().getDirection(), HUD_RANGE,
+                    FluidCollisionMode.NEVER, true);
+            if (block != null && block.getHitPosition().distanceSquared(player.getEyeLocation().toVector())
+                    < hit.getHitPosition().distanceSquared(player.getEyeLocation().toVector()) - 0.05
+                    && at(block.getHitBlock()) == null) {
+                continue; // Block davor
+            }
+            Station station = byEntity(hit.getHitEntity());
+            Component hud = station == null ? null : station.hud(player);
+            if (hud != null) {
+                player.sendActionBar(hud);
+            }
+        }
     }
 
     public long serverTick() {
         return serverTick;
+    }
+
+    /**
+     * Nachricht einer Station in der Actionbar: Statusanzeige 2 s lang nicht darüberschreiben.
+     */
+    public void actionBar(Player player, Component message) {
+        player.sendActionBar(message);
+        hudPausedUntil.put(player.getUniqueId(), serverTick + 40);
     }
 
     /**
@@ -172,12 +231,12 @@ public class StationManager implements Listener {
      * Stationen unter den Entities eines Chunks finden, ihre Displays zuordnen und verwaiste Displays entfernen.
      */
     private void attach(List<Entity> entities) {
-        Map<String, List<ItemDisplay>> displaysByOwner = new HashMap<>();
+        Map<String, List<Entity>> displaysByOwner = new HashMap<>();
         List<Interaction> roots = new ArrayList<>();
         for (Entity entity : entities) {
             PersistentDataContainer pdc = entity.getPersistentDataContainer();
-            if (entity instanceof ItemDisplay display && pdc.has(Keys.STATION_OWNER, PersistentDataType.STRING)) {
-                displaysByOwner.computeIfAbsent(pdc.get(Keys.STATION_OWNER, PersistentDataType.STRING), k -> new ArrayList<>()).add(display);
+            if ((entity instanceof ItemDisplay || entity instanceof Interaction) && pdc.has(Keys.STATION_OWNER, PersistentDataType.STRING)) {
+                displaysByOwner.computeIfAbsent(pdc.get(Keys.STATION_OWNER, PersistentDataType.STRING), k -> new ArrayList<>()).add(entity);
             } else if (entity instanceof Interaction interaction && pdc.has(Keys.STATION_TYPE, PersistentDataType.STRING)) {
                 roots.add(interaction);
             }
@@ -188,17 +247,19 @@ public class StationManager implements Listener {
                 continue;
             }
             Station station = create(root);
-            List<ItemDisplay> displays = displaysByOwner.remove(root.getUniqueId().toString());
+            List<Entity> displays = displaysByOwner.remove(root.getUniqueId().toString());
             if (station == null) {
                 continue; // unbekannter Typ: Entities stehen lassen
             }
             if (displays != null) {
-                for (ItemDisplay display : displays) {
-                    String part = display.getPersistentDataContainer().get(Keys.STATION_PART, PersistentDataType.STRING);
-                    if (part == null) {
-                        display.remove();
-                    } else {
-                        station.adoptPart(part, display);
+                for (Entity part : displays) {
+                    String name = part.getPersistentDataContainer().get(Keys.STATION_PART, PersistentDataType.STRING);
+                    if (name == null) {
+                        part.remove();
+                    } else if (part instanceof ItemDisplay display) {
+                        station.adoptPart(name, display);
+                    } else if (part instanceof Interaction hitbox) {
+                        station.adoptHitbox(name, hitbox);
                     }
                 }
             }
@@ -209,8 +270,8 @@ public class StationManager implements Listener {
             }
         }
         // Displays ohne Station im selben Chunk sind verwaist (Teile liegen immer im Block der Station)
-        for (List<ItemDisplay> orphans : displaysByOwner.values()) {
-            for (ItemDisplay orphan : orphans) {
+        for (List<Entity> orphans : displaysByOwner.values()) {
+            for (Entity orphan : orphans) {
                 UUID owner = UUID.fromString(orphan.getPersistentDataContainer().get(Keys.STATION_OWNER, PersistentDataType.STRING));
                 if (!byRoot.containsKey(owner)) {
                     orphan.remove();
@@ -238,11 +299,13 @@ public class StationManager implements Listener {
             station.forceDirty();
         }
         byRoot.put(root.getUniqueId(), station);
-        Station previous = byBlock.put(position, station);
-        if (previous != null && previous != station) {
-            plugin.getLogger().warning("Zwei Stationen im selben Block " + position + " – die ältere wird ignoriert");
-            detach(previous);
-            byBlock.put(position, station);
+        for (BlockKey block : station.occupied()) {
+            Station previous = byBlock.put(block, station);
+            if (previous != null && previous != station) {
+                plugin.getLogger().warning("Zwei Stationen im selben Block " + block + " – die ältere wird ignoriert");
+                detach(previous);
+                byBlock.put(block, station);
+            }
         }
         updateTicking(station);
         return station;
@@ -250,8 +313,33 @@ public class StationManager implements Listener {
 
     private void detach(Station station) {
         byRoot.remove(station.root().getUniqueId());
-        byBlock.remove(station.position(), station);
+        for (BlockKey block : station.occupied()) {
+            byBlock.remove(block, station);
+        }
+        for (Interaction hitbox : station.hitboxes().values()) {
+            byHitbox.remove(hitbox.getUniqueId(), station);
+        }
         ticking.remove(station);
+    }
+
+    void registerHitbox(Interaction hitbox, Station station) {
+        byHitbox.put(hitbox.getUniqueId(), station);
+    }
+
+    void unregisterHitbox(Interaction hitbox) {
+        byHitbox.remove(hitbox.getUniqueId());
+    }
+
+    /**
+     * Belegte Blöcke einer Station haben sich geändert (z. B. 1x2-Gericht platziert).
+     */
+    public void updateOccupied(Station station, List<BlockKey> before) {
+        for (BlockKey block : before) {
+            byBlock.remove(block, station);
+        }
+        for (BlockKey block : station.occupied()) {
+            byBlock.put(block, station);
+        }
     }
 
     // ---- Abfragen ----
@@ -268,6 +356,29 @@ public class StationManager implements Listener {
         return byRoot.get(entity.getUniqueId());
     }
 
+    /**
+     * Station zu einer Wurzel-Entity oder einer zusätzlichen Hitbox.
+     */
+    public @Nullable Station byEntity(Entity entity) {
+        Station station = byRoot.get(entity.getUniqueId());
+        return station != null ? station : byHitbox.get(entity.getUniqueId());
+    }
+
+    /**
+     * Hitzequelle für Wok/Suppentopf wie hasHeatSource im Mod: brennender Herd, Blöcke mit LIT=true
+     * (Lagerfeuer, Ofen ...) oder Feuer, Seelenfeuer, Lava, Magma.
+     */
+    public boolean isHeatSource(Block block) {
+        Station station = at(block);
+        if (station != null) {
+            return station instanceof StoveStation stove && stove.isLit();
+        }
+        if (block.getBlockData() instanceof Lightable lightable) {
+            return lightable.isLit();
+        }
+        return HEAT_SOURCES.contains(block.getType());
+    }
+
     public Collection<Station> loaded() {
         return Collections.unmodifiableCollection(byRoot.values());
     }
@@ -278,6 +389,14 @@ public class StationManager implements Listener {
      * Station erzeugen. Prüfungen (Platz, Rechte) macht der Aufrufer.
      */
     public Station place(StationType type, Block block, Facing facing) {
+        return place(type, block, facing, station -> {
+        });
+    }
+
+    /**
+     * @param init wird vor dem ersten Speichern/Anzeigen aufgerufen (z. B. welches Gericht auf dem Teller liegt)
+     */
+    public Station place(StationType type, Block block, Facing facing, java.util.function.Consumer<Station> init) {
         if (type.barrier()) {
             block.setType(Material.BARRIER, false);
         }
@@ -306,9 +425,11 @@ public class StationManager implements Listener {
         if (station == null) {
             throw new IllegalStateException("Station " + type.id() + " nicht registriert");
         }
+        init.accept(station);
         station.forceDirty();
         station.flush();
         station.updateDisplay();
+        updateTicking(station);
         return station;
     }
 
@@ -326,7 +447,7 @@ public class StationManager implements Listener {
             }
         }
         if (player == null || player.getGameMode() != GameMode.CREATIVE) {
-            ItemStack item = plugin.getItems().create(station.context().type().item(), 1);
+            ItemStack item = station.selfDrop();
             if (item != null) {
                 drop.getWorld().dropItemNaturally(drop, item);
             }
@@ -342,9 +463,11 @@ public class StationManager implements Listener {
         detach(station);
         station.destroy();
         if (station.context().type().barrier()) {
-            Block block = station.position().block();
-            if (block != null && block.getType() == Material.BARRIER) {
-                block.setType(Material.AIR, false);
+            for (BlockKey key : station.occupied()) {
+                Block block = key.block();
+                if (block != null && block.getType() == Material.BARRIER) {
+                    block.setType(Material.AIR, false);
+                }
             }
         }
     }
@@ -380,9 +503,9 @@ public class StationManager implements Listener {
                 continue;
             }
             Map<String, ItemDisplay> parts = station.parts();
-            int before = parts == null ? 0 : (int) parts.values().stream().filter(Entity::isValid).count();
+            int before = (int) parts.values().stream().filter(Entity::isValid).count();
             station.updateDisplay();
-            int after = parts == null ? 0 : (int) parts.values().stream().filter(Entity::isValid).count();
+            int after = (int) parts.values().stream().filter(Entity::isValid).count();
             if (after != before) {
                 fixes++;
             }
@@ -400,6 +523,15 @@ public class StationManager implements Listener {
                 }
             }
             for (Interaction interaction : world.getEntitiesByClass(Interaction.class)) {
+                String hitboxOwner = interaction.getPersistentDataContainer().get(Keys.STATION_OWNER, PersistentDataType.STRING);
+                if (hitboxOwner != null) {
+                    Station owner = byRoot.get(UUID.fromString(hitboxOwner));
+                    if (owner == null || !interaction.equals(owner.hitboxes().get(interaction.getPersistentDataContainer().get(Keys.STATION_PART, PersistentDataType.STRING)))) {
+                        interaction.remove();
+                        fixes++;
+                    }
+                    continue;
+                }
                 if (interaction.getPersistentDataContainer().has(Keys.STATION_TYPE, PersistentDataType.STRING) && !byRoot.containsKey(interaction.getUniqueId())
                         && types.containsKey(interaction.getPersistentDataContainer().get(Keys.STATION_TYPE, PersistentDataType.STRING))) {
                     // Doppelte Station im selben Block

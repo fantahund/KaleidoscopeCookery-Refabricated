@@ -109,7 +109,7 @@ def parse_cookery_foods() -> dict:
         food = {}
         if m := re.search(r"\.nutrition\((\d+)\)", body):
             food["nutrition"] = int(m.group(1))
-        if m := re.search(r"\.saturationModifier\(([\d.]+)F?\)", body):
+        if m := re.search(r"\.saturationModifier\(([\d.]+)[fF]?\)", body):
             # Minecraft: Saettigung = Naehrwert * Modifier * 2
             food["saturation"] = round(food.get("nutrition", 0) * float(m.group(1)) * 2, 2)
         if ".alwaysEdible()" in body:
@@ -146,10 +146,48 @@ def parse_cookery_item_foods(foods: dict) -> dict:
     return result
 
 
+# ---------------------------------------------------------------- Teller-Gerichte
+
+VANILLA_ITEM_CONSTANTS = {"FLOWER_POT": "minecraft:flower_pot"}
+
+
+def java_item(name: str) -> str:
+    return VANILLA_ITEM_CONSTANTS.get(name, "minecraft:" + name.lower())
+
+
+def parse_food_bites(foods: dict) -> dict:
+    source = (COOKERY_JAVA / "init/registry/FoodBiteRegistry.java").read_text(encoding="utf-8")
+    blockstates = COOKERY / "src/generated/resources/assets/kaleidoscope_cookery/blockstates"
+    bites = {}
+    for match in re.finditer(r'registerFoodData\("(\w+)",\s*FoodData\s*\.(create|createOneByTwo)\((\d+),\s*(\w+),\s*(\w+)\)(.*?)\);', source, re.S):
+        name, kind, max_bites, block_food, item_food, rest = match.groups()
+        loot = ["minecraft:bowl"]
+        if m := re.search(r"setLootItem\(Items\.(\w+)\)", rest):
+            loot = [java_item(m.group(1))]
+        for m in re.finditer(r"addLootItems\(([^)]*)\)", rest):
+            loot += [java_item(x.strip().split(".")[-1]) for x in m.group(1).split(",") if x.strip()]
+        entry = {"max-bites": int(max_bites), "food": foods.get(block_food, {}), "item-food": foods.get(item_food, {}), "loot": loot}
+        if kind == "createOneByTwo":
+            entry["size"] = "1x2"
+        state_file = blockstates / f"{name}.json"
+        if state_file.exists():
+            models = {}
+            for key, variant in read_json(state_file)["variants"].items():
+                props = dict(p.split("=") for p in key.split(","))
+                if props.get("facing") != "north" or props.get("quality", "0") != "0":
+                    continue
+                part = {"0": "left", "1": "right"}.get(props.get("position"), "main")
+                models.setdefault(part, {})[int(props["bites"])] = variant["model"]
+            entry["models"] = {part: [stages[i] for i in sorted(stages)] for part, stages in models.items()}
+        bites[f"kaleidoscope_cookery:{name}"] = entry
+    return bites
+
+
 # ---------------------------------------------------------------- Items
 
 # Items mit Vanilla-Funktion: Basis-Material statt Papier (Schaden, Haltbarkeit, Verzaubern bleiben erhalten)
 BASE_MATERIALS = {
+    "kaleidoscope_cookery:kitchen_shovel": "IRON_SHOVEL",
     "kaleidoscope_cookery:iron_kitchen_knife": "IRON_SWORD",
     "kaleidoscope_cookery:gold_kitchen_knife": "GOLDEN_SWORD",
     "kaleidoscope_cookery:diamond_kitchen_knife": "DIAMOND_SWORD",
@@ -166,7 +204,7 @@ def parse_stack_sizes() -> dict:
     return sizes
 
 
-def collect_items(foods: dict) -> dict:
+def collect_items(foods: dict, bites: dict) -> dict:
     items = {}
     stack_sizes = parse_stack_sizes()
     for ns in ("kaleidoscope_cookery", "kaleidoscope_grilling"):
@@ -182,12 +220,19 @@ def collect_items(foods: dict) -> dict:
             if full_id in items and parts[0] == "block":
                 continue
             entry = {"model": full_id, "name": key}
+            tooltip_key = f"tooltip.{ns}.{item_id}"
+            if tooltip_key in lang:
+                entry["tooltip"] = tooltip_key
             if full_id in BASE_MATERIALS:
                 entry["base"] = BASE_MATERIALS[full_id]
             elif full_id in stack_sizes:
                 entry["max-stack"] = stack_sizes[full_id]
             if ns == "kaleidoscope_cookery" and item_id in foods:
                 entry["food"] = foods[item_id]
+            if full_id in bites:
+                bite = dict(bites[full_id])
+                entry["food"] = bite.pop("item-food")
+                entry["plate"] = bite
             items[full_id] = entry
     for full_id, name_key in EXTRA_ITEMS.items():
         items.setdefault(full_id, {"model": full_id, "name": name_key})
@@ -290,7 +335,7 @@ def collect_recipes(tags: dict) -> dict:
         for file in sorted(folder.glob("*.json")):
             recipe = read_json(file)
             ns = base.parent.name
-            recipe_id = f"{ns}:{file.stem}"
+            recipe_id = f"{ns}:chopping_board/{file.stem}"
             # Grilling ersetzt einzelne Cookery-Rezepte (gleicher Pfad im Cookery-Namespace)
             chopping[recipe_id] = {
                 "ingredient": ingredient(recipe["ingredient"], used_tags),
@@ -298,6 +343,7 @@ def collect_recipes(tags: dict) -> dict:
                 "model": recipe["model_id"],
                 "results": result_list(recipe),
             }
+    pot, flex_pot = collect_pot_recipes(used_tags)
     vanilla = collect_vanilla_recipes(used_tags)
     tag_groups = {}
     for name in sorted(used_tags):
@@ -307,7 +353,63 @@ def collect_recipes(tags: dict) -> dict:
         if not values:
             print(f"WARNUNG: Tag #{name} lässt sich nicht auflösen")
         tag_groups[name] = values
-    return {"tags": tag_groups, "chopping-board": chopping, "vanilla": vanilla}
+    return {"data-version": DATA_VERSION, "tags": tag_groups, "chopping-board": chopping, "pot": pot, "flex-pot": flex_pot,
+            "vanilla": vanilla}
+
+
+# Bei jeder inhaltlichen Aenderung der erzeugten recipes.yml erhoehen: das Plugin ersetzt dann alte Kopien (mit Backup)
+DATA_VERSION = 2
+POT_DEFAULT_TIME = 200
+POT_DEFAULT_STIR_FRY = 3
+
+
+def pot_dirs(kind: str):
+    for base in RECIPE_DIRS:
+        folder = base / kind
+        if folder.exists():
+            yield base.parent.name, folder
+
+
+def collect_pot_recipes(used_tags: set):
+    pot = {}
+    groups = {}
+    for ns, folder in pot_dirs("pot"):
+        for file in sorted(folder.glob("*.json")):
+            recipe = read_json(file)
+            entry = pot_entry(recipe, used_tags)
+            m = re.fullmatch(r"(.+)_([1-9])", file.stem)
+            ingredients = recipe["ingredients"]
+            if m and len(ingredients) == int(m.group(2)) and all(i == ingredients[0] for i in ingredients) \
+                    and recipe["result"].get("count", 1) == int(m.group(2)):
+                groups.setdefault(f"{ns}:pot/{m.group(1)}", []).append((int(m.group(2)), entry))
+                continue
+            pot[f"{ns}:pot/{file.stem}"] = entry
+    # Vanilla-"1x-9x"-Rezepte: ein Rezept, das mit 1-9 gleichen Zutaten funktioniert
+    for recipe_id, variants in groups.items():
+        if sorted(n for n, _ in variants) != list(range(1, 10)):
+            for n, entry in variants:
+                pot[f"{recipe_id}_{n}"] = entry
+            continue
+        entry = dict(next(e for n, e in variants if n == 1))
+        entry["per-item"] = True
+        pot[recipe_id] = entry
+    flex = {}
+    for ns, folder in pot_dirs("flex_pot"):
+        for file in sorted(folder.glob("*.json")):
+            flex[f"{ns}:flex_pot/{file.stem}"] = pot_entry(read_json(file), used_tags)
+    return dict(sorted(pot.items())), dict(sorted(flex.items()))
+
+
+def pot_entry(recipe: dict, used_tags: set) -> dict:
+    entry = {"ingredients": [ingredient(i, used_tags) for i in recipe["ingredients"]]}
+    if recipe.get("time", POT_DEFAULT_TIME) != POT_DEFAULT_TIME:
+        entry["time"] = recipe["time"]
+    if recipe.get("stir_fry_count", POT_DEFAULT_STIR_FRY) != POT_DEFAULT_STIR_FRY:
+        entry["stir-fry"] = recipe["stir_fry_count"]
+    if recipe.get("carrier"):
+        entry["carrier"] = ingredient(recipe["carrier"], used_tags)
+    entry["result"] = result_list({"result": recipe["result"]})[0]
+    return entry
 
 
 # NeoForge-Common-Tags, die nicht in den Mod-Daten stehen
@@ -439,8 +541,9 @@ def write_german_lang():
 
 
 def main():
-    foods = parse_cookery_item_foods(parse_cookery_foods())
-    items = collect_items(foods)
+    raw_foods = parse_cookery_foods()
+    foods = parse_cookery_item_foods(raw_foods)
+    items = collect_items(foods, parse_food_bites(raw_foods))
     header = "# Generiert von tools/gen_data.py aus den Mod-Quellen - nicht von Hand bearbeiten.\n"
     (RESOURCES / "items.yml").write_text(header + to_yaml({"items": items}) + "\n", encoding="utf-8")
 
@@ -451,7 +554,7 @@ def main():
                      "# Zutaten: Item-ID, \"#tag\" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.\n")
     (RESOURCES / "recipes.yml").write_text(recipe_header + to_yaml(recipes) + "\n", encoding="utf-8")
     write_german_lang()
-    print(f"Items: {len(items)}, Schneidebrett-Rezepte: {len(recipes['chopping-board'])}, Vanilla-Rezepte: {len(recipes['vanilla'])}, Tags: {len(recipes['tags'])}")
+    print(f"Items: {len(items)}, Teller: {sum(1 for i in items.values() if 'plate' in i)}, Wok: {len(recipes['pot'])}+{len(recipes['flex-pot'])} flex, Schneidebrett-Rezepte: {len(recipes['chopping-board'])}, Vanilla-Rezepte: {len(recipes['vanilla'])}, Tags: {len(recipes['tags'])}")
 
 
 if __name__ == "__main__":

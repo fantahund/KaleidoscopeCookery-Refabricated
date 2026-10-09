@@ -3,6 +3,7 @@ items:
   "kaleidoscope_cookery:apple_platter":
     model: "kaleidoscope_cookery:apple_platter"
     name: block.kaleidoscope_cookery.apple_platter
+    tooltip: tooltip.kaleidoscope_cookery.apple_platter
   "kaleidoscope_cookery:bamboo_tray":
     model: "kaleidoscope_cookery:bamboo_tray"
     name: block.kaleidoscope_cookery.bamboo_tray
@@ -26,6 +27,7 @@ items:
   "kaleidoscope_cookery:baozi_plate":
     model: "kaleidoscope_cookery:baozi_plate"
     name: block.kaleidoscope_cookery.baozi_plate
+    tooltip: tooltip.kaleidoscope_cookery.baozi_plate
   "kaleidoscope_cookery:barley_tea":
     model: "kaleidoscope_cookery:barley_tea"
     name: block.kaleidoscope_cookery.barley_tea
@@ -37,6 +39,7 @@ items:
     name: item.kaleidoscope_cookery.beef_meatball_soup
     food:
       nutrition: 6
+      saturation: 8.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:warmth"
@@ -47,6 +50,7 @@ items:
     name: item.kaleidoscope_cookery.beef_noodle
     food:
       nutrition: 14
+      saturation: 18.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:vitality"
@@ -55,6 +59,7 @@ items:
   "kaleidoscope_cookery:berry_platter":
     model: "kaleidoscope_cookery:berry_platter"
     name: block.kaleidoscope_cookery.berry_platter
+    tooltip: tooltip.kaleidoscope_cookery.berry_platter
   "kaleidoscope_cookery:biluochun":
     model: "kaleidoscope_cookery:biluochun"
     name: block.kaleidoscope_cookery.biluochun
@@ -64,11 +69,37 @@ items:
   "kaleidoscope_cookery:blaze_lamb_chop":
     model: "kaleidoscope_cookery:blaze_lamb_chop"
     name: block.kaleidoscope_cookery.blaze_lamb_chop
+    food:
+      nutrition: 13
+      saturation: 15.99
+      always-edible: true
+      effects:
+        - effect: "minecraft:fire_resistance"
+          duration: 1600
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 4
+        saturation: 5.0
+        always-edible: true
+        effects:
+          - effect: "minecraft:fire_resistance"
+            duration: 1600
+      loot:
+        - "minecraft:bowl"
+        - "minecraft:blaze_rod"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/blaze_lamb_chop/blaze_lamb_chop_0"
+          - "kaleidoscope_cookery:block/food/blaze_lamb_chop/blaze_lamb_chop_1"
+          - "kaleidoscope_cookery:block/food/blaze_lamb_chop/blaze_lamb_chop_2"
+          - "kaleidoscope_cookery:block/food/blaze_lamb_chop/blaze_lamb_chop_3"
   "kaleidoscope_cookery:borscht":
     model: "kaleidoscope_cookery:borscht"
     name: item.kaleidoscope_cookery.borscht
     food:
       nutrition: 6
+      saturation: 8.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:flatulence"
@@ -79,6 +110,7 @@ items:
     name: item.kaleidoscope_cookery.braised_beef
     food:
       nutrition: 9
+      saturation: 11.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:vigor"
@@ -89,6 +121,7 @@ items:
     name: item.kaleidoscope_cookery.braised_beef_rice_bowl
     food:
       nutrition: 14
+      saturation: 18.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:satiated_shield"
@@ -99,6 +132,7 @@ items:
     name: item.kaleidoscope_cookery.braised_beef_with_potatoes
     food:
       nutrition: 6
+      saturation: 8.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:warmth"
@@ -107,12 +141,91 @@ items:
   "kaleidoscope_cookery:braised_pork_ribs":
     model: "kaleidoscope_cookery:braised_pork_ribs"
     name: block.kaleidoscope_cookery.braised_pork_ribs
+    food:
+      nutrition: 16
+      saturation: 25.6
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 1600
+    plate:
+      max-bites: 4
+      food:
+        nutrition: 4
+        saturation: 6.4
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:warmth"
+            duration: 1600
+      loot:
+        - "minecraft:bowl"
+        - "minecraft:bone"
+      size: "1x2"
+      models:
+        left:
+          - "kaleidoscope_cookery:block/food/braised_pork_ribs/braised_pork_ribs_left_0"
+          - "kaleidoscope_cookery:block/food/braised_pork_ribs/braised_pork_ribs_left_1"
+          - "kaleidoscope_cookery:block/food/braised_pork_ribs/braised_pork_ribs_left_2"
+          - "kaleidoscope_cookery:block/food/braised_pork_ribs/braised_pork_ribs_left_3"
+          - "kaleidoscope_cookery:block/food/braised_pork_ribs/braised_pork_ribs_left_4"
+        right:
+          - "kaleidoscope_cookery:block/food/braised_pork_ribs/braised_pork_ribs_right_0"
+          - "kaleidoscope_cookery:block/food/braised_pork_ribs/braised_pork_ribs_right_1"
+          - "kaleidoscope_cookery:block/food/braised_pork_ribs/braised_pork_ribs_right_2"
+          - "kaleidoscope_cookery:block/food/braised_pork_ribs/braised_pork_ribs_right_3"
+          - "kaleidoscope_cookery:block/food/braised_pork_ribs/braised_pork_ribs_right_4"
   "kaleidoscope_cookery:brown_mushroom_pot_soup":
     model: "kaleidoscope_cookery:brown_mushroom_pot_soup"
     name: block.kaleidoscope_cookery.brown_mushroom_pot_soup
+    food:
+      nutrition: 18
+      saturation: 24.01
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 6000
+    plate:
+      max-bites: 2
+      food:
+        nutrition: 6
+        saturation: 8.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:warmth"
+            duration: 6000
+      loot:
+        - "minecraft:flower_pot"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/brown_mushroom_pot_soup/brown_mushroom_pot_soup_0"
+          - "kaleidoscope_cookery:block/food/brown_mushroom_pot_soup/brown_mushroom_pot_soup_1"
+          - "kaleidoscope_cookery:block/food/brown_mushroom_pot_soup/brown_mushroom_pot_soup_2"
   "kaleidoscope_cookery:buddha_jumps_over_the_wall":
     model: "kaleidoscope_cookery:buddha_jumps_over_the_wall"
     name: block.kaleidoscope_cookery.buddha_jumps_over_the_wall
+    food:
+      nutrition: 20
+      saturation: 22.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:satiated_shield"
+          duration: 3600
+    plate:
+      max-bites: 2
+      food:
+        nutrition: 7
+        saturation: 7.29
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:satiated_shield"
+            duration: 3600
+      loot:
+        - "minecraft:flower_pot"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/buddha_jumps_over_the_wall/buddha_jumps_over_the_wall_0"
+          - "kaleidoscope_cookery:block/food/buddha_jumps_over_the_wall/buddha_jumps_over_the_wall_1"
+          - "kaleidoscope_cookery:block/food/buddha_jumps_over_the_wall/buddha_jumps_over_the_wall_2"
   "kaleidoscope_cookery:butter_tea":
     model: "kaleidoscope_cookery:butter_tea"
     name: block.kaleidoscope_cookery.butter_tea
@@ -122,9 +235,34 @@ items:
   "kaleidoscope_cookery:candied_potato":
     model: "kaleidoscope_cookery:candied_potato"
     name: block.kaleidoscope_cookery.candied_potato
+    food:
+      nutrition: 20
+      saturation: 22.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 1600
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 5
+        saturation: 5.5
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:warmth"
+            duration: 1600
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/candied_potato/candied_potato_0"
+          - "kaleidoscope_cookery:block/food/candied_potato/candied_potato_1"
+          - "kaleidoscope_cookery:block/food/candied_potato/candied_potato_2"
+          - "kaleidoscope_cookery:block/food/candied_potato/candied_potato_3"
   "kaleidoscope_cookery:caterpillar":
     model: "kaleidoscope_cookery:caterpillar"
     name: item.kaleidoscope_cookery.caterpillar
+    tooltip: tooltip.kaleidoscope_cookery.caterpillar
     food:
       nutrition: 18
       saturation: 7.2
@@ -170,6 +308,7 @@ items:
     name: item.kaleidoscope_cookery.chicken_and_mushroom_stew
     food:
       nutrition: 6
+      saturation: 8.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:warmth"
@@ -184,24 +323,102 @@ items:
   "kaleidoscope_cookery:chopping_board":
     model: "kaleidoscope_cookery:chopping_board"
     name: block.kaleidoscope_cookery.chopping_board
+    tooltip: tooltip.kaleidoscope_cookery.chopping_board
   "kaleidoscope_cookery:chorus_fried_egg":
     model: "kaleidoscope_cookery:chorus_fried_egg"
     name: block.kaleidoscope_cookery.chorus_fried_egg
+    food:
+      nutrition: 9
+      saturation: 0.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:flatulence"
+          duration: 700
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 3
+        saturation: 0.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:flatulence"
+            duration: 700
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/chorus_fried_egg/chorus_fried_egg_0"
+          - "kaleidoscope_cookery:block/food/chorus_fried_egg/chorus_fried_egg_1"
+          - "kaleidoscope_cookery:block/food/chorus_fried_egg/chorus_fried_egg_2"
+          - "kaleidoscope_cookery:block/food/chorus_fried_egg/chorus_fried_egg_3"
   "kaleidoscope_cookery:chorus_fruit_platter":
     model: "kaleidoscope_cookery:chorus_fruit_platter"
     name: block.kaleidoscope_cookery.chorus_fruit_platter
+    tooltip: tooltip.kaleidoscope_cookery.chorus_fruit_platter
   "kaleidoscope_cookery:clay_pot_milk_tea":
     model: "kaleidoscope_cookery:clay_pot_milk_tea"
     name: block.kaleidoscope_cookery.clay_pot_milk_tea
   "kaleidoscope_cookery:cold_cut_ham_slices":
     model: "kaleidoscope_cookery:cold_cut_ham_slices"
     name: block.kaleidoscope_cookery.cold_cut_ham_slices
+    tooltip: tooltip.kaleidoscope_cookery.cold_cut_ham_slices
   "kaleidoscope_cookery:cold_roasted_meat":
     model: "kaleidoscope_cookery:cold_roasted_meat"
     name: block.kaleidoscope_cookery.cold_roasted_meat
+    food:
+      nutrition: 16
+      saturation: 25.6
+      always-edible: true
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 4
+        saturation: 6.4
+        always-edible: true
+      loot:
+        - "minecraft:bowl"
+      size: "1x2"
+      models:
+        left:
+          - "kaleidoscope_cookery:block/food/cold_roasted_meat/cold_roasted_meat_left_0"
+          - "kaleidoscope_cookery:block/food/cold_roasted_meat/cold_roasted_meat_left_1"
+          - "kaleidoscope_cookery:block/food/cold_roasted_meat/cold_roasted_meat_left_2"
+          - "kaleidoscope_cookery:block/food/cold_roasted_meat/cold_roasted_meat_left_3"
+        right:
+          - "kaleidoscope_cookery:block/food/cold_roasted_meat/cold_roasted_meat_right_0"
+          - "kaleidoscope_cookery:block/food/cold_roasted_meat/cold_roasted_meat_right_1"
+          - "kaleidoscope_cookery:block/food/cold_roasted_meat/cold_roasted_meat_right_2"
+          - "kaleidoscope_cookery:block/food/cold_roasted_meat/cold_roasted_meat_right_3"
   "kaleidoscope_cookery:cold_style_sashimi":
     model: "kaleidoscope_cookery:cold_style_sashimi"
     name: block.kaleidoscope_cookery.cold_style_sashimi
+    food:
+      nutrition: 16
+      saturation: 6.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:mustard"
+          duration: 6000
+    plate:
+      max-bites: 4
+      food:
+        nutrition: 4
+        saturation: 1.5
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:mustard"
+            duration: 6000
+      loot:
+        - "minecraft:bowl"
+        - "minecraft:snowball"
+        - "minecraft:snowball"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/cold_style_sashimi/cold_style_sashimi_0"
+          - "kaleidoscope_cookery:block/food/cold_style_sashimi/cold_style_sashimi_1"
+          - "kaleidoscope_cookery:block/food/cold_style_sashimi/cold_style_sashimi_2"
+          - "kaleidoscope_cookery:block/food/cold_style_sashimi/cold_style_sashimi_3"
+          - "kaleidoscope_cookery:block/food/cold_style_sashimi/cold_style_sashimi_4"
   "kaleidoscope_cookery:cook_stool_acacia":
     model: "kaleidoscope_cookery:cook_stool_acacia"
     name: block.kaleidoscope_cookery.cook_stool_acacia
@@ -281,15 +498,123 @@ items:
   "kaleidoscope_cookery:crimson_fungus_pot_soup":
     model: "kaleidoscope_cookery:crimson_fungus_pot_soup"
     name: block.kaleidoscope_cookery.crimson_fungus_pot_soup
+    food:
+      nutrition: 18
+      saturation: 24.01
+      always-edible: true
+      effects:
+        - effect: "minecraft:fire_resistance"
+          duration: 2400
+    plate:
+      max-bites: 2
+      food:
+        nutrition: 6
+        saturation: 8.0
+        always-edible: true
+        effects:
+          - effect: "minecraft:fire_resistance"
+            duration: 2400
+      loot:
+        - "minecraft:flower_pot"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/crimson_fungus_pot_soup/crimson_fungus_pot_soup_0"
+          - "kaleidoscope_cookery:block/food/crimson_fungus_pot_soup/crimson_fungus_pot_soup_1"
+          - "kaleidoscope_cookery:block/food/crimson_fungus_pot_soup/crimson_fungus_pot_soup_2"
   "kaleidoscope_cookery:crystal_lamb_chop":
     model: "kaleidoscope_cookery:crystal_lamb_chop"
     name: block.kaleidoscope_cookery.crystal_lamb_chop
+    food:
+      nutrition: 13
+      saturation: 15.99
+      always-edible: true
+      effects:
+        - effect: "minecraft:haste"
+          duration: 6000
+          amplifier: 1
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 4
+        saturation: 5.0
+        always-edible: true
+        effects:
+          - effect: "minecraft:haste"
+            duration: 6000
+            amplifier: 1
+      loot:
+        - "minecraft:bowl"
+        - "minecraft:amethyst_shard"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/crystal_lamb_chop/crystal_lamb_chop_0"
+          - "kaleidoscope_cookery:block/food/crystal_lamb_chop/crystal_lamb_chop_1"
+          - "kaleidoscope_cookery:block/food/crystal_lamb_chop/crystal_lamb_chop_2"
+          - "kaleidoscope_cookery:block/food/crystal_lamb_chop/crystal_lamb_chop_3"
   "kaleidoscope_cookery:dark_cuisine":
     model: "kaleidoscope_cookery:dark_cuisine"
     name: block.kaleidoscope_cookery.dark_cuisine
+    food:
+      nutrition: 2
+      saturation: 0.0
+      always-edible: true
+      effects:
+        - effect: "minecraft:blindness"
+          duration: 300
+          probability: 0.33
+        - effect: "minecraft:poison"
+          duration: 100
+          probability: 0.33
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 1
+        saturation: 0.0
+        always-edible: true
+        effects:
+          - effect: "minecraft:blindness"
+            duration: 300
+            probability: 0.33
+          - effect: "minecraft:poison"
+            duration: 100
+            probability: 0.33
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/dark_cuisine/dark_cuisine_0"
+          - "kaleidoscope_cookery:block/food/dark_cuisine/dark_cuisine_1"
+          - "kaleidoscope_cookery:block/food/dark_cuisine/dark_cuisine_2"
+          - "kaleidoscope_cookery:block/food/dark_cuisine/dark_cuisine_3"
   "kaleidoscope_cookery:desert_style_sashimi":
     model: "kaleidoscope_cookery:desert_style_sashimi"
     name: block.kaleidoscope_cookery.desert_style_sashimi
+    food:
+      nutrition: 16
+      saturation: 6.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:mustard"
+          duration: 6000
+    plate:
+      max-bites: 4
+      food:
+        nutrition: 4
+        saturation: 1.5
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:mustard"
+            duration: 6000
+      loot:
+        - "minecraft:bowl"
+        - "minecraft:cactus"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/desert_style_sashimi/desert_style_sashimi_0"
+          - "kaleidoscope_cookery:block/food/desert_style_sashimi/desert_style_sashimi_1"
+          - "kaleidoscope_cookery:block/food/desert_style_sashimi/desert_style_sashimi_2"
+          - "kaleidoscope_cookery:block/food/desert_style_sashimi/desert_style_sashimi_3"
+          - "kaleidoscope_cookery:block/food/desert_style_sashimi/desert_style_sashimi_4"
   "kaleidoscope_cookery:diamond_kitchen_knife":
     model: "kaleidoscope_cookery:diamond_kitchen_knife"
     name: item.kaleidoscope_cookery.diamond_kitchen_knife
@@ -297,6 +622,31 @@ items:
   "kaleidoscope_cookery:dongpo_pork":
     model: "kaleidoscope_cookery:dongpo_pork"
     name: block.kaleidoscope_cookery.dongpo_pork
+    food:
+      nutrition: 20
+      saturation: 22.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:satiated_shield"
+          duration: 1600
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 7
+        saturation: 7.29
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:satiated_shield"
+            duration: 1600
+      loot:
+        - "minecraft:bowl"
+        - "minecraft:bamboo"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/dongpo_pork/dongpo_pork_0"
+          - "kaleidoscope_cookery:block/food/dongpo_pork/dongpo_pork_1"
+          - "kaleidoscope_cookery:block/food/dongpo_pork/dongpo_pork_2"
+          - "kaleidoscope_cookery:block/food/dongpo_pork/dongpo_pork_3"
   "kaleidoscope_cookery:donkey_burger":
     model: "kaleidoscope_cookery:donkey_burger"
     name: item.kaleidoscope_cookery.donkey_burger
@@ -310,6 +660,30 @@ items:
   "kaleidoscope_cookery:dough_drop_soup":
     model: "kaleidoscope_cookery:dough_drop_soup"
     name: block.kaleidoscope_cookery.dough_drop_soup
+    food:
+      nutrition: 8
+      saturation: 16.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 1600
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 2
+        saturation: 4.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:warmth"
+            duration: 1600
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/dough_drop_soup/dough_drop_soup_0"
+          - "kaleidoscope_cookery:block/food/dough_drop_soup/dough_drop_soup_1"
+          - "kaleidoscope_cookery:block/food/dough_drop_soup/dough_drop_soup_2"
+          - "kaleidoscope_cookery:block/food/dough_drop_soup/dough_drop_soup_3"
   "kaleidoscope_cookery:dried_tea_leaves":
     model: "kaleidoscope_cookery:dried_tea_leaves"
     name: item.kaleidoscope_cookery.dried_tea_leaves
@@ -340,9 +714,36 @@ items:
   "kaleidoscope_cookery:enamel_basin":
     model: "kaleidoscope_cookery:enamel_basin"
     name: block.kaleidoscope_cookery.enamel_basin
+    tooltip: tooltip.kaleidoscope_cookery.enamel_basin
   "kaleidoscope_cookery:end_style_sashimi":
     model: "kaleidoscope_cookery:end_style_sashimi"
     name: block.kaleidoscope_cookery.end_style_sashimi
+    food:
+      nutrition: 16
+      saturation: 6.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:mustard"
+          duration: 6000
+    plate:
+      max-bites: 4
+      food:
+        nutrition: 4
+        saturation: 1.5
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:mustard"
+            duration: 6000
+      loot:
+        - "minecraft:bowl"
+        - "minecraft:chorus_fruit"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/end_style_sashimi/end_style_sashimi_0"
+          - "kaleidoscope_cookery:block/food/end_style_sashimi/end_style_sashimi_1"
+          - "kaleidoscope_cookery:block/food/end_style_sashimi/end_style_sashimi_2"
+          - "kaleidoscope_cookery:block/food/end_style_sashimi/end_style_sashimi_3"
+          - "kaleidoscope_cookery:block/food/end_style_sashimi/end_style_sashimi_4"
   "kaleidoscope_cookery:farmer_boots":
     model: "kaleidoscope_cookery:farmer_boots"
     name: item.kaleidoscope_cookery.farmer_boots
@@ -371,6 +772,7 @@ items:
     name: item.kaleidoscope_cookery.fish_flavored_shredded_pork
     food:
       nutrition: 9
+      saturation: 11.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:vigor"
@@ -381,6 +783,7 @@ items:
     name: item.kaleidoscope_cookery.fish_flavored_shredded_pork_rice_bowl
     food:
       nutrition: 14
+      saturation: 18.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:satiated_shield"
@@ -395,18 +798,117 @@ items:
   "kaleidoscope_cookery:fondant_pie":
     model: "kaleidoscope_cookery:fondant_pie"
     name: block.kaleidoscope_cookery.fondant_pie
+    food:
+      nutrition: 20
+      saturation: 22.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:satiated_shield"
+          duration: 1600
+    plate:
+      max-bites: 4
+      food:
+        nutrition: 5
+        saturation: 5.5
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:satiated_shield"
+            duration: 1600
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/fondant_pie/fondant_pie_0"
+          - "kaleidoscope_cookery:block/food/fondant_pie/fondant_pie_1"
+          - "kaleidoscope_cookery:block/food/fondant_pie/fondant_pie_2"
+          - "kaleidoscope_cookery:block/food/fondant_pie/fondant_pie_3"
+          - "kaleidoscope_cookery:block/food/fondant_pie/fondant_pie_4"
   "kaleidoscope_cookery:fondant_spider_eye":
     model: "kaleidoscope_cookery:fondant_spider_eye"
     name: block.kaleidoscope_cookery.fondant_spider_eye
+    food:
+      nutrition: 8
+      saturation: 0.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:flatulence"
+          duration: 700
+    plate:
+      max-bites: 4
+      food:
+        nutrition: 2
+        saturation: 0.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:flatulence"
+            duration: 700
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/fondant_spider_eye/fondant_spider_eye_0"
+          - "kaleidoscope_cookery:block/food/fondant_spider_eye/fondant_spider_eye_1"
+          - "kaleidoscope_cookery:block/food/fondant_spider_eye/fondant_spider_eye_2"
+          - "kaleidoscope_cookery:block/food/fondant_spider_eye/fondant_spider_eye_3"
+          - "kaleidoscope_cookery:block/food/fondant_spider_eye/fondant_spider_eye_4"
   "kaleidoscope_cookery:four_joy_meatball_soup":
     model: "kaleidoscope_cookery:four_joy_meatball_soup"
     name: block.kaleidoscope_cookery.four_joy_meatball_soup
+    food:
+      nutrition: 13
+      saturation: 15.99
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 1600
+    plate:
+      max-bites: 4
+      food:
+        nutrition: 3
+        saturation: 4.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:warmth"
+            duration: 1600
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/four_joy_meatball_soup/four_joy_meatball_soup_0"
+          - "kaleidoscope_cookery:block/food/four_joy_meatball_soup/four_joy_meatball_soup_1"
+          - "kaleidoscope_cookery:block/food/four_joy_meatball_soup/four_joy_meatball_soup_2"
+          - "kaleidoscope_cookery:block/food/four_joy_meatball_soup/four_joy_meatball_soup_3"
+          - "kaleidoscope_cookery:block/food/four_joy_meatball_soup/four_joy_meatball_soup_4"
   "kaleidoscope_cookery:fresh_tea_leaves":
     model: "kaleidoscope_cookery:fresh_tea_leaves"
     name: item.kaleidoscope_cookery.fresh_tea_leaves
   "kaleidoscope_cookery:fried_caterpillar":
     model: "kaleidoscope_cookery:fried_caterpillar"
     name: block.kaleidoscope_cookery.fried_caterpillar
+    food:
+      nutrition: 12
+      saturation: 19.2
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:flatulence"
+          duration: 200
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 4
+        saturation: 6.4
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:flatulence"
+            duration: 200
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/fried_caterpillar/fried_caterpillar_0"
+          - "kaleidoscope_cookery:block/food/fried_caterpillar/fried_caterpillar_1"
+          - "kaleidoscope_cookery:block/food/fried_caterpillar/fried_caterpillar_2"
+          - "kaleidoscope_cookery:block/food/fried_caterpillar/fried_caterpillar_3"
   "kaleidoscope_cookery:fried_egg":
     model: "kaleidoscope_cookery:fried_egg"
     name: item.kaleidoscope_cookery.fried_egg
@@ -417,12 +919,62 @@ items:
   "kaleidoscope_cookery:fried_spring_roll":
     model: "kaleidoscope_cookery:fried_spring_roll"
     name: block.kaleidoscope_cookery.fried_spring_roll
+    food:
+      nutrition: 13
+      saturation: 15.99
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 1600
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 3
+        saturation: 4.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:warmth"
+            duration: 1600
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/fried_spring_roll/fried_spring_roll_0"
+          - "kaleidoscope_cookery:block/food/fried_spring_roll/fried_spring_roll_1"
+          - "kaleidoscope_cookery:block/food/fried_spring_roll/fried_spring_roll_2"
+          - "kaleidoscope_cookery:block/food/fried_spring_roll/fried_spring_roll_3"
   "kaleidoscope_cookery:frost_lamb_chop":
     model: "kaleidoscope_cookery:frost_lamb_chop"
     name: block.kaleidoscope_cookery.frost_lamb_chop
+    food:
+      nutrition: 13
+      saturation: 15.99
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:tundra_strider"
+          duration: 1600
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 4
+        saturation: 5.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:tundra_strider"
+            duration: 1600
+      loot:
+        - "minecraft:bowl"
+        - "minecraft:blue_ice"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/frost_lamb_chop/frost_lamb_chop_0"
+          - "kaleidoscope_cookery:block/food/frost_lamb_chop/frost_lamb_chop_1"
+          - "kaleidoscope_cookery:block/food/frost_lamb_chop/frost_lamb_chop_2"
+          - "kaleidoscope_cookery:block/food/frost_lamb_chop/frost_lamb_chop_3"
   "kaleidoscope_cookery:fruit_basket":
     model: "kaleidoscope_cookery:fruit_basket"
     name: block.kaleidoscope_cookery.fruit_basket
+    tooltip: tooltip.kaleidoscope_cookery.fruit_basket
   "kaleidoscope_cookery:gold_kitchen_knife":
     model: "kaleidoscope_cookery:gold_kitchen_knife"
     name: item.kaleidoscope_cookery.gold_kitchen_knife
@@ -430,6 +982,37 @@ items:
   "kaleidoscope_cookery:golden_salad":
     model: "kaleidoscope_cookery:golden_salad"
     name: block.kaleidoscope_cookery.golden_salad
+    food:
+      nutrition: 20
+      saturation: 22.0
+      always-edible: true
+      effects:
+        - effect: "minecraft:resistance"
+          duration: 2000
+        - effect: "minecraft:regeneration"
+          duration: 200
+    plate:
+      max-bites: 6
+      food:
+        nutrition: 5
+        saturation: 5.5
+        always-edible: true
+        effects:
+          - effect: "minecraft:resistance"
+            duration: 2000
+          - effect: "minecraft:regeneration"
+            duration: 200
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/golden_salad/golden_salad_0"
+          - "kaleidoscope_cookery:block/food/golden_salad/golden_salad_1"
+          - "kaleidoscope_cookery:block/food/golden_salad/golden_salad_2"
+          - "kaleidoscope_cookery:block/food/golden_salad/golden_salad_3"
+          - "kaleidoscope_cookery:block/food/golden_salad/golden_salad_4"
+          - "kaleidoscope_cookery:block/food/golden_salad/golden_salad_5"
+          - "kaleidoscope_cookery:block/food/golden_salad/golden_salad_6"
   "kaleidoscope_cookery:green_chili":
     model: "kaleidoscope_cookery:green_chili"
     name: item.kaleidoscope_cookery.green_chili
@@ -438,6 +1021,7 @@ items:
     name: item.kaleidoscope_cookery.hot_dry_noodles
     food:
       nutrition: 14
+      saturation: 18.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:vitality"
@@ -448,6 +1032,7 @@ items:
     name: item.kaleidoscope_cookery.hui_noodle
     food:
       nutrition: 14
+      saturation: 18.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:vitality"
@@ -460,9 +1045,12 @@ items:
   "kaleidoscope_cookery:kitchen_shovel":
     model: "kaleidoscope_cookery:kitchen_shovel"
     name: item.kaleidoscope_cookery.kitchen_shovel
+    tooltip: tooltip.kaleidoscope_cookery.kitchen_shovel
+    base: IRON_SHOVEL
   "kaleidoscope_cookery:kitchenware_racks":
     model: "kaleidoscope_cookery:kitchenware_racks"
     name: block.kaleidoscope_cookery.kitchenware_racks
+    tooltip: tooltip.kaleidoscope_cookery.kitchenware_racks
   "kaleidoscope_cookery:laba_congee":
     model: "kaleidoscope_cookery:laba_congee"
     name: item.kaleidoscope_cookery.laba_congee
@@ -479,6 +1067,7 @@ items:
     name: item.kaleidoscope_cookery.lamb_and_radish_soup
     food:
       nutrition: 6
+      saturation: 8.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:tundra_strider"
@@ -518,12 +1107,40 @@ items:
   "kaleidoscope_cookery:millstone":
     model: "kaleidoscope_cookery:millstone"
     name: block.kaleidoscope_cookery.millstone
+    tooltip: tooltip.kaleidoscope_cookery.millstone
   "kaleidoscope_cookery:mystery_tea":
     model: "kaleidoscope_cookery:mystery_tea"
     name: block.kaleidoscope_cookery.mystery_tea
   "kaleidoscope_cookery:nether_style_sashimi":
     model: "kaleidoscope_cookery:nether_style_sashimi"
     name: block.kaleidoscope_cookery.nether_style_sashimi
+    food:
+      nutrition: 16
+      saturation: 6.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:mustard"
+          duration: 6000
+    plate:
+      max-bites: 4
+      food:
+        nutrition: 4
+        saturation: 1.5
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:mustard"
+            duration: 6000
+      loot:
+        - "minecraft:bowl"
+        - "minecraft:crimson_fungus"
+        - "minecraft:warped_fungus"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/nether_style_sashimi/nether_style_sashimi_0"
+          - "kaleidoscope_cookery:block/food/nether_style_sashimi/nether_style_sashimi_1"
+          - "kaleidoscope_cookery:block/food/nether_style_sashimi/nether_style_sashimi_2"
+          - "kaleidoscope_cookery:block/food/nether_style_sashimi/nether_style_sashimi_3"
+          - "kaleidoscope_cookery:block/food/nether_style_sashimi/nether_style_sashimi_4"
   "kaleidoscope_cookery:netherite_kitchen_knife":
     model: "kaleidoscope_cookery:netherite_kitchen_knife"
     name: item.kaleidoscope_cookery.netherite_kitchen_knife
@@ -531,9 +1148,34 @@ items:
   "kaleidoscope_cookery:numbing_spicy_chicken":
     model: "kaleidoscope_cookery:numbing_spicy_chicken"
     name: block.kaleidoscope_cookery.numbing_spicy_chicken
+    food:
+      nutrition: 13
+      saturation: 15.99
+      always-edible: true
+      effects:
+        - effect: "minecraft:fire_resistance"
+          duration: 2400
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 3
+        saturation: 4.0
+        always-edible: true
+        effects:
+          - effect: "minecraft:fire_resistance"
+            duration: 2400
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/numbing_spicy_chicken/numbing_spicy_chicken_0"
+          - "kaleidoscope_cookery:block/food/numbing_spicy_chicken/numbing_spicy_chicken_1"
+          - "kaleidoscope_cookery:block/food/numbing_spicy_chicken/numbing_spicy_chicken_2"
+          - "kaleidoscope_cookery:block/food/numbing_spicy_chicken/numbing_spicy_chicken_3"
   "kaleidoscope_cookery:oil":
     model: "kaleidoscope_cookery:oil"
     name: item.kaleidoscope_cookery.oil
+    tooltip: tooltip.kaleidoscope_cookery.oil
   "kaleidoscope_cookery:oil_block":
     model: "kaleidoscope_cookery:oil_block"
     name: block.kaleidoscope_cookery.oil_block
@@ -543,6 +1185,41 @@ items:
   "kaleidoscope_cookery:oil_splashed_fish":
     model: "kaleidoscope_cookery:oil_splashed_fish"
     name: block.kaleidoscope_cookery.oil_splashed_fish
+    food:
+      nutrition: 13
+      saturation: 15.99
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 1600
+    plate:
+      max-bites: 5
+      food:
+        nutrition: 3
+        saturation: 4.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:warmth"
+            duration: 1600
+      loot:
+        - "minecraft:bowl"
+        - "minecraft:bone_meal"
+      size: "1x2"
+      models:
+        left:
+          - "kaleidoscope_cookery:block/food/oil_splashed_fish/oil_splashed_fish_left_0"
+          - "kaleidoscope_cookery:block/food/oil_splashed_fish/oil_splashed_fish_left_1"
+          - "kaleidoscope_cookery:block/food/oil_splashed_fish/oil_splashed_fish_left_2"
+          - "kaleidoscope_cookery:block/food/oil_splashed_fish/oil_splashed_fish_left_3"
+          - "kaleidoscope_cookery:block/food/oil_splashed_fish/oil_splashed_fish_left_4"
+          - "kaleidoscope_cookery:block/food/oil_splashed_fish/oil_splashed_fish_left_5"
+        right:
+          - "kaleidoscope_cookery:block/food/oil_splashed_fish/oil_splashed_fish_right_0"
+          - "kaleidoscope_cookery:block/food/oil_splashed_fish/oil_splashed_fish_right_1"
+          - "kaleidoscope_cookery:block/food/oil_splashed_fish/oil_splashed_fish_right_2"
+          - "kaleidoscope_cookery:block/food/oil_splashed_fish/oil_splashed_fish_right_3"
+          - "kaleidoscope_cookery:block/food/oil_splashed_fish/oil_splashed_fish_right_4"
+          - "kaleidoscope_cookery:block/food/oil_splashed_fish/oil_splashed_fish_right_5"
   "kaleidoscope_cookery:oolong":
     model: "kaleidoscope_cookery:oolong"
     name: block.kaleidoscope_cookery.oolong
@@ -552,11 +1229,41 @@ items:
   "kaleidoscope_cookery:pan_seared_knight_steak":
     model: "kaleidoscope_cookery:pan_seared_knight_steak"
     name: block.kaleidoscope_cookery.pan_seared_knight_steak
+    food:
+      nutrition: 13
+      saturation: 15.99
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:satiated_shield"
+          duration: 1800
+    plate:
+      max-bites: 4
+      food:
+        nutrition: 4
+        saturation: 5.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:satiated_shield"
+            duration: 1800
+          - effect: "kaleidoscope_cookery:warmth"
+            duration: 800
+      loot:
+        - "minecraft:bowl"
+        - "minecraft:bone"
+        - "minecraft:bone_meal"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/pan_seared_knight_steak/pan_seared_knight_steak_0"
+          - "kaleidoscope_cookery:block/food/pan_seared_knight_steak/pan_seared_knight_steak_1"
+          - "kaleidoscope_cookery:block/food/pan_seared_knight_steak/pan_seared_knight_steak_2"
+          - "kaleidoscope_cookery:block/food/pan_seared_knight_steak/pan_seared_knight_steak_3"
+          - "kaleidoscope_cookery:block/food/pan_seared_knight_steak/pan_seared_knight_steak_4"
   "kaleidoscope_cookery:pork_bone_soup":
     model: "kaleidoscope_cookery:pork_bone_soup"
     name: item.kaleidoscope_cookery.pork_bone_soup
     food:
       nutrition: 6
+      saturation: 8.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:vigor"
@@ -565,6 +1272,7 @@ items:
   "kaleidoscope_cookery:pot":
     model: "kaleidoscope_cookery:pot"
     name: block.kaleidoscope_cookery.pot
+    tooltip: tooltip.kaleidoscope_cookery.pot
   "kaleidoscope_cookery:pufferfish_soup":
     model: "kaleidoscope_cookery:pufferfish_soup"
     name: item.kaleidoscope_cookery.pufferfish_soup
@@ -586,6 +1294,7 @@ items:
   "kaleidoscope_cookery:qingtuan_plate":
     model: "kaleidoscope_cookery:qingtuan_plate"
     name: block.kaleidoscope_cookery.qingtuan_plate
+    tooltip: tooltip.kaleidoscope_cookery.qingtuan_plate
   "kaleidoscope_cookery:raw_bamboo_tube_rice":
     model: "kaleidoscope_cookery:raw_bamboo_tube_rice"
     name: item.kaleidoscope_cookery.raw_bamboo_tube_rice
@@ -606,6 +1315,7 @@ items:
   "kaleidoscope_cookery:raw_dough":
     model: "kaleidoscope_cookery:raw_dough"
     name: item.kaleidoscope_cookery.raw_dough
+    tooltip: tooltip.kaleidoscope_cookery.raw_dough
   "kaleidoscope_cookery:raw_lamb_chops":
     model: "kaleidoscope_cookery:raw_lamb_chops"
     name: item.kaleidoscope_cookery.raw_lamb_chops
@@ -645,6 +1355,29 @@ items:
   "kaleidoscope_cookery:red_mushroom_pot_soup":
     model: "kaleidoscope_cookery:red_mushroom_pot_soup"
     name: block.kaleidoscope_cookery.red_mushroom_pot_soup
+    food:
+      nutrition: 18
+      saturation: 24.01
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 6000
+    plate:
+      max-bites: 2
+      food:
+        nutrition: 6
+        saturation: 8.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:warmth"
+            duration: 6000
+      loot:
+        - "minecraft:flower_pot"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/red_mushroom_pot_soup/red_mushroom_pot_soup_0"
+          - "kaleidoscope_cookery:block/food/red_mushroom_pot_soup/red_mushroom_pot_soup_1"
+          - "kaleidoscope_cookery:block/food/red_mushroom_pot_soup/red_mushroom_pot_soup_2"
   "kaleidoscope_cookery:rice":
     model: "kaleidoscope_cookery:rice"
     name: item.kaleidoscope_cookery.rice
@@ -678,11 +1411,13 @@ items:
   "kaleidoscope_cookery:scarecrow":
     model: "kaleidoscope_cookery:scarecrow"
     name: item.kaleidoscope_cookery.scarecrow
+    tooltip: tooltip.kaleidoscope_cookery.scarecrow
   "kaleidoscope_cookery:scramble_egg_with_tomatoes":
     model: "kaleidoscope_cookery:scramble_egg_with_tomatoes"
     name: item.kaleidoscope_cookery.scramble_egg_with_tomatoes
     food:
       nutrition: 9
+      saturation: 11.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:vigor"
@@ -693,6 +1428,7 @@ items:
     name: item.kaleidoscope_cookery.scramble_egg_with_tomatoes_rice_bowl
     food:
       nutrition: 14
+      saturation: 18.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:satiated_shield"
@@ -703,6 +1439,7 @@ items:
     name: item.kaleidoscope_cookery.seafood_miso_soup
     food:
       nutrition: 6
+      saturation: 8.0
       always-edible: true
       effects:
         - effect: "minecraft:water_breathing"
@@ -711,6 +1448,7 @@ items:
   "kaleidoscope_cookery:shawarma_spit":
     model: "kaleidoscope_cookery:shawarma_spit"
     name: block.kaleidoscope_cookery.shawarma_spit
+    tooltip: tooltip.kaleidoscope_cookery.shawarma_spit
   "kaleidoscope_cookery:shengjian_mantou":
     model: "kaleidoscope_cookery:shengjian_mantou"
     name: item.kaleidoscope_cookery.shengjian_mantou
@@ -724,27 +1462,156 @@ items:
   "kaleidoscope_cookery:shengjian_mantou_plate":
     model: "kaleidoscope_cookery:shengjian_mantou_plate"
     name: block.kaleidoscope_cookery.shengjian_mantou_plate
+    tooltip: tooltip.kaleidoscope_cookery.shengjian_mantou_plate
   "kaleidoscope_cookery:sickle":
     model: "kaleidoscope_cookery:sickle"
     name: item.kaleidoscope_cookery.sickle
+    tooltip: tooltip.kaleidoscope_cookery.sickle
   "kaleidoscope_cookery:slime_ball_meal":
     model: "kaleidoscope_cookery:slime_ball_meal"
     name: block.kaleidoscope_cookery.slime_ball_meal
+    food:
+      nutrition: 9
+      saturation: 0.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:flatulence"
+          duration: 700
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 3
+        saturation: 0.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:flatulence"
+            duration: 700
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/slime_ball_meal/slime_ball_meal_0"
+          - "kaleidoscope_cookery:block/food/slime_ball_meal/slime_ball_meal_1"
+          - "kaleidoscope_cookery:block/food/slime_ball_meal/slime_ball_meal_2"
+          - "kaleidoscope_cookery:block/food/slime_ball_meal/slime_ball_meal_3"
   "kaleidoscope_cookery:spicy_blood_stew":
     model: "kaleidoscope_cookery:spicy_blood_stew"
     name: block.kaleidoscope_cookery.spicy_blood_stew
+    food:
+      nutrition: 13
+      saturation: 15.99
+      always-edible: true
+      effects:
+        - effect: "minecraft:fire_resistance"
+          duration: 1600
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 3
+        saturation: 4.0
+        always-edible: true
+        effects:
+          - effect: "minecraft:fire_resistance"
+            duration: 1600
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/spicy_blood_stew/spicy_blood_stew_0"
+          - "kaleidoscope_cookery:block/food/spicy_blood_stew/spicy_blood_stew_1"
+          - "kaleidoscope_cookery:block/food/spicy_blood_stew/spicy_blood_stew_2"
+          - "kaleidoscope_cookery:block/food/spicy_blood_stew/spicy_blood_stew_3"
   "kaleidoscope_cookery:spicy_chicken":
     model: "kaleidoscope_cookery:spicy_chicken"
     name: block.kaleidoscope_cookery.spicy_chicken
+    food:
+      nutrition: 20
+      saturation: 22.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:satiated_shield"
+          duration: 1600
+    plate:
+      max-bites: 4
+      food:
+        nutrition: 5
+        saturation: 5.5
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:satiated_shield"
+            duration: 1600
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/spicy_chicken/spicy_chicken_0"
+          - "kaleidoscope_cookery:block/food/spicy_chicken/spicy_chicken_1"
+          - "kaleidoscope_cookery:block/food/spicy_chicken/spicy_chicken_2"
+          - "kaleidoscope_cookery:block/food/spicy_chicken/spicy_chicken_3"
+          - "kaleidoscope_cookery:block/food/spicy_chicken/spicy_chicken_4"
   "kaleidoscope_cookery:spicy_rabbit_head":
     model: "kaleidoscope_cookery:spicy_rabbit_head"
     name: block.kaleidoscope_cookery.spicy_rabbit_head
+    food:
+      nutrition: 13
+      saturation: 15.99
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 1600
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 3
+        saturation: 4.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:warmth"
+            duration: 1600
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/spicy_rabbit_head/spicy_rabbit_head_0"
+          - "kaleidoscope_cookery:block/food/spicy_rabbit_head/spicy_rabbit_head_1"
+          - "kaleidoscope_cookery:block/food/spicy_rabbit_head/spicy_rabbit_head_2"
+          - "kaleidoscope_cookery:block/food/spicy_rabbit_head/spicy_rabbit_head_3"
   "kaleidoscope_cookery:stargazy_pie":
     model: "kaleidoscope_cookery:stargazy_pie"
     name: block.kaleidoscope_cookery.stargazy_pie
+    food:
+      nutrition: 13
+      saturation: 15.99
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:flatulence"
+          duration: 600
+        - effect: "minecraft:unluck"
+          duration: 3600
+    plate:
+      max-bites: 4
+      food:
+        nutrition: 3
+        saturation: 4.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:flatulence"
+            duration: 600
+          - effect: "minecraft:unluck"
+            duration: 3600
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/stargazy_pie/stargazy_pie_0"
+          - "kaleidoscope_cookery:block/food/stargazy_pie/stargazy_pie_1"
+          - "kaleidoscope_cookery:block/food/stargazy_pie/stargazy_pie_2"
+          - "kaleidoscope_cookery:block/food/stargazy_pie/stargazy_pie_3"
+          - "kaleidoscope_cookery:block/food/stargazy_pie/stargazy_pie_4"
   "kaleidoscope_cookery:steamer":
     model: "kaleidoscope_cookery:steamer"
     name: block.kaleidoscope_cookery.steamer
+    tooltip: tooltip.kaleidoscope_cookery.steamer
   "kaleidoscope_cookery:sticky_candy":
     model: "kaleidoscope_cookery:sticky_candy"
     name: item.kaleidoscope_cookery.sticky_candy
@@ -755,6 +1622,7 @@ items:
   "kaleidoscope_cookery:sticky_candy_plate":
     model: "kaleidoscope_cookery:sticky_candy_plate"
     name: block.kaleidoscope_cookery.sticky_candy_plate
+    tooltip: tooltip.kaleidoscope_cookery.sticky_candy_plate
   "kaleidoscope_cookery:sticky_rice_cake":
     model: "kaleidoscope_cookery:sticky_rice_cake"
     name: item.kaleidoscope_cookery.sticky_rice_cake
@@ -765,11 +1633,13 @@ items:
   "kaleidoscope_cookery:sticky_rice_cake_plate":
     model: "kaleidoscope_cookery:sticky_rice_cake_plate"
     name: block.kaleidoscope_cookery.sticky_rice_cake_plate
+    tooltip: tooltip.kaleidoscope_cookery.sticky_rice_cake_plate
   "kaleidoscope_cookery:stir_fried_pork_with_peppers":
     model: "kaleidoscope_cookery:stir_fried_pork_with_peppers"
     name: item.kaleidoscope_cookery.stir_fried_pork_with_peppers
     food:
       nutrition: 9
+      saturation: 11.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:vigor"
@@ -780,6 +1650,7 @@ items:
     name: item.kaleidoscope_cookery.stir_fried_pork_with_peppers_rice_bowl
     food:
       nutrition: 14
+      saturation: 18.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:satiated_shield"
@@ -788,18 +1659,22 @@ items:
   "kaleidoscope_cookery:stockpot":
     model: "kaleidoscope_cookery:stockpot"
     name: block.kaleidoscope_cookery.stockpot
+    tooltip: tooltip.kaleidoscope_cookery.stockpot
   "kaleidoscope_cookery:stockpot_lid":
     model: "kaleidoscope_cookery:stockpot_lid"
     name: item.kaleidoscope_cookery.stockpot_lid
+    tooltip: tooltip.kaleidoscope_cookery.stockpot_lid
   "kaleidoscope_cookery:stove":
     model: "kaleidoscope_cookery:stove"
     name: block.kaleidoscope_cookery.stove
+    tooltip: tooltip.kaleidoscope_cookery.stove
   "kaleidoscope_cookery:straw_block":
     model: "kaleidoscope_cookery:straw_block"
     name: block.kaleidoscope_cookery.straw_block
   "kaleidoscope_cookery:straw_hat":
     model: "kaleidoscope_cookery:straw_hat"
     name: item.kaleidoscope_cookery.straw_hat
+    tooltip: tooltip.kaleidoscope_cookery.straw_hat
   "kaleidoscope_cookery:straw_hat_flower":
     model: "kaleidoscope_cookery:straw_hat_flower"
     name: item.kaleidoscope_cookery.straw_hat_flower
@@ -812,17 +1687,122 @@ items:
   "kaleidoscope_cookery:stuffed_tiger_skin_pepper":
     model: "kaleidoscope_cookery:stuffed_tiger_skin_pepper"
     name: block.kaleidoscope_cookery.stuffed_tiger_skin_pepper
+    food:
+      nutrition: 13
+      saturation: 15.99
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:warmth"
+          duration: 1600
+    plate:
+      max-bites: 5
+      food:
+        nutrition: 3
+        saturation: 4.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:warmth"
+            duration: 1600
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/stuffed_tiger_skin_pepper/stuffed_tiger_skin_pepper_0"
+          - "kaleidoscope_cookery:block/food/stuffed_tiger_skin_pepper/stuffed_tiger_skin_pepper_1"
+          - "kaleidoscope_cookery:block/food/stuffed_tiger_skin_pepper/stuffed_tiger_skin_pepper_2"
+          - "kaleidoscope_cookery:block/food/stuffed_tiger_skin_pepper/stuffed_tiger_skin_pepper_3"
+          - "kaleidoscope_cookery:block/food/stuffed_tiger_skin_pepper/stuffed_tiger_skin_pepper_4"
+          - "kaleidoscope_cookery:block/food/stuffed_tiger_skin_pepper/stuffed_tiger_skin_pepper_5"
   "kaleidoscope_cookery:suspicious_stir_fry":
     model: "kaleidoscope_cookery:suspicious_stir_fry"
     name: block.kaleidoscope_cookery.suspicious_stir_fry
+    food:
+      nutrition: 4
+      saturation: 3.2
+      always-edible: true
+      effects:
+        - effect: "minecraft:speed"
+          duration: 1200
+          probability: 0.15
+        - effect: "minecraft:jump_boost"
+          duration: 1200
+          probability: 0.15
+        - effect: "minecraft:haste"
+          duration: 1200
+          probability: 0.15
+        - effect: "minecraft:luck"
+          duration: 1200
+          probability: 0.15
+        - effect: "minecraft:mining_fatigue"
+          duration: 1200
+          probability: 0.15
+        - effect: "minecraft:nausea"
+          duration: 400
+          probability: 0.15
+    plate:
+      max-bites: 1
+      food:
+        nutrition: 4
+        saturation: 3.2
+        always-edible: true
+        effects:
+          - effect: "minecraft:speed"
+            duration: 1200
+            probability: 0.15
+          - effect: "minecraft:jump_boost"
+            duration: 1200
+            probability: 0.15
+          - effect: "minecraft:haste"
+            duration: 1200
+            probability: 0.15
+          - effect: "minecraft:luck"
+            duration: 1200
+            probability: 0.15
+          - effect: "minecraft:mining_fatigue"
+            duration: 1200
+            probability: 0.15
+          - effect: "minecraft:nausea"
+            duration: 400
+            probability: 0.15
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/suspicious_stir_fry/suspicious_stir_fry_0"
+          - "kaleidoscope_cookery:block/food/suspicious_stir_fry/suspicious_stir_fry_1"
   "kaleidoscope_cookery:sweet_and_sour_ender_pearls":
     model: "kaleidoscope_cookery:sweet_and_sour_ender_pearls"
     name: block.kaleidoscope_cookery.sweet_and_sour_ender_pearls
+    food:
+      nutrition: 9
+      saturation: 0.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:flatulence"
+          duration: 700
+    plate:
+      max-bites: 3
+      food:
+        nutrition: 3
+        saturation: 0.0
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:flatulence"
+            duration: 700
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/sweet_and_sour_ender_pearls/sweet_and_sour_ender_pearls_0"
+          - "kaleidoscope_cookery:block/food/sweet_and_sour_ender_pearls/sweet_and_sour_ender_pearls_1"
+          - "kaleidoscope_cookery:block/food/sweet_and_sour_ender_pearls/sweet_and_sour_ender_pearls_2"
+          - "kaleidoscope_cookery:block/food/sweet_and_sour_ender_pearls/sweet_and_sour_ender_pearls_3"
   "kaleidoscope_cookery:sweet_and_sour_pork":
     model: "kaleidoscope_cookery:sweet_and_sour_pork"
     name: item.kaleidoscope_cookery.sweet_and_sour_pork
     food:
       nutrition: 9
+      saturation: 11.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:vigor"
@@ -833,6 +1813,7 @@ items:
     name: item.kaleidoscope_cookery.sweet_and_sour_pork_rice_bowl
     food:
       nutrition: 14
+      saturation: 18.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:satiated_shield"
@@ -906,6 +1887,7 @@ items:
   "kaleidoscope_cookery:tomato_platter":
     model: "kaleidoscope_cookery:tomato_platter"
     name: block.kaleidoscope_cookery.tomato_platter
+    tooltip: tooltip.kaleidoscope_cookery.tomato_platter
   "kaleidoscope_cookery:tomato_seed":
     model: "kaleidoscope_cookery:tomato_seed"
     name: item.kaleidoscope_cookery.tomato_seed
@@ -918,11 +1900,37 @@ items:
   "kaleidoscope_cookery:tundra_style_sashimi":
     model: "kaleidoscope_cookery:tundra_style_sashimi"
     name: block.kaleidoscope_cookery.tundra_style_sashimi
+    food:
+      nutrition: 16
+      saturation: 6.0
+      always-edible: true
+      effects:
+        - effect: "kaleidoscope_cookery:mustard"
+          duration: 6000
+    plate:
+      max-bites: 4
+      food:
+        nutrition: 4
+        saturation: 1.5
+        always-edible: true
+        effects:
+          - effect: "kaleidoscope_cookery:mustard"
+            duration: 6000
+      loot:
+        - "minecraft:bowl"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/tundra_style_sashimi/tundra_style_sashimi_0"
+          - "kaleidoscope_cookery:block/food/tundra_style_sashimi/tundra_style_sashimi_1"
+          - "kaleidoscope_cookery:block/food/tundra_style_sashimi/tundra_style_sashimi_2"
+          - "kaleidoscope_cookery:block/food/tundra_style_sashimi/tundra_style_sashimi_3"
+          - "kaleidoscope_cookery:block/food/tundra_style_sashimi/tundra_style_sashimi_4"
   "kaleidoscope_cookery:udon_noodle":
     model: "kaleidoscope_cookery:udon_noodle"
     name: item.kaleidoscope_cookery.udon_noodle
     food:
       nutrition: 14
+      saturation: 18.0
       always-edible: true
       effects:
         - effect: "kaleidoscope_cookery:vitality"
@@ -931,14 +1939,39 @@ items:
   "kaleidoscope_cookery:warped_fungus_pot_soup":
     model: "kaleidoscope_cookery:warped_fungus_pot_soup"
     name: block.kaleidoscope_cookery.warped_fungus_pot_soup
+    food:
+      nutrition: 18
+      saturation: 24.01
+      always-edible: true
+      effects:
+        - effect: "minecraft:fire_resistance"
+          duration: 2400
+    plate:
+      max-bites: 2
+      food:
+        nutrition: 6
+        saturation: 8.0
+        always-edible: true
+        effects:
+          - effect: "minecraft:fire_resistance"
+            duration: 2400
+      loot:
+        - "minecraft:flower_pot"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/warped_fungus_pot_soup/warped_fungus_pot_soup_0"
+          - "kaleidoscope_cookery:block/food/warped_fungus_pot_soup/warped_fungus_pot_soup_1"
+          - "kaleidoscope_cookery:block/food/warped_fungus_pot_soup/warped_fungus_pot_soup_2"
   "kaleidoscope_cookery:watermelon_platter":
     model: "kaleidoscope_cookery:watermelon_platter"
     name: block.kaleidoscope_cookery.watermelon_platter
+    tooltip: tooltip.kaleidoscope_cookery.watermelon_platter
   "kaleidoscope_cookery:wild_mushroom_rabbit_soup":
     model: "kaleidoscope_cookery:wild_mushroom_rabbit_soup"
     name: item.kaleidoscope_cookery.wild_mushroom_rabbit_soup
     food:
       nutrition: 6
+      saturation: 8.0
       always-edible: true
       effects:
         - effect: "minecraft:speed"
@@ -960,6 +1993,7 @@ items:
   "kaleidoscope_cookery:zongzi_plate":
     model: "kaleidoscope_cookery:zongzi_plate"
     name: block.kaleidoscope_cookery.zongzi_plate
+    tooltip: tooltip.kaleidoscope_cookery.zongzi_plate
   "kaleidoscope_grilling:advanced_rack":
     model: "kaleidoscope_grilling:advanced_rack"
     name: block.kaleidoscope_grilling.advanced_rack
@@ -1191,6 +2225,7 @@ items:
   "kaleidoscope_grilling:raw_sweet_potato_sheet":
     model: "kaleidoscope_grilling:raw_sweet_potato_sheet"
     name: item.kaleidoscope_grilling.raw_sweet_potato_sheet
+    tooltip: tooltip.kaleidoscope_grilling.raw_sweet_potato_sheet
   "kaleidoscope_grilling:raw_sweet_potato_sheet_skewer":
     model: "kaleidoscope_grilling:raw_sweet_potato_sheet_skewer"
     name: item.kaleidoscope_grilling.raw_sweet_potato_sheet_skewer
@@ -1218,6 +2253,7 @@ items:
   "kaleidoscope_grilling:sichuan_pepper":
     model: "kaleidoscope_grilling:sichuan_pepper"
     name: item.kaleidoscope_grilling.sichuan_pepper
+    tooltip: tooltip.kaleidoscope_grilling.sichuan_pepper
   "kaleidoscope_grilling:skewer_plate":
     model: "kaleidoscope_grilling:skewer_plate"
     name: item.kaleidoscope_grilling.skewer_plate

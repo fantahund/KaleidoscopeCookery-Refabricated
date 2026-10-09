@@ -6,12 +6,15 @@ import de.emrion.kaleidoscopeCookery.util.Text;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Consumable;
 import io.papermc.paper.datacomponent.item.FoodProperties;
+import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.datacomponent.item.UseRemainder;
 import io.papermc.paper.datacomponent.item.consumable.ConsumeEffect;
 import io.papermc.paper.datacomponent.item.consumable.ItemUseAnimation;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -68,8 +71,13 @@ public class CookeryItems {
                     logger.warning(id + ": unbekanntes Basis-Material " + entry.getString("base") + ", nehme " + BASE_MATERIAL);
                     base = BASE_MATERIAL;
                 }
-                items.put(key, new CookeryItem(key, base, Key.key(entry.getString("model", id)), entry.getString("name", id),
-                        Math.clamp(entry.getInt("max-stack", 64), 1, 99), food));
+                CookeryItem.Plate plate = null;
+                ConfigurationSection plateSection = entry.getConfigurationSection("plate");
+                if (plateSection != null) {
+                    plate = loadPlate(id, plateSection, logger);
+                }
+                items.put(key, new CookeryItem(key, base, Key.key(entry.getString("model", id)), entry.getString("name", id), entry.getString("tooltip"),
+                        Math.clamp(entry.getInt("max-stack", 64), 1, 99), food, plate));
             }
         }
         return new CookeryItems(items);
@@ -97,6 +105,31 @@ public class CookeryItems {
         String remainder = section.getString("remainder");
         return new CookeryItem.Food(section.getInt("nutrition"), (float) section.getDouble("saturation"), section.getBoolean("always-edible"),
                 (float) section.getDouble("eat-seconds", 1.6), remainder == null ? null : Key.key(remainder), List.copyOf(effects));
+    }
+
+    private static CookeryItem.Plate loadPlate(String id, ConfigurationSection section, Logger logger) {
+        ConfigurationSection foodSection = section.getConfigurationSection("food");
+        CookeryItem.Food food = foodSection != null ? loadFood(id, foodSection, logger)
+                : new CookeryItem.Food(0, 0, true, 1.6f, null, List.of());
+        List<Key> loot = new ArrayList<>();
+        for (String value : section.getStringList("loot")) {
+            if (Key.parseable(value)) {
+                loot.add(Key.key(value));
+            }
+        }
+        Map<String, List<Key>> models = new LinkedHashMap<>();
+        ConfigurationSection modelSection = section.getConfigurationSection("models");
+        if (modelSection != null) {
+            for (String part : modelSection.getKeys(false)) {
+                List<Key> stages = new ArrayList<>();
+                for (String value : modelSection.getStringList(part)) {
+                    stages.add(Key.key(value));
+                }
+                models.put(part, List.copyOf(stages));
+            }
+        }
+        return new CookeryItem.Plate(Math.max(1, section.getInt("max-bites", 3)), food, List.copyOf(loot), "1x2".equals(section.getString("size")),
+                Collections.unmodifiableMap(models));
     }
 
     private static Number number(Object value, Number fallback) {
@@ -160,41 +193,59 @@ public class CookeryItems {
         ItemStack stack = ItemStack.of(item.base(), 1);
         stack.setData(DataComponentTypes.ITEM_MODEL, item.model());
         stack.setData(DataComponentTypes.ITEM_NAME, Text.noItalic(Lang.raw(item.nameKey())));
+        if (item.tooltipKey() != null) {
+            stack.setData(DataComponentTypes.LORE, ItemLore.lore(List.of(tooltip(item))));
+        }
         if (item.base() == BASE_MATERIAL) {
             // Werkzeuge behalten Stapelgröße 1 und ihre Haltbarkeit
             stack.setData(DataComponentTypes.MAX_STACK_SIZE, item.maxStack());
         }
-        CookeryItem.Food food = item.food();
-        if (food != null) {
-            stack.setData(DataComponentTypes.FOOD, FoodProperties.food()
-                    .nutrition(food.nutrition())
-                    .saturation(food.saturation())
-                    .canAlwaysEat(food.alwaysEdible())
-                    .build());
-            Consumable.Builder consumable = Consumable.consumable()
-                    .consumeSeconds(food.eatSeconds())
-                    .animation(ItemUseAnimation.EAT)
-                    .hasConsumeParticles(true);
-            for (CookeryItem.FoodEffect effect : food.effects()) {
-                PotionEffectType type = vanillaEffect(effect.effect());
-                if (type != null) {
-                    consumable.addEffect(ConsumeEffect.applyStatusEffects(List.of(new PotionEffect(type, effect.duration(), effect.amplifier())), effect.probability()));
-                }
-            }
-            stack.setData(DataComponentTypes.CONSUMABLE, consumable.build());
-            if (food.remainder() != null) {
-                ItemStack remainder = create(food.remainder(), 1);
-                if (remainder != null) {
-                    stack.setData(DataComponentTypes.USE_REMAINDER, UseRemainder.useRemainder(remainder));
-                }
-            }
+        if (item.food() != null) {
+            applyFood(stack, item.food(), 1.0);
         }
         stack.editPersistentDataContainer(pdc -> pdc.set(Keys.ITEM, PersistentDataType.STRING, item.id().asString()));
         stack.setAmount(Math.min(amount, stack.getMaxStackSize()));
         return stack;
     }
 
-    private static @Nullable PotionEffectType vanillaEffect(Key key) {
+    /**
+     * Nahrungswerte setzen, skaliert mit ratio (Qualität). Mod-Effekte setzt das Plugin beim Essen selbst um.
+     */
+    @SuppressWarnings("UnstableApiUsage")
+    public void applyFood(ItemStack stack, CookeryItem.Food food, double ratio) {
+        stack.setData(DataComponentTypes.FOOD, FoodProperties.food()
+                .nutrition((int) Math.round(food.nutrition() * ratio))
+                .saturation((float) (food.saturation() * ratio))
+                .canAlwaysEat(food.alwaysEdible())
+                .build());
+        Consumable.Builder consumable = Consumable.consumable()
+                .consumeSeconds(food.eatSeconds())
+                .animation(ItemUseAnimation.EAT)
+                .hasConsumeParticles(true);
+        for (CookeryItem.FoodEffect effect : food.effects()) {
+            PotionEffectType type = vanillaEffect(effect.effect());
+            int duration = (int) Math.round(effect.duration() * ratio);
+            if (type != null && duration > 0) {
+                consumable.addEffect(ConsumeEffect.applyStatusEffects(List.of(new PotionEffect(type, duration, effect.amplifier())), effect.probability()));
+            }
+        }
+        stack.setData(DataComponentTypes.CONSUMABLE, consumable.build());
+        if (food.remainder() != null) {
+            ItemStack remainder = create(food.remainder(), 1);
+            if (remainder != null) {
+                stack.setData(DataComponentTypes.USE_REMAINDER, UseRemainder.useRemainder(remainder));
+            }
+        }
+    }
+
+    /**
+     * Beschreibungszeile aus der Mod-Sprachdatei.
+     */
+    public static Component tooltip(CookeryItem item) {
+        return Text.noItalic(Lang.raw(item.tooltipKey()).color(NamedTextColor.GRAY));
+    }
+
+    public static @Nullable PotionEffectType vanillaEffect(Key key) {
         if (!key.namespace().equals(NamespacedKey.MINECRAFT)) {
             return null;
         }

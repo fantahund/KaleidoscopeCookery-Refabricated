@@ -2,7 +2,10 @@ package de.emrion.kaleidoscopeCookery.station;
 
 import de.emrion.kaleidoscopeCookery.KaleidoscopeCookery;
 import de.emrion.kaleidoscopeCookery.command.Permissions;
+import de.emrion.kaleidoscopeCookery.item.CookeryItem;
 import de.emrion.kaleidoscopeCookery.item.CookeryItems;
+import de.emrion.kaleidoscopeCookery.station.plate.PlateStation;
+import net.kyori.adventure.key.Key;
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -12,6 +15,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Interaction;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,13 +34,19 @@ import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.List;
 
 /**
@@ -53,6 +63,7 @@ public class StationListener implements Listener {
     private final StationManager stations;
     /** Gerade läuft ein selbst ausgelöstes Event zur Rechte-Prüfung */
     private boolean checking;
+    private final Map<UUID, Vector> lastClickedPosition = new HashMap<>();
 
     public StationListener(KaleidoscopeCookery plugin, StationManager stations) {
         this.plugin = plugin;
@@ -63,10 +74,11 @@ public class StationListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInteractEntity(PlayerInteractEntityEvent event) {
-        if (checking) {
+        // "interact at" kommt zusätzlich und vorher – nur die Klickposition merken (onInteractAt)
+        if (checking || event instanceof PlayerInteractAtEntityEvent) {
             return;
         }
-        Station station = stations.byRoot(event.getRightClicked());
+        Station station = stations.byEntity(event.getRightClicked());
         if (station == null) {
             return;
         }
@@ -75,14 +87,60 @@ public class StationListener implements Listener {
         if (event.getHand() != EquipmentSlot.HAND || !player.hasPermission(Permissions.USE)) {
             return;
         }
+        ItemStack held = player.getInventory().getItemInMainHand();
+        boolean stationItem = stations.typeByItem(CookeryItems.idOf(held)) != null;
+        // Stations-Items (Wok auf Herd ...) zuerst platzieren, Gerichte nur, wenn die Station nichts damit anfängt
+        if (stationItem && placeOnStation(player, held, event)) {
+            return;
+        }
         if (station.onInteract(player, EquipmentSlot.HAND)) {
             player.swingMainHand();
+            return;
+        }
+        if (!stationItem && placeableType(held) != null) {
+            placeOnStation(player, held, event);
+        }
+    }
+
+    /**
+     * Platzieren mit Klick auf eine Hitbox: Seite aus der Klickposition bestimmen.
+     */
+    private boolean placeOnStation(Player player, ItemStack held, PlayerInteractEntityEvent event) {
+        Vector clicked = lastClickedPosition.remove(player.getUniqueId());
+        if (clicked == null || !(event.getRightClicked() instanceof Interaction hitbox)) {
+            return false;
+        }
+        BlockFace face = faceOf(clicked, hitbox.getInteractionWidth(), hitbox.getInteractionHeight());
+        Block block = hitbox.getLocation().add(0, 0.05, 0).getBlock();
+        return tryPlace(player, EquipmentSlot.HAND, held, block, face);
+    }
+
+    private static BlockFace faceOf(Vector clicked, float width, float height) {
+        if (clicked.getY() >= height - 0.02) {
+            return BlockFace.UP;
+        }
+        if (clicked.getY() <= 0.02) {
+            return BlockFace.DOWN;
+        }
+        if (Math.abs(clicked.getX()) >= Math.abs(clicked.getZ())) {
+            return clicked.getX() > 0 ? BlockFace.EAST : BlockFace.WEST;
+        }
+        return clicked.getZ() > 0 ? BlockFace.SOUTH : BlockFace.NORTH;
+    }
+
+    /**
+     * Der Client schickt bei Interactions erst "interact at" (mit Position), dann "interact".
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInteractAt(PlayerInteractAtEntityEvent event) {
+        if (event.getHand() == EquipmentSlot.HAND && stations.byEntity(event.getRightClicked()) != null) {
+            lastClickedPosition.put(event.getPlayer().getUniqueId(), event.getClickedPosition());
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onAttack(PrePlayerAttackEntityEvent event) {
-        Station station = stations.byRoot(event.getAttacked());
+        Station station = stations.byEntity(event.getAttacked());
         if (station == null) {
             return;
         }
@@ -136,46 +194,85 @@ public class StationListener implements Listener {
             return;
         }
         ItemStack item = event.getItem();
-        StationType type = stations.typeByItem(CookeryItems.idOf(item));
-        if (type == null) {
+        if (placeableType(item) == null) {
             return;
         }
         event.setCancelled(true);
-        Player player = event.getPlayer();
-        if (player.isSneaking() && stations.at(event.getClickedBlock()) != null) {
+        if (event.getPlayer().isSneaking() && stations.at(event.getClickedBlock()) != null) {
             return;
         }
-        Block clicked = event.getClickedBlock();
-        Block target = clicked.isReplaceable() && stations.at(clicked) == null ? clicked : clicked.getRelative(event.getBlockFace());
+        tryPlace(event.getPlayer(), event.getHand(), item, event.getClickedBlock(), event.getBlockFace());
+    }
+
+    /**
+     * Stations-Typ, den dieses Item platziert (Stations-Item oder Teller-Gericht), sonst null.
+     */
+    private @Nullable StationType placeableType(@Nullable ItemStack item) {
+        Key itemId = CookeryItems.idOf(item);
+        StationType type = stations.typeByItem(itemId);
+        if (type == null && itemId != null) {
+            CookeryItem dish = plugin.getItems().get(itemId);
+            if (dish != null && dish.plate() != null) {
+                type = stations.type(PlateStation.TYPE_ID);
+            }
+        }
+        return type;
+    }
+
+    /**
+     * Station aus dem Item an clicked + face setzen (wie ein Block).
+     */
+    private boolean tryPlace(Player player, EquipmentSlot hand, ItemStack item, Block clicked, BlockFace face) {
+        StationType type = placeableType(item);
+        if (type == null || !player.hasPermission(Permissions.USE)) {
+            return false;
+        }
+        Key itemId = CookeryItems.idOf(item);
+        CookeryItem dish = plugin.getItems().get(itemId);
+        Block target = clicked.isReplaceable() && stations.at(clicked) == null ? clicked : clicked.getRelative(face);
+        Facing facing = Facing.towards(player.getYaw());
         if (!canPlaceAt(type, target)) {
-            return;
+            return false;
+        }
+        if (dish != null && dish.plate() != null && dish.plate().wide()) {
+            BlockFace side = PlateStation.secondBlock(facing);
+            if (!canPlaceAt(type, target.getRelative(side))) {
+                return false;
+            }
         }
         BlockState replaced = target.getState();
         if (type.barrier()) {
             BoundingBox box = BoundingBox.of(target);
             Collection<Entity> blocking = target.getWorld().getNearbyEntities(box, entity -> entity instanceof LivingEntity);
             if (!blocking.isEmpty()) {
-                return;
+                return false;
             }
             target.setType(Material.BARRIER, false);
         }
         checking = true;
         boolean allowed;
         try {
-            allowed = new BlockPlaceEvent(target, replaced, clicked, item, player, true, event.getHand()).callEvent();
+            allowed = new BlockPlaceEvent(target, replaced, clicked, item, player, true, hand).callEvent();
         } finally {
             checking = false;
         }
         if (!allowed) {
             replaced.update(true, false);
-            return;
+            return false;
         }
-        stations.place(type, target, Facing.towards(player.getYaw()));
+        ItemStack placedFrom = item.asOne();
+        Key placedId = itemId;
+        stations.place(type, target, facing, station -> {
+            if (station instanceof PlateStation plate) {
+                plate.initFrom(placedFrom, placedId);
+            }
+        });
         if (player.getGameMode() != GameMode.CREATIVE) {
             item.subtract();
         }
-        player.swingHand(event.getHand());
+        player.swingHand(hand);
         target.getWorld().playSound(target.getLocation().toCenterLocation(), Sound.BLOCK_WOOD_PLACE, SoundCategory.BLOCKS, 1, 1);
+        return true;
     }
 
     private boolean canPlaceAt(StationType type, Block target) {

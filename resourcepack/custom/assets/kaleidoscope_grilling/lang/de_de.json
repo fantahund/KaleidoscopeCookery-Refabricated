@@ -16,6 +16,10 @@
   "block.kaleidoscope_grilling.skewer_plate": "Spießteller",
   "block.kaleidoscope_grilling.skewer_recipe": "Spieß-Rezept",
   "block.kaleidoscope_grilling.sweet_potato_crop": "Süßkartoffel",
+  "hud.kaleidoscope_grilling.pot.state.need_heat": "Wartet auf Hitzequelle",
+  "hud.kaleidoscope_grilling.pot.state.need_oil": "Wartet auf Öl",
+  "hud.kaleidoscope_grilling.pot.state.stir": "Wartet aufs Rühren",
+  "hud.kaleidoscope_grilling.pot.state.take": "Kann herausgenommen werden",
   "item.kaleidoscope_grilling.beef_chunks": "Rindfleischwürfel",
   "item.kaleidoscope_grilling.braised_chicken_wings": "Geschmorte Hähnchenflügel",
   "item.kaleidoscope_grilling.canola_oil_brush": "Rapsöl-Pinsel",
@@ -106,5 +110,8 @@
   "item.kaleidoscope_grilling.sweet_potato_powder": "Süßkartoffelstärke",
   "item.kaleidoscope_grilling.totem_powder": "Totempulver",
   "item.kaleidoscope_grilling.unfinished_skewer": "Unfertiger Spieß",
-  "item.kaleidoscope_grilling.wedding_candy": "Hochzeitsbonbon"
+  "item.kaleidoscope_grilling.wedding_candy": "Hochzeitsbonbon",
+  "tooltip.kaleidoscope_grilling.hot_food": "🔥 Rauchig warm (%s:%s)",
+  "tooltip.kaleidoscope_grilling.raw_sweet_potato_sheet": "Süßkartoffelstärke kneten oder auf dem Schneidebrett schneiden",
+  "tooltip.kaleidoscope_grilling.sichuan_pepper": "Von Pfefferbäumen im Wald ernten oder in Dörfern finden."
 }
