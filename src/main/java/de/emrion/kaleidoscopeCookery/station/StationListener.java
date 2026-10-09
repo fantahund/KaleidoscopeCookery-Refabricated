@@ -4,6 +4,8 @@ import de.emrion.kaleidoscopeCookery.KaleidoscopeCookery;
 import de.emrion.kaleidoscopeCookery.command.Permissions;
 import de.emrion.kaleidoscopeCookery.item.CookeryItem;
 import de.emrion.kaleidoscopeCookery.item.CookeryItems;
+import de.emrion.kaleidoscopeCookery.station.crop.CropKind;
+import de.emrion.kaleidoscopeCookery.station.crop.CropStation;
 import de.emrion.kaleidoscopeCookery.station.plate.PlateStation;
 import de.emrion.kaleidoscopeCookery.station.teapot.CupStation;
 import de.emrion.kaleidoscopeCookery.station.teapot.TeapotStation;
@@ -151,7 +153,7 @@ public class StationListener implements Listener {
         }
         event.setCancelled(true);
         Player player = event.getPlayer();
-        if (player.isSneaking()) {
+        if (player.isSneaking() || station.breaksOnAttack()) {
             if (canBreak(player, station)) {
                 stations.breakStation(station, player);
             }
@@ -329,9 +331,16 @@ public class StationListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFlow(BlockFromToEvent event) {
-        if (stations.at(event.getToBlock()) != null) {
-            event.setCancelled(true);
+        Station station = stations.at(event.getToBlock());
+        if (station == null) {
+            return;
         }
+        if (station instanceof CropStation crop && crop.kind() != CropKind.RICE) {
+            // Wasser spült Pflanzen weg (wie bei Vanilla-Pflanzen)
+            stations.breakStation(station, null);
+            return;
+        }
+        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -414,11 +423,11 @@ public class StationListener implements Listener {
     private void checkSupportLater(Block changed) {
         Block above = changed.getRelative(BlockFace.UP);
         Station station = stations.at(above);
-        if (station == null || !station.context().type().needsSupport()) {
+        if (station == null || !station.context().type().needsSupport() || !station.position().equals(BlockKey.of(above))) {
             return;
         }
         plugin.getServer().getScheduler().runTask(plugin, () -> {
-            if (!station.isRemoved() && !hasSupport(above)) {
+            if (!station.isRemoved() && (!hasSupport(station.position().block()) || !station.canSurvive())) {
                 stations.breakStation(station, null);
             }
         });

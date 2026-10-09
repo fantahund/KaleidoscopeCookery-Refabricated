@@ -219,6 +219,15 @@ BASE_MATERIALS = {
     "kaleidoscope_cookery:netherite_kitchen_knife": "JIGSAW",
 }
 MAX_DAMAGE = {"kaleidoscope_cookery:stockpot_lid": 120}
+# Kleidung (ArmorMaterial FARMER im Mod): Basis Lederrüstung (Verzauberungen), Rüstungswerte wie im Mod, ohne Haltbarkeit.
+# Strohhüte ohne Equipment-Asset: der Client zeigt dann das 3D-Itemmodell auf dem Kopf.
+WEARABLES = {
+    "kaleidoscope_cookery:straw_hat": ("LEATHER_HELMET", "head", None, 3),
+    "kaleidoscope_cookery:straw_hat_flower": ("LEATHER_HELMET", "head", None, 3),
+    "kaleidoscope_cookery:farmer_chest_plate": ("LEATHER_CHESTPLATE", "chest", "kaleidoscope_cookery:cookery_farmer", 4),
+    "kaleidoscope_cookery:farmer_leggings": ("LEATHER_LEGGINGS", "legs", "kaleidoscope_cookery:cookery_farmer", 5),
+    "kaleidoscope_cookery:farmer_boots": ("LEATHER_BOOTS", "feet", "kaleidoscope_cookery:cookery_farmer", 2),
+}
 PROTOTYPES = {
     "kaleidoscope_cookery:iron_kitchen_knife": "IRON_SWORD",
     "kaleidoscope_cookery:gold_kitchen_knife": "GOLDEN_SWORD",
@@ -266,6 +275,14 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry["max-stack"] = stack_sizes[full_id]
             if ns == "kaleidoscope_cookery" and item_id in foods:
                 entry["food"] = foods[item_id]
+            if full_id in WEARABLES:
+                base, slot, asset, armor = WEARABLES[full_id]
+                entry["base"] = base
+                entry["prototype"] = base
+                entry["equippable"] = {"slot": slot, "asset": asset} if asset else {"slot": slot}
+                entry["armor"] = armor
+                entry["unbreakable"] = True
+                entry.pop("max-stack", None)
             if full_id == "kaleidoscope_cookery:teapot":
                 entry["sneak-place"] = True  # TeapotItem#useOn: nur beim Schleichen platzieren
                 entry["max-stack"] = 1

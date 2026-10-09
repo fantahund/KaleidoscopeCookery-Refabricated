@@ -20,9 +20,18 @@ import java.util.List;
  * @param food     Nahrungswerte, null wenn nicht essbar
  * @param plate    Gericht, das man als Teller hinstellen und bissweise essen kann, sonst null
  * @param sneakToPlace nur beim Schleichen platzieren (Teetassen, Teekanne – sonst trinken bzw. benutzen)
+ * @param wearable Kleidung, sonst null
  */
 public record CookeryItem(Key id, Material base, @Nullable Material prototype, Key model, String nameKey, @Nullable String tooltipKey, int maxStack, int maxDamage, @Nullable Food food,
-                          @Nullable Plate plate, boolean sneakToPlace) {
+                          @Nullable Plate plate, boolean sneakToPlace, @Nullable Wearable wearable) {
+
+    /**
+     * Kleidung (Strohhut, Bauernkleidung).
+     *
+     * @param asset Equipment-Asset für die Rüstungsschicht; null = Itemmodell auf dem Kopf (Strohhut)
+     */
+    public record Wearable(org.bukkit.inventory.EquipmentSlot slot, @Nullable Key asset, int armor, boolean unbreakable) {
+    }
 
     /**
      * Teller-Gericht (FoodBiteBlock im Mod).

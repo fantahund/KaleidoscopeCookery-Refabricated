@@ -5,6 +5,8 @@ import de.emrion.kaleidoscopeCookery.util.Lang;
 import de.emrion.kaleidoscopeCookery.util.Text;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Consumable;
+import io.papermc.paper.datacomponent.item.Equippable;
+import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
 import io.papermc.paper.datacomponent.item.FoodProperties;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.datacomponent.item.UseRemainder;
@@ -79,7 +81,7 @@ public class CookeryItems {
                 Material prototype = entry.getString("prototype") == null ? null : Material.matchMaterial(entry.getString("prototype"));
                 items.put(key, new CookeryItem(key, base, prototype, Key.key(entry.getString("model", id)), entry.getString("name", id), entry.getString("tooltip"),
                         Math.clamp(entry.getInt("max-stack", 64), 1, 99), Math.max(0, entry.getInt("max-damage", 0)), food, plate,
-                        entry.getBoolean("sneak-place")));
+                        entry.getBoolean("sneak-place"), loadWearable(id, entry, logger)));
             }
         }
         return new CookeryItems(items);
@@ -133,6 +135,21 @@ public class CookeryItems {
         }
         return new CookeryItem.Plate(Math.max(1, section.getInt("max-bites", 3)), food, List.copyOf(loot), "1x2".equals(section.getString("size")),
                 Collections.unmodifiableMap(models));
+    }
+
+    private static CookeryItem.@Nullable Wearable loadWearable(String id, ConfigurationSection entry, Logger logger) {
+        ConfigurationSection section = entry.getConfigurationSection("equippable");
+        if (section == null) {
+            return null;
+        }
+        org.bukkit.inventory.EquipmentSlot slot = switch (section.getString("slot", "head")) {
+            case "chest" -> org.bukkit.inventory.EquipmentSlot.CHEST;
+            case "legs" -> org.bukkit.inventory.EquipmentSlot.LEGS;
+            case "feet" -> org.bukkit.inventory.EquipmentSlot.FEET;
+            default -> org.bukkit.inventory.EquipmentSlot.HEAD;
+        };
+        String asset = section.getString("asset");
+        return new CookeryItem.Wearable(slot, asset == null ? null : Key.key(asset), entry.getInt("armor", 0), entry.getBoolean("unbreakable"));
     }
 
     private static Number number(Object value, Number fallback) {
@@ -213,6 +230,9 @@ public class CookeryItems {
         if (item.food() != null) {
             applyFood(stack, item.food(), 1.0);
         }
+        if (item.wearable() != null) {
+            applyWearable(stack, item.wearable());
+        }
         stack.editPersistentDataContainer(pdc -> pdc.set(Keys.ITEM, PersistentDataType.STRING, item.id().asString()));
         stack.setAmount(Math.min(amount, stack.getMaxStackSize()));
         return stack;
@@ -251,6 +271,25 @@ public class CookeryItems {
             if (remainder != null) {
                 stack.setData(DataComponentTypes.USE_REMAINDER, UseRemainder.useRemainder(remainder));
             }
+        }
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    private static void applyWearable(ItemStack stack, CookeryItem.Wearable wearable) {
+        Equippable.Builder equippable = Equippable.equippable(wearable.slot()).equipSound(org.bukkit.Sound.ITEM_ARMOR_EQUIP_LEATHER.key());
+        if (wearable.asset() != null) {
+            equippable.assetId(wearable.asset());
+        }
+        stack.setData(DataComponentTypes.EQUIPPABLE, equippable.build());
+        org.bukkit.inventory.EquipmentSlotGroup group = wearable.slot().getGroup();
+        stack.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.itemAttributes()
+                .addModifier(org.bukkit.attribute.Attribute.ARMOR,
+                        new org.bukkit.attribute.AttributeModifier(new NamespacedKey(Keys.NAMESPACE, "armor_" + wearable.slot().name().toLowerCase(java.util.Locale.ROOT)),
+                                wearable.armor(), org.bukkit.attribute.AttributeModifier.Operation.ADD_NUMBER, group), group)
+                .build());
+        if (wearable.unbreakable()) {
+            stack.unsetData(DataComponentTypes.MAX_DAMAGE);
+            stack.unsetData(DataComponentTypes.DAMAGE);
         }
     }
 

@@ -1,0 +1,195 @@
+{
+  "textures": {
+    "hat": "kaleidoscope_cookery:models/armor/straw_hat_flower",
+    "particle": "kaleidoscope_cookery:models/armor/straw_hat_flower"
+  },
+  "elements": [
+    {
+      "from": [
+        0.5,
+        8.0,
+        0.5
+      ],
+      "to": [
+        15.5,
+        8.0,
+        15.5
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            1.25,
+            4.25,
+            5.0,
+            8.0
+          ],
+          "texture": "#hat"
+        },
+        "down": {
+          "uv": [
+            5.0,
+            8.0,
+            8.75,
+            4.25
+          ],
+          "texture": "#hat"
+        }
+      }
+    },
+    {
+      "from": [
+        4.0,
+        8.0,
+        3.5
+      ],
+      "to": [
+        12.0,
+        12.0,
+        12.5
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            9.75,
+            0.0,
+            11.75,
+            2.25
+          ],
+          "texture": "#hat"
+        },
+        "down": {
+          "uv": [
+            11.75,
+            2.25,
+            13.75,
+            0.0
+          ],
+          "texture": "#hat"
+        },
+        "west": {
+          "uv": [
+            7.5,
+            2.25,
+            9.75,
+            3.25
+          ],
+          "texture": "#hat"
+        },
+        "north": {
+          "uv": [
+            9.75,
+            2.25,
+            11.75,
+            3.25
+          ],
+          "texture": "#hat"
+        },
+        "east": {
+          "uv": [
+            11.75,
+            2.25,
+            14.0,
+            3.25
+          ],
+          "texture": "#hat"
+        },
+        "south": {
+          "uv": [
+            14.0,
+            2.25,
+            16.0,
+            3.25
+          ],
+          "texture": "#hat"
+        }
+      }
+    },
+    {
+      "from": [
+        3.9,
+        7.15,
+        3.4
+      ],
+      "to": [
+        12.1,
+        11.35,
+        12.6
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            2.25,
+            10.25,
+            4.25,
+            12.5
+          ],
+          "texture": "#hat"
+        },
+        "down": {
+          "uv": [
+            4.25,
+            12.5,
+            6.25,
+            10.25
+          ],
+          "texture": "#hat"
+        },
+        "west": {
+          "uv": [
+            0.0,
+            12.5,
+            2.25,
+            13.5
+          ],
+          "texture": "#hat"
+        },
+        "north": {
+          "uv": [
+            2.25,
+            12.5,
+            4.25,
+            13.5
+          ],
+          "texture": "#hat"
+        },
+        "east": {
+          "uv": [
+            4.25,
+            12.5,
+            6.5,
+            13.5
+          ],
+          "texture": "#hat"
+        },
+        "south": {
+          "uv": [
+            6.5,
+            12.5,
+            8.5,
+            13.5
+          ],
+          "texture": "#hat"
+        }
+      }
+    }
+  ],
+  "display": {
+    "head": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1.6,
+        1.6,
+        1.6
+      ]
+    }
+  }
+}

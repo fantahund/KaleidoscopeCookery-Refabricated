@@ -109,6 +109,27 @@ public abstract class Station {
     }
 
     /**
+     * Darf die Station an ihrer Stelle bleiben (zusätzlich zum festen Block darunter, siehe StationType#needsSupport)?
+     */
+    public boolean canSurvive() {
+        return true;
+    }
+
+    /**
+     * Linksklick baut ab, ohne Schleichen (Pflanzen).
+     */
+    public boolean breaksOnAttack() {
+        return false;
+    }
+
+    /**
+     * Beute beim Abbauen durch einen Spieler (z. B. mit Glück).
+     */
+    public List<ItemStack> contents(@Nullable Player breaker) {
+        return contents();
+    }
+
+    /**
      * Inhalt, der beim Abbauen fallen gelassen wird (ohne das Stations-Item selbst).
      */
     public List<ItemStack> contents() {

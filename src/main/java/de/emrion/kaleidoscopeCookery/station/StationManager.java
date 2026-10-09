@@ -452,7 +452,7 @@ public class StationManager implements Listener {
             return;
         }
         Location drop = station.center();
-        for (ItemStack content : station.contents()) {
+        for (ItemStack content : station.contents(player)) {
             if (content != null && !content.isEmpty()) {
                 drop.getWorld().dropItemNaturally(drop, content);
             }
@@ -464,7 +464,8 @@ public class StationManager implements Listener {
             }
         }
         remove(station);
-        drop.getWorld().playSound(drop, Sound.BLOCK_WOOD_BREAK, SoundCategory.BLOCKS, 1, 1);
+        drop.getWorld().playSound(drop, station instanceof de.emrion.kaleidoscopeCookery.station.crop.CropStation ? Sound.BLOCK_CROP_BREAK : Sound.BLOCK_WOOD_BREAK,
+                SoundCategory.BLOCKS, 1, 1);
     }
 
     /**

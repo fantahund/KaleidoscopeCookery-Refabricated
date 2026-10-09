@@ -784,15 +784,33 @@ items:
   "kaleidoscope_cookery:farmer_boots":
     model: "kaleidoscope_cookery:farmer_boots"
     name: item.kaleidoscope_cookery.farmer_boots
-    max-stack: 1
+    base: LEATHER_BOOTS
+    prototype: LEATHER_BOOTS
+    equippable:
+      slot: feet
+      asset: "kaleidoscope_cookery:cookery_farmer"
+    armor: 2
+    unbreakable: true
   "kaleidoscope_cookery:farmer_chest_plate":
     model: "kaleidoscope_cookery:farmer_chest_plate"
     name: item.kaleidoscope_cookery.farmer_chest_plate
-    max-stack: 1
+    base: LEATHER_CHESTPLATE
+    prototype: LEATHER_CHESTPLATE
+    equippable:
+      slot: chest
+      asset: "kaleidoscope_cookery:cookery_farmer"
+    armor: 4
+    unbreakable: true
   "kaleidoscope_cookery:farmer_leggings":
     model: "kaleidoscope_cookery:farmer_leggings"
     name: item.kaleidoscope_cookery.farmer_leggings
-    max-stack: 1
+    base: LEATHER_LEGGINGS
+    prototype: LEATHER_LEGGINGS
+    equippable:
+      slot: legs
+      asset: "kaleidoscope_cookery:cookery_farmer"
+    armor: 5
+    unbreakable: true
   "kaleidoscope_cookery:fearsome_thick_soup":
     model: "kaleidoscope_cookery:fearsome_thick_soup"
     name: item.kaleidoscope_cookery.fearsome_thick_soup
@@ -1767,9 +1785,21 @@ items:
     model: "kaleidoscope_cookery:straw_hat"
     name: item.kaleidoscope_cookery.straw_hat
     tooltip: tooltip.kaleidoscope_cookery.straw_hat
+    base: LEATHER_HELMET
+    prototype: LEATHER_HELMET
+    equippable:
+      slot: head
+    armor: 3
+    unbreakable: true
   "kaleidoscope_cookery:straw_hat_flower":
     model: "kaleidoscope_cookery:straw_hat_flower"
     name: item.kaleidoscope_cookery.straw_hat_flower
+    base: LEATHER_HELMET
+    prototype: LEATHER_HELMET
+    equippable:
+      slot: head
+    armor: 3
+    unbreakable: true
   "kaleidoscope_cookery:strung_mushrooms":
     model: "kaleidoscope_cookery:strung_mushrooms"
     name: block.kaleidoscope_cookery.strung_mushrooms

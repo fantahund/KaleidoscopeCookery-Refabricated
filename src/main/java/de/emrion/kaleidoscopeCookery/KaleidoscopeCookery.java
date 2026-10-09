@@ -15,6 +15,9 @@ import de.emrion.kaleidoscopeCookery.recipe.VanillaRecipes;
 import de.emrion.kaleidoscopeCookery.station.StationListener;
 import de.emrion.kaleidoscopeCookery.station.StationManager;
 import de.emrion.kaleidoscopeCookery.station.choppingboard.ChoppingBoardStation;
+import de.emrion.kaleidoscopeCookery.station.crop.CropKind;
+import de.emrion.kaleidoscopeCookery.station.crop.CropListener;
+import de.emrion.kaleidoscopeCookery.station.crop.CropStation;
 import de.emrion.kaleidoscopeCookery.station.plate.PlateStation;
 import de.emrion.kaleidoscopeCookery.station.pot.PotStation;
 import de.emrion.kaleidoscopeCookery.station.steamer.SteamerStation;
@@ -81,6 +84,9 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         stations.register(SteamerStation.type());
         stations.register(TeapotStation.type());
         stations.register(CupStation.type());
+        for (CropKind kind : CropKind.values()) {
+            stations.register(CropStation.type(kind));
+        }
 
         pluginManager.registerEvents(resourcePack, this);
         pluginManager.registerEvents(stations, this);
@@ -94,6 +100,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         pluginManager.registerEvents(vanillaFood, this);
         pluginManager.registerEvents(new StoveListener(stations), this);
         pluginManager.registerEvents(new TeapotItems(this), this);
+        pluginManager.registerEvents(new CropListener(this, stations), this);
 
         stations.start();
         foodService.start();
