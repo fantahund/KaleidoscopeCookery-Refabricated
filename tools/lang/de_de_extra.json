@@ -189,7 +189,8 @@
     "tooltip.kaleidoscope_cookery.cold_roasted_meat.maxim": "Eine Platte mit fein geschnittenem, zartem Fleisch.",
     "tooltip.kaleidoscope_cookery.oil_splashed_fish.maxim": "Heißes Öl wird darübergegossen, damit die Aromen aufblühen\nund der Fisch frisch und zart bleibt.\nVoller betäubender Schärfe.",
     "tooltip.kaleidoscope_cookery.chance": "%s Chance",
-    "tip.kaleidoscope_cookery.millstone.oil_pot_is_full": "Diese Ölkanne ist voll"
+    "tip.kaleidoscope_cookery.millstone.oil_pot_is_full": "Diese Ölkanne ist voll",
+    "block.kaleidoscope_cookery.recipe_block.has_record": "Rezept: %s, zubereitet im %s"
   },
   "kaleidoscope_grilling": {
     "hud.kaleidoscope_grilling.pot.state.need_heat": "Wartet auf Hitzequelle",

@@ -414,6 +414,67 @@ public class StockpotStation extends Station {
         return true;
     }
 
+    // ---- Rezept-Item (RecipeItem im Mod) ----
+
+    public List<ItemStack> recordableInputs() {
+        List<ItemStack> list = new ArrayList<>();
+        if (status == PUT_INGREDIENT) {
+            for (ItemStack input : inputs) {
+                if (input != null) {
+                    list.add(input.clone());
+                }
+            }
+        }
+        return list;
+    }
+
+    /**
+     * RecipeItem#getStockpotRecipeResult: Ergebnis der aktuellen Zutaten, ohne Rezept ein seltsamer Eintopf.
+     */
+    public java.util.Map.Entry<ItemStack, Boolean> previewResult() {
+        List<ItemStack> inputList = new ArrayList<>();
+        for (ItemStack input : inputs) {
+            inputList.add(input == null ? ItemStack.empty() : input);
+        }
+        StockpotRecipe recipe = plugin().getRecipes().findStockpot(inputList, soupBase);
+        ItemStack created = recipe == null ? null : items().create(recipe.result().item(), recipe.result().count());
+        if (recipe == null || created == null) {
+            return java.util.Map.entry(new ItemStack(Material.SUSPICIOUS_STEW), false);
+        }
+        if (recipe.flex()) {
+            plugin().getFoodService().setQuality(created, QualityEvaluator.evaluate(inputList, recipe.ingredients(), recipe.id(), world().getSeed()));
+        }
+        return java.util.Map.entry(created, recipe.flex());
+    }
+
+    public boolean canReceiveRecipe() {
+        return status == PUT_INGREDIENT && !hasLid() && inputCount() == 0;
+    }
+
+    /**
+     * StockpotBlockEntity#addAllIngredients
+     */
+    public void addAllIngredients(List<ItemStack> ingredients, Player player) {
+        if (hasLid() || status != PUT_INGREDIENT) {
+            return;
+        }
+        for (int i = 0; i < Math.min(ingredients.size(), inputs.length); i++) {
+            ItemStack stack = ingredients.get(i);
+            if (stack == null || stack.isEmpty()) {
+                continue;
+            }
+            Material container = CookeryItems.isCustom(stack) ? null : stack.getType().getCraftingRemainingItem();
+            if (container != null && !container.isAir()) {
+                give(player, new ItemStack(container));
+            }
+            inputs[i] = stack.asOne();
+        }
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        world().playSound(center(), Sound.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2f, ((random.nextFloat() - random.nextFloat()) * 0.7f + 1) * 2);
+        markDirty();
+        updateDisplay();
+    }
+
     private boolean addIngredient(Player player, ItemStack held) {
         if (hasLid() || status != PUT_INGREDIENT || isBlocked(held)) {
             return false;

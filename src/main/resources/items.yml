@@ -1503,6 +1503,8 @@ items:
   "kaleidoscope_cookery:recipe_item":
     model: "kaleidoscope_cookery:recipe_item"
     name: block.kaleidoscope_cookery.recipe_block
+    tooltip: tooltip.kaleidoscope_cookery.recipe_item
+    max-stack: 64
   "kaleidoscope_cookery:red_chili":
     model: "kaleidoscope_cookery:red_chili"
     name: item.kaleidoscope_cookery.red_chili

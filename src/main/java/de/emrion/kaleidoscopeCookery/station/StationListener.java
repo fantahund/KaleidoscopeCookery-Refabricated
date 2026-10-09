@@ -328,6 +328,8 @@ public class StationListener implements Listener {
                 basket.initFrom(placedFrom);
             } else if (station instanceof de.emrion.kaleidoscopeCookery.station.decor.StrawBlockStation straw) {
                 straw.initAxis(face);
+            } else if (station instanceof de.emrion.kaleidoscopeCookery.station.decor.RecipeBlockStation recipe) {
+                recipe.initFrom(placedFrom, face);
             }
         });
         if (!placed.canSurvive()) {

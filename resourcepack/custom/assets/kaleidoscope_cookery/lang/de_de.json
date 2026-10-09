@@ -77,6 +77,7 @@
   "block.kaleidoscope_cookery.pot": "Wok",
   "block.kaleidoscope_cookery.qingtuan_plate": "Teller mit Qingtuan",
   "block.kaleidoscope_cookery.recipe_block": "Rezept",
+  "block.kaleidoscope_cookery.recipe_block.has_record": "Rezept: %s, zubereitet im %s",
   "block.kaleidoscope_cookery.red_lantern": "Rote Laterne",
   "block.kaleidoscope_cookery.red_mushroom_pot_soup": "Rote Pilzsuppe",
   "block.kaleidoscope_cookery.rice_crop": "Reis",

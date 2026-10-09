@@ -412,6 +412,72 @@ public class PotStation extends Station {
         updateDisplay();
     }
 
+    // ---- Rezept-Item (RecipeItem im Mod) ----
+
+    /**
+     * Zutaten zum Aufzeichnen (nur solange man Zutaten einlegt), sonst leer.
+     */
+    public List<ItemStack> recordableInputs() {
+        List<ItemStack> list = new ArrayList<>();
+        if (status == PUT_INGREDIENT) {
+            for (ItemStack input : inputs) {
+                if (input != null) {
+                    list.add(input.clone());
+                }
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Was aus den aktuellen Zutaten würde (RecipeItem#getPotRecipeResult), mit Qualität bei Flex-Rezepten.
+     *
+     * @return Ergebnis und ob es ein Flex-Rezept ist
+     */
+    public java.util.Map.Entry<ItemStack, Boolean> previewResult() {
+        List<ItemStack> inputList = inputList();
+        PotRecipe recipe = plugin().getRecipes().findPot(inputList);
+        ItemStack created = recipe == null ? null : items().create(recipe.result().item(), recipe.match(inputList));
+        if (recipe == null || created == null) {
+            ItemStack suspicious = items().create(SUSPICIOUS_STIR_FRY, 1);
+            return java.util.Map.entry(suspicious == null ? new ItemStack(Material.BOWL) : suspicious, false);
+        }
+        if (recipe.flex()) {
+            plugin().getFoodService().setQuality(created, QualityEvaluator.evaluate(inputList, recipe.ingredients(), recipe.id(), world().getSeed()));
+        }
+        return java.util.Map.entry(created, recipe.flex());
+    }
+
+    /**
+     * Leerer, geölter Wok, in den man ein aufgezeichnetes Rezept einlegen kann.
+     */
+    public boolean canReceiveRecipe() {
+        return status == PUT_INGREDIENT && hasOil && isEmpty();
+    }
+
+    /**
+     * PotBlockEntity#addAllIngredients
+     */
+    public void addAllIngredients(List<ItemStack> ingredients, Player player) {
+        if (status != PUT_INGREDIENT) {
+            return;
+        }
+        for (int i = 0; i < Math.min(ingredients.size(), inputs.length); i++) {
+            ItemStack stack = ingredients.get(i);
+            if (stack == null || stack.isEmpty()) {
+                continue;
+            }
+            Material container = CookeryItems.isCustom(stack) ? null : stack.getType().getCraftingRemainingItem();
+            if (container != null && container.isItem() && !container.isAir()) {
+                give(player, new ItemStack(container));
+            }
+            inputs[i] = stack.asOne();
+        }
+        world().playSound(center(), Sound.BLOCK_LANTERN_PLACE, SoundCategory.BLOCKS, 1, 0.5f);
+        markDirty();
+        updateDisplay();
+    }
+
     private List<ItemStack> inputList() {
         List<ItemStack> list = new ArrayList<>(inputs.length);
         for (ItemStack input : inputs) {

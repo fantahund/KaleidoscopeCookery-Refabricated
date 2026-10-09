@@ -110,6 +110,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         stations.register(FruitBasketStation.type());
         stations.register(TrashCanStation.type());
         stations.register(de.emrion.kaleidoscopeCookery.station.decor.StrawBlockStation.type());
+        stations.register(de.emrion.kaleidoscopeCookery.station.decor.RecipeBlockStation.type());
         for (de.emrion.kaleidoscopeCookery.station.decor.HangingStation.Kind kind : de.emrion.kaleidoscopeCookery.station.decor.HangingStation.Kind.values()) {
             stations.register(de.emrion.kaleidoscopeCookery.station.decor.HangingStation.type(kind));
         }
@@ -137,6 +138,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         pluginManager.registerEvents(new SickleListener(stations), this);
         pluginManager.registerEvents(new de.emrion.kaleidoscopeCookery.item.DoughListener(this), this);
         pluginManager.registerEvents(new de.emrion.kaleidoscopeCookery.item.LunchBag(this), this);
+        pluginManager.registerEvents(new de.emrion.kaleidoscopeCookery.item.RecipeItems(this), this);
         pluginManager.registerEvents(new de.emrion.kaleidoscopeCookery.station.decor.StrawBlockListener(stations), this);
         seats = new Seats(this);
         pluginManager.registerEvents(seats, this);

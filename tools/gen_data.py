@@ -311,7 +311,11 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry["plate"] = bite
             items[full_id] = entry
     for full_id, name_key in EXTRA_ITEMS.items():
-        items.setdefault(full_id, {"model": full_id, "name": name_key})
+        ns, item_id = full_id.split(":")
+        entry = {"model": full_id, "name": name_key, "tooltip": f"tooltip.{ns}.{item_id}"}
+        if full_id == "kaleidoscope_cookery:recipe_item":
+            entry["max-stack"] = 64
+        items.setdefault(full_id, entry)
     return dict(sorted(items.items()))
 
 
