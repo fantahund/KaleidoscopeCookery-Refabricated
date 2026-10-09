@@ -8,7 +8,10 @@ import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.enchantment.EnchantItemEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Verzauberung "Schnelles Messer" (kaleidoscope_cookery:quick_knife, registriert in KaleidoscopeCookeryBootstrap).
  * Sie hängt technisch an den Schwert-Typen, auf denen die Küchenmesser basieren. Dieser Listener sorgt dafür,
- * dass normale Schwerter sie weder am Zaubertisch noch am Amboss bekommen.
+ * dass normale Schwerter sie weder am Zaubertisch noch am Amboss bekommen. Außerdem: kein Schwungangriff mit Messern.
  */
 public class QuickKnifeListener implements Listener {
 
@@ -41,6 +44,17 @@ public class QuickKnifeListener implements Listener {
     public static boolean isKnife(@Nullable ItemStack stack) {
         Key id = CookeryItems.idOf(stack);
         return id != null && id.value().endsWith("kitchen_knife");
+    }
+
+    /**
+     * Mod: "菜刀不能横扫之刃" – Küchenmesser machen keinen Schwungangriff.
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onSweep(EntityDamageByEntityEvent event) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK && event.getDamager() instanceof LivingEntity attacker
+                && attacker.getEquipment() != null && isKnife(attacker.getEquipment().getItemInMainHand())) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
