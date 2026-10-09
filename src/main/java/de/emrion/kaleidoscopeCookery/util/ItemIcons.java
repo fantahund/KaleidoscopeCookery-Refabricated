@@ -21,6 +21,8 @@ public final class ItemIcons {
     /** Item -> großes Bild (16 Pixel) als Zeichen der Schrift kaleidoscope:icons */
     private static final java.util.Map<Key, Component> BIG_ICONS = new java.util.HashMap<>();
     private static final Key ICON_FONT = Key.key("kaleidoscope", "icons");
+    /** Item -> großes Stations-Bild fürs Rezept-Diagramm (32 Pixel) */
+    private static final java.util.Map<Key, Component> DIAGRAMS = new java.util.HashMap<>();
 
     private ItemIcons() {
     }
@@ -28,12 +30,19 @@ public final class ItemIcons {
     public static void load(org.bukkit.plugin.Plugin plugin) {
         ICONS.clear();
         BIG_ICONS.clear();
+        DIAGRAMS.clear();
         try (java.io.InputStream in = plugin.getResource("item_icons.txt")) {
             if (in == null) {
                 plugin.getLogger().warning("item_icons.txt fehlt im Plugin – keine Bilder im Kochbuch");
                 return;
             }
             for (String line : new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).split("\n")) {
+                if (line.startsWith("@diagram|")) {
+                    String[] parts = line.substring("@diagram|".length()).trim().split("=");
+                    DIAGRAMS.put(Key.key(parts[0]), Component.text(Character.toString(Integer.parseInt(parts[1], 16))).font(ICON_FONT)
+                            .color(net.kyori.adventure.text.format.NamedTextColor.WHITE));
+                    continue;
+                }
                 int equals = line.indexOf('=');
                 int bar = line.indexOf('|');
                 if (equals < 0 || bar < equals) {
@@ -61,6 +70,10 @@ public final class ItemIcons {
         }
         Key id = CookeryItems.idOf(stack);
         return ICONS.get(id != null ? id : stack.getType().key());
+    }
+
+    public static @Nullable Component diagram(Key item) {
+        return DIAGRAMS.get(item);
     }
 
     /**

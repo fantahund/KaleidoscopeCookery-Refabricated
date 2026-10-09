@@ -57,6 +57,18 @@ public enum Category {
     }
 
     /**
+     * Bild der Station im Rezept-Diagramm (32 Pixel, in der mittleren Reihe), null wenn es keins gibt.
+     */
+    public @Nullable Component diagramImage() {
+        return switch (this) {
+            case SHAWARMA_SPIT -> ItemIcons.diagram(Key.key("kaleidoscope_cookery", "shawarma_spit"));
+            case CRAFTING -> ItemIcons.diagram(Key.key("minecraft", "crafting_table"));
+            case FURNACE -> ItemIcons.diagram(Key.key("minecraft", "furnace"));
+            default -> Component.text(Character.toString(0xE220 + ordinal())).font(FONT).color(net.kyori.adventure.text.format.NamedTextColor.WHITE);
+        };
+    }
+
+    /**
      * Großes Bild als Schriftzeichen, null wenn es keins gibt.
      */
     public @Nullable Component bigImage() {

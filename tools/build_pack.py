@@ -22,6 +22,8 @@ import json
 import sys
 import urllib.request
 import zipfile
+
+from PIL import Image
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -32,6 +34,8 @@ ZIP_NAME = "KaleidoscopeCookery-Pack.zip"
 ICON_FIRST_CHAR = 0xF0000
 ICON_HEIGHT = 16
 ICON_ASCENT = 7
+# Stations-Bilder im Rezept-Diagramm (32 Pixel, in der mittleren Reihe des Rasters, siehe Cookbook#diagram)
+DIAGRAM_ITEMS = {"minecraft:crafting_table", "minecraft:furnace", "kaleidoscope_cookery:shawarma_spit"}
 ZIP_TIME = (2026, 1, 1, 0, 0, 0)
 MERGE_JSON = ("/lang/", "/sounds.json")
 BUILTIN_PARENTS = {"builtin/generated", "minecraft:builtin/generated"}
@@ -278,11 +282,13 @@ class PackBuilder:
                         return found
             return None
 
-        def textures_of(reference):
+        def textures_of(reference, chain=None):
             textures = {}
             seen = 0
             while reference and seen < 16:
                 seen += 1
+                if chain is not None:
+                    chain.append(norm(reference))
                 model = read(self.model_path(reference))
                 if model is None:
                     break
@@ -290,6 +296,37 @@ class PackBuilder:
                     textures.setdefault(key, value)
                 reference = model.get("parent")
             return textures
+
+        def load_texture(texture):
+            tns, tpath = norm(texture)
+            png = f"assets/{tns}/textures/{tpath}.png"
+            if png in self.files:
+                data = self.files[png]
+            elif png in self.vanilla.names:
+                data = jar.read(png)
+            else:
+                return None
+            image = Image.open(io.BytesIO(data)).convert("RGBA")
+            if image.height > image.width:
+                image = image.crop((0, 0, image.width, image.width))  # animiert: erstes Bild
+            return image.resize((16, 16), Image.NEAREST) if image.size != (16, 16) else image
+
+        def shade(image, factor):
+            r, g, b, a = image.split()
+            return Image.merge("RGBA", [c.point(lambda v: int(v * factor)) for c in (r, g, b)] + [a])
+
+        def iso(top, left, right):
+            """Würfel wie im Inventar: Oberseite, Vorderseite links, Seite rechts (32x32)."""
+            out = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+            faces = [
+                (top, 1.0, (0.5, -1, 8, 0.5, 1, -8)),
+                (left, 0.8, (1, 0, 0, -0.5, 1, -8)),
+                (right, 0.6, (1, 0, -16, 0.5, 1, -24)),
+            ]
+            for texture, factor, data in faces:
+                face = shade(texture, factor).transform((32, 32), Image.AFFINE, data, Image.NEAREST)
+                out.alpha_composite(face)
+            return out
 
         def resolve(textures, value, depth=0):
             while isinstance(value, str) and value.startswith("#") and depth < 8:
@@ -310,6 +347,7 @@ class PackBuilder:
                        and n.count("/") == 3]
         lines = []
         providers = []
+        diagrams = []
         for name in sorted(definitions):
             ns = name.split("/")[1]
             item = name.split("/")[3][:-5]
@@ -319,7 +357,29 @@ class PackBuilder:
             model = first_model(definition.get("model")) if definition else None
             if not model:
                 continue
-            textures = textures_of(model)
+            chain = []
+            textures = textures_of(model, chain)
+            # Würfel-Blöcke (Elternmodell block/cube): 3D-Ansicht wie im Inventar
+            if ("minecraft", "block/cube") in chain:
+                faces = [resolve(textures, textures.get(k)) for k in ("up", "north", "east")]
+                images = [load_texture(f) if f else None for f in faces]
+                if all(images):
+                    icon_path = f"assets/kaleidoscope/textures/icon/{ns}/{item}.png"
+                    buffer = io.BytesIO()
+                    iso(*images).save(buffer, "PNG")
+                    self.files[icon_path] = buffer.getvalue()
+                    char = chr(ICON_FIRST_CHAR + len(providers))
+                    providers.append({"type": "bitmap", "file": f"kaleidoscope:icon/{ns}/{item}.png", "height": ICON_HEIGHT,
+                                      "ascent": ICON_ASCENT, "chars": [char]})
+                    glyph = f"{ord(char):X}"
+                    if f"{ns}:{item}" in DIAGRAM_ITEMS:
+                        diagram_char = chr(ICON_FIRST_CHAR + len(providers))
+                        providers.append({"type": "bitmap", "file": f"kaleidoscope:icon/{ns}/{item}.png", "height": 32,
+                                          "ascent": 14, "chars": [diagram_char]})
+                        diagrams.append(f"@diagram|{ns}:{item}={ord(diagram_char):X}")
+                    up = norm(faces[0])
+                    lines.append(f"{ns}:{item}=minecraft:blocks|{up[0]}:{up[1]}|{glyph}")
+                    continue
             for key in self.ICON_TEXTURE_KEYS + tuple(textures):
                 texture = resolve(textures, textures.get(key))
                 if texture and atlas_of(texture):
@@ -333,11 +393,16 @@ class PackBuilder:
                         providers.append({"type": "bitmap", "file": f"{tns}:{tpath}.png", "height": ICON_HEIGHT,
                                           "ascent": ICON_ASCENT, "chars": [char]})
                         glyph = f"{ord(char):X}"
+                        if f"{ns}:{item}" in DIAGRAM_ITEMS:
+                            diagram_char = chr(ICON_FIRST_CHAR + len(providers))
+                            providers.append({"type": "bitmap", "file": f"{tns}:{tpath}.png", "height": 32,
+                                              "ascent": 14, "chars": [diagram_char]})
+                            diagrams.append(f"@diagram|{ns}:{item}={ord(diagram_char):X}")
                     lines.append(f"{ns}:{item}={atlas_of(texture)}|{tns}:{tpath}|{glyph}")
                     break
         self.files["assets/kaleidoscope/font/icons.json"] = json.dumps({"providers": providers}, ensure_ascii=True).encode("utf-8")
         out.mkdir(parents=True, exist_ok=True)
-        (out / "item_icons.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+        (out / "item_icons.txt").write_text("\n".join(lines + diagrams) + "\n", encoding="utf-8")
         print(f"Item-Bilder: {len(lines)}, davon groß: {len(providers)}")
 
     # ---- Ausgabe ----

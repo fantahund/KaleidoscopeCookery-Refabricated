@@ -40,6 +40,9 @@ SPACE_CHAR = 0xE213
 ARROW_CHAR = 0xE214
 BLANK_ARROW_CHAR = 0xE215
 BLANK_SLOT_CHAR = 0xE216
+BLANK_DIAGRAM_CHAR = 0xE217
+# Stations-Bilder im Rezept-Diagramm (Reihenfolge = CROPS)
+DIAGRAM_CHAR = 0xE220
 
 
 def main():
@@ -56,6 +59,9 @@ def main():
         square.save(sprites / f"{name}.png")
         providers.append({"type": "bitmap", "file": f"kaleidoscope:gui/sprites/cookbook/{name}.png",
                           "height": BIG_HEIGHT, "ascent": 7, "chars": [chr(FIRST_CHAR + index)]})
+        # Im Rezept-Diagramm: in der mittleren Reihe des Rasters, mittig über drei Slot-Reihen
+        providers.append({"type": "bitmap", "file": f"kaleidoscope:gui/sprites/cookbook/{name}.png",
+                          "height": BIG_HEIGHT, "ascent": 14, "chars": [chr(DIAGRAM_CHAR + index)]})
         print(f"{name}: {square.size[0]} px, Zeichen U+{FIRST_CHAR + index:04X}")
     # Werkbank-Raster: Slot (18x18 wie im Inventar), Pfeil, Abstände (siehe Cookbook#craftingGrid)
     slot = Image.new("RGBA", (18, 18), (139, 139, 139, 255))
@@ -79,7 +85,8 @@ def main():
     providers.append({"type": "bitmap", "file": "kaleidoscope:gui/sprites/cookbook/slot.png", "height": 18, "ascent": 8, "chars": [chr(SLOT_CHAR)]})
     providers.append({"type": "bitmap", "file": "kaleidoscope:gui/sprites/cookbook/arrow.png", "height": 16, "ascent": 7, "chars": [chr(ARROW_CHAR)]})
     providers.append({"type": "space", "advances": {chr(BACK_CHAR): -18, chr(GAP_CHAR): 1, chr(SPACE_CHAR): 4,
-                                                    chr(BLANK_ARROW_CHAR): 17, chr(BLANK_SLOT_CHAR): 19}})
+                                                    chr(BLANK_ARROW_CHAR): 17, chr(BLANK_SLOT_CHAR): 19,
+                                                    chr(BLANK_DIAGRAM_CHAR): 33}})
     (OUT / "font").mkdir(parents=True, exist_ok=True)
     (OUT / "font" / "cookbook.json").write_text(json.dumps({"providers": providers}, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
 

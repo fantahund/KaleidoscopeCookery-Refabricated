@@ -11,11 +11,29 @@
     },
     {
       "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/pot.png",
+      "height": 32,
+      "ascent": 14,
+      "chars": [
+        "\ue220"
+      ]
+    },
+    {
+      "type": "bitmap",
       "file": "kaleidoscope:gui/sprites/cookbook/stockpot.png",
       "height": 32,
       "ascent": 7,
       "chars": [
         "\ue201"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/stockpot.png",
+      "height": 32,
+      "ascent": 14,
+      "chars": [
+        "\ue221"
       ]
     },
     {
@@ -29,11 +47,29 @@
     },
     {
       "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/steamer.png",
+      "height": 32,
+      "ascent": 14,
+      "chars": [
+        "\ue222"
+      ]
+    },
+    {
+      "type": "bitmap",
       "file": "kaleidoscope:gui/sprites/cookbook/chopping_board.png",
       "height": 32,
       "ascent": 7,
       "chars": [
         "\ue203"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/chopping_board.png",
+      "height": 32,
+      "ascent": 14,
+      "chars": [
+        "\ue223"
       ]
     },
     {
@@ -47,6 +83,15 @@
     },
     {
       "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/teapot.png",
+      "height": 32,
+      "ascent": 14,
+      "chars": [
+        "\ue224"
+      ]
+    },
+    {
+      "type": "bitmap",
       "file": "kaleidoscope:gui/sprites/cookbook/millstone.png",
       "height": 32,
       "ascent": 7,
@@ -56,11 +101,29 @@
     },
     {
       "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/millstone.png",
+      "height": 32,
+      "ascent": 14,
+      "chars": [
+        "\ue225"
+      ]
+    },
+    {
+      "type": "bitmap",
       "file": "kaleidoscope:gui/sprites/cookbook/bamboo_tray.png",
       "height": 32,
       "ascent": 7,
       "chars": [
         "\ue206"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/bamboo_tray.png",
+      "height": 32,
+      "ascent": 14,
+      "chars": [
+        "\ue226"
       ]
     },
     {
@@ -88,7 +151,8 @@
         "\ue212": 1,
         "\ue213": 4,
         "\ue215": 17,
-        "\ue216": 19
+        "\ue216": 19,
+        "\ue217": 33
       }
     }
   ]
