@@ -2,9 +2,8 @@ package de.emrion.kaleidoscopeCookery.effect;
 
 import de.emrion.kaleidoscopeCookery.KaleidoscopeCookery;
 import de.emrion.kaleidoscopeCookery.util.Keys;
-import net.kyori.adventure.bossbar.BossBar;
+import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,6 +43,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scoreboard.Criteria;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionEffectTypeCategory;
 import org.bukkit.scheduler.BukkitTask;
@@ -61,8 +65,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Die Effekte aus Kaleidoscope Cookery, nachgebaut wie im Mod (VigorEffect, WarmthEffect, SatiatedShieldEvent ...).
- * Aktive Effekte stehen oben in einer Bossbar mit den Original-Icons; die Leiste selbst ist im Resourcepack
- * unsichtbar (weiße Bossbars, textures/gui/sprites/boss_bar/white_*). Eigene Effekte im Inventar anzeigen geht nicht:
+ * Aktive Effekte stehen in der Seitenleiste mit den Original-Icons. Eigene Effekte im Inventar anzeigen geht nicht:
  * Effekte sind eine feste Registry im Client. Beim Verlassen werden sie im Spieler-PDC gespeichert.
  */
 public class EffectManager implements Listener {
@@ -83,7 +86,10 @@ public class EffectManager implements Listener {
 
     private final KaleidoscopeCookery plugin;
     private final Map<UUID, EnumMap<CookeryEffect, Active>> active = new HashMap<>();
-    private final Map<UUID, BossBar> bars = new HashMap<>();
+    private final Map<UUID, Sidebar> sidebars = new HashMap<>();
+
+    private record Sidebar(Scoreboard previous, Scoreboard board, Objective objective) {
+    }
     private BukkitTask task;
     private long tick;
 
@@ -256,48 +262,57 @@ public class EffectManager implements Listener {
 
     // ---- Anzeige ----
 
+    /**
+     * Seitenleiste (Scoreboard) mit den aktiven Effekten: ohne Überschrift, ohne Zahlen, eine Zeile pro Effekt.
+     * Solange Effekte aktiv sind, bekommt der Spieler ein eigenes Scoreboard; danach wieder das vorherige.
+     */
     private void updateBar(Player player) {
         EnumMap<CookeryEffect, Active> effects = active.get(player.getUniqueId());
         if (effects == null || effects.isEmpty()) {
             hideBar(player);
             return;
         }
-        TextComponent.Builder title = Component.text();
-        long longest = 0;
-        boolean first = true;
+        Sidebar sidebar = sidebars.get(player.getUniqueId());
+        if (sidebar == null) {
+            Scoreboard board = plugin.getServer().getScoreboardManager().getNewScoreboard();
+            Objective objective = board.registerNewObjective("kc_effects", Criteria.DUMMY, Component.empty());
+            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+            objective.numberFormat(NumberFormat.blank());
+            sidebar = new Sidebar(player.getScoreboard(), board, objective);
+            sidebars.put(player.getUniqueId(), sidebar);
+            player.setScoreboard(board);
+        }
+        int line = 0;
         for (Map.Entry<CookeryEffect, Active> entry : effects.entrySet()) {
-            if (!first) {
-                title.append(Component.text("   "));
-            }
-            first = false;
             CookeryEffect effect = entry.getKey();
             long remaining = Math.max(0, entry.getValue().end() - tick);
-            longest = Math.max(longest, remaining);
-            title.append(Component.text(String.valueOf(effect.icon())).font(CookeryEffect.FONT).color(NamedTextColor.WHITE));
-            title.append(Component.text(" "));
             Component name = Component.translatable(effect.translationKey()).color(effect.color());
             if (entry.getValue().amplifier() > 0) {
                 name = name.append(Component.text(" " + roman(entry.getValue().amplifier() + 1)));
             }
-            title.append(name);
-            title.append(Component.text(" " + formatTicks(remaining), NamedTextColor.GRAY));
+            Component text = Component.text()
+                    .append(Component.text(String.valueOf(effect.icon())).font(CookeryEffect.FONT).color(NamedTextColor.WHITE))
+                    .append(Component.text(" "))
+                    .append(name)
+                    .append(Component.text(" " + formatTicks(remaining), NamedTextColor.GRAY))
+                    .build();
+            // Unsichtbare, eindeutige Einträge; Reihenfolge über den (versteckten) Score
+            Score score = sidebar.objective().getScore("\u00a7" + Integer.toHexString(line));
+            score.setScore(effects.size() - line);
+            score.customName(text);
+            line++;
         }
-        BossBar bar = bars.get(player.getUniqueId());
-        float progress = (float) Math.clamp(longest / (20.0 * 60 * 5), 0, 1);
-        if (bar == null) {
-            bar = BossBar.bossBar(title.build(), progress, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS);
-            bars.put(player.getUniqueId(), bar);
-            player.showBossBar(bar);
-        } else {
-            bar.name(title.build());
-            bar.progress(progress);
+        for (String entry : sidebar.board().getEntries()) {
+            if (entry.length() == 2 && Integer.parseInt(entry.substring(1), 16) >= line) {
+                sidebar.board().resetScores(entry);
+            }
         }
     }
 
     private void hideBar(Player player) {
-        BossBar bar = bars.remove(player.getUniqueId());
-        if (bar != null) {
-            player.hideBossBar(bar);
+        Sidebar sidebar = sidebars.remove(player.getUniqueId());
+        if (sidebar != null && player.getScoreboard() == sidebar.board()) {
+            player.setScoreboard(sidebar.previous());
         }
     }
 
