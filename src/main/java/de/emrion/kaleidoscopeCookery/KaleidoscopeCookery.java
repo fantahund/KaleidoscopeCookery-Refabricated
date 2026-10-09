@@ -17,6 +17,7 @@ import de.emrion.kaleidoscopeCookery.station.StationManager;
 import de.emrion.kaleidoscopeCookery.station.choppingboard.ChoppingBoardStation;
 import de.emrion.kaleidoscopeCookery.station.plate.PlateStation;
 import de.emrion.kaleidoscopeCookery.station.pot.PotStation;
+import de.emrion.kaleidoscopeCookery.station.steamer.SteamerStation;
 import de.emrion.kaleidoscopeCookery.station.stockpot.StockpotStation;
 import de.emrion.kaleidoscopeCookery.station.stove.StoveListener;
 import de.emrion.kaleidoscopeCookery.station.stove.StoveStation;
@@ -74,6 +75,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         stations.register(PotStation.type());
         stations.register(PlateStation.type());
         stations.register(StockpotStation.type());
+        stations.register(SteamerStation.type());
 
         pluginManager.registerEvents(resourcePack, this);
         pluginManager.registerEvents(stations, this);

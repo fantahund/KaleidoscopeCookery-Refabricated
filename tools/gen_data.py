@@ -360,6 +360,15 @@ def collect_recipes(tags: dict) -> dict:
             }
     pot, flex_pot = collect_pot_recipes(used_tags)
     stockpot, flex_stockpot = collect_stockpot_recipes(used_tags)
+    steamer = {}
+    for ns, folder in pot_dirs("steamer"):
+        for file in sorted(folder.glob("*.json")):
+            recipe = read_json(file)
+            entry = {"ingredient": ingredient(recipe["ingredient"], used_tags)}
+            if recipe.get("cook_tick", 1200) != 1200:
+                entry["time"] = recipe["cook_tick"]
+            entry["result"] = result_list({"result": recipe["result"]})[0]
+            steamer[f"{ns}:steamer/{file.stem}"] = entry
     vanilla = collect_vanilla_recipes(used_tags)
     tag_groups = {}
     for name in sorted(used_tags):
@@ -370,11 +379,11 @@ def collect_recipes(tags: dict) -> dict:
             print(f"WARNUNG: Tag #{name} lässt sich nicht auflösen")
         tag_groups[name] = values
     return {"data-version": DATA_VERSION, "tags": tag_groups, "chopping-board": chopping, "pot": pot, "flex-pot": flex_pot,
-            "stockpot": stockpot, "flex-stockpot": flex_stockpot, "vanilla": vanilla}
+            "stockpot": stockpot, "flex-stockpot": flex_stockpot, "steamer": steamer, "vanilla": vanilla}
 
 
 # Bei jeder inhaltlichen Aenderung der erzeugten recipes.yml erhoehen: das Plugin ersetzt dann alte Kopien (mit Backup)
-DATA_VERSION = 3
+DATA_VERSION = 4
 STOCKPOT_DEFAULT_TIME = 300
 POT_DEFAULT_TIME = 200
 POT_DEFAULT_STIR_FRY = 3
@@ -535,6 +544,8 @@ def collect_vanilla_recipes(used_tags: set) -> dict:
             kind = recipe.get("type")
             if kind not in VANILLA_RECIPE_TYPES:
                 continue
+            if "components" in recipe.get("result", {}):
+                continue  # z. B. vorgefüllter Dampfkorb: Inhalt als Block-Entity-Daten gibt es hier nicht
             entry = {"type": kind.split(":", 1)[1]}
             if kind == "minecraft:crafting_shaped":
                 entry["pattern"] = recipe["pattern"]

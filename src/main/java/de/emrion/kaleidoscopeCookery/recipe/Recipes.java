@@ -23,15 +23,17 @@ public class Recipes {
     private final List<VanillaRecipe> vanilla;
     private final List<PotRecipe> pot;
     private final List<StockpotRecipe> stockpot;
+    private final List<SteamerRecipe> steamer;
     private final int dataVersion;
 
     private Recipes(Map<String, List<String>> tags, List<ChoppingBoardRecipe> choppingBoard, List<VanillaRecipe> vanilla, List<PotRecipe> pot,
-                    List<StockpotRecipe> stockpot, int dataVersion) {
+                    List<StockpotRecipe> stockpot, List<SteamerRecipe> steamer, int dataVersion) {
         this.tags = Collections.unmodifiableMap(tags);
         this.choppingBoard = List.copyOf(choppingBoard);
         this.vanilla = List.copyOf(vanilla);
         this.pot = List.copyOf(pot);
         this.stockpot = List.copyOf(stockpot);
+        this.steamer = List.copyOf(steamer);
         this.dataVersion = dataVersion;
     }
 
@@ -123,7 +125,16 @@ public class Recipes {
                 }
             }
         }
-        return new Recipes(tags, chopping, vanilla, pot, stockpot, config.getInt("data-version", 0));
+        List<SteamerRecipe> steamer = new ArrayList<>();
+        for (Map.Entry<String, ConfigurationSection> entry : sections(config, "steamer").entrySet()) {
+            try {
+                steamer.add(new SteamerRecipe(entry.getKey(), Ingredient.parse(entry.getValue().get("ingredient"), tags),
+                        Math.max(1, entry.getValue().getInt("time", SteamerRecipe.DEFAULT_TIME)), RecipeResult.parse(entry.getValue().get("result"))));
+            } catch (RuntimeException e) {
+                logger.warning("Dampfkorb-Rezept " + entry.getKey() + " ungültig: " + e.getMessage());
+            }
+        }
+        return new Recipes(tags, chopping, vanilla, pot, stockpot, steamer, config.getInt("data-version", 0));
     }
 
     /**
@@ -188,6 +199,19 @@ public class Recipes {
             }
         }
         return null;
+    }
+
+    public @Nullable SteamerRecipe findSteamer(ItemStack input) {
+        for (SteamerRecipe recipe : steamer) {
+            if (recipe.ingredient().test(input)) {
+                return recipe;
+            }
+        }
+        return null;
+    }
+
+    public List<SteamerRecipe> steamer() {
+        return steamer;
     }
 
     public int dataVersion() {

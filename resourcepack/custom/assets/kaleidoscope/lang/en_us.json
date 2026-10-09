@@ -44,5 +44,9 @@
   "kaleidoscope.hud.stockpot.cooking": "Cooking · %s s",
   "kaleidoscope.hud.stockpot.need_lid": "Lid missing – not cooking",
   "kaleidoscope.hud.stockpot.open": "Done! Take the lid off",
-  "kaleidoscope.hud.stockpot.portions": "Done · %s servings"
+  "kaleidoscope.hud.stockpot.portions": "Done · %s servings",
+  "kaleidoscope.hud.steamer.empty": "Empty",
+  "kaleidoscope.hud.steamer.need_lid": "Lid missing (sneak + right click with empty hand)",
+  "kaleidoscope.hud.steamer.cooking": "Steaming · %s s left · heat %s",
+  "kaleidoscope.hud.steamer.done": "Done"
 }

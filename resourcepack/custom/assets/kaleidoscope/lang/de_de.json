@@ -44,5 +44,9 @@
   "kaleidoscope.hud.stockpot.cooking": "Kocht · %s s",
   "kaleidoscope.hud.stockpot.need_lid": "Deckel fehlt – kocht nicht",
   "kaleidoscope.hud.stockpot.open": "Fertig! Deckel abnehmen",
-  "kaleidoscope.hud.stockpot.portions": "Fertig · %s Portionen"
+  "kaleidoscope.hud.stockpot.portions": "Fertig · %s Portionen",
+  "kaleidoscope.hud.steamer.empty": "Leer",
+  "kaleidoscope.hud.steamer.need_lid": "Deckel fehlt (Schleichen + Rechtsklick mit leerer Hand)",
+  "kaleidoscope.hud.steamer.cooking": "Dämpft · noch %s s · Hitze %s",
+  "kaleidoscope.hud.steamer.done": "Fertig gedämpft"
 }

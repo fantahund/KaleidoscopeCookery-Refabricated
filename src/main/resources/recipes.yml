@@ -2,7 +2,7 @@
 # Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert
 # und kann dort angepasst werden (/kc reload).
 # Zutaten: Item-ID, "#tag" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.
-data-version: 3
+data-version: 4
 tags:
   "c:bricks/normal":
     - "minecraft:brick"
@@ -1878,6 +1878,19 @@ flex-stockpot:
       - "#kaleidoscope_grilling:ingredients/leafy_greens"
     carrier: "minecraft:bowl"
     result: "kaleidoscope_grilling:sour_spicy_noodles"
+steamer:
+  "kaleidoscope_cookery:steamer/bamboo_tube_rice":
+    ingredient: "kaleidoscope_cookery:raw_bamboo_tube_rice"
+    result: "kaleidoscope_cookery:bamboo_tube_rice"
+  "kaleidoscope_cookery:steamer/baozi":
+    ingredient: "kaleidoscope_cookery:stuffed_dough_food"
+    result: "kaleidoscope_cookery:baozi"
+  "kaleidoscope_cookery:steamer/mantou":
+    ingredient: "#c:dough"
+    result: "kaleidoscope_cookery:mantou"
+  "kaleidoscope_cookery:steamer/qingtuan":
+    ingredient: "minecraft:slime_ball"
+    result: "kaleidoscope_cookery:qingtuan"
 vanilla:
   "kaleidoscope_cookery:apple_platter":
     type: crafting_shapeless
@@ -2858,24 +2871,6 @@ vanilla:
       - "kaleidoscope_cookery:zongzi"
       - "minecraft:bowl"
     result: "kaleidoscope_cookery:zongzi_plate"
-  "kaleidoscope_cookery:raw_dough_steamer":
-    type: crafting_shapeless
-    ingredients:
-      - "kaleidoscope_cookery:steamer"
-      - "kaleidoscope_cookery:raw_dough"
-      - "kaleidoscope_cookery:raw_dough"
-      - "kaleidoscope_cookery:raw_dough"
-      - "kaleidoscope_cookery:raw_dough"
-    result: "kaleidoscope_cookery:steamer"
-  "kaleidoscope_cookery:stuffed_dough_food_steamer":
-    type: crafting_shapeless
-    ingredients:
-      - "kaleidoscope_cookery:steamer"
-      - "kaleidoscope_cookery:stuffed_dough_food"
-      - "kaleidoscope_cookery:stuffed_dough_food"
-      - "kaleidoscope_cookery:stuffed_dough_food"
-      - "kaleidoscope_cookery:stuffed_dough_food"
-    result: "kaleidoscope_cookery:steamer"
   "kaleidoscope_cookery:chili_seed_from_green_chili":
     type: crafting_shapeless
     ingredients:

@@ -95,6 +95,10 @@ public class StationListener implements Listener {
         ItemStack held = player.getInventory().getItemInMainHand();
         boolean stationItem = stations.typeByItem(CookeryItems.idOf(held)) != null;
         // Stations-Items (Wok auf Herd ...) zuerst platzieren, Gerichte nur, wenn die Station nichts damit anfängt
+        if (stationItem && station.interceptPlacement(player, held)) {
+            player.swingMainHand();
+            return;
+        }
         if (stationItem && placeOnStation(player, held, event)) {
             return;
         }

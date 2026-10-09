@@ -74,6 +74,15 @@ public abstract class Station {
     }
 
     /**
+     * Rechtsklick mit einem Stations-Item auf diese Station, bevor normal platziert wird (z. B. Dampfkörbe stapeln).
+     *
+     * @return true, wenn die Station das Item selbst verarbeitet hat
+     */
+    public boolean interceptPlacement(Player player, ItemStack held) {
+        return false;
+    }
+
+    /**
      * Linksklick ohne Schleichen (Schleichen + Linksklick baut ab).
      *
      * @return true, wenn etwas passiert ist
