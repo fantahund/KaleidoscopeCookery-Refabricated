@@ -32,10 +32,14 @@ CROPS = {
 # und reicht nach unten (Dialoge schneiden alles über der ersten Zeile ab), darunter Leerzeilen freihalten
 FIRST_CHAR = 0xE200
 BIG_HEIGHT = 32
-# Slot-Kästchen, 10 Pixel zurück, 1 Pixel Abstand (siehe Cookbook#craftingGrid)
+# Werkbank-Raster (siehe Cookbook#craftingGrid): Slot, 18 zurück, 1 Abstand, 4 Abstand, Pfeil, leerer Pfeil, leerer Slot
 SLOT_CHAR = 0xE210
 BACK_CHAR = 0xE211
 GAP_CHAR = 0xE212
+SPACE_CHAR = 0xE213
+ARROW_CHAR = 0xE214
+BLANK_ARROW_CHAR = 0xE215
+BLANK_SLOT_CHAR = 0xE216
 
 
 def main():
@@ -53,18 +57,29 @@ def main():
         providers.append({"type": "bitmap", "file": f"kaleidoscope:gui/sprites/cookbook/{name}.png",
                           "height": BIG_HEIGHT, "ascent": 7, "chars": [chr(FIRST_CHAR + index)]})
         print(f"{name}: {square.size[0]} px, Zeichen U+{FIRST_CHAR + index:04X}")
-    # Werkbank-Raster: Slot-Kästchen (10x10 wie ein Inventar-Slot) und Rückwärts-Leerzeichen, um ein Item-Bild hineinzusetzen
-    slot = Image.new("RGBA", (10, 10), (139, 139, 139, 255))
-    for i in range(10):
+    # Werkbank-Raster: Slot (18x18 wie im Inventar), Pfeil, Abstände (siehe Cookbook#craftingGrid)
+    slot = Image.new("RGBA", (18, 18), (139, 139, 139, 255))
+    for i in range(18):
         slot.putpixel((i, 0), (55, 55, 55, 255))
         slot.putpixel((0, i), (55, 55, 55, 255))
-        slot.putpixel((i, 9), (255, 255, 255, 255))
-        slot.putpixel((9, i), (255, 255, 255, 255))
-    slot.putpixel((0, 9), (139, 139, 139, 255))
-    slot.putpixel((9, 0), (139, 139, 139, 255))
+        slot.putpixel((i, 17), (255, 255, 255, 255))
+        slot.putpixel((17, i), (255, 255, 255, 255))
+    slot.putpixel((0, 17), (139, 139, 139, 255))
+    slot.putpixel((17, 0), (139, 139, 139, 255))
     slot.save(sprites / "slot.png")
-    providers.append({"type": "bitmap", "file": "kaleidoscope:gui/sprites/cookbook/slot.png", "height": 10, "ascent": 8, "chars": [chr(SLOT_CHAR)]})
-    providers.append({"type": "space", "advances": {chr(BACK_CHAR): -10, chr(GAP_CHAR): 1}})
+    arrow = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    gray = (139, 139, 139, 255)
+    for x in range(1, 11):
+        for y in range(7, 10):
+            arrow.putpixel((x, y), gray)
+    for i in range(5):
+        for y in range(8 - i, 9 + i):
+            arrow.putpixel((14 - i, y), gray)
+    arrow.save(sprites / "arrow.png")
+    providers.append({"type": "bitmap", "file": "kaleidoscope:gui/sprites/cookbook/slot.png", "height": 18, "ascent": 8, "chars": [chr(SLOT_CHAR)]})
+    providers.append({"type": "bitmap", "file": "kaleidoscope:gui/sprites/cookbook/arrow.png", "height": 16, "ascent": 7, "chars": [chr(ARROW_CHAR)]})
+    providers.append({"type": "space", "advances": {chr(BACK_CHAR): -18, chr(GAP_CHAR): 1, chr(SPACE_CHAR): 4,
+                                                    chr(BLANK_ARROW_CHAR): 17, chr(BLANK_SLOT_CHAR): 19}})
     (OUT / "font").mkdir(parents=True, exist_ok=True)
     (OUT / "font" / "cookbook.json").write_text(json.dumps({"providers": providers}, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
 

@@ -184,10 +184,10 @@ public class Cookbook {
         Supplier<Dialog> self = () -> entryPage(entry, back);
         List<DialogBody> body = new ArrayList<>();
         if (entry.grid() != null) {
-            body.add(DialogBody.plainMessage(craftingGrid(entry), 120));
+            body.add(DialogBody.plainMessage(craftingGrid(entry), 200));
         }
-        // Ergebnis(se)
-        for (CookbookEntry.Output output : entry.outputs()) {
+        // Ergebnis(se) und Zutaten – bei Werkbank-Rezepten zeigt das Raster alles
+        for (CookbookEntry.Output output : entry.grid() != null ? List.<CookbookEntry.Output>of() : entry.outputs()) {
             Component description = name(output.item()).append(Component.text(" ×" + output.amount(), NamedTextColor.GRAY));
             if (output.chance() < 1) {
                 description = description.append(Component.text(" · ", NamedTextColor.DARK_GRAY))
@@ -197,8 +197,10 @@ public class Cookbook {
                     .showDecorations(true).showTooltip(true).build());
         }
         // Zutaten
-        body.add(DialogBody.plainMessage(Lang.get("cookbook.ingredients").color(NamedTextColor.GOLD)));
-        for (CookbookEntry.Input input : entry.inputs()) {
+        if (entry.grid() == null) {
+            body.add(DialogBody.plainMessage(Lang.get("cookbook.ingredients").color(NamedTextColor.GOLD)));
+        }
+        for (CookbookEntry.Input input : entry.grid() != null ? List.<CookbookEntry.Input>of() : entry.inputs()) {
             Key first = input.ingredient().items().iterator().next();
             Component description = name(first).append(Component.text(" ×" + input.amount(), NamedTextColor.GRAY));
             int others = input.ingredient().items().size() - 1;
@@ -237,45 +239,52 @@ public class Cookbook {
     }
 
     private static final Key FONT = Key.key("kaleidoscope", "cookbook");
-    private static final Component SLOT = Component.text("\uE210").font(FONT).color(NamedTextColor.WHITE);
-    private static final Component BACK = Component.text("\uE211").font(FONT);
-    private static final Component GAP = Component.text("\uE212").font(FONT);
+    private static final Component SLOT = glyph(0xE210);
+    private static final Component BACK = glyph(0xE211);
+    private static final Component GAP = glyph(0xE212);
+    private static final Component SPACE = glyph(0xE213);
+    private static final Component ARROW = glyph(0xE214);
+    private static final Component BLANK_ARROW = glyph(0xE215);
+    private static final Component BLANK_SLOT = glyph(0xE216);
+
+    private static Component glyph(int codepoint) {
+        return Component.text(Character.toString(codepoint)).font(FONT).color(NamedTextColor.WHITE);
+    }
 
     /**
-     * Werkbank-Raster aus Slot-Kästchen mit den Item-Bildern darin, daneben Pfeil und Ergebnis.
-     * Mit der Maus über einem Feld erscheint der Item-Tooltip.
+     * Werkbank-Raster wie im Spiel: 3x3 Slots mit 16-Pixel-Bildern, Pfeil und Ergebnis-Slot. Jede Zeile ist gleich
+     * breit (Platzhalter statt Pfeil/Ergebnis), weil der Dialog jede Zeile einzeln zentriert. Die Slots sind 18 Pixel
+     * hoch – zwischen den Reihen steht deshalb eine Leerzeile. Maus über einem Feld zeigt den Item-Tooltip.
      */
     private static Component craftingGrid(CookbookEntry entry) {
         List<de.emrion.kaleidoscopeCookery.recipe.Ingredient> grid = entry.grid();
         Component text = Component.empty();
         for (int row = 0; row < 3; row++) {
             if (row > 0) {
-                text = text.append(Component.newline());
+                text = text.append(Component.text("\n\n"));
             }
             for (int column = 0; column < 3; column++) {
                 de.emrion.kaleidoscopeCookery.recipe.Ingredient ingredient = grid.get(row * 3 + column);
-                text = text.append(SLOT);
-                if (ingredient != null && !ingredient.items().isEmpty()) {
-                    ItemStack stack = stack(ingredient.items().iterator().next(), 1);
-                    Component icon = ItemIcons.of(stack);
-                    if (icon != null) {
-                        text = text.append(BACK).append(icon.hoverEvent(stack.asHoverEvent())).append(GAP);
-                    }
-                }
+                text = text.append(slot(ingredient == null || ingredient.items().isEmpty() ? null : stack(ingredient.items().iterator().next(), 1)));
             }
-            if (row == 1) {
-                ItemStack result = stack(entry.main().item(), entry.main().amount());
-                Component icon = ItemIcons.of(result);
-                text = text.append(Component.text("  →  ", NamedTextColor.GRAY)).append(SLOT);
-                if (icon != null) {
-                    text = text.append(BACK).append(icon.hoverEvent(result.asHoverEvent())).append(GAP);
-                }
-                if (entry.main().amount() > 1) {
-                    text = text.append(Component.text(" ×" + entry.main().amount(), NamedTextColor.GRAY));
-                }
-            }
+            text = text.append(SPACE).append(row == 1 ? ARROW : BLANK_ARROW).append(SPACE)
+                    .append(row == 1 ? slot(stack(entry.main().item(), entry.main().amount())) : BLANK_SLOT);
+        }
+        if (entry.main().amount() > 1) {
+            text = text.append(Component.text("\n\n")).append(Component.text("×" + entry.main().amount(), NamedTextColor.GRAY));
         }
         return text;
+    }
+
+    /**
+     * Ein Slot (Vorschub 19), darin das Item-Bild (16 Pixel, 1 Pixel Rand).
+     */
+    private static Component slot(@Nullable ItemStack stack) {
+        Component icon = ItemIcons.big(stack);
+        if (icon == null) {
+            return SLOT;
+        }
+        return Component.text().append(SLOT).append(BACK).append(GAP).append(icon.hoverEvent(stack.asHoverEvent())).append(GAP).build();
     }
 
     private Dialog usesPage(Key item, Supplier<Dialog> back) {

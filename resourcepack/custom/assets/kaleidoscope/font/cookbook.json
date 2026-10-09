@@ -66,17 +66,29 @@
     {
       "type": "bitmap",
       "file": "kaleidoscope:gui/sprites/cookbook/slot.png",
-      "height": 10,
+      "height": 18,
       "ascent": 8,
       "chars": [
         "\ue210"
       ]
     },
     {
+      "type": "bitmap",
+      "file": "kaleidoscope:gui/sprites/cookbook/arrow.png",
+      "height": 16,
+      "ascent": 7,
+      "chars": [
+        "\ue214"
+      ]
+    },
+    {
       "type": "space",
       "advances": {
-        "\ue211": -10,
-        "\ue212": 1
+        "\ue211": -18,
+        "\ue212": 1,
+        "\ue213": 4,
+        "\ue215": 17,
+        "\ue216": 19
       }
     }
   ]

@@ -28,6 +28,10 @@ ROOT = Path(__file__).resolve().parent.parent
 LAYERS = [ROOT / "resourcepack" / "imported", ROOT / "resourcepack" / "custom"]
 MC_VERSION = "26.3"
 ZIP_NAME = "KaleidoscopeCookery-Pack.zip"
+# Große Item-Bilder fürs Kochbuch (Schrift kaleidoscope:icons): Zeichen ab U+F0000, 16 Pixel hoch, oben an der Zeile
+ICON_FIRST_CHAR = 0xF0000
+ICON_HEIGHT = 16
+ICON_ASCENT = 7
 ZIP_TIME = (2026, 1, 1, 0, 0, 0)
 MERGE_JSON = ("/lang/", "/sounds.json")
 BUILTIN_PARENTS = {"builtin/generated", "minecraft:builtin/generated"}
@@ -247,6 +251,13 @@ class PackBuilder:
 
         def first_model(node):
             if isinstance(node, dict):
+                # Inventar-Ansicht bevorzugen (select display_context mit "gui")
+                for case in node.get("cases", []) if isinstance(node.get("cases"), list) else []:
+                    when = case.get("when")
+                    if when == "gui" or (isinstance(when, list) and "gui" in when):
+                        found = first_model(case.get("model"))
+                        if found:
+                            return found
                 if node.get("type") in ("minecraft:model", "model") and "model" in node:
                     return node["model"]
                 if "base" in node and isinstance(node["base"], str):
@@ -298,6 +309,7 @@ class PackBuilder:
         definitions = [n for n in set(self.files) | self.vanilla.names if "/items/" in n and n.startswith("assets/") and n.endswith(".json")
                        and n.count("/") == 3]
         lines = []
+        providers = []
         for name in sorted(definitions):
             ns = name.split("/")[1]
             item = name.split("/")[3][:-5]
@@ -312,11 +324,21 @@ class PackBuilder:
                 texture = resolve(textures, textures.get(key))
                 if texture and atlas_of(texture):
                     tns, tpath = norm(texture)
-                    lines.append(f"{ns}:{item}={atlas_of(texture)}|{tns}:{tpath}")
+                    png = f"assets/{tns}/textures/{tpath}.png"
+                    # Große Variante als Schriftzeichen (16 Pixel), nicht für animierte Texturen (Streifen mit mehreren Bildern)
+                    glyph = ""
+                    if (png in self.files or png in self.vanilla.names) and (png + ".mcmeta") not in self.files \
+                            and (png + ".mcmeta") not in self.vanilla.names:
+                        char = chr(ICON_FIRST_CHAR + len(providers))
+                        providers.append({"type": "bitmap", "file": f"{tns}:{tpath}.png", "height": ICON_HEIGHT,
+                                          "ascent": ICON_ASCENT, "chars": [char]})
+                        glyph = f"{ord(char):X}"
+                    lines.append(f"{ns}:{item}={atlas_of(texture)}|{tns}:{tpath}|{glyph}")
                     break
+        self.files["assets/kaleidoscope/font/icons.json"] = json.dumps({"providers": providers}, ensure_ascii=True).encode("utf-8")
         out.mkdir(parents=True, exist_ok=True)
         (out / "item_icons.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
-        print(f"Item-Bilder: {len(lines)}")
+        print(f"Item-Bilder: {len(lines)}, davon groß: {len(providers)}")
 
     # ---- Ausgabe ----
 
