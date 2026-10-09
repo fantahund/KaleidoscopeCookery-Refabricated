@@ -120,7 +120,8 @@ public class Cookbook {
         List<DialogBody> body = new ArrayList<>();
         Component image = category.bigImage();
         if (image != null) {
-            body.add(DialogBody.plainMessage(image));
+            // Das Bild reicht von der ersten Zeile nach unten (32 Pixel ≈ 4 Zeilen): Platz freihalten
+            body.add(DialogBody.plainMessage(image.append(Component.text("\n\n\n"))));
         }
         List<Component> guide = category.guide();
         if (!guide.isEmpty()) {

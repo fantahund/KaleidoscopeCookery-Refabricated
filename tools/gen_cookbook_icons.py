@@ -27,7 +27,8 @@ CROPS = {
     "millstone": ("millstone", (21, 12, 104, 85)),
     "bamboo_tray": ("bamboo_tray", (14, 15, 85, 55)),
 }
-# Erstes Schriftzeichen der großen Bilder; Reihenfolge = CROPS
+# Erstes Schriftzeichen der großen Bilder; Reihenfolge = CROPS. Ascent 7: das Bild beginnt oben an der Zeile
+# und reicht nach unten (Dialoge schneiden alles über der ersten Zeile ab), darunter Leerzeilen freihalten
 FIRST_CHAR = 0xE200
 BIG_HEIGHT = 32
 
@@ -45,7 +46,7 @@ def main():
         square.paste(part, ((size - part.width) // 2, (size - part.height) // 2))
         square.save(sprites / f"{name}.png")
         providers.append({"type": "bitmap", "file": f"kaleidoscope:gui/sprites/cookbook/{name}.png",
-                          "height": BIG_HEIGHT, "ascent": BIG_HEIGHT - 8, "chars": [chr(FIRST_CHAR + index)]})
+                          "height": BIG_HEIGHT, "ascent": 7, "chars": [chr(FIRST_CHAR + index)]})
         print(f"{name}: {square.size[0]} px, Zeichen U+{FIRST_CHAR + index:04X}")
     (OUT / "font").mkdir(parents=True, exist_ok=True)
     (OUT / "font" / "cookbook.json").write_text(json.dumps({"providers": providers}, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")

@@ -221,6 +221,103 @@ class PackBuilder:
             data["sources"] += [s for s in sources if json.dumps(s, sort_keys=True) not in known]
             self.files[path] = json.dumps(data).encode("utf-8")
 
+    # ---- Item-Bilder fürs Kochbuch ----
+
+    ICON_TEXTURE_KEYS = ("layer0", "all", "side", "front", "top", "texture", "cross", "plant", "particle")
+
+    def write_item_icons(self, out: Path):
+        """
+        Für jedes Item (Vanilla aus dem Client-Jar und die Mod-Items) eine flache Textur bestimmen, die als Sprite
+        im Text angezeigt werden kann: item_icons.txt mit Zeilen "item=atlas|sprite".
+        """
+        jar = zipfile.ZipFile(self.vanilla.jar_path)
+        cache = {}
+
+        def read(path):
+            if path in cache:
+                return cache[path]
+            if path in self.files:
+                data = load_json(self.files[path], path)
+            elif path in self.vanilla.names:
+                data = json.loads(jar.read(path))
+            else:
+                data = None
+            cache[path] = data
+            return data
+
+        def first_model(node):
+            if isinstance(node, dict):
+                if node.get("type") in ("minecraft:model", "model") and "model" in node:
+                    return node["model"]
+                if "base" in node and isinstance(node["base"], str):
+                    return node["base"]
+                for key in ("fallback", "on_false", "on_true", "model", "cases", "entries", "models"):
+                    if key in node:
+                        found = first_model(node[key])
+                        if found:
+                            return found
+                for value in node.values():
+                    found = first_model(value)
+                    if found:
+                        return found
+            elif isinstance(node, list):
+                for value in node:
+                    found = first_model(value)
+                    if found:
+                        return found
+            return None
+
+        def textures_of(reference):
+            textures = {}
+            seen = 0
+            while reference and seen < 16:
+                seen += 1
+                model = read(self.model_path(reference))
+                if model is None:
+                    break
+                for key, value in model.get("textures", {}).items():
+                    textures.setdefault(key, value)
+                reference = model.get("parent")
+            return textures
+
+        def resolve(textures, value, depth=0):
+            while isinstance(value, str) and value.startswith("#") and depth < 8:
+                value = textures.get(value[1:])
+                depth += 1
+            return value if isinstance(value, str) and not value.startswith("#") else None
+
+        def atlas_of(texture):
+            ns, path = norm(texture)
+            top = path.split("/", 1)[0]
+            if top == "item":
+                return "minecraft:items"
+            if top == "block" or top in self.texture_dirs:
+                return "minecraft:blocks"
+            return None
+
+        definitions = [n for n in set(self.files) | self.vanilla.names if "/items/" in n and n.startswith("assets/") and n.endswith(".json")
+                       and n.count("/") == 3]
+        lines = []
+        for name in sorted(definitions):
+            ns = name.split("/")[1]
+            item = name.split("/")[3][:-5]
+            if ns not in ("minecraft", "kaleidoscope_cookery", "kaleidoscope_grilling"):
+                continue
+            definition = read(name)
+            model = first_model(definition.get("model")) if definition else None
+            if not model:
+                continue
+            textures = textures_of(model)
+            for key in self.ICON_TEXTURE_KEYS + tuple(textures):
+                texture = resolve(textures, textures.get(key))
+                if texture and atlas_of(texture):
+                    tns, tpath = norm(texture)
+                    lines.append(f"{ns}:{item}={atlas_of(texture)}|{tns}:{tpath}")
+                    break
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "item_icons.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+        print(f"Item-Bilder: {len(lines)}")
+
     # ---- Ausgabe ----
 
     def write_zip(self, out: Path) -> str:
@@ -260,6 +357,7 @@ class PackBuilder:
             print(f"Resourcepack ungueltig: {len(set(self.errors))} Fehler", file=sys.stderr)
             return 1
         self.add_atlases()
+        self.write_item_icons(out)
         sha1 = self.write_zip(out)
         size = (out / ZIP_NAME).stat().st_size
         print(f"Resourcepack OK: {len(self.files)} Dateien, {size / 1024 / 1024:.2f} MiB")

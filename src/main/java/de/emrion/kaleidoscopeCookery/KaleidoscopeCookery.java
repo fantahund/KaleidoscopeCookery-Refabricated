@@ -77,7 +77,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         resourcePack = new ResourcePackService(this);
         try (ZipFile pack = new ZipFile(resourcePack.extract().toFile())) {
             Lang.load(pack, getLogger());
-            de.emrion.kaleidoscopeCookery.util.ItemIcons.load(pack);
+            de.emrion.kaleidoscopeCookery.util.ItemIcons.load(this);
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Resourcepack/Sprachdateien konnten nicht geladen werden", e);
         }
