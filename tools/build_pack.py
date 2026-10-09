@@ -36,6 +36,9 @@ ICON_HEIGHT = 16
 ICON_ASCENT = 7
 # Stations-Bilder im Rezept-Diagramm (32 Pixel, in der mittleren Reihe des Rasters, siehe Cookbook#diagram)
 DIAGRAM_ITEMS = {"minecraft:crafting_table", "minecraft:furnace", "kaleidoscope_cookery:shawarma_spit"}
+# Items, deren Block aus mehreren Modellen übereinander besteht: (Modell, y-Versatz in Modell-Pixeln)
+MULTIBLOCK_MODELS = {"kaleidoscope_cookery:shawarma_spit": [("kaleidoscope_cookery:block/shawarma_spit_lower", 0),
+                                                            ("kaleidoscope_cookery:block/shawarma_spit_upper", 16)]}
 ZIP_TIME = (2026, 1, 1, 0, 0, 0)
 MERGE_JSON = ("/lang/", "/sounds.json")
 BUILTIN_PARENTS = {"builtin/generated", "minecraft:builtin/generated"}
@@ -297,37 +300,6 @@ class PackBuilder:
                 reference = model.get("parent")
             return textures
 
-        def load_texture(texture):
-            tns, tpath = norm(texture)
-            png = f"assets/{tns}/textures/{tpath}.png"
-            if png in self.files:
-                data = self.files[png]
-            elif png in self.vanilla.names:
-                data = jar.read(png)
-            else:
-                return None
-            image = Image.open(io.BytesIO(data)).convert("RGBA")
-            if image.height > image.width:
-                image = image.crop((0, 0, image.width, image.width))  # animiert: erstes Bild
-            return image.resize((16, 16), Image.NEAREST) if image.size != (16, 16) else image
-
-        def shade(image, factor):
-            r, g, b, a = image.split()
-            return Image.merge("RGBA", [c.point(lambda v: int(v * factor)) for c in (r, g, b)] + [a])
-
-        def iso(top, left, right):
-            """Würfel wie im Inventar: Oberseite, Vorderseite links, Seite rechts (32x32)."""
-            out = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
-            faces = [
-                (top, 1.0, (0.5, -1, 8, 0.5, 1, -8)),
-                (left, 0.8, (1, 0, 0, -0.5, 1, -8)),
-                (right, 0.6, (1, 0, -16, 0.5, 1, -24)),
-            ]
-            for texture, factor, data in faces:
-                face = shade(texture, factor).transform((32, 32), Image.AFFINE, data, Image.NEAREST)
-                out.alpha_composite(face)
-            return out
-
         def resolve(textures, value, depth=0):
             while isinstance(value, str) and value.startswith("#") and depth < 8:
                 value = textures.get(value[1:])
@@ -342,6 +314,135 @@ class PackBuilder:
             if top == "block" or top in self.texture_dirs:
                 return "minecraft:blocks"
             return None
+
+        def load_texture(texture):
+            """Textur in Originalgröße; animierte (Streifen) nur das erste Bild."""
+            tns, tpath = norm(texture)
+            png = f"assets/{tns}/textures/{tpath}.png"
+            if png in self.files:
+                data = self.files[png]
+            elif png in self.vanilla.names:
+                data = jar.read(png)
+            else:
+                return None
+            image = Image.open(io.BytesIO(data)).convert("RGBA")
+            if image.height > image.width and image.height % image.width == 0:
+                image = image.crop((0, 0, image.width, image.width))
+            return image
+
+        def is_animated(texture):
+            tns, tpath = norm(texture)
+            meta = f"assets/{tns}/textures/{tpath}.png.mcmeta"
+            data = read(meta) if (meta in self.files or meta in self.vanilla.names) else None
+            return bool(data and "animation" in data)
+
+        def shade(image, factor, tint=None):
+            r, g, b, a = image.split()
+            channels = [r, g, b]
+            if tint:
+                channels = [c.point(lambda v, t=t: v * t // 255) for c, t in zip(channels, tint)]
+            return Image.merge("RGBA", [c.point(lambda v: int(v * factor)) for c in channels] + [a])
+
+        def model_parts(reference):
+            """Texturen und Elemente eines Modells (Elemente vom ersten Modell der Kette, das welche hat)."""
+            textures = {}
+            elements = None
+            seen = 0
+            while reference and seen < 16:
+                seen += 1
+                model = read(self.model_path(reference))
+                if model is None:
+                    break
+                for key, value in model.get("textures", {}).items():
+                    textures.setdefault(key, value)
+                if elements is None and "elements" in model:
+                    elements = model["elements"]
+                reference = model.get("parent")
+            return textures, elements
+
+        FOLIAGE = (124, 189, 107)
+
+        def render3d(parts):
+            """
+            Blockmodell wie im Inventar zeichnen: Blick von Nordwesten schräg von oben, sichtbar sind Oberseite,
+            Nordseite (links) und Westseite (rechts). Elemente werden als Quader gezeichnet (Drehungen ignoriert),
+            von hinten nach vorne. 2 Pixel je Modell-Pixel in der Breite.
+            parts: Liste aus (Texturen, Elemente, y-Versatz in Modell-Pixeln).
+            """
+            extra = max(offset for _, _, offset in parts)
+            height = 33 + extra
+            faces = []
+            for textures, elements, offset in parts:
+                for element in elements:
+                    (x1, y1, z1), (x2, y2, z2) = element["from"], element["to"]
+                    y1, y2 = y1 + offset, y2 + offset
+                    for direction, face in element.get("faces", {}).items():
+                        if direction not in ("up", "north", "west"):
+                            continue
+                        texture = resolve(textures, face.get("texture"))
+                        if not texture:
+                            continue
+                        uv = face.get("uv")
+                        if direction == "up":
+                            uv = uv or [x1, z1, x2, z2]
+                            corners = ((x1, y2, z1), (x2, y2, z1), (x1, y2, z2))
+                            center = ((x1 + x2) / 2, y2, (z1 + z2) / 2)
+                            light = 1.0
+                        elif direction == "north":
+                            uv = uv or [16 - x2, 16 - (y2 - offset), 16 - x1, 16 - (y1 - offset)]
+                            corners = ((x2, y2, z1), (x1, y2, z1), (x2, y1, z1))
+                            center = ((x1 + x2) / 2, (y1 + y2) / 2, z1)
+                            light = 0.8
+                        else:
+                            uv = uv or [z1, 16 - (y2 - offset), z2, 16 - (y1 - offset)]
+                            corners = ((x1, y2, z1), (x1, y2, z2), (x1, y1, z1))
+                            center = (x1, (y1 + y2) / 2, (z1 + z2) / 2)
+                            light = 0.6
+                        faces.append((center[0] + center[2] - center[1], texture, uv, corners, light, "tintindex" in face))
+            out = Image.new("RGBA", (32, height), (0, 0, 0, 0))
+
+            def screen(point):
+                x, y, z = point
+                return 16 - x + z, 16 - 0.5 * x - 0.5 * z + (16 + extra - y)
+
+            for _, texture, uv, corners, light, tinted in sorted(faces, key=lambda f: -f[0]):
+                image = load_texture(texture)
+                if image is None:
+                    continue
+                scale = image.width / 16
+                u1, v1, u2, v2 = uv
+                box = (min(u1, u2) * scale, min(v1, v2) * scale, max(u1, u2) * scale, max(v1, v2) * scale)
+                if box[2] - box[0] < 0.5 or box[3] - box[1] < 0.5:
+                    continue
+                part = image.crop(tuple(round(v) for v in box))
+                if u2 < u1:
+                    part = part.transpose(Image.FLIP_LEFT_RIGHT)
+                if v2 < v1:
+                    part = part.transpose(Image.FLIP_TOP_BOTTOM)
+                part = shade(part, light, FOLIAGE if tinted else None)
+                (ax, ay), (bx, by), (cx, cy) = (screen(c) for c in corners)
+                w, h = part.size
+                # Textur (p, q) -> Bildschirm: A + p/w (B - A) + q/h (C - A); PIL braucht die Umkehrung
+                m11, m12, m21, m22 = (bx - ax) / w, (cx - ax) / h, (by - ay) / w, (cy - ay) / h
+                det = m11 * m22 - m12 * m21
+                if abs(det) < 1e-9:
+                    continue
+                i11, i12, i21, i22 = m22 / det, -m12 / det, -m21 / det, m11 / det
+                data = (i11, i12, -(i11 * ax + i12 * ay), i21, i22, -(i21 * ax + i22 * ay))
+                out.alpha_composite(part.transform(out.size, Image.AFFINE, data, Image.NEAREST))
+            box = out.getbbox()
+            return out if box else None
+
+        def add_glyph(file, height, ascent):
+            char = chr(ICON_FIRST_CHAR + len(providers))
+            providers.append({"type": "bitmap", "file": file, "height": height, "ascent": ascent, "chars": [char]})
+            return f"{ord(char):X}"
+
+        def save_icon(ns, item, image):
+            buffer = io.BytesIO()
+            image.save(buffer, "PNG")
+            self.files[f"assets/kaleidoscope/textures/icon/{ns}/{item}.png"] = buffer.getvalue()
+            return f"kaleidoscope:icon/{ns}/{item}.png"
 
         definitions = [n for n in set(self.files) | self.vanilla.names if "/items/" in n and n.startswith("assets/") and n.endswith(".json")
                        and n.count("/") == 3]
@@ -359,26 +460,26 @@ class PackBuilder:
                 continue
             chain = []
             textures = textures_of(model, chain)
-            # Würfel-Blöcke (Elternmodell block/cube): 3D-Ansicht wie im Inventar
-            if ("minecraft", "block/cube") in chain:
-                faces = [resolve(textures, textures.get(k)) for k in ("up", "north", "east")]
-                images = [load_texture(f) if f else None for f in faces]
-                if all(images):
-                    icon_path = f"assets/kaleidoscope/textures/icon/{ns}/{item}.png"
-                    buffer = io.BytesIO()
-                    iso(*images).save(buffer, "PNG")
-                    self.files[icon_path] = buffer.getvalue()
-                    char = chr(ICON_FIRST_CHAR + len(providers))
-                    providers.append({"type": "bitmap", "file": f"kaleidoscope:icon/{ns}/{item}.png", "height": ICON_HEIGHT,
-                                      "ascent": ICON_ASCENT, "chars": [char]})
-                    glyph = f"{ord(char):X}"
+            # Blockmodelle (nicht item/generated): 3D-Ansicht wie im Inventar
+            generated = any(path in ("item/generated", "item/handheld", "builtin/generated") for _, path in chain)
+            if not generated:
+                if f"{ns}:{item}" in MULTIBLOCK_MODELS:
+                    parts = [model_parts(ref) + (offset,) for ref, offset in MULTIBLOCK_MODELS[f"{ns}:{item}"]]
+                else:
+                    parts = [model_parts(model) + (0,)]
+                parts = [(t, e, o) for t, e, o in parts if e]
+                image = render3d(parts) if parts else None
+                if image is not None:
+                    file = save_icon(ns, item, image)
+                    glyph = add_glyph(file, ICON_HEIGHT, ICON_ASCENT)
                     if f"{ns}:{item}" in DIAGRAM_ITEMS:
-                        diagram_char = chr(ICON_FIRST_CHAR + len(providers))
-                        providers.append({"type": "bitmap", "file": f"kaleidoscope:icon/{ns}/{item}.png", "height": 32,
-                                          "ascent": 14, "chars": [diagram_char]})
-                        diagrams.append(f"@diagram|{ns}:{item}={ord(diagram_char):X}")
-                    up = norm(faces[0])
-                    lines.append(f"{ns}:{item}=minecraft:blocks|{up[0]}:{up[1]}|{glyph}")
+                        diagrams.append(f"@diagram|{ns}:{item}={add_glyph(file, 32, 14 + (image.height - 33) // 2)}")
+                    first = resolve(textures, textures.get("particle")) or next((resolve(textures, v) for v in textures.values() if resolve(textures, v)), None)
+                    if first and atlas_of(first):
+                        tns, tpath = norm(first)
+                        lines.append(f"{ns}:{item}={atlas_of(first)}|{tns}:{tpath}|{glyph}")
+                    else:
+                        lines.append(f"{ns}:{item}=minecraft:blocks|minecraft:block/stone|{glyph}")
                     continue
             for key in self.ICON_TEXTURE_KEYS + tuple(textures):
                 texture = resolve(textures, textures.get(key))
@@ -387,17 +488,12 @@ class PackBuilder:
                     png = f"assets/{tns}/textures/{tpath}.png"
                     # Große Variante als Schriftzeichen (16 Pixel), nicht für animierte Texturen (Streifen mit mehreren Bildern)
                     glyph = ""
-                    if (png in self.files or png in self.vanilla.names) and (png + ".mcmeta") not in self.files \
-                            and (png + ".mcmeta") not in self.vanilla.names:
-                        char = chr(ICON_FIRST_CHAR + len(providers))
-                        providers.append({"type": "bitmap", "file": f"{tns}:{tpath}.png", "height": ICON_HEIGHT,
-                                          "ascent": ICON_ASCENT, "chars": [char]})
-                        glyph = f"{ord(char):X}"
+                    if png in self.files or png in self.vanilla.names:
+                        # Animierte Texturen: erstes Bild als eigene Datei (die Schrift würde sonst den ganzen Streifen zeigen)
+                        file = save_icon(ns, item, load_texture(texture)) if is_animated(texture) else f"{tns}:{tpath}.png"
+                        glyph = add_glyph(file, ICON_HEIGHT, ICON_ASCENT)
                         if f"{ns}:{item}" in DIAGRAM_ITEMS:
-                            diagram_char = chr(ICON_FIRST_CHAR + len(providers))
-                            providers.append({"type": "bitmap", "file": f"{tns}:{tpath}.png", "height": 32,
-                                              "ascent": 14, "chars": [diagram_char]})
-                            diagrams.append(f"@diagram|{ns}:{item}={ord(diagram_char):X}")
+                            diagrams.append(f"@diagram|{ns}:{item}={add_glyph(file, 32, 14)}")
                     lines.append(f"{ns}:{item}={atlas_of(texture)}|{tns}:{tpath}|{glyph}")
                     break
         self.files["assets/kaleidoscope/font/icons.json"] = json.dumps({"providers": providers}, ensure_ascii=True).encode("utf-8")

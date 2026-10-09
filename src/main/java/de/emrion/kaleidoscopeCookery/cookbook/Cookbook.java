@@ -258,7 +258,8 @@ public class Cookbook {
     private static final Component BLANK_SLOT = glyph(0xE216);
 
     private static Component glyph(int codepoint) {
-        return Component.text(Character.toString(codepoint)).font(FONT).color(NamedTextColor.WHITE);
+        // Ohne Text-Schatten, sonst wirken Bilder verschmiert
+        return Component.text(Character.toString(codepoint)).font(FONT).color(NamedTextColor.WHITE).shadowColor(net.kyori.adventure.text.format.ShadowColor.none());
     }
 
     private static final Component BLANK_DIAGRAM = glyph(0xE217);
@@ -429,11 +430,12 @@ public class Cookbook {
                 all.add(button != null ? button : blank(self));
             }
         }
-        // Escape bzw. "Schließen": ohne Server-Aktion, damit sofort zu ist (kein "Warte auf Server")
-        ActionButton exit = ActionButton.builder(Lang.get("cookbook.close")).width(BUTTON_WIDTH).build();
-        // Nach einem Klick offen bleiben, bis die nächste Seite kommt: so springt der Mauszeiger nicht in die Mitte
+        // Escape schließt im Client sofort; der Knopf "Schließen" schließt über den Server
+        ActionButton exit = button(Lang.get("cookbook.close"), null, (response, audience) -> audience.closeDialog());
+        // Nach einem Klick unverändert offen bleiben, bis die nächste Seite kommt: kein Warte-Bildschirm,
+        // und der Mauszeiger springt nicht in die Mitte
         return Dialog.create(builder -> builder.empty()
-                .base(DialogBase.builder(title).canCloseWithEscape(true).afterAction(DialogBase.DialogAfterAction.WAIT_FOR_RESPONSE)
+                .base(DialogBase.builder(title).canCloseWithEscape(true).afterAction(DialogBase.DialogAfterAction.NONE)
                         .body(body).inputs(inputs).build())
                 .type(DialogType.multiAction(all).columns(COLUMNS).exitAction(exit).build()));
     }

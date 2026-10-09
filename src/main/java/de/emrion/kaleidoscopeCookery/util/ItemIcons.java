@@ -40,7 +40,7 @@ public final class ItemIcons {
                 if (line.startsWith("@diagram|")) {
                     String[] parts = line.substring("@diagram|".length()).trim().split("=");
                     DIAGRAMS.put(Key.key(parts[0]), Component.text(Character.toString(Integer.parseInt(parts[1], 16))).font(ICON_FONT)
-                            .color(net.kyori.adventure.text.format.NamedTextColor.WHITE));
+                            .color(net.kyori.adventure.text.format.NamedTextColor.WHITE).shadowColor(net.kyori.adventure.text.format.ShadowColor.none()));
                     continue;
                 }
                 int equals = line.indexOf('=');
@@ -53,7 +53,7 @@ public final class ItemIcons {
                 ICONS.put(item, Component.object(ObjectContents.sprite(Key.key(line.substring(equals + 1, bar)), Key.key(sprite[0]))));
                 if (sprite.length > 1 && !sprite[1].isEmpty()) {
                     BIG_ICONS.put(item, Component.text(Character.toString(Integer.parseInt(sprite[1], 16))).font(ICON_FONT)
-                            .color(net.kyori.adventure.text.format.NamedTextColor.WHITE));
+                            .color(net.kyori.adventure.text.format.NamedTextColor.WHITE).shadowColor(net.kyori.adventure.text.format.ShadowColor.none()));
                 }
             }
         } catch (java.io.IOException e) {
