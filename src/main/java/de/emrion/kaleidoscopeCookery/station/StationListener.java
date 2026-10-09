@@ -63,7 +63,7 @@ public class StationListener implements Listener {
     private final StationManager stations;
     /** Gerade läuft ein selbst ausgelöstes Event zur Rechte-Prüfung */
     private boolean checking;
-    private final Map<UUID, Vector> lastClickedPosition = new HashMap<>();
+    private final Map<UUID, Long> lastHandledTick = new HashMap<>();
 
     public StationListener(KaleidoscopeCookery plugin, StationManager stations) {
         this.plugin = plugin;
@@ -74,8 +74,7 @@ public class StationListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInteractEntity(PlayerInteractEntityEvent event) {
-        // "interact at" kommt zusätzlich und vorher – nur die Klickposition merken (onInteractAt)
-        if (checking || event instanceof PlayerInteractAtEntityEvent) {
+        if (checking) {
             return;
         }
         Station station = stations.byEntity(event.getRightClicked());
@@ -85,6 +84,12 @@ public class StationListener implements Listener {
         event.setCancelled(true);
         Player player = event.getPlayer();
         if (event.getHand() != EquipmentSlot.HAND || !player.hasPermission(Permissions.USE)) {
+            return;
+        }
+        // Sicherheitshalber pro Tick nur einmal handeln (falls doch einmal zwei Klick-Events kommen)
+        long tick = stations.serverTick();
+        Long last = lastHandledTick.put(player.getUniqueId(), tick);
+        if (last != null && last == tick) {
             return;
         }
         ItemStack held = player.getInventory().getItemInMainHand();
@@ -106,8 +111,12 @@ public class StationListener implements Listener {
      * Platzieren mit Klick auf eine Hitbox: Seite aus der Klickposition bestimmen.
      */
     private boolean placeOnStation(Player player, ItemStack held, PlayerInteractEntityEvent event) {
-        Vector clicked = lastClickedPosition.remove(player.getUniqueId());
-        if (clicked == null || !(event.getRightClicked() instanceof Interaction hitbox)) {
+        // Paper 26.3 meldet Rechtsklicks auf Entities immer mit Klickposition
+        if (!(event instanceof PlayerInteractAtEntityEvent at) || !(event.getRightClicked() instanceof Interaction hitbox)) {
+            return false;
+        }
+        Vector clicked = at.getClickedPosition();
+        if (clicked == null) {
             return false;
         }
         BlockFace face = faceOf(clicked, hitbox.getInteractionWidth(), hitbox.getInteractionHeight());
@@ -126,16 +135,6 @@ public class StationListener implements Listener {
             return clicked.getX() > 0 ? BlockFace.EAST : BlockFace.WEST;
         }
         return clicked.getZ() > 0 ? BlockFace.SOUTH : BlockFace.NORTH;
-    }
-
-    /**
-     * Der Client schickt bei Interactions erst "interact at" (mit Position), dann "interact".
-     */
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onInteractAt(PlayerInteractAtEntityEvent event) {
-        if (event.getHand() == EquipmentSlot.HAND && stations.byEntity(event.getRightClicked()) != null) {
-            lastClickedPosition.put(event.getPlayer().getUniqueId(), event.getClickedPosition());
-        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)

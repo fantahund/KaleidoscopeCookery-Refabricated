@@ -190,6 +190,7 @@ public abstract class Station {
      * @param interpolationTicks 0 = sofort, sonst flüssiger Übergang der Transformation
      */
     protected void showPart(String name, PartLook look, int interpolationTicks) {
+        look = corrected(look);
         ItemDisplay display = parts.get(name);
         if (display == null || !display.isValid()) {
             parts.put(name, spawnPart(name, look));
@@ -212,6 +213,18 @@ public abstract class Station {
             display.setTransformation(look.transformation());
         }
         partLooks.put(name, look);
+    }
+
+    /**
+     * Der Renderer von ItemDisplays dreht das Modell um 180° um die Y-Achse. Die Mod-Renderer tun das nicht –
+     * deshalb hier über die rechte Rotation (wirkt direkt aufs Modell) wieder zurückdrehen.
+     */
+    private static final Quaternionf RENDERER_CORRECTION = new Quaternionf().rotationY((float) Math.PI);
+
+    private static PartLook corrected(PartLook look) {
+        Transformation t = look.transformation();
+        Transformation fixed = new Transformation(t.getTranslation(), t.getLeftRotation(), t.getScale(), new Quaternionf(t.getRightRotation()).mul(RENDERER_CORRECTION));
+        return new PartLook(look.stack(), look.displayTransform(), fixed, look.brightness());
     }
 
     /**
