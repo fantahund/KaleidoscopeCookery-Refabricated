@@ -280,6 +280,17 @@ public class StationManager implements Listener {
         }
     }
 
+    /**
+     * Bei Barriere-Stationen muss die Hitbox den ganzen Block etwas überragen, sonst treffen Klicks die Barriere.
+     */
+    private static float hitboxWidth(StationType type) {
+        return type.barrier() ? Math.max(type.interactionWidth(), 1f) + 0.02f : type.interactionWidth();
+    }
+
+    private static float hitboxHeight(StationType type) {
+        return type.barrier() ? Math.max(type.interactionHeight(), 1f) + 0.02f : type.interactionHeight();
+    }
+
     private @Nullable Station create(Interaction root) {
         PersistentDataContainer pdc = root.getPersistentDataContainer();
         String typeId = pdc.get(Keys.STATION_TYPE, PersistentDataType.STRING);
@@ -289,6 +300,11 @@ public class StationManager implements Listener {
             return null;
         }
         Facing facing = Facing.byDataValue(pdc.getOrDefault(Keys.STATION_FACING, PersistentDataType.INTEGER, Facing.NORTH.dataValue()));
+        // Hitbox an die aktuelle Größe des Typs anpassen (ältere Stationen)
+        if (root.getInteractionWidth() != hitboxWidth(type) || root.getInteractionHeight() != hitboxHeight(type)) {
+            root.setInteractionWidth(hitboxWidth(type));
+            root.setInteractionHeight(hitboxHeight(type));
+        }
         BlockKey position = BlockKey.of(root.getLocation().add(0, 0.05, 0));
         Station station = type.factory().create(new StationContext(this, type, root, position, facing));
         try {
@@ -401,16 +417,11 @@ public class StationManager implements Listener {
             block.setType(Material.BARRIER, false);
         }
         Location location = BlockKey.of(block).bottomCenter(block.getWorld());
-        float width = type.interactionWidth();
-        float height = type.interactionHeight();
         if (type.barrier()) {
-            // Etwas größer als der Barriere-Block, damit Klicks die Hitbox treffen und nicht den Block
-            width += 0.02f;
-            height += 0.02f;
             location.subtract(0, 0.01, 0);
         }
-        float finalWidth = width;
-        float finalHeight = height;
+        float finalWidth = hitboxWidth(type);
+        float finalHeight = hitboxHeight(type);
         Interaction root = block.getWorld().spawn(location, Interaction.class, interaction -> {
             interaction.setInteractionWidth(finalWidth);
             interaction.setInteractionHeight(finalHeight);
