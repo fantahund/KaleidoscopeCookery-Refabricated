@@ -2,12 +2,13 @@ package de.emrion.kaleidoscopeCookery.station.racks;
 
 import de.emrion.kaleidoscopeCookery.item.CookeryItems;
 import de.emrion.kaleidoscopeCookery.item.QuickKnifeListener;
+import de.emrion.kaleidoscopeCookery.item.SickleListener;
+import de.emrion.kaleidoscopeCookery.station.oil.OilItems;
 import de.emrion.kaleidoscopeCookery.station.Station;
 import de.emrion.kaleidoscopeCookery.station.StationContext;
 import de.emrion.kaleidoscopeCookery.station.StationType;
 import de.emrion.kaleidoscopeCookery.util.Keys;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
@@ -37,8 +38,6 @@ public class KitchenwareRacksStation extends Station {
     private static final Key MODEL = Key.key("kaleidoscope_cookery", "block/kitchenware_racks");
     private static final NamespacedKey LEFT = Keys.key("left");
     private static final NamespacedKey RIGHT = Keys.key("right");
-    /** Tags.Items.TOOLS (c:tools) */
-    private static final NamespacedKey TOOLS = new NamespacedKey("c", "tools");
 
     private @Nullable ItemStack left;
     private @Nullable ItemStack right;
@@ -102,15 +101,22 @@ public class KitchenwareRacksStation extends Station {
 
     // ---- Interaktion ----
 
+    /** Werkzeuge aus c:tools (NeoForge), die keinen eigenen Vanilla-Tag haben */
+    private static final java.util.Set<Material> OTHER_TOOLS = java.util.EnumSet.of(Material.BOW, Material.CROSSBOW, Material.FISHING_ROD,
+            Material.SHEARS, Material.SHIELD, Material.TRIDENT, Material.BRUSH, Material.MACE, Material.FLINT_AND_STEEL);
+
     /**
-     * Werkzeug im Sinne von c:tools; von den eigenen Items nur die Küchenmesser (wie im Mod).
+     * Werkzeug im Sinne von c:tools (Schwerter, Äxte, Spitzhacken, Schaufeln, Hacken, Speere, Bogen, Angel, Schere ...).
+     * Von den eigenen Items: Küchenmesser, Sichel und Pfannenwender (im Mod in #minecraft:swords bzw. #minecraft:shovels).
      */
     private static boolean isTool(ItemStack stack) {
-        if (CookeryItems.idOf(stack) != null) {
-            return QuickKnifeListener.isKnife(stack);
+        Key id = CookeryItems.idOf(stack);
+        if (id != null) {
+            return QuickKnifeListener.isKnife(stack) || id.equals(SickleListener.ITEM) || id.equals(OilItems.KITCHEN_SHOVEL);
         }
-        Tag<Material> tools = Bukkit.getTag(Tag.REGISTRY_ITEMS, TOOLS, Material.class);
-        return tools != null && tools.isTagged(stack.getType());
+        Material type = stack.getType();
+        return Tag.ITEMS_SWORDS.isTagged(type) || Tag.ITEMS_AXES.isTagged(type) || Tag.ITEMS_PICKAXES.isTagged(type)
+                || Tag.ITEMS_SHOVELS.isTagged(type) || Tag.ITEMS_HOES.isTagged(type) || Tag.ITEMS_SPEARS.isTagged(type) || OTHER_TOOLS.contains(type);
     }
 
     /**

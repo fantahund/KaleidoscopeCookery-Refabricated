@@ -43,14 +43,24 @@ import java.util.List;
 public class TrashCanStation extends Station {
 
     public static final Key ITEM = Key.key("kaleidoscope_cookery", "trash_can");
-    private static final Key MODEL = Key.key("kaleidoscope_cookery", "block/trash_can_model");
+    /** Teile wie im TrashCanModel: Name, Modell, Drehpunkt in Welt-Pixeln (Ausrichtung Norden, tools/gen_entity_models.py) */
+    private record Part(String name, Key model, Vector3f pivot) {
+    }
+
+    private static final List<Part> PARTS = List.of(
+            new Part("bone", Key.key("kaleidoscope_cookery", "block/trash_can_body"), new Vector3f(8, 6, 8)),
+            new Part("bone2", Key.key("kaleidoscope_cookery", "block/trash_can_lid"), new Vector3f(8, 14.75f, 8)),
+            new Part("eye", Key.key("kaleidoscope_cookery", "block/trash_can_eye"), new Vector3f(8, 8.5f, 8)),
+            new Part("bone3", Key.key("kaleidoscope_cookery", "block/trash_can_pupils"), new Vector3f(8, 7, 7.9f)));
     private static final int SLOTS = 3;
     private static final NamespacedKey STORAGE = Keys.key("storage");
-    /** Sitzhöhe im Eimer (SitEntity mit 0,875) */
-    private static final double SEAT_HEIGHT = 0.875;
+    /** Sitzhöhe: im Mod 0,875 (der Client versteckt den Spieler), hier tiefer, damit man im Eimer sitzt */
+    private static final double SEAT_HEIGHT = 0.875 - 0.9;
 
     private final @Nullable ItemStack[] storage = new ItemStack[SLOTS];
     private boolean powered;
+    /** Laufende Animationen mit Start-Tick (Spielzeit) */
+    private final java.util.EnumMap<TrashCanAnimation, Long> animations = new java.util.EnumMap<>(TrashCanAnimation.class);
 
     public TrashCanStation(StationContext context) {
         super(context);
@@ -80,7 +90,41 @@ public class TrashCanStation extends Station {
 
     @Override
     public void updateDisplay() {
-        showPart("body", MODEL, new Transformation(new Vector3f(), facing().blockRotation(), new Vector3f(1), new Quaternionf()));
+        hidePart("body");
+        updateParts(0);
+    }
+
+    /**
+     * Alle Teile in der aktuellen Animations-Stellung anzeigen (TrashCanBlockEntityRender + KeyframeAnimations).
+     */
+    private void updateParts(int interpolation) {
+        long now = world().getGameTime();
+        Vector3f eyeOffset = new Vector3f();
+        for (Part part : PARTS) {
+            Vector3f rotation = new Vector3f();
+            Vector3f position = new Vector3f();
+            for (var entry : animations.entrySet()) {
+                entry.getKey().apply(part.name(), (now - entry.getValue()) / 20f, rotation, position);
+            }
+            // posVec dreht y um, ZN(180) des Renderers dreht x und y: Modell -> Welt
+            Vector3f offset = new Vector3f(-position.x, position.y, position.z);
+            if (part.name().equals("eye")) {
+                eyeOffset.set(offset);
+            } else if (part.name().equals("bone3")) {
+                offset.add(eyeOffset);
+            }
+            Quaternionf facingRotation = facing().blockRotation();
+            Vector3f translation = facingRotation.transform(new Vector3f(part.pivot()).add(offset).sub(8, 8, 8).div(16));
+            Quaternionf partRotation = new Quaternionf(facingRotation)
+                    .rotateZ((float) Math.toRadians(rotation.z))
+                    .rotateY((float) Math.toRadians(-rotation.y))
+                    .rotateX((float) Math.toRadians(-rotation.x));
+            showPart(part.name(), part.model(), new Transformation(translation, partRotation, new Vector3f(1), new Quaternionf()), interpolation);
+        }
+    }
+
+    private void play(TrashCanAnimation animation) {
+        animations.put(animation, world().getGameTime());
     }
 
     @Override
@@ -148,6 +192,7 @@ public class TrashCanStation extends Station {
             stack.setAmount(copy.getAmount());
         }
         effects(Sound.BLOCK_BARREL_OPEN, 0.5f);
+        play(TrashCanAnimation.PUT);
         markDirty();
     }
 
@@ -160,6 +205,7 @@ public class TrashCanStation extends Station {
                 player.getInventory().setItemInMainHand(storage[i]);
                 storage[i] = null;
                 effects(Sound.BLOCK_BARREL_CLOSE, 0.8f);
+                play(TrashCanAnimation.WITHDRAW);
                 markDirty();
                 return;
             }
@@ -178,11 +224,10 @@ public class TrashCanStation extends Station {
      * TrashCanBlock#fallOn: Spieler versteckt sich im Eimer, Monster in 32 Blöcken vergessen ihn.
      */
     public void onFallOn(Player player, Seats seats) {
-        Location corner = new Location(world(), position().x(), position().y(), position().z());
-        if (player.isInsideVehicle() || Seats.isOccupied(world(), corner)) {
+        Location seat = seatLocation();
+        if (player.isInsideVehicle() || Seats.isOccupied(seat)) {
             return;
         }
-        Location seat = position().bottomCenter(world()).add(0, SEAT_HEIGHT, 0);
         seat.setYaw(switch (facing()) {
             case SOUTH -> 0;
             case WEST -> 90;
@@ -190,6 +235,7 @@ public class TrashCanStation extends Station {
             case EAST -> 270;
         });
         seats.sit(player, seat, "trash_can");
+        play(TrashCanAnimation.ENTER);
         for (Entity entity : world().getNearbyEntities(center(), 32.5, 32.5, 32.5, e -> e instanceof Mob)) {
             Mob mob = (Mob) entity;
             if (player.equals(mob.getTarget())) {
@@ -207,6 +253,7 @@ public class TrashCanStation extends Station {
 
     @Override
     public void tick(long serverTick) {
+        tickAnimations();
         if (serverTick % 4 != 0) {
             return;
         }
@@ -225,6 +272,40 @@ public class TrashCanStation extends Station {
                 item.remove();
             }
         }
+    }
+
+    /**
+     * TrashCanBlockEntity#clientTick: sitzt jemand drin, schaut alle 61 Ticks das Auge heraus (zufällig Blinzeln oder Umschauen);
+     * ohne Insassen verschwindet es wieder. Laufende Animationen werden jeden Tick weitergestellt.
+     */
+    private void tickAnimations() {
+        long now = world().getGameTime();
+        long offset = now + position().hashCode();
+        if (Math.floorMod(offset, 61) == 0 && seated()) {
+            boolean first = java.util.concurrent.ThreadLocalRandom.current().nextBoolean();
+            animations.remove(first ? TrashCanAnimation.PLAYER2 : TrashCanAnimation.PLAYER1);
+            play(first ? TrashCanAnimation.PLAYER1 : TrashCanAnimation.PLAYER2);
+        }
+        if (Math.floorMod(offset, 5) == 0 && (animations.containsKey(TrashCanAnimation.PLAYER1) || animations.containsKey(TrashCanAnimation.PLAYER2)) && !seated()) {
+            animations.remove(TrashCanAnimation.PLAYER1);
+            animations.remove(TrashCanAnimation.PLAYER2);
+            updateParts(2);
+        }
+        if (animations.isEmpty()) {
+            return;
+        }
+        // Einmalige Animationen enden nach ihrer Länge (die Spieler-Animationen bleiben in der Endstellung)
+        boolean ended = animations.entrySet().removeIf(entry -> entry.getKey() != TrashCanAnimation.PLAYER1 && entry.getKey() != TrashCanAnimation.PLAYER2
+                && (now - entry.getValue()) / 20f > entry.getKey().length() + 0.1f);
+        updateParts(ended ? 0 : 1);
+    }
+
+    private boolean seated() {
+        return Seats.isOccupied(seatLocation());
+    }
+
+    private Location seatLocation() {
+        return position().bottomCenter(world()).add(0, SEAT_HEIGHT, 0);
     }
 
     /**

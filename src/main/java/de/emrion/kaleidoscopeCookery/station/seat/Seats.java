@@ -51,10 +51,10 @@ public class Seats implements Listener {
     }
 
     /**
-     * Sitzt jemand an dieser Stelle (im Block)?
+     * Gibt es an dieser Sitzposition schon einen Sitz?
      */
-    public static boolean isOccupied(World world, Location blockCorner) {
-        return !world.getNearbyEntities(blockCorner.clone().add(0.5, 0.5, 0.5), 0.5, 0.5, 0.5, Seats::isSeat).isEmpty();
+    public static boolean isOccupied(Location seat) {
+        return !seat.getWorld().getNearbyEntities(seat, 0.3, 0.3, 0.3, Seats::isSeat).isEmpty();
     }
 
     /**

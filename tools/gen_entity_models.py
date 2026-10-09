@@ -3,7 +3,7 @@
 Baut Java-Entity-Modelle des Mods (createBodyLayer) als Item-Modelle nach:
 - Mühlstein (MillstoneModel): Sockel (fest), Rad mit Deichsel (dreht sich um die Blockmitte)
   und Walze (rollt zusätzlich um ihre eigene Achse)
-- Mülleimer (TrashCanModel): ein Modell in Ruhestellung
+- Mülleimer (TrashCanModel): Körper, Deckel, Auge und Pupillen einzeln für die Animationen
 
 Koordinaten: Die Mod-Renderer legen die Modelle mit translate(0.5, 1.5, 0.5) und ZN(180) in den Block
 (Ausrichtung Norden). Ein Modellpunkt (x, y, z) in Pixeln liegt damit bei (8 - x, 24 - y, 8 + z)
@@ -167,12 +167,20 @@ def main():
         write_model(name, elements, texture)
         print(f"{name}: {len(elements)} Elemente")
 
-    # Mülleimer: ein Modell in Originalgröße
+    # Mülleimer: vier animierte Teile in Originalgröße, jeweils um ihren Drehpunkt (TrashCanAnimation)
     cubes = []
     collect(TRASH_CAN, (0, 0, 0), [], cubes)
-    elements = [element(pivot, rotation, c, BLOCK_CENTER, 1, 64) for path, pivot, rotation, c in cubes]
-    write_model("trash_can_model", elements, "kaleidoscope_cookery:block/trash_can")
-    print(f"trash_can_model: {len(elements)} Elemente")
+    pivots = {"bone": (0, 18, 0), "bone2": (0, 9.25, 0), "eye": (0, 15.5, 0), "bone3": (0, 17, -0.1)}
+    parts = {"bone": "trash_can_body", "bone2": "trash_can_lid", "eye": "trash_can_eye", "bone3": "trash_can_pupils"}
+    groups = {name: [] for name in parts.values()}
+    for path, pivot, rotation, c in cubes:
+        part = next(p for p in reversed(path) if p in parts)
+        groups[parts[part]].append(element(pivot, rotation, c, to_world(pivots[part]), 1, 64))
+    for name, elements in groups.items():
+        write_model(name, elements, "kaleidoscope_cookery:block/trash_can")
+        print(f"{name}: {len(elements)} Elemente")
+    for part, pivot in pivots.items():
+        print(f"Drehpunkt {part} (Welt-Pixel, Norden): {to_world(pivot)}")
 
 
 if __name__ == "__main__":

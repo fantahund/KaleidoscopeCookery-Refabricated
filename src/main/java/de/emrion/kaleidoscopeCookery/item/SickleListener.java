@@ -75,6 +75,10 @@ public class SickleListener implements Listener {
                 || !isSickle(event.getItem())) {
             return;
         }
+        // Wie im Mod zuerst der Block: Kisten, Öfen, Türen ... öffnen sich normal (außer beim Schleichen)
+        if (event.getClickedBlock().getType().isInteractable() && !event.getPlayer().isSneaking()) {
+            return;
+        }
         event.setCancelled(true);
         use(event.getPlayer(), event.getClickedBlock());
     }
@@ -87,8 +91,8 @@ public class SickleListener implements Listener {
         if (event.getHand() != EquipmentSlot.HAND || !isSickle(event.getPlayer().getInventory().getItemInMainHand())) {
             return;
         }
-        Station station = stations.byEntity(event.getRightClicked());
-        if (station == null) {
+        // Nur Pflanzen: andere Stationen (Regal, Mülleimer ...) bedienen sich normal
+        if (!(stations.byEntity(event.getRightClicked()) instanceof CropStation station)) {
             return;
         }
         event.setCancelled(true);
