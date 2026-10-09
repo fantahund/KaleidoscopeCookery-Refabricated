@@ -113,6 +113,15 @@ public class LunchBag implements Listener {
                 animation = ItemUseAnimation.DRINK;
             }
         }
+        boolean hasFood = items.stream().anyMatch(item -> item.hasData(DataComponentTypes.FOOD));
+        boolean hasPotion = items.stream().anyMatch(item -> item.getType() == Material.POTION);
+        // Satt und nur Essen drin: wie normales Essen nicht benutzbar (Client und Server). Tränke gehen immer.
+        if (hasFood) {
+            bag.setData(DataComponentTypes.FOOD, io.papermc.paper.datacomponent.item.FoodProperties.food()
+                    .nutrition(0).saturation(0).canAlwaysEat(hasPotion).build());
+        } else {
+            bag.unsetData(DataComponentTypes.FOOD);
+        }
         if (animation == null) {
             bag.unsetData(DataComponentTypes.CONSUMABLE);
         } else {

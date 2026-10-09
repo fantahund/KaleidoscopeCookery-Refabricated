@@ -106,7 +106,7 @@ public class MillstoneStation extends Station {
     }
 
     public static StationType type() {
-        return new StationType("millstone", ITEM, true, 3f, 1f, false, MillstoneStation::new, 2, 1);
+        return new StationType("millstone", ITEM, true, 1f, 1f, false, MillstoneStation::new, 2, 1);
     }
 
     // ---- Zustand ----
