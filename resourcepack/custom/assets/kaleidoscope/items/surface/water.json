@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "kaleidoscope:surface/water",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 4159204
+      }
+    ]
+  }
+}

@@ -78,7 +78,7 @@ public class CookeryItems {
                 }
                 Material prototype = entry.getString("prototype") == null ? null : Material.matchMaterial(entry.getString("prototype"));
                 items.put(key, new CookeryItem(key, base, prototype, Key.key(entry.getString("model", id)), entry.getString("name", id), entry.getString("tooltip"),
-                        Math.clamp(entry.getInt("max-stack", 64), 1, 99), food, plate));
+                        Math.clamp(entry.getInt("max-stack", 64), 1, 99), Math.max(0, entry.getInt("max-damage", 0)), food, plate));
             }
         }
         return new CookeryItems(items);
@@ -197,6 +197,9 @@ public class CookeryItems {
             stack.copyDataFrom(ItemStack.of(item.prototype()), type -> true);
         }
         stack.setData(DataComponentTypes.ITEM_MODEL, item.model());
+        if (item.maxDamage() > 0) {
+            stack.setData(DataComponentTypes.MAX_DAMAGE, item.maxDamage());
+        }
         stack.setData(DataComponentTypes.ITEM_NAME, Text.noItalic(Lang.raw(item.nameKey())));
         if (item.tooltipKey() != null) {
             stack.setData(DataComponentTypes.LORE, ItemLore.lore(List.of(tooltip(item))));

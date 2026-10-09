@@ -1,0 +1,32 @@
+{
+  "textures": {
+    "surface": "kaleidoscope_cookery:stockpot/rice_finished",
+    "particle": "kaleidoscope_cookery:stockpot/rice_finished"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        0,
+        3
+      ],
+      "to": [
+        13,
+        0,
+        13
+      ],
+      "shade": false,
+      "faces": {
+        "up": {
+          "uv": [
+            0,
+            0,
+            10,
+            10
+          ],
+          "texture": "#surface"
+        }
+      }
+    }
+  ]
+}

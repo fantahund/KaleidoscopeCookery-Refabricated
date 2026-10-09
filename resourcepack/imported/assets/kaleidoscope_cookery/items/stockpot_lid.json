@@ -1,27 +1,14 @@
 {
   "model": {
-    "type": "minecraft:range_dispatch",
-    "property": "minecraft:custom_model_data",
-    "index": 6,
-    "entries": [
-      {
-        "threshold": 0.0,
-        "model": {
-          "type": "minecraft:model",
-          "model": "kaleidoscope_cookery:item/stockpot_lid_normal"
-        }
-      },
-      {
-        "threshold": 1.0,
-        "model": {
-          "type": "minecraft:model",
-          "model": "kaleidoscope_cookery:item/stockpot_lid_using"
-        }
-      }
-    ],
-    "fallback": {
+    "type": "minecraft:condition",
+    "property": "minecraft:using_item",
+    "on_true": {
       "type": "minecraft:model",
-      "model": "kaleidoscope_cookery:item/stockpot_lid"
+      "model": "kaleidoscope_cookery:item/stockpot_lid_using"
+    },
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "kaleidoscope_cookery:item/stockpot_lid_normal"
     }
   }
 }

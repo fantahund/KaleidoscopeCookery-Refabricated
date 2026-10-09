@@ -22,13 +22,16 @@ public class Recipes {
     private final List<ChoppingBoardRecipe> choppingBoard;
     private final List<VanillaRecipe> vanilla;
     private final List<PotRecipe> pot;
+    private final List<StockpotRecipe> stockpot;
     private final int dataVersion;
 
-    private Recipes(Map<String, List<String>> tags, List<ChoppingBoardRecipe> choppingBoard, List<VanillaRecipe> vanilla, List<PotRecipe> pot, int dataVersion) {
+    private Recipes(Map<String, List<String>> tags, List<ChoppingBoardRecipe> choppingBoard, List<VanillaRecipe> vanilla, List<PotRecipe> pot,
+                    List<StockpotRecipe> stockpot, int dataVersion) {
         this.tags = Collections.unmodifiableMap(tags);
         this.choppingBoard = List.copyOf(choppingBoard);
         this.vanilla = List.copyOf(vanilla);
         this.pot = List.copyOf(pot);
+        this.stockpot = List.copyOf(stockpot);
         this.dataVersion = dataVersion;
     }
 
@@ -95,7 +98,32 @@ public class Recipes {
                 }
             }
         }
-        return new Recipes(tags, chopping, vanilla, pot, config.getInt("data-version", 0));
+        List<StockpotRecipe> stockpot = new ArrayList<>();
+        for (String kind : List.of("stockpot", "flex-stockpot")) {
+            for (Map.Entry<String, ConfigurationSection> entry : sections(config, kind).entrySet()) {
+                ConfigurationSection section = entry.getValue();
+                try {
+                    List<Ingredient> ingredients = new ArrayList<>();
+                    for (Object value : section.getList("ingredients", List.of())) {
+                        ingredients.add(Ingredient.parse(value, tags));
+                    }
+                    if (ingredients.isEmpty() || ingredients.size() > StockpotRecipe.SLOTS) {
+                        throw new IllegalArgumentException("1 bis " + StockpotRecipe.SLOTS + " Zutaten nötig");
+                    }
+                    Object carrierValue = section.get("carrier", "minecraft:bowl");
+                    Ingredient carrier = "none".equals(carrierValue) ? null : Ingredient.parse(carrierValue, tags);
+                    stockpot.add(new StockpotRecipe(entry.getKey(), kind.equals("flex-stockpot"), List.copyOf(ingredients),
+                            Key.key(section.getString("soup-base", "minecraft:water")), Math.max(1, section.getInt("time", StockpotRecipe.DEFAULT_TIME)), carrier,
+                            RecipeResult.parse(section.get("result")),
+                            Key.key(section.getString("cooking-texture", StockpotRecipe.DEFAULT_COOKING_TEXTURE.asString())),
+                            Key.key(section.getString("finished-texture", StockpotRecipe.DEFAULT_FINISHED_TEXTURE.asString())),
+                            section.getInt("cooking-color", StockpotRecipe.DEFAULT_COOKING_COLOR), section.getInt("finished-color", StockpotRecipe.DEFAULT_FINISHED_COLOR)));
+                } catch (RuntimeException e) {
+                    logger.warning("Suppentopf-Rezept " + entry.getKey() + " ungültig: " + e.getMessage());
+                }
+            }
+        }
+        return new Recipes(tags, chopping, vanilla, pot, stockpot, config.getInt("data-version", 0));
     }
 
     /**
@@ -142,6 +170,24 @@ public class Recipes {
 
     public List<PotRecipe> pot() {
         return pot;
+    }
+
+    public List<StockpotRecipe> stockpot() {
+        return stockpot;
+    }
+
+    /**
+     * Erst exakte, dann Flex-Rezepte (wie StockpotBlockEntity#setRecipe).
+     */
+    public @Nullable StockpotRecipe findStockpot(List<ItemStack> inputs, Key soupBase) {
+        for (boolean flex : new boolean[]{false, true}) {
+            for (StockpotRecipe recipe : stockpot) {
+                if (recipe.flex() == flex && recipe.matches(inputs, soupBase)) {
+                    return recipe;
+                }
+            }
+        }
+        return null;
     }
 
     public int dataVersion() {

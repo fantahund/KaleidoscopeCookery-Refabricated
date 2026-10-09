@@ -15,11 +15,12 @@ import java.util.List;
  * @param model    Item-Model-Definition im Resourcepack (assets/&lt;ns&gt;/items/&lt;pfad&gt;.json)
  * @param nameKey  Übersetzungs-Key des Namens
  * @param maxStack Stapelgröße
+ * @param maxDamage Haltbarkeit, 0 = Standard des Basis-Items
  * @param tooltipKey Beschreibung aus der Mod-Sprachdatei, sonst null
  * @param food     Nahrungswerte, null wenn nicht essbar
  * @param plate    Gericht, das man als Teller hinstellen und bissweise essen kann, sonst null
  */
-public record CookeryItem(Key id, Material base, @Nullable Material prototype, Key model, String nameKey, @Nullable String tooltipKey, int maxStack, @Nullable Food food,
+public record CookeryItem(Key id, Material base, @Nullable Material prototype, Key model, String nameKey, @Nullable String tooltipKey, int maxStack, int maxDamage, @Nullable Food food,
                           @Nullable Plate plate) {
 
     /**

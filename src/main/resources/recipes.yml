@@ -2,7 +2,7 @@
 # Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert
 # und kann dort angepasst werden (/kc reload).
 # Zutaten: Item-ID, "#tag" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.
-data-version: 2
+data-version: 3
 tags:
   "c:bricks/normal":
     - "minecraft:brick"
@@ -13,6 +13,8 @@ tags:
   "c:crops/chilipepper":
     - "kaleidoscope_cookery:red_chili"
     - "kaleidoscope_cookery:green_chili"
+  "c:crops/lettuce":
+    - "kaleidoscope_cookery:lettuce"
   "c:crops/tomato":
     - "kaleidoscope_cookery:tomato"
   "c:crops/wheat":
@@ -27,6 +29,8 @@ tags:
     - "minecraft:turtle_egg"
   "c:fences/wooden":
     - "#minecraft:wooden_fences"
+  "c:flour":
+    - "kaleidoscope_cookery:flour"
   "c:foods/cooked_rice":
     - "kaleidoscope_cookery:cooked_rice"
   "c:foods/raw_beef":
@@ -79,6 +83,13 @@ tags:
     - "minecraft:salmon"
     - "kaleidoscope_cookery:sashimi"
     - "kaleidoscope_cookery:raw_cut_small_meats"
+  "c:seeds":
+    - "kaleidoscope_cookery:chili_seed"
+    - "kaleidoscope_cookery:tomato_seed"
+    - "kaleidoscope_cookery:lettuce_seed"
+    - "kaleidoscope_cookery:wild_rice"
+    - "kaleidoscope_cookery:rice"
+    - "kaleidoscope_cookery:tea_seed"
   "c:vegetables":
     - "kaleidoscope_cookery:red_chili"
     - "kaleidoscope_cookery:green_chili"
@@ -95,10 +106,23 @@ tags:
   "kaleidoscope_cookery:straw_hat":
     - "kaleidoscope_cookery:straw_hat"
     - "kaleidoscope_cookery:straw_hat_flower"
+  "kaleidoscope_cookery:tea_bags":
+    - "kaleidoscope_cookery:tieguanyin_tea_bag"
+    - "kaleidoscope_cookery:biluochun_tea_bag"
+    - "kaleidoscope_cookery:oolong_tea_bag"
+    - "kaleidoscope_cookery:sakura_fubuki_tea_bag"
+    - "kaleidoscope_cookery:barley_tea_bag"
+    - "kaleidoscope_cookery:butter_tea_bag"
+  "kaleidoscope_grilling:ingredients/beef_chunks":
+    - "kaleidoscope_grilling:beef_chunks"
+  "kaleidoscope_grilling:ingredients/carrot_dice":
+    - "kaleidoscope_grilling:carrot_dice"
   "kaleidoscope_grilling:ingredients/chicken_wings":
     - "kaleidoscope_grilling:chicken_wing"
   "kaleidoscope_grilling:ingredients/houttuynia":
     - "kaleidoscope_grilling:houttuynia"
+  "kaleidoscope_grilling:ingredients/leafy_greens":
+    - "kaleidoscope_cookery:lettuce"
   "kaleidoscope_grilling:ingredients/onions":
     - "kaleidoscope_grilling:onion"
   "kaleidoscope_grilling:ingredients/squid_tentacles":
@@ -838,6 +862,1022 @@ flex-pot:
       - "minecraft:porkchop"
     carrier: "minecraft:bowl"
     result: "kaleidoscope_grilling:houttuynia_stir_fried_pork"
+stockpot:
+  "kaleidoscope_cookery:stockpot/beef_meatball_soup":
+    ingredients:
+      - "kaleidoscope_cookery:raw_meatball"
+      - "kaleidoscope_cookery:raw_meatball"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+    result: "kaleidoscope_cookery:beef_meatball_soup"
+  "kaleidoscope_cookery:stockpot/beef_noodle":
+    ingredients:
+      - "#c:foods/raw_beef"
+      - "#c:foods/raw_beef"
+      - "#c:foods/raw_beef"
+      - "#c:foods/raw_beef"
+      - "kaleidoscope_cookery:raw_noodles"
+      - "kaleidoscope_cookery:raw_noodles"
+      - "kaleidoscope_cookery:raw_noodles"
+    result: "kaleidoscope_cookery:beef_noodle"
+  "kaleidoscope_cookery:stockpot/borscht":
+    ingredients:
+      - "#c:foods/raw_beef"
+      - "#c:foods/raw_beef"
+      - "#c:crops/tomato"
+      - "#c:crops/tomato"
+      - "#c:crops/tomato"
+      - "#c:crops/tomato"
+    result: "kaleidoscope_cookery:borscht"
+  "kaleidoscope_cookery:stockpot/braised_beef_with_potatoes":
+    ingredients:
+      - "minecraft:potato"
+      - "minecraft:potato"
+      - "minecraft:potato"
+      - "#c:foods/raw_beef"
+      - "#c:foods/raw_beef"
+    result: "kaleidoscope_cookery:braised_beef_with_potatoes"
+  "kaleidoscope_cookery:stockpot/brown_mushroom_pot_soup":
+    ingredients:
+      - "minecraft:brown_mushroom"
+      - "minecraft:brown_mushroom"
+      - "minecraft:brown_mushroom"
+      - "minecraft:brown_mushroom"
+      - "minecraft:brown_mushroom"
+      - "minecraft:brown_mushroom"
+    carrier: "minecraft:flower_pot"
+    result: "kaleidoscope_cookery:brown_mushroom_pot_soup"
+  "kaleidoscope_cookery:stockpot/buddha_jumps_over_the_wall":
+    ingredients:
+      - "#c:eggs"
+      - "#c:eggs"
+      - "minecraft:phantom_membrane"
+      - "minecraft:phantom_membrane"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+    carrier: "minecraft:flower_pot"
+    result: "kaleidoscope_cookery:buddha_jumps_over_the_wall"
+  "kaleidoscope_cookery:stockpot/chicken_and_mushroom_stew":
+    ingredients:
+      - "#c:foods/raw_chicken"
+      - "#c:foods/raw_chicken"
+      - "#c:mushrooms"
+      - "#c:mushrooms"
+      - "#c:mushrooms"
+    result: "kaleidoscope_cookery:chicken_and_mushroom_stew"
+  "kaleidoscope_cookery:stockpot/clay_pot_milk_tea_count_1":
+    ingredients:
+      - "#kaleidoscope_cookery:tea_bags"
+    soup-base: "minecraft:milk"
+    carrier: "minecraft:flower_pot"
+    result: "kaleidoscope_cookery:clay_pot_milk_tea"
+  "kaleidoscope_cookery:stockpot/clay_pot_milk_tea_count_2":
+    ingredients:
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+    soup-base: "minecraft:milk"
+    carrier: "minecraft:flower_pot"
+    result:
+      item: "kaleidoscope_cookery:clay_pot_milk_tea"
+      count: 2
+  "kaleidoscope_cookery:stockpot/clay_pot_milk_tea_count_3":
+    ingredients:
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+    soup-base: "minecraft:milk"
+    carrier: "minecraft:flower_pot"
+    result:
+      item: "kaleidoscope_cookery:clay_pot_milk_tea"
+      count: 3
+  "kaleidoscope_cookery:stockpot/clay_pot_milk_tea_count_4":
+    ingredients:
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+    soup-base: "minecraft:milk"
+    carrier: "minecraft:flower_pot"
+    result:
+      item: "kaleidoscope_cookery:clay_pot_milk_tea"
+      count: 4
+  "kaleidoscope_cookery:stockpot/clay_pot_milk_tea_count_5":
+    ingredients:
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+    soup-base: "minecraft:milk"
+    carrier: "minecraft:flower_pot"
+    result:
+      item: "kaleidoscope_cookery:clay_pot_milk_tea"
+      count: 5
+  "kaleidoscope_cookery:stockpot/clay_pot_milk_tea_count_6":
+    ingredients:
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+    soup-base: "minecraft:milk"
+    carrier: "minecraft:flower_pot"
+    result:
+      item: "kaleidoscope_cookery:clay_pot_milk_tea"
+      count: 6
+  "kaleidoscope_cookery:stockpot/clay_pot_milk_tea_count_7":
+    ingredients:
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+    soup-base: "minecraft:milk"
+    carrier: "minecraft:flower_pot"
+    result:
+      item: "kaleidoscope_cookery:clay_pot_milk_tea"
+      count: 7
+  "kaleidoscope_cookery:stockpot/clay_pot_milk_tea_count_8":
+    ingredients:
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+    soup-base: "minecraft:milk"
+    carrier: "minecraft:flower_pot"
+    result:
+      item: "kaleidoscope_cookery:clay_pot_milk_tea"
+      count: 8
+  "kaleidoscope_cookery:stockpot/clay_pot_milk_tea_count_9":
+    ingredients:
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+      - "#kaleidoscope_cookery:tea_bags"
+    soup-base: "minecraft:milk"
+    carrier: "minecraft:flower_pot"
+    result:
+      item: "kaleidoscope_cookery:clay_pot_milk_tea"
+      count: 9
+  "kaleidoscope_cookery:stockpot/crimson_fungus_pot_soup":
+    ingredients:
+      - "minecraft:crimson_fungus"
+      - "minecraft:crimson_fungus"
+      - "minecraft:crimson_fungus"
+      - "minecraft:crimson_fungus"
+      - "minecraft:crimson_fungus"
+      - "minecraft:crimson_fungus"
+    carrier: "minecraft:flower_pot"
+    result: "kaleidoscope_cookery:crimson_fungus_pot_soup"
+  "kaleidoscope_cookery:stockpot/dough_drop_soup":
+    ingredients:
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+      - "#c:flour"
+      - "#c:flour"
+    result: "kaleidoscope_cookery:dough_drop_soup"
+  "kaleidoscope_cookery:stockpot/dumpling_count_1":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    carrier: none
+    result: "kaleidoscope_cookery:dumpling"
+  "kaleidoscope_cookery:stockpot/dumpling_count_2":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:dumpling"
+      count: 2
+  "kaleidoscope_cookery:stockpot/dumpling_count_3":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:dumpling"
+      count: 3
+  "kaleidoscope_cookery:stockpot/dumpling_count_4":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:dumpling"
+      count: 4
+  "kaleidoscope_cookery:stockpot/dumpling_count_5":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:dumpling"
+      count: 5
+  "kaleidoscope_cookery:stockpot/dumpling_count_6":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:dumpling"
+      count: 6
+  "kaleidoscope_cookery:stockpot/dumpling_count_7":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:dumpling"
+      count: 7
+  "kaleidoscope_cookery:stockpot/dumpling_count_8":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:dumpling"
+      count: 8
+  "kaleidoscope_cookery:stockpot/dumpling_count_9":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:dumpling"
+      count: 9
+  "kaleidoscope_cookery:stockpot/fearsome_thick_soup":
+    ingredients:
+      - "minecraft:rotten_flesh"
+      - "minecraft:rotten_flesh"
+      - "minecraft:rotten_flesh"
+      - "minecraft:rotten_flesh"
+      - "minecraft:sculk"
+      - "minecraft:sculk"
+      - "minecraft:sculk"
+      - "minecraft:sculk"
+      - "minecraft:sculk"
+    soup-base: "minecraft:lava"
+    result: "kaleidoscope_cookery:fearsome_thick_soup"
+  "kaleidoscope_cookery:stockpot/four_joy_meatball_soup":
+    ingredients:
+      - "kaleidoscope_cookery:raw_meatball"
+      - "kaleidoscope_cookery:raw_meatball"
+      - "kaleidoscope_cookery:raw_meatball"
+      - "kaleidoscope_cookery:raw_meatball"
+    result: "kaleidoscope_cookery:four_joy_meatball_soup"
+  "kaleidoscope_cookery:stockpot/hot_dry_noodles":
+    ingredients:
+      - "kaleidoscope_cookery:raw_noodles"
+      - "kaleidoscope_cookery:raw_noodles"
+      - "kaleidoscope_cookery:raw_noodles"
+      - "#c:crops/chilipepper"
+      - "#c:crops/chilipepper"
+      - "#c:crops/chilipepper"
+    soup-base: "minecraft:lava"
+    result: "kaleidoscope_cookery:hot_dry_noodles"
+  "kaleidoscope_cookery:stockpot/hui_noodle":
+    ingredients:
+      - "#c:foods/raw_mutton"
+      - "#c:foods/raw_mutton"
+      - "#c:foods/raw_mutton"
+      - "#c:foods/raw_mutton"
+      - "kaleidoscope_cookery:raw_noodles"
+      - "kaleidoscope_cookery:raw_noodles"
+      - "kaleidoscope_cookery:raw_noodles"
+    result: "kaleidoscope_cookery:hui_noodle"
+  "kaleidoscope_cookery:stockpot/laba_congee":
+    ingredients:
+      - "#c:seeds"
+      - "#c:seeds"
+      - "#c:seeds"
+      - "#c:seeds"
+      - "#c:seeds"
+      - "#c:seeds"
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+      - "minecraft:sugar"
+    result: "kaleidoscope_cookery:laba_congee"
+  "kaleidoscope_cookery:stockpot/lamb_and_radish_soup":
+    ingredients:
+      - "minecraft:carrot"
+      - "minecraft:carrot"
+      - "minecraft:carrot"
+      - "#c:foods/raw_mutton"
+      - "#c:foods/raw_mutton"
+    result: "kaleidoscope_cookery:lamb_and_radish_soup"
+  "kaleidoscope_cookery:stockpot/numbing_spicy_chicken":
+    ingredients:
+      - "#c:crops/chilipepper"
+      - "#c:crops/chilipepper"
+      - "#c:foods/raw_chicken"
+      - "#c:foods/raw_chicken"
+      - "#c:foods/raw_chicken"
+    soup-base: "minecraft:lava"
+    result: "kaleidoscope_cookery:numbing_spicy_chicken"
+  "kaleidoscope_cookery:stockpot/pork_bone_soup":
+    ingredients:
+      - "minecraft:bone"
+      - "minecraft:bone"
+      - "minecraft:bone"
+      - "minecraft:bone"
+      - "minecraft:bone"
+      - "minecraft:bone"
+      - "minecraft:bone"
+    result: "kaleidoscope_cookery:pork_bone_soup"
+  "kaleidoscope_cookery:stockpot/pufferfish_soup":
+    ingredients:
+      - "minecraft:pufferfish"
+      - "minecraft:pufferfish"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+    result: "kaleidoscope_cookery:pufferfish_soup"
+  "kaleidoscope_cookery:stockpot/pufferfish_soup_entity":
+    ingredients:
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+    soup-base: "minecraft:pufferfish_bucket"
+    result: "kaleidoscope_cookery:pufferfish_soup"
+  "kaleidoscope_cookery:stockpot/red_mushroom_pot_soup":
+    ingredients:
+      - "minecraft:red_mushroom"
+      - "minecraft:red_mushroom"
+      - "minecraft:red_mushroom"
+      - "minecraft:red_mushroom"
+      - "minecraft:red_mushroom"
+      - "minecraft:red_mushroom"
+    carrier: "minecraft:flower_pot"
+    result: "kaleidoscope_cookery:red_mushroom_pot_soup"
+  "kaleidoscope_cookery:stockpot/rice_1":
+    ingredients:
+      - "#c:grain/rice"
+    time: 100
+    finished-texture: "kaleidoscope_cookery:stockpot/rice_finished"
+    finished-color: 15328219
+    result: "kaleidoscope_cookery:cooked_rice"
+  "kaleidoscope_cookery:stockpot/rice_2":
+    ingredients:
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+    time: 200
+    finished-texture: "kaleidoscope_cookery:stockpot/rice_finished"
+    finished-color: 15328219
+    result:
+      item: "kaleidoscope_cookery:cooked_rice"
+      count: 2
+  "kaleidoscope_cookery:stockpot/rice_3":
+    ingredients:
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+    finished-texture: "kaleidoscope_cookery:stockpot/rice_finished"
+    finished-color: 15328219
+    result:
+      item: "kaleidoscope_cookery:cooked_rice"
+      count: 3
+  "kaleidoscope_cookery:stockpot/rice_4":
+    ingredients:
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+    time: 400
+    finished-texture: "kaleidoscope_cookery:stockpot/rice_finished"
+    finished-color: 15328219
+    result:
+      item: "kaleidoscope_cookery:cooked_rice"
+      count: 4
+  "kaleidoscope_cookery:stockpot/rice_5":
+    ingredients:
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+    time: 500
+    finished-texture: "kaleidoscope_cookery:stockpot/rice_finished"
+    finished-color: 15328219
+    result:
+      item: "kaleidoscope_cookery:cooked_rice"
+      count: 5
+  "kaleidoscope_cookery:stockpot/rice_6":
+    ingredients:
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+    time: 600
+    finished-texture: "kaleidoscope_cookery:stockpot/rice_finished"
+    finished-color: 15328219
+    result:
+      item: "kaleidoscope_cookery:cooked_rice"
+      count: 6
+  "kaleidoscope_cookery:stockpot/rice_7":
+    ingredients:
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+    time: 700
+    finished-texture: "kaleidoscope_cookery:stockpot/rice_finished"
+    finished-color: 15328219
+    result:
+      item: "kaleidoscope_cookery:cooked_rice"
+      count: 7
+  "kaleidoscope_cookery:stockpot/rice_8":
+    ingredients:
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+    time: 800
+    finished-texture: "kaleidoscope_cookery:stockpot/rice_finished"
+    finished-color: 15328219
+    result:
+      item: "kaleidoscope_cookery:cooked_rice"
+      count: 8
+  "kaleidoscope_cookery:stockpot/rice_9":
+    ingredients:
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+      - "#c:grain/rice"
+    time: 900
+    finished-texture: "kaleidoscope_cookery:stockpot/rice_finished"
+    finished-color: 15328219
+    result:
+      item: "kaleidoscope_cookery:cooked_rice"
+      count: 9
+  "kaleidoscope_cookery:stockpot/seafood_miso_soup":
+    ingredients:
+      - "#c:raw_fishes"
+      - "#c:raw_fishes"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+    result: "kaleidoscope_cookery:seafood_miso_soup"
+  "kaleidoscope_cookery:stockpot/seafood_miso_soup_cod_entity":
+    ingredients:
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+    soup-base: "minecraft:cod_bucket"
+    result: "kaleidoscope_cookery:seafood_miso_soup"
+  "kaleidoscope_cookery:stockpot/seafood_miso_soup_salmon_entity":
+    ingredients:
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+    soup-base: "minecraft:salmon_bucket"
+    result: "kaleidoscope_cookery:seafood_miso_soup"
+  "kaleidoscope_cookery:stockpot/seafood_miso_soup_tropical_entity":
+    ingredients:
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+    soup-base: "minecraft:tropical_fish_bucket"
+    result: "kaleidoscope_cookery:seafood_miso_soup"
+  "kaleidoscope_cookery:stockpot/shengjian_mantou_count_1":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    soup-base: "minecraft:lava"
+    carrier: none
+    result: "kaleidoscope_cookery:shengjian_mantou"
+  "kaleidoscope_cookery:stockpot/shengjian_mantou_count_2":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    soup-base: "minecraft:lava"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:shengjian_mantou"
+      count: 2
+  "kaleidoscope_cookery:stockpot/shengjian_mantou_count_3":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    soup-base: "minecraft:lava"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:shengjian_mantou"
+      count: 3
+  "kaleidoscope_cookery:stockpot/shengjian_mantou_count_4":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    soup-base: "minecraft:lava"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:shengjian_mantou"
+      count: 4
+  "kaleidoscope_cookery:stockpot/shengjian_mantou_count_5":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    soup-base: "minecraft:lava"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:shengjian_mantou"
+      count: 5
+  "kaleidoscope_cookery:stockpot/shengjian_mantou_count_6":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    soup-base: "minecraft:lava"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:shengjian_mantou"
+      count: 6
+  "kaleidoscope_cookery:stockpot/shengjian_mantou_count_7":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    soup-base: "minecraft:lava"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:shengjian_mantou"
+      count: 7
+  "kaleidoscope_cookery:stockpot/shengjian_mantou_count_8":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    soup-base: "minecraft:lava"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:shengjian_mantou"
+      count: 8
+  "kaleidoscope_cookery:stockpot/shengjian_mantou_count_9":
+    ingredients:
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+      - "kaleidoscope_cookery:stuffed_dough_food"
+    soup-base: "minecraft:lava"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:shengjian_mantou"
+      count: 9
+  "kaleidoscope_cookery:stockpot/spicy_blood_stew":
+    ingredients:
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:foods/raw_pork"
+      - "#c:crops/chilipepper"
+      - "#c:crops/chilipepper"
+      - "#c:crops/chilipepper"
+      - "#c:crops/chilipepper"
+      - "minecraft:blaze_powder"
+    soup-base: "minecraft:lava"
+    result: "kaleidoscope_cookery:spicy_blood_stew"
+  "kaleidoscope_cookery:stockpot/tea_egg_count_1":
+    ingredients:
+      - "kaleidoscope_cookery:dried_tea_leaves"
+      - "minecraft:egg"
+    carrier: none
+    result: "kaleidoscope_cookery:tea_egg"
+  "kaleidoscope_cookery:stockpot/tea_egg_count_2":
+    ingredients:
+      - "kaleidoscope_cookery:dried_tea_leaves"
+      - "kaleidoscope_cookery:dried_tea_leaves"
+      - "minecraft:egg"
+      - "minecraft:egg"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:tea_egg"
+      count: 2
+  "kaleidoscope_cookery:stockpot/tea_egg_count_3":
+    ingredients:
+      - "kaleidoscope_cookery:dried_tea_leaves"
+      - "kaleidoscope_cookery:dried_tea_leaves"
+      - "kaleidoscope_cookery:dried_tea_leaves"
+      - "minecraft:egg"
+      - "minecraft:egg"
+      - "minecraft:egg"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:tea_egg"
+      count: 3
+  "kaleidoscope_cookery:stockpot/tea_egg_count_4":
+    ingredients:
+      - "kaleidoscope_cookery:dried_tea_leaves"
+      - "kaleidoscope_cookery:dried_tea_leaves"
+      - "kaleidoscope_cookery:dried_tea_leaves"
+      - "kaleidoscope_cookery:dried_tea_leaves"
+      - "minecraft:egg"
+      - "minecraft:egg"
+      - "minecraft:egg"
+      - "minecraft:egg"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:tea_egg"
+      count: 4
+  "kaleidoscope_cookery:stockpot/udon_noodle":
+    ingredients:
+      - "#c:crops/lettuce"
+      - "#c:crops/lettuce"
+      - "#c:eggs"
+      - "#c:eggs"
+      - "kaleidoscope_cookery:raw_noodles"
+      - "kaleidoscope_cookery:raw_noodles"
+      - "kaleidoscope_cookery:raw_noodles"
+    result: "kaleidoscope_cookery:udon_noodle"
+  "kaleidoscope_cookery:stockpot/warped_fungus_pot_soup":
+    ingredients:
+      - "minecraft:warped_fungus"
+      - "minecraft:warped_fungus"
+      - "minecraft:warped_fungus"
+      - "minecraft:warped_fungus"
+      - "minecraft:warped_fungus"
+      - "minecraft:warped_fungus"
+    carrier: "minecraft:flower_pot"
+    result: "kaleidoscope_cookery:warped_fungus_pot_soup"
+  "kaleidoscope_cookery:stockpot/wild_mushroom_rabbit_soup":
+    ingredients:
+      - "#c:mushrooms"
+      - "#c:mushrooms"
+      - "#c:mushrooms"
+      - "minecraft:rabbit"
+      - "minecraft:rabbit"
+    result: "kaleidoscope_cookery:wild_mushroom_rabbit_soup"
+  "kaleidoscope_cookery:stockpot/zongzi_count_1":
+    ingredients:
+      - "kaleidoscope_cookery:raw_zongzi"
+    carrier: none
+    result: "kaleidoscope_cookery:zongzi"
+  "kaleidoscope_cookery:stockpot/zongzi_count_2":
+    ingredients:
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:zongzi"
+      count: 2
+  "kaleidoscope_cookery:stockpot/zongzi_count_3":
+    ingredients:
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:zongzi"
+      count: 3
+  "kaleidoscope_cookery:stockpot/zongzi_count_4":
+    ingredients:
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:zongzi"
+      count: 4
+  "kaleidoscope_cookery:stockpot/zongzi_count_5":
+    ingredients:
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:zongzi"
+      count: 5
+  "kaleidoscope_cookery:stockpot/zongzi_count_6":
+    ingredients:
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:zongzi"
+      count: 6
+  "kaleidoscope_cookery:stockpot/zongzi_count_7":
+    ingredients:
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:zongzi"
+      count: 7
+  "kaleidoscope_cookery:stockpot/zongzi_count_8":
+    ingredients:
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:zongzi"
+      count: 8
+  "kaleidoscope_cookery:stockpot/zongzi_count_9":
+    ingredients:
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+      - "kaleidoscope_cookery:raw_zongzi"
+    carrier: none
+    result:
+      item: "kaleidoscope_cookery:zongzi"
+      count: 9
+  "kaleidoscope_grilling:stockpot/potato_beef_stew":
+    ingredients:
+      - "#kaleidoscope_grilling:ingredients/beef_chunks"
+      - "#kaleidoscope_grilling:ingredients/beef_chunks"
+      - "minecraft:potato"
+      - "#kaleidoscope_grilling:ingredients/carrot_dice"
+      - "#kaleidoscope_grilling:ingredients/onions"
+    result: "kaleidoscope_grilling:potato_beef_stew"
+  "kaleidoscope_grilling:stockpot/red_sweet_potato_porridge":
+    ingredients:
+      - "#kaleidoscope_grilling:ingredients/sweet_potatoes"
+      - "#kaleidoscope_grilling:ingredients/sweet_potatoes"
+      - "#kaleidoscope_grilling:ingredients/sweet_potatoes"
+      - "kaleidoscope_cookery:rice"
+      - "kaleidoscope_cookery:rice"
+      - "kaleidoscope_cookery:rice"
+    result: "kaleidoscope_grilling:red_sweet_potato_porridge"
+  "kaleidoscope_grilling:stockpot/sour_spicy_noodles":
+    ingredients:
+      - "kaleidoscope_tavern:vinegar"
+      - "kaleidoscope_cookery:red_chili"
+      - "kaleidoscope_cookery:red_chili"
+      - "kaleidoscope_grilling:raw_sweet_potato_sheet"
+      - "kaleidoscope_grilling:raw_sweet_potato_sheet"
+      - "#kaleidoscope_grilling:ingredients/leafy_greens"
+    result: "kaleidoscope_grilling:sour_spicy_noodles"
+flex-stockpot:
+  "kaleidoscope_cookery:flex_stockpot/beef_meatball_soup":
+    ingredients:
+      - "kaleidoscope_cookery:raw_meatball"
+      - "#c:crops/lettuce"
+    result: "kaleidoscope_cookery:beef_meatball_soup"
+  "kaleidoscope_cookery:flex_stockpot/beef_noodle":
+    ingredients:
+      - "#c:foods/raw_beef"
+      - "kaleidoscope_cookery:raw_noodles"
+    result: "kaleidoscope_cookery:beef_noodle"
+  "kaleidoscope_cookery:flex_stockpot/borscht":
+    ingredients:
+      - "#c:foods/raw_beef"
+      - "#c:crops/tomato"
+    result: "kaleidoscope_cookery:borscht"
+  "kaleidoscope_cookery:flex_stockpot/braised_beef_with_potatoes":
+    ingredients:
+      - "#c:foods/raw_beef"
+      - "minecraft:potato"
+    result: "kaleidoscope_cookery:braised_beef_with_potatoes"
+  "kaleidoscope_cookery:flex_stockpot/brown_mushroom_pot_soup":
+    ingredients:
+      - "minecraft:brown_mushroom"
+    carrier: "minecraft:flower_pot"
+    result: "kaleidoscope_cookery:brown_mushroom_pot_soup"
+  "kaleidoscope_cookery:flex_stockpot/buddha_jumps_over_the_wall":
+    ingredients:
+      - "#c:eggs"
+      - "minecraft:phantom_membrane"
+      - "#c:crops/lettuce"
+    carrier: "minecraft:flower_pot"
+    result: "kaleidoscope_cookery:buddha_jumps_over_the_wall"
+  "kaleidoscope_cookery:flex_stockpot/chicken_and_mushroom_stew":
+    ingredients:
+      - "#c:foods/raw_chicken"
+      - "#c:mushrooms"
+    result: "kaleidoscope_cookery:chicken_and_mushroom_stew"
+  "kaleidoscope_cookery:flex_stockpot/crimson_fungus_pot_soup":
+    ingredients:
+      - "minecraft:crimson_fungus"
+    carrier: "minecraft:flower_pot"
+    result: "kaleidoscope_cookery:crimson_fungus_pot_soup"
+  "kaleidoscope_cookery:flex_stockpot/dough_drop_soup":
+    ingredients:
+      - "#c:crops/lettuce"
+      - "#c:flour"
+    result: "kaleidoscope_cookery:dough_drop_soup"
+  "kaleidoscope_cookery:flex_stockpot/fearsome_thick_soup":
+    ingredients:
+      - "minecraft:rotten_flesh"
+      - "minecraft:sculk"
+    soup-base: "minecraft:lava"
+    result: "kaleidoscope_cookery:fearsome_thick_soup"
+  "kaleidoscope_cookery:flex_stockpot/four_joy_meatball_soup":
+    ingredients:
+      - "kaleidoscope_cookery:raw_meatball"
+    result: "kaleidoscope_cookery:four_joy_meatball_soup"
+  "kaleidoscope_cookery:flex_stockpot/hot_dry_noodles":
+    ingredients:
+      - "#c:crops/chilipepper"
+      - "kaleidoscope_cookery:raw_noodles"
+    soup-base: "minecraft:lava"
+    result: "kaleidoscope_cookery:hot_dry_noodles"
+  "kaleidoscope_cookery:flex_stockpot/hui_noodle":
+    ingredients:
+      - "#c:foods/raw_mutton"
+      - "kaleidoscope_cookery:raw_noodles"
+    result: "kaleidoscope_cookery:hui_noodle"
+  "kaleidoscope_cookery:flex_stockpot/laba_congee":
+    ingredients:
+      - "#c:seeds"
+      - "minecraft:sugar"
+    result: "kaleidoscope_cookery:laba_congee"
+  "kaleidoscope_cookery:flex_stockpot/lamb_and_radish_soup":
+    ingredients:
+      - "#c:foods/raw_mutton"
+      - "minecraft:carrot"
+    result: "kaleidoscope_cookery:lamb_and_radish_soup"
+  "kaleidoscope_cookery:flex_stockpot/numbing_spicy_chicken":
+    ingredients:
+      - "#c:crops/chilipepper"
+      - "#c:foods/raw_chicken"
+    soup-base: "minecraft:lava"
+    result: "kaleidoscope_cookery:numbing_spicy_chicken"
+  "kaleidoscope_cookery:flex_stockpot/pork_bone_soup":
+    ingredients:
+      - "minecraft:bone"
+    result: "kaleidoscope_cookery:pork_bone_soup"
+  "kaleidoscope_cookery:flex_stockpot/pufferfish_soup":
+    ingredients:
+      - "minecraft:pufferfish"
+      - "#c:crops/lettuce"
+    result: "kaleidoscope_cookery:pufferfish_soup"
+  "kaleidoscope_cookery:flex_stockpot/pufferfish_soup_entity":
+    ingredients:
+      - "#c:crops/lettuce"
+    soup-base: "minecraft:pufferfish_bucket"
+    result: "kaleidoscope_cookery:pufferfish_soup"
+  "kaleidoscope_cookery:flex_stockpot/red_mushroom_pot_soup":
+    ingredients:
+      - "minecraft:red_mushroom"
+    carrier: "minecraft:flower_pot"
+    result: "kaleidoscope_cookery:red_mushroom_pot_soup"
+  "kaleidoscope_cookery:flex_stockpot/seafood_miso_soup":
+    ingredients:
+      - "#c:raw_fishes"
+      - "#c:crops/lettuce"
+    result: "kaleidoscope_cookery:seafood_miso_soup"
+  "kaleidoscope_cookery:flex_stockpot/seafood_miso_soup_cod_entity":
+    ingredients:
+      - "#c:crops/lettuce"
+    soup-base: "minecraft:cod_bucket"
+    result: "kaleidoscope_cookery:seafood_miso_soup"
+  "kaleidoscope_cookery:flex_stockpot/seafood_miso_soup_salmon_entity":
+    ingredients:
+      - "#c:crops/lettuce"
+    soup-base: "minecraft:salmon_bucket"
+    result: "kaleidoscope_cookery:seafood_miso_soup"
+  "kaleidoscope_cookery:flex_stockpot/seafood_miso_soup_tropical_entity":
+    ingredients:
+      - "#c:crops/lettuce"
+    soup-base: "minecraft:tropical_fish_bucket"
+    result: "kaleidoscope_cookery:seafood_miso_soup"
+  "kaleidoscope_cookery:flex_stockpot/spicy_blood_stew":
+    ingredients:
+      - "#c:foods/raw_pork"
+      - "#c:crops/chilipepper"
+      - "minecraft:blaze_powder"
+    soup-base: "minecraft:lava"
+    result: "kaleidoscope_cookery:spicy_blood_stew"
+  "kaleidoscope_cookery:flex_stockpot/udon_noodle":
+    ingredients:
+      - "#c:crops/lettuce"
+      - "#c:eggs"
+      - "kaleidoscope_cookery:raw_noodles"
+    result: "kaleidoscope_cookery:udon_noodle"
+  "kaleidoscope_cookery:flex_stockpot/warped_fungus_pot_soup":
+    ingredients:
+      - "minecraft:warped_fungus"
+    carrier: "minecraft:flower_pot"
+    result: "kaleidoscope_cookery:warped_fungus_pot_soup"
+  "kaleidoscope_cookery:flex_stockpot/wild_mushroom_rabbit_soup":
+    ingredients:
+      - "minecraft:rabbit"
+      - "#c:mushrooms"
+    result: "kaleidoscope_cookery:wild_mushroom_rabbit_soup"
+  "kaleidoscope_grilling:flex_stockpot/potato_beef_stew":
+    ingredients:
+      - "#kaleidoscope_grilling:ingredients/beef_chunks"
+      - "minecraft:potato"
+      - "#kaleidoscope_grilling:ingredients/carrot_dice"
+      - "#kaleidoscope_grilling:ingredients/onions"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_grilling:potato_beef_stew"
+  "kaleidoscope_grilling:flex_stockpot/red_sweet_potato_porridge":
+    ingredients:
+      - "#kaleidoscope_grilling:ingredients/sweet_potatoes"
+      - "kaleidoscope_cookery:rice"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_grilling:red_sweet_potato_porridge"
+  "kaleidoscope_grilling:flex_stockpot/sour_spicy_noodles":
+    ingredients:
+      - "kaleidoscope_tavern:vinegar"
+      - "kaleidoscope_cookery:red_chili"
+      - "kaleidoscope_grilling:raw_sweet_potato_sheet"
+      - "#kaleidoscope_grilling:ingredients/leafy_greens"
+    carrier: "minecraft:bowl"
+    result: "kaleidoscope_grilling:sour_spicy_noodles"
 vanilla:
   "kaleidoscope_cookery:apple_platter":
     type: crafting_shapeless

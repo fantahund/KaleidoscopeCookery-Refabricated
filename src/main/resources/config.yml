@@ -64,3 +64,5 @@ food:
     saturation-percent: 125
     # So lange bleiben Gerichte aus dem Wok heiß (Sekunden, Mod: normales Öl 60 s)
     wok-seconds: 60
+    # So lange bleiben Suppen aus dem Suppentopf heiß (Sekunden, Mod: 60 s)
+    stockpot-seconds: 60

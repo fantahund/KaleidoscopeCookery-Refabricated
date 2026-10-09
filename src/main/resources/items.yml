@@ -1668,6 +1668,8 @@ items:
     model: "kaleidoscope_cookery:stockpot_lid"
     name: item.kaleidoscope_cookery.stockpot_lid
     tooltip: tooltip.kaleidoscope_cookery.stockpot_lid
+    base: SHIELD
+    max-damage: 120
   "kaleidoscope_cookery:stove":
     model: "kaleidoscope_cookery:stove"
     name: block.kaleidoscope_cookery.stove

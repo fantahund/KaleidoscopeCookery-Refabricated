@@ -188,6 +188,8 @@ def parse_food_bites(foods: dict) -> dict:
 # Items mit Vanilla-Funktion: Basis-Material statt Papier
 BASE_MATERIALS = {
     "kaleidoscope_cookery:kitchen_shovel": "IRON_SHOVEL",
+    # Suppentopfdeckel: im Mod ein Schild (ShieldItem, 120 Haltbarkeit)
+    "kaleidoscope_cookery:stockpot_lid": "SHIELD",
     # Küchenmesser: Verbundblock (im Survival nicht erhältlich, ohne OP nicht platzierbar, keine Rechtsklick-Funktion)
     # mit allen Komponenten des passenden Schwerts. Das Plugin trägt ihn in #minecraft:swords ein (wie die Messer im Mod).
     "kaleidoscope_cookery:iron_kitchen_knife": "JIGSAW",
@@ -195,6 +197,7 @@ BASE_MATERIALS = {
     "kaleidoscope_cookery:diamond_kitchen_knife": "JIGSAW",
     "kaleidoscope_cookery:netherite_kitchen_knife": "JIGSAW",
 }
+MAX_DAMAGE = {"kaleidoscope_cookery:stockpot_lid": 120}
 PROTOTYPES = {
     "kaleidoscope_cookery:iron_kitchen_knife": "IRON_SWORD",
     "kaleidoscope_cookery:gold_kitchen_knife": "GOLDEN_SWORD",
@@ -235,6 +238,8 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry["base"] = BASE_MATERIALS[full_id]
                 if full_id in PROTOTYPES:
                     entry["prototype"] = PROTOTYPES[full_id]
+                if full_id in MAX_DAMAGE:
+                    entry["max-damage"] = MAX_DAMAGE[full_id]
             elif full_id in stack_sizes:
                 entry["max-stack"] = stack_sizes[full_id]
             if ns == "kaleidoscope_cookery" and item_id in foods:
@@ -354,6 +359,7 @@ def collect_recipes(tags: dict) -> dict:
                 "results": result_list(recipe),
             }
     pot, flex_pot = collect_pot_recipes(used_tags)
+    stockpot, flex_stockpot = collect_stockpot_recipes(used_tags)
     vanilla = collect_vanilla_recipes(used_tags)
     tag_groups = {}
     for name in sorted(used_tags):
@@ -364,11 +370,12 @@ def collect_recipes(tags: dict) -> dict:
             print(f"WARNUNG: Tag #{name} lässt sich nicht auflösen")
         tag_groups[name] = values
     return {"data-version": DATA_VERSION, "tags": tag_groups, "chopping-board": chopping, "pot": pot, "flex-pot": flex_pot,
-            "vanilla": vanilla}
+            "stockpot": stockpot, "flex-stockpot": flex_stockpot, "vanilla": vanilla}
 
 
 # Bei jeder inhaltlichen Aenderung der erzeugten recipes.yml erhoehen: das Plugin ersetzt dann alte Kopien (mit Backup)
-DATA_VERSION = 2
+DATA_VERSION = 3
+STOCKPOT_DEFAULT_TIME = 300
 POT_DEFAULT_TIME = 200
 POT_DEFAULT_STIR_FRY = 3
 
@@ -408,6 +415,32 @@ def collect_pot_recipes(used_tags: set):
         for file in sorted(folder.glob("*.json")):
             flex[f"{ns}:flex_pot/{file.stem}"] = pot_entry(read_json(file), used_tags)
     return dict(sorted(pot.items())), dict(sorted(flex.items()))
+
+
+def collect_stockpot_recipes(used_tags: set):
+    result = {}
+    for kind in ("stockpot", "flex_stockpot"):
+        recipes = {}
+        for ns, folder in pot_dirs(kind):
+            for file in sorted(folder.glob("*.json")):
+                recipe = read_json(file)
+                entry = {"ingredients": [ingredient(i, used_tags) for i in recipe["ingredients"]]}
+                if recipe.get("soup_base", "minecraft:water") != "minecraft:water":
+                    entry["soup-base"] = recipe["soup_base"]
+                if recipe.get("time", STOCKPOT_DEFAULT_TIME) != STOCKPOT_DEFAULT_TIME:
+                    entry["time"] = recipe["time"]
+                # Ohne Angabe: Schüssel; leere Liste: kein Gefäß nötig
+                if "carrier" in recipe:
+                    carrier = recipe["carrier"]
+                    entry["carrier"] = "none" if carrier == [] else ingredient(carrier, used_tags)
+                for key, out in (("cooking_texture", "cooking-texture"), ("finished_texture", "finished-texture"),
+                                 ("cooking_bubble_color", "cooking-color"), ("finished_bubble_color", "finished-color")):
+                    if key in recipe:
+                        entry[out] = recipe[key]
+                entry["result"] = result_list({"result": recipe["result"]})[0]
+                recipes[f"{ns}:{kind}/{file.stem}"] = entry
+        result[kind] = dict(sorted(recipes.items()))
+    return result["stockpot"], result["flex_stockpot"]
 
 
 def pot_entry(recipe: dict, used_tags: set) -> dict:
@@ -564,7 +597,7 @@ def main():
                      "# Zutaten: Item-ID, \"#tag\" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.\n")
     (RESOURCES / "recipes.yml").write_text(recipe_header + to_yaml(recipes) + "\n", encoding="utf-8")
     write_german_lang()
-    print(f"Items: {len(items)}, Teller: {sum(1 for i in items.values() if 'plate' in i)}, Wok: {len(recipes['pot'])}+{len(recipes['flex-pot'])} flex, Schneidebrett-Rezepte: {len(recipes['chopping-board'])}, Vanilla-Rezepte: {len(recipes['vanilla'])}, Tags: {len(recipes['tags'])}")
+    print(f"Items: {len(items)}, Teller: {sum(1 for i in items.values() if 'plate' in i)}, Wok: {len(recipes['pot'])}+{len(recipes['flex-pot'])} flex, Suppentopf: {len(recipes['stockpot'])}+{len(recipes['flex-stockpot'])} flex, Schneidebrett-Rezepte: {len(recipes['chopping-board'])}, Vanilla-Rezepte: {len(recipes['vanilla'])}, Tags: {len(recipes['tags'])}")
 
 
 if __name__ == "__main__":

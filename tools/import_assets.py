@@ -172,8 +172,22 @@ class Importer:
             self.properties[name] = len(self.properties)
         return self.properties[name]
 
+    # Predicates, die es in 26.x als echte Item-Model-Bedingung gibt (statt custom_model_data)
+    CONDITION_PROPERTIES = {"kaleidoscope_cookery:using": "minecraft:using_item"}
+
     def convert_overrides(self, base_ref: str, overrides: list) -> dict:
         """Vanilla-1.21.1-Semantik: das letzte Override, dessen Predicates alle <= Wert sind, gewinnt."""
+        names = {name for o in overrides for name in o["predicate"]}
+        if len(names) == 1 and next(iter(names)) in self.CONDITION_PROPERTIES:
+            name = next(iter(names))
+
+            def pick(value):
+                result = base_ref
+                for o in overrides:
+                    if value >= float(o["predicate"][name]):
+                        result = o["model"]
+                return {"type": "minecraft:model", "model": result}
+            return {"type": "minecraft:condition", "property": self.CONDITION_PROPERTIES[name], "on_true": pick(1.0), "on_false": pick(0.0)}
         props = []
         for override in overrides:
             for name in override["predicate"]:
