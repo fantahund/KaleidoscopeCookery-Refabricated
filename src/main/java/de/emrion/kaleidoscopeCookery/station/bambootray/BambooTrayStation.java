@@ -137,7 +137,9 @@ public class BambooTrayStation extends Station {
 
     @Override
     public String describe() {
-        return "Bambustablett";
+        Block above = world().getBlockAt(position().x(), position().y() + 1, position().z());
+        return "Bambustablett (Biom " + above.getBiome().key() + ", Temperatur " + above.getTemperature() + ", Sturm " + world().hasStorm()
+                + ", Himmel " + Weather.canSeeSky(above) + ", Regen " + Weather.isRainingAt(above) + ", Modus " + activeType + ")";
     }
 
     @Override
