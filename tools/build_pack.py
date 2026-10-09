@@ -420,7 +420,7 @@ class PackBuilder:
             parts: Liste aus (Texturen, Elemente, Inventar-Ansicht, y-Versatz in Modell-Pixeln).
             """
             extra = max(offset for *_, offset in parts)
-            supersample = 4
+            supersample = 8
             gui = parts[0][2]
             rx, ry, rz = gui.get("rotation", [0, 0, 0])
             tx, ty, tz = gui.get("translation", [0, 0, 0])
@@ -487,7 +487,8 @@ class PackBuilder:
                 out.alpha_composite(part.transform(out.size, Image.AFFINE, data, Image.NEAREST))
             if not out.getbbox():
                 return None
-            return out.resize((width // supersample, height // supersample), Image.BOX)
+            # 4-fache Auflösung (128 Pixel für 16 Modell-Pixel): auch bei großer GUI scharf
+            return out.resize((width // 2, height // 2), Image.BOX)
 
         def glyph_advance(file, height):
             """Vorschub wie BitmapProvider: Breite bis zur letzten nicht ganz durchsichtigen Spalte, skaliert, + 1."""
@@ -543,11 +544,14 @@ class PackBuilder:
                 parts = [(t, e, g, o) for t, e, g, o in parts if e]
                 image = render3d(parts) if parts else None
                 if image is not None:
-                    file = save_icon(ns, item, image)
-                    glyph = add_glyph(file, ICON_HEIGHT, ICON_ASCENT)
+                    # Slot-Bild in 64 Pixel (16 Pixel im Spiel, also 4-fach), Stations-Bild in 128 Pixel (32 im Spiel)
+                    file = save_icon(ns, item, image.resize((image.width // 2, image.height // 2), Image.BOX))
+                    glyph = add_glyph(file, ICON_HEIGHT * image.height // image.width, ICON_ASCENT)
                     if f"{ns}:{item}" in DIAGRAM_ITEMS:
-                        # In Originalgröße, mittig über den drei Slot-Reihen (54 Pixel)
-                        diagrams.append(f"@diagram|{ns}:{item}={add_glyph(file, image.height, 7 + 18 - (54 - image.height) // 2)}")
+                        large = save_icon(ns, item + "_large", image)
+                        shown = image.height // 4
+                        # mittig über den drei Slot-Reihen (54 Pixel)
+                        diagrams.append(f"@diagram|{ns}:{item}={add_glyph(large, shown, 7 + 18 - (54 - shown) // 2)}")
                     first = resolve(textures, textures.get("particle")) or next((resolve(textures, v) for v in textures.values() if resolve(textures, v)), None)
                     if first and atlas_of(first):
                         tns, tpath = norm(first)
