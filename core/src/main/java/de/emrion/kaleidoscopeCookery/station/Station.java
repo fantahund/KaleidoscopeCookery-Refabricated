@@ -103,6 +103,18 @@ public abstract class Station {
     }
 
     /**
+     * Geplanter Einzel-Tick (StationManager#schedule).
+     */
+    public void scheduledTick(long serverTick) {
+    }
+
+    /**
+     * Station wurde geladen bzw. gesetzt und ist registriert (z. B. ersten geplanten Tick anlegen).
+     */
+    protected void onAttached() {
+    }
+
+    /**
      * Item, das die Station beim Abbauen (außer im Kreativmodus) zurückgibt. null = keins.
      */
     public @Nullable ItemStack selfDrop() {
@@ -370,7 +382,7 @@ public abstract class Station {
             display.setTransformation(look.transformation());
             display.setBrightness(look.brightness());
             display.setPersistent(true);
-            display.setViewRange(viewRange());
+            display.setViewRange(effectiveViewRange());
             display.setDisplayWidth(displaySize());
             display.setDisplayHeight(displaySize());
             display.getPersistentDataContainer().set(Keys.STATION_OWNER, PersistentDataType.STRING, owner);
@@ -384,6 +396,11 @@ public abstract class Station {
      */
     protected float viewRange() {
         return 1.0f;
+    }
+
+    /** Höchstens bis zur Simulationsdistanz der Welt (dort wachsen Pflanzen und arbeiten Stationen) */
+    private float effectiveViewRange() {
+        return Math.min(viewRange(), world().getSimulationDistance() * 16f / 64f);
     }
 
     /**
@@ -437,8 +454,8 @@ public abstract class Station {
     }
 
     void adoptPart(String name, ItemDisplay display) {
-        if (display.getViewRange() != viewRange()) {
-            display.setViewRange(viewRange());
+        if (display.getViewRange() != effectiveViewRange()) {
+            display.setViewRange(effectiveViewRange());
         }
         ItemDisplay previous = parts.put(name, display);
         if (previous != null && previous != display) {

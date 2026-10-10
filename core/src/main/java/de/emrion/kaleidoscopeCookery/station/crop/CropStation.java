@@ -160,20 +160,54 @@ public class CropStation extends Station {
 
     // ---- Wachstum ----
 
+    /** Kein Tick jeden Tick: der nächste Zufalls-Tick wird vorab ausgewürfelt und geplant (scheduleNext) */
     @Override
     public boolean isTicking() {
-        return !isMature() || kind == CropKind.RICE;
+        return false;
+    }
+
+    private boolean scheduled;
+
+    @Override
+    protected void onAttached() {
+        scheduleNext();
+    }
+
+    /**
+     * Nächsten Zufalls-Tick planen: Vanilla gibt jedem Block pro Tick mit p = randomTickSpeed/4096 einen; die Wartezeit
+     * bis zum nächsten ist geometrisch verteilt (jede Pflanze würfelt für sich, im Schnitt 4096/Speed Ticks).
+     */
+    private void scheduleNext() {
+        if (scheduled || (isMature() && kind != CropKind.RICE)) {
+            return;
+        }
+        int speed = world().getGameRuleValue(GameRules.RANDOM_TICK_SPEED);
+        long delay;
+        if (speed <= 0) {
+            delay = 200; // Zufalls-Ticks aus: später wieder nachsehen
+        } else {
+            double p = Math.min(1.0, speed / 4096.0);
+            double u = ThreadLocalRandom.current().nextDouble();
+            delay = p >= 1.0 ? 1 : 1 + (long) Math.floor(Math.log(1 - u) / Math.log(1 - p));
+        }
+        scheduled = true;
+        context.manager().schedule(this, delay);
     }
 
     @Override
-    public void tick(long serverTick) {
-        // Zufalls-Tick: jeder Block bekommt pro Tick mit Wahrscheinlichkeit randomTickSpeed/4096 einen
+    public void scheduledTick(long serverTick) {
+        scheduled = false;
         int speed = world().getGameRuleValue(GameRules.RANDOM_TICK_SPEED);
-        if (speed <= 0 || ThreadLocalRandom.current().nextInt(4096) >= speed) {
-            return;
+        // Wie Vanilla: Zufalls-Ticks nur in Chunks mit Entity-Ticking (Simulationsdistanz eines Spielers)
+        org.bukkit.Chunk chunk = world().getChunkAt(position().x() >> 4, position().z() >> 4);
+        if (speed > 0 && chunk.getLoadLevel() == org.bukkit.Chunk.LoadLevel.ENTITY_TICKING) {
+            randomTick();
         }
-        randomTick();
+        if (!isRemoved()) {
+            scheduleNext();
+        }
     }
+
 
     private void randomTick() {
         if (!canSurvive()) {
@@ -258,7 +292,7 @@ public class CropStation extends Station {
         age = Math.min(kind.maxAge(), newAge);
         markDirty();
         updateDisplay();
-        context.manager().updateTicking(this);
+        scheduleNext(); // nach der Ernte wächst sie wieder
     }
 
     // ---- Bedienung ----

@@ -64,6 +64,8 @@ public class StationManager implements Listener {
     /** Zusätzliche Hitboxen (Interaction mit STATION_OWNER) -> Station */
     private final Map<UUID, Station> byHitbox = new HashMap<>();
     private final Set<Station> ticking = new LinkedHashSet<>();
+    /** Geplante Einzel-Ticks: Server-Tick -> Stationen (z. B. der nächste Zufalls-Tick einer Pflanze) */
+    private final Map<Long, List<Station>> scheduled = new HashMap<>();
     private final Map<UUID, Long> hudPausedUntil = new HashMap<>();
     private BukkitTask task;
     private long serverTick;
@@ -135,6 +137,19 @@ public class StationManager implements Listener {
 
     private void tick() {
         serverTick++;
+        List<Station> due = scheduled.remove(serverTick);
+        if (due != null) {
+            for (Station station : due) {
+                if (station.isRemoved() || byRoot.get(station.root().getUniqueId()) != station) {
+                    continue; // abgebaut oder Chunk entladen (beim Laden wird neu geplant)
+                }
+                try {
+                    station.scheduledTick(serverTick);
+                } catch (RuntimeException e) {
+                    plugin.getLogger().log(Level.SEVERE, "Fehler im geplanten Tick der Station " + station.describe() + " bei " + station.position(), e);
+                }
+            }
+        }
         for (Station station : new ArrayList<>(ticking)) {
             if (station.isRemoved()) {
                 ticking.remove(station);
@@ -287,6 +302,13 @@ public class StationManager implements Listener {
     /**
      * Station tickt (oder nicht mehr), z. B. nach einer Zustandsänderung.
      */
+    /**
+     * Einmaligen Tick in delay Ticks planen ({@link Station#scheduledTick}).
+     */
+    public void schedule(Station station, long delay) {
+        scheduled.computeIfAbsent(serverTick + Math.max(1, delay), k -> new ArrayList<>()).add(station);
+    }
+
     public void updateTicking(Station station) {
         if (station.isTicking() && !station.isRemoved()) {
             ticking.add(station);
@@ -429,6 +451,7 @@ public class StationManager implements Listener {
             }
         }
         updateTicking(station);
+        station.onAttached();
         return station;
     }
 
