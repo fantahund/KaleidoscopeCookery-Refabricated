@@ -248,3 +248,28 @@ a.slot:hover { background: #2a2a34; text-decoration: none; }
 .crop p { margin: 0.4rem 0 0; }
 .crop-row { display: flex; align-items: center; gap: 0.8rem; }
 .crop-row small { display: block; font-family: var(--pixel); color: var(--muted); font-size: 0.7rem; }
+
+/* ---- Languages: wiki texts (l-*) and names (n-*) ---- */
+html.ui-en .l-de, html:not(.ui-en) .l-en { display: none !important; }
+html.names-en .n-de, html:not(.names-en) .n-en { display: none !important; }
+
+/* ---- Settings ---- */
+.settings { position: relative; }
+.settings-button {
+  font: 0.8rem var(--pixel); color: var(--text); cursor: pointer;
+  background: #5a5a62; border: 2px solid #000; padding: 0.45rem 0.8rem;
+  box-shadow: inset 2px 2px 0 #8a8a94, inset -2px -2px 0 #36363c; text-shadow: 2px 2px 0 #222;
+}
+.settings-button:hover { filter: brightness(1.12); }
+.settings-panel { position: absolute; right: 0; top: calc(100% + 6px); width: 300px; padding: 0.9rem 1rem; display: none; z-index: 60; }
+.settings-panel.open { display: block; }
+.setting { margin-bottom: 0.9rem; }
+.setting > span { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.35rem; }
+.toggle { display: flex; }
+.toggle button {
+  flex: 1; font: 0.8rem var(--pixel); color: var(--muted); cursor: pointer; padding: 0.4rem 0.5rem;
+  background: var(--slot); border: 2px solid #000;
+}
+.toggle button + button { border-left: 0; }
+.toggle button.on { color: #fff; background: #4c8a2f; box-shadow: inset 2px 2px 0 #7ccc55, inset -2px -2px 0 #2f5a1b; text-shadow: 2px 2px 0 #1d3a10; }
+.small { font-size: 0.75rem; margin: 0; }
