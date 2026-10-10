@@ -273,3 +273,7 @@ html.names-en .n-de, html:not(.names-en) .n-en { display: none !important; }
 .toggle button + button { border-left: 0; }
 .toggle button.on { color: #fff; background: #4c8a2f; box-shadow: inset 2px 2px 0 #7ccc55, inset -2px -2px 0 #2f5a1b; text-shadow: 2px 2px 0 #1d3a10; }
 .small { font-size: 0.75rem; margin: 0; }
+
+/* ---- Hunger and saturation drumsticks ---- */
+.food-bar { display: flex; flex-wrap: wrap; gap: 0; margin-top: 3px; }
+.food-bar img { width: 18px; height: 18px; image-rendering: pixelated; filter: drop-shadow(1px 1px 0 #000); }

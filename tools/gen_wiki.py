@@ -906,9 +906,10 @@ class Site:
             if food:
                 n = food.get("nutrition", 0)
                 if n:
-                    stats.append((("Hunger", "Hunger"), L(f"{n} ({de_num(f'{n / 2:g}')} Keulen)", f"{n} ({n / 2:g} drumsticks)")))
+                    stats.append((("Hunger", "Hunger"), L(f"{n} ({de_num(f'{n / 2:g}')} Keulen)", f"{n} ({n / 2:g} drumsticks)") + self.food_bar(n, "food", root)))
                 if food.get("saturation"):
-                    stats.append((("Sättigung", "Saturation"), L(de_num(f"{food['saturation']:g}"), f"{food['saturation']:g}")))
+                    sat = food["saturation"]
+                    stats.append((("Sättigung", "Saturation"), L(de_num(f"{sat:g}"), f"{sat:g}") + self.food_bar(sat, "saturation", root)))
                 if food.get("drink"):
                     stats.append((("Art", "Type"), L("Getränk", "Drink")))
                 if food.get("eat-seconds"):
@@ -924,7 +925,8 @@ class Site:
                 pf = plate.get("food", {})
                 if pf.get("nutrition"):
                     sat = f"{pf.get('saturation', 0):g}"
-                    stats.append((("Pro Biss", "Per bite"), L(f"{pf['nutrition']} Hunger, {de_num(sat)} Sättigung", f"{pf['nutrition']} hunger, {sat} saturation")))
+                    stats.append((("Pro Biss", "Per bite"), L(f"{pf['nutrition']} Hunger, {de_num(sat)} Sättigung", f"{pf['nutrition']} hunger, {sat} saturation")
+                                  + self.food_bar(pf["nutrition"], "food", root)))
             stats.append((("Stapel", "Stack"), str(value.get("max-stack", 64))))
             stats.append((("ID", "ID"), f"<code>{e(item)}</code>"))
             effects = self.effect_list(food.get("effects", []) if food else [], root)
@@ -959,6 +961,16 @@ class Site:
 """
             self.page(f"items/{slug(item)}.html", names, body, 2, "items")
             self.search.append({"d": names[0], "e": names[1], "u": f"items/{slug(item)}.html", "i": f"assets/icons/{slug(item)}.png", "k": "item"})
+
+    def food_bar(self, points: float, kind: str, root: str) -> str:
+        """Drumsticks like the hunger bar (kind "food") or golden ones for saturation (kind "saturation"), 2 points each."""
+        points = min(points, 20)
+        full, half = int(points // 2), (points % 2) >= 1
+        icons = [f"{kind}_full"] * full + ([f"{kind}_half"] if half else [])
+        if not icons:
+            return ""
+        imgs = "".join(f'<img src="{root}assets/gui/{i}.png" width="18" height="18" alt="">' for i in icons)
+        return f'<span class="food-bar">{imgs}</span>'
 
     def effect_list(self, effects: list, root: str) -> str:
         rows = []
@@ -1188,6 +1200,18 @@ class Site:
     def assets(self):
         assets = self.out / "assets"
         assets.mkdir(parents=True, exist_ok=True)
+        gui = assets / "gui"
+        gui.mkdir(parents=True, exist_ok=True)
+        from PIL import Image
+        for part in ("full", "half"):
+            raw = self.data.read_asset(f"assets/minecraft/textures/gui/sprites/hud/food_{part}.png")
+            (gui / f"food_{part}.png").write_bytes(raw)
+            # saturation: golden drumsticks (like the saturation overlay of AppleSkin)
+            image = Image.open(io.BytesIO(raw)).convert("RGBA")
+            pixels = [(min(255, int(l * 1.25) + 40), min(255, int(l * 1.0) + 20), int(l * 0.25), a)
+                      for l, a in ((int(0.3 * r + 0.59 * g + 0.11 * b), a) for r, g, b, a in image.getdata())]
+            image.putdata(pixels)
+            image.save(gui / f"saturation_{part}.png")
         shutil.copy(WIKI_SRC / "style.css", assets / "style.css")
         shutil.copy(WIKI_SRC / "wiki.js", assets / "wiki.js")
         index = json.dumps(sorted(self.search, key=lambda s: s["e"].lower()), ensure_ascii=False, separators=(",", ":"))
