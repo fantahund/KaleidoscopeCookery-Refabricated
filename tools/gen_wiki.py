@@ -962,6 +962,18 @@ class Site:
             self.page(f"items/{slug(item)}.html", names, body, 2, "items")
             self.search.append({"d": names[0], "e": names[1], "u": f"items/{slug(item)}.html", "i": f"assets/icons/{slug(item)}.png", "k": "item"})
 
+    def effect_icon(self, key: str, root: str, size: int = 18) -> str:
+        """Effect icon (textures/mob_effect of the mods or vanilla), like in the inventory."""
+        ns, path = key.split(":")
+        target = self.out / f"assets/effects/{ns}/{path}.png"
+        if not target.exists():
+            raw = self.data.read_asset(f"assets/{ns}/textures/mob_effect/{path}.png")
+            if raw is None:
+                return ""
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(raw)
+        return f'<img class="effect-icon" src="{root}assets/effects/{ns}/{path}.png" width="{size}" height="{size}" alt="">'
+
     def food_bar(self, points: float, kind: str, root: str) -> str:
         """Drumsticks like the hunger bar (kind "food") or golden ones for saturation (kind "saturation"), 2 points each."""
         points = min(points, 20)
@@ -981,6 +993,7 @@ class Site:
             roman = ["", " II", " III", " IV", " V"][level] if level < 5 else f" {level + 1}"
             name = N(e(self.data.keyed("effect", key, "de")), e(self.data.keyed("effect", key, "en"))) + roman
             label = f'<a href="{root}effects.html#{ns}-{path}">{name}</a>' if ns.startswith("kaleidoscope") else name
+            label = self.effect_icon(key, root) + label
             chance = float(effect.get("probability", 1))
             s = seconds(effect.get("duration", 0))
             extra = f" · {chance * 100:g} %" if chance < 1 else ""
@@ -1061,7 +1074,7 @@ class Site:
                 desc = EFFECT_DESCRIPTIONS.get(effect_id, ("–", "–"))
             foods = "".join(f'<a class="mini" href="items/{slug(i)}.html" {self.tip(i)}>{self.icon(i, "", 24, "icon-sm")}</a>' for i in users.get(effect_id, []))
             name = N(e(self.data.lang["de"].get(key, path)), e(self.data.lang["en"].get(key, path)))
-            rows += (f'<div class="effect-card panel" id="{ns}-{path}"><h3>{name}</h3><p>{L(e(desc[0]), e(desc[1]))}</p>'
+            rows += (f'<div class="effect-card panel" id="{ns}-{path}"><h3>{self.effect_icon(effect_id, "", 36)}{name}</h3><p>{L(e(desc[0]), e(desc[1]))}</p>'
                      f'{f"<div class=minis>{foods}</div>" if foods else ""}</div>')
         body = (f'<h1>{L("Effekte", "Effects")}</h1><p class="lead">'
                 + L("Eigene Effekte der Mods. Sie stehen während der Wirkung in der Seitenleiste rechts, weil Minecraft eigene Effekte nicht im Inventar anzeigen kann.",
