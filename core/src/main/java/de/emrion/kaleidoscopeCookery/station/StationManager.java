@@ -614,6 +614,12 @@ public class StationManager implements Listener {
             }
         }
         remove(station);
+        // Station darüber ohne Halt (z. B. Dampfgarer auf Wok, Suppentopf oder Dampfgarer) fällt mit ab
+        Block below = station.position().block();
+        Station above = below == null ? null : at(below.getRelative(org.bukkit.block.BlockFace.UP));
+        if (above != null && above.context().type().needsSupport() && (!below.getType().isSolid() || below.getType() == Material.BARRIER)) {
+            breakStation(above, player);
+        }
         drop.getWorld().playSound(drop, station instanceof de.emrion.kaleidoscopeCookery.station.crop.CropStation ? Sound.BLOCK_CROP_BREAK : Sound.BLOCK_WOOD_BREAK,
                 SoundCategory.BLOCKS, 1, 1);
     }
