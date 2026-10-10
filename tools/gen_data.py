@@ -476,6 +476,11 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry["use-animation"] = "bow"  # RawDoughItem: gedrückt halten wie einen Bogen, dann werden es Nudeln
             if full_id in ("kaleidoscope_cookery:oil_pot", "kaleidoscope_cookery:fruit_basket", "kaleidoscope_cookery:transmutation_lunch_bag"):
                 entry["max-stack"] = 1  # OilPotItem, FruitBasketItem, TransmutationLunchBagItem: stacksTo(1)
+            if full_id in ("kaleidoscope_grilling:empty_seasoning_bottle", "kaleidoscope_grilling:pending_seasoning",
+                           "kaleidoscope_grilling:special_seasoning", "kaleidoscope_grilling:skewer_recipe_book"):
+                entry["max-stack"] = 1  # stacksTo(1)
+            if full_id == "kaleidoscope_grilling:pending_seasoning":
+                entry["sneak-place"] = True  # PendingSeasoningItem#useOn: ohne Schleichen wird geschüttelt
             if full_id == "kaleidoscope_cookery:teapot":
                 entry["sneak-place"] = True  # TeapotItem#useOn: nur beim Schleichen platzieren
                 entry["max-stack"] = 1

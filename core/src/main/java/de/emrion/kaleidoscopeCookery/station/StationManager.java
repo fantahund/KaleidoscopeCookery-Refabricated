@@ -84,6 +84,13 @@ public class StationManager implements Listener {
         }
     }
 
+    /**
+     * Weiteres Item, das denselben Stations-Typ setzt (z. B. volle und leere Gewürzflasche).
+     */
+    public void registerItem(Key item, StationType type) {
+        typesByItem.put(item, type);
+    }
+
     public @Nullable StationType typeByItem(@Nullable Key item) {
         return item == null ? null : typesByItem.get(item);
     }

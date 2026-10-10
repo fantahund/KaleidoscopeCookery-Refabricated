@@ -143,6 +143,26 @@ def palette(image) -> list:
     return clean_isolated(quantize(sampled, 8))
 
 
+def top_two(image) -> list:
+    """SeasoningColorProvider#sample: die zwei häufigsten Farben der Bildmitte (Schichten in der Gewürzflasche)."""
+    width, height = image.size
+    pixels = image.load()
+    counts = {}
+    for y in range(height // 4, height * 3 // 4):
+        for x in range(width // 4, width * 3 // 4):
+            r, g, b, a = pixels[x, y]
+            if a >= 48:
+                rgb = r << 16 | g << 8 | b
+                counts[rgb] = counts.get(rgb, 0) + 1
+    result = [c for c, _ in sorted(counts.items(), key=lambda e: -e[1])[:2]]
+    if not result:
+        return [0xB86B45, 0xE0A56A]
+    if len(result) == 1:
+        c = result[0]
+        result.append(int(((c >> 16) & 255) * 0.78) << 16 | int(((c >> 8) & 255) * 0.78) << 8 | int((c & 255) * 0.78))
+    return result
+
+
 if __name__ == "__main__":
     # Selbsttest: einfarbiges Bild -> 16 gleiche Farben
     from PIL import Image

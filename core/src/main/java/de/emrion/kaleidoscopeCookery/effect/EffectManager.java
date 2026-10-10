@@ -87,6 +87,20 @@ public class EffectManager implements Listener {
     private final KaleidoscopeCookery plugin;
     private final Map<UUID, EnumMap<CookeryEffect, Active>> active = new HashMap<>();
     private final Map<UUID, Sidebar> sidebars = new HashMap<>();
+    /** Effekte von Addons (z. B. Grilling): Anzeige wie die Cookery-Effekte, Wirkung setzt das Addon selbst um */
+    private final Map<net.kyori.adventure.key.Key, AddonEffect> addonEffects = new java.util.LinkedHashMap<>();
+    private final Map<UUID, Map<net.kyori.adventure.key.Key, Active>> addonActive = new HashMap<>();
+
+    /**
+     * Effekt eines Addons.
+     *
+     * @param icon Icon (Zeichen in einer Schrift des Addon-Packs)
+     */
+    public record AddonEffect(net.kyori.adventure.key.Key key, net.kyori.adventure.text.format.TextColor color, Component icon) {
+        public String translationKey() {
+            return "effect." + key.namespace() + "." + key.value();
+        }
+    }
 
     private record Sidebar(Scoreboard previous, Scoreboard board, Objective objective) {
     }
@@ -116,6 +130,54 @@ public class EffectManager implements Listener {
     }
 
     // ---- API ----
+
+    public void registerAddonEffect(AddonEffect effect) {
+        addonEffects.put(effect.key(), effect);
+    }
+
+    public boolean isAddonEffect(net.kyori.adventure.key.Key key) {
+        return addonEffects.containsKey(key);
+    }
+
+    /**
+     * Effekt eines Addons geben (höhere Stufe bzw. längere Dauer gewinnt).
+     */
+    public void apply(Player player, net.kyori.adventure.key.Key key, int durationTicks, int amplifier) {
+        CookeryEffect cookery = CookeryEffect.byKey(key);
+        if (cookery != null) {
+            apply(player, cookery, durationTicks, amplifier);
+            return;
+        }
+        if (durationTicks <= 0 || !addonEffects.containsKey(key)) {
+            return;
+        }
+        Map<net.kyori.adventure.key.Key, Active> effects = addonActive.computeIfAbsent(player.getUniqueId(), k -> new java.util.LinkedHashMap<>());
+        long end = tick + durationTicks;
+        Active old = effects.get(key);
+        if (old == null || amplifier > old.amplifier() || (amplifier == old.amplifier() && end > old.end())) {
+            effects.put(key, new Active(end, amplifier));
+        }
+        active.computeIfAbsent(player.getUniqueId(), k -> new EnumMap<>(CookeryEffect.class));
+        updateBar(player);
+    }
+
+    public boolean has(Entity entity, net.kyori.adventure.key.Key key) {
+        Map<net.kyori.adventure.key.Key, Active> effects = addonActive.get(entity.getUniqueId());
+        return effects != null && effects.containsKey(key);
+    }
+
+    public int amplifier(Entity entity, net.kyori.adventure.key.Key key) {
+        Map<net.kyori.adventure.key.Key, Active> effects = addonActive.get(entity.getUniqueId());
+        Active a = effects == null ? null : effects.get(key);
+        return a == null ? -1 : a.amplifier();
+    }
+
+    public void remove(Player player, net.kyori.adventure.key.Key key) {
+        Map<net.kyori.adventure.key.Key, Active> effects = addonActive.get(player.getUniqueId());
+        if (effects != null && effects.remove(key) != null) {
+            updateBar(player);
+        }
+    }
 
     /**
      * Effekt geben. Wie bei Vanilla gewinnt die höhere Stufe bzw. bei gleicher Stufe die längere Dauer.
@@ -153,6 +215,7 @@ public class EffectManager implements Listener {
 
     public void clear(Player player) {
         active.remove(player.getUniqueId());
+        addonActive.remove(player.getUniqueId());
         hideBar(player);
     }
 
@@ -169,7 +232,15 @@ public class EffectManager implements Listener {
             }
             EnumMap<CookeryEffect, Active> effects = entry.getValue();
             effects.values().removeIf(a -> a.end() <= tick);
-            if (effects.isEmpty()) {
+            Map<net.kyori.adventure.key.Key, Active> addon = addonActive.get(entry.getKey());
+            if (addon != null) {
+                addon.values().removeIf(a -> a.end() <= tick);
+                if (addon.isEmpty()) {
+                    addonActive.remove(entry.getKey());
+                    updateBar(player);
+                }
+            }
+            if (effects.isEmpty() && !addonActive.containsKey(entry.getKey())) {
                 it.remove();
                 hideBar(player);
                 continue;
@@ -268,9 +339,13 @@ public class EffectManager implements Listener {
      */
     private void updateBar(Player player) {
         EnumMap<CookeryEffect, Active> effects = active.get(player.getUniqueId());
-        if (effects == null || effects.isEmpty()) {
+        Map<net.kyori.adventure.key.Key, Active> addon = addonActive.getOrDefault(player.getUniqueId(), Map.of());
+        if ((effects == null || effects.isEmpty()) && addon.isEmpty()) {
             hideBar(player);
             return;
+        }
+        if (effects == null) {
+            effects = new EnumMap<>(CookeryEffect.class);
         }
         Sidebar sidebar = sidebars.get(player.getUniqueId());
         if (sidebar == null) {
@@ -282,23 +357,35 @@ public class EffectManager implements Listener {
             sidebars.put(player.getUniqueId(), sidebar);
             player.setScoreboard(board);
         }
-        int line = 0;
+        record Row(Component icon, Component name, Active state) {
+        }
+        List<Row> rows = new ArrayList<>();
         for (Map.Entry<CookeryEffect, Active> entry : effects.entrySet()) {
             CookeryEffect effect = entry.getKey();
-            long remaining = Math.max(0, entry.getValue().end() - tick);
-            Component name = Component.translatable(effect.translationKey()).color(effect.color());
-            if (entry.getValue().amplifier() > 0) {
-                name = name.append(Component.text(" " + roman(entry.getValue().amplifier() + 1)));
+            rows.add(new Row(Component.text(String.valueOf(effect.icon())).font(CookeryEffect.FONT).color(NamedTextColor.WHITE),
+                    Component.translatable(effect.translationKey()).color(effect.color()), entry.getValue()));
+        }
+        for (Map.Entry<net.kyori.adventure.key.Key, Active> entry : addon.entrySet()) {
+            AddonEffect effect = addonEffects.get(entry.getKey());
+            rows.add(new Row(effect.icon(), Component.translatable(effect.translationKey()).color(effect.color()), entry.getValue()));
+        }
+        int line = 0;
+        for (Row row : rows) {
+            int amplifier = row.state().amplifier();
+            long remaining = Math.max(0, row.state().end() - tick);
+            Component name = row.name();
+            if (amplifier > 0) {
+                name = name.append(Component.text(" " + roman(amplifier + 1)));
             }
             Component text = Component.text()
-                    .append(Component.text(String.valueOf(effect.icon())).font(CookeryEffect.FONT).color(NamedTextColor.WHITE))
+                    .append(row.icon())
                     .append(Component.text(" "))
                     .append(name)
                     .append(Component.text(" " + formatTicks(remaining), NamedTextColor.GRAY))
                     .build();
             // Unsichtbare, eindeutige Einträge; Reihenfolge über den (versteckten) Score
             Score score = sidebar.objective().getScore("\u00a7" + Integer.toHexString(line));
-            score.setScore(effects.size() - line);
+            score.setScore(rows.size() - line);
             score.customName(text);
             line++;
         }
@@ -334,14 +421,19 @@ public class EffectManager implements Listener {
     // ---- Speichern ----
 
     private void save(Player player) {
-        EnumMap<CookeryEffect, Active> effects = active.get(player.getUniqueId());
-        if (effects == null || effects.isEmpty()) {
+        EnumMap<CookeryEffect, Active> effects = active.getOrDefault(player.getUniqueId(), new EnumMap<>(CookeryEffect.class));
+        Map<net.kyori.adventure.key.Key, Active> addon = addonActive.getOrDefault(player.getUniqueId(), Map.of());
+        if (effects.isEmpty() && addon.isEmpty()) {
             player.getPersistentDataContainer().remove(SAVED);
             return;
         }
         List<String> entries = new ArrayList<>();
         for (Map.Entry<CookeryEffect, Active> entry : effects.entrySet()) {
             entries.add(entry.getKey().id() + ":" + (entry.getValue().end() - tick) + ":" + entry.getValue().amplifier());
+        }
+        // Addon-Effekte mit vollem Schlüssel (ns/pfad, ":" trennt die Felder)
+        for (Map.Entry<net.kyori.adventure.key.Key, Active> entry : addon.entrySet()) {
+            entries.add(entry.getKey().namespace() + "/" + entry.getKey().value() + ":" + (entry.getValue().end() - tick) + ":" + entry.getValue().amplifier());
         }
         player.getPersistentDataContainer().set(SAVED, PersistentDataType.STRING, String.join(";", entries));
     }
@@ -354,6 +446,16 @@ public class EffectManager implements Listener {
         for (String entry : saved.split(";")) {
             String[] parts = entry.split(":");
             if (parts.length != 3) {
+                continue;
+            }
+            if (parts[0].contains("/")) {
+                net.kyori.adventure.key.Key key = net.kyori.adventure.key.Key.key(parts[0].replace('/', ':'));
+                if (addonEffects.containsKey(key)) {
+                    try {
+                        apply(player, key, Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
                 continue;
             }
             for (CookeryEffect effect : CookeryEffect.values()) {

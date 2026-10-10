@@ -240,8 +240,9 @@ public class FoodService implements Listener {
     private void applyModEffects(Player player, CookeryItem.Food food, double ratio) {
         for (CookeryItem.FoodEffect effect : food.effects()) {
             CookeryEffect cookeryEffect = CookeryEffect.byKey(effect.effect());
-            if (cookeryEffect != null && ThreadLocalRandom.current().nextFloat() < effect.probability()) {
-                plugin.getEffects().apply(player, cookeryEffect, (int) Math.round(effect.duration() * ratio), effect.amplifier());
+            boolean addon = plugin.getEffects().isAddonEffect(effect.effect());
+            if ((cookeryEffect != null || addon) && ThreadLocalRandom.current().nextFloat() < effect.probability()) {
+                plugin.getEffects().apply(player, effect.effect(), (int) Math.round(effect.duration() * ratio), effect.amplifier());
             }
         }
     }

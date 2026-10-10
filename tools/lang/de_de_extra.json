@@ -303,6 +303,26 @@
     "message.kaleidoscope_grilling.grill_need_oil": "Wartet darauf, mit Öl bestrichen zu werden",
     "message.kaleidoscope_grilling.grill_wait_flip": "Wenden … (%1$s/%2$s)",
     "message.kaleidoscope_grilling.grill_need_seasoning": "Fertig gegart, wartet aufs Würzen",
-    "message.kaleidoscope_grilling.grill_ready_to_take": "Fertig gegart, kann heruntergenommen werden!"
+    "message.kaleidoscope_grilling.grill_ready_to_take": "Fertig gegart, kann heruntergenommen werden!",
+    "effect.kaleidoscope_grilling.heavy_metal": "Schwermetall",
+    "effect.kaleidoscope_grilling.heavy_metal_poisoning": "Schwermetallvergiftung",
+    "effect.kaleidoscope_grilling.numb": "Taub",
+    "effect.kaleidoscope_grilling.dragon_blood": "Drachenblut",
+    "effect.kaleidoscope_grilling.invincible": "Unverwundbar",
+    "hud.kaleidoscope_grilling.seasoning.title": "Gewürzflasche · Mischen",
+    "hud.kaleidoscope_grilling.seasoning.capacity": "Füllung %1$s/%2$s · noch %3$s",
+    "hud.kaleidoscope_grilling.seasoning.effects": "Wirkung",
+    "hud.kaleidoscope_grilling.seasoning.no_effect": "Nur Grundgewürz",
+    "hud.kaleidoscope_grilling.seasoning.missing": "Es fehlen Grundzutaten",
+    "hud.kaleidoscope_grilling.seasoning.speed": "Tempo · Redstone ×%s",
+    "hud.kaleidoscope_grilling.seasoning.strength": "Stärke · Schwarzpulver ×%s",
+    "hud.kaleidoscope_grilling.seasoning.duration": "Längere Dauer · Fischminzenpulver ×%s",
+    "hud.kaleidoscope_grilling.seasoning.totem": "Schutz vor dem Tod · Totempulver ×%s",
+    "hud.kaleidoscope_grilling.seasoning.vitality": "Maximale Gesundheit · Dracheneipulver ×%s",
+    "hud.kaleidoscope_grilling.seasoning.numbness": "Taub · Sichuanpfeffer ×%s (mindestens 4)",
+    "hud.kaleidoscope_grilling.seasoning.numbness_pending": "Taub (inaktiv) · Sichuanpfeffer ×%s/4",
+    "message.kaleidoscope_grilling.bottle_full": "Die Gewürzflasche ist voll",
+    "message.kaleidoscope_grilling.invalid_seasoning": "Das kann nicht hinein",
+    "message.kaleidoscope_grilling.missing_base_seasoning": "Es fehlen Grundzutaten (grünes Chilipulver, Sichuanpfeffer, Zwiebelpulver)"
   }
 }

@@ -667,7 +667,9 @@ class PackBuilder:
                 image = load_texture(texture) if texture else None
                 if image is None:
                     continue
-                palette_lines.append(f"{ns}:{item}=" + ",".join(f"{c:06X}" for c in skewer_palette.palette(image)))
+                # 16 Felder für Spieße, danach 2 Farben für Gewürzflaschen-Schichten
+                colors = skewer_palette.palette(image) + skewer_palette.top_two(image)
+                palette_lines.append(f"{ns}:{item}=" + ",".join(f"{c:06X}" for c in colors))
             out.mkdir(parents=True, exist_ok=True)
             (out / "skewer_palettes.txt").write_text("\n".join(palette_lines) + "\n", encoding="utf-8")
             print(f"Spieß-Paletten: {len(palette_lines)}")
