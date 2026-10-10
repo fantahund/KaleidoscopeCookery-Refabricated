@@ -346,6 +346,9 @@
     "message.kaleidoscope_grilling.press_status": "Ölkuchen: %1$s/4, Fortschritt: %2$s/%3$s",
     "message.kaleidoscope_grilling.press_no_vat": "Kein Fass in der Nähe kann das Rapsöl aufnehmen; der Fortschritt bleibt",
     "message.kaleidoscope_grilling.press_wrong_vat": "Das Fass in der Nähe enthält eine andere Flüssigkeit; der Fortschritt bleibt",
-    "message.kaleidoscope_grilling.press_vat_full": "Im Fass in der Nähe ist nicht genug Platz; der Fortschritt bleibt"
+    "message.kaleidoscope_grilling.press_vat_full": "Im Fass in der Nähe ist nicht genug Platz; der Fortschritt bleibt",
+    "item.kaleidoscope_grilling.sichuan_pepper_seeds": "Sichuanpfeffer-Samen",
+    "block.kaleidoscope_grilling.sichuan_pepper_crop": "Sichuanpfeffer-Strauch",
+    "tooltip.kaleidoscope_grilling.sichuan_pepper_seeds": "Kann mit Strohhut beim Grasabbauen fallen; auf Ackerland pflanzen"
   }
 }

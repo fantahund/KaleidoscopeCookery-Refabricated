@@ -270,7 +270,7 @@ public class CropStation extends Station {
         if (kind == CropKind.CHILI && ThreadLocalRandom.current().nextInt(5) == 0) {
             drop = Key.key("kaleidoscope_cookery", "green_chili"); // 20 % grüne Chili
         }
-        ItemStack stack = items().create(drop, 1);
+        ItemStack stack = items().create(drop, kind.harvestMax() > 1 ? ThreadLocalRandom.current().nextInt(1, kind.harvestMax() + 1) : 1);
         if (stack != null) {
             world().dropItemNaturally(center(), stack);
         }

@@ -23,9 +23,10 @@ import java.util.List;
  * @param matureExtra feste Zahl zusätzlicher Samen in der reifen Beute (Süßkartoffel: set_count 2)
  * @param models      Modell je Stufe: "%d" = Stufe, "%s" = Teil (Reis) bzw. Variante
  * @param variant     zweites Aussehen (Fischminze auf Seelensand), sonst null
+ * @param harvestMax  Rechtsklick-Ernte: 1 bis so viele Stück
  */
 public record CropKind(String name, List<Key> seeds, Key result, Key lootSeed, int maxAge, int harvestAge, Soil soil,
-                       int seedTrials, int matureExtra, String models, @Nullable Variant variant) {
+                       int seedTrials, int matureExtra, String models, @Nullable Variant variant, int harvestMax) {
 
     public enum Soil {
         FARMLAND, DIRT, WATER,
@@ -62,7 +63,7 @@ public record CropKind(String name, List<Key> seeds, Key result, Key lootSeed, i
     private static final List<CropKind> KINDS = new ArrayList<>(List.of(TOMATO, CHILI, LETTUCE, RICE, TEA));
 
     private static CropKind cookery(String name, List<Key> seeds, Key result, Key lootSeed, int maxAge, int harvestAge, Soil soil) {
-        return new CropKind(name, seeds, result, lootSeed, maxAge, harvestAge, soil, 3, 0, COOKERY_MODELS.formatted(name), null);
+        return new CropKind(name, seeds, result, lootSeed, maxAge, harvestAge, soil, 3, 0, COOKERY_MODELS.formatted(name), null, 1);
     }
 
     private static Key key(String value) {

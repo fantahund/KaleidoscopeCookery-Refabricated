@@ -119,6 +119,8 @@ class Importer:
                         continue
                     sub = file.relative_to(ns_dir).as_posix()
                     top = sub.split("/", 1)[0]
+                    if re.search(r"pepper_(log|leaves|sapling)", sub):
+                        continue  # Pfefferbaum ersetzt durch den Pfefferstrauch (tools/gen_pepper_bush.py)
                     if sub == "sounds.json":
                         self.sounds.setdefault(ns, {}).update(read_json(file))
                     elif sub == "lang/en_us.json" and ns != "minecraft":

@@ -315,7 +315,8 @@ def parse_stack_sizes() -> dict:
 
 
 # Nicht übernommen: Strohbett (nicht gewünscht), Modell-Vorschau (Debug-Item), Pappel-Möbel (Pappel gibt es in 26.3 nicht)
-SKIP_ITEM = re.compile(r"kaleidoscope_cookery:(straw_bed|model_display|\w+_poplar)$")
+# Grilling: statt des Pfefferbaums (Holz, Blätter, Setzling, Weltgenerierung) ein Pfefferstrauch als Pflanze
+SKIP_ITEM = re.compile(r"kaleidoscope_cookery:(straw_bed|model_display|\w+_poplar)$|kaleidoscope_grilling:pepper_(log|leaves|sapling)$")
 
 
 def without_skipped(recipes: dict) -> dict:
@@ -326,7 +327,8 @@ def without_skipped(recipes: dict) -> dict:
             out[section] = values
             continue
         out[section] = {k: v for k, v in values.items()
-                        if not re.search(r"kaleidoscope_cookery:(straw_bed|model_display|\w+_poplar)\b|minecraft:poplar", json.dumps(v) + k)}
+                        if not re.search(r"kaleidoscope_cookery:(straw_bed|model_display|\w+_poplar)\b|minecraft:poplar|kaleidoscope_grilling:pepper_(log|leaves|sapling)\b",
+                                         json.dumps(v) + k)}
     return out
 
 
@@ -548,7 +550,9 @@ def resolve_tag(name: str, tags: dict, seen=None) -> list:
 # In 26.x umbenannte Vanilla-Items
 RENAMED_ITEMS = {"minecraft:chain": "minecraft:iron_chain"}
 # Items ohne eigenen Namen in der Sprachdatei (Item-ID -> Sprach-Key)
-EXTRA_ITEMS = {"kaleidoscope_cookery:recipe_item": "block.kaleidoscope_cookery.recipe_block"}
+EXTRA_ITEMS = {"kaleidoscope_cookery:recipe_item": "block.kaleidoscope_cookery.recipe_block",
+               # Samen des Pfefferstrauchs (tools/gen_pepper_bush.py) statt des Pfefferbaums
+               "kaleidoscope_grilling:sichuan_pepper_seeds": "item.kaleidoscope_grilling.sichuan_pepper_seeds"}
 
 
 def vanilla_item_ids() -> set:
@@ -929,7 +933,7 @@ def write_german_lang():
 
 GRILLING_RESOURCES = GRILLING_ROOT / "src" / "main" / "resources"
 # Bei jeder inhaltlichen Aenderung der Grilling-recipes.yml erhoehen
-GRILLING_DATA_VERSION = 1
+GRILLING_DATA_VERSION = 2
 
 
 def write_skewers():
