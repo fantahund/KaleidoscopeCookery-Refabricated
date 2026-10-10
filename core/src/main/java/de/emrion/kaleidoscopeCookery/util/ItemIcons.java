@@ -60,7 +60,9 @@ public final class ItemIcons {
                 }
                 String[] sprite = line.substring(bar + 1).trim().split("\\|");
                 Key item = Key.key(line.substring(0, equals));
-                ICONS.put(item, Component.object(ObjectContents.sprite(Key.key(line.substring(equals + 1, bar)), Key.key(sprite[0]))));
+                // 3D-Modelle haben eine kleine gerenderte Ansicht, sonst die flache Textur
+                ICONS.put(item, sprite.length > 2 ? glyph(sprite[2], font)
+                        : Component.object(ObjectContents.sprite(Key.key(line.substring(equals + 1, bar)), Key.key(sprite[0]))));
                 if (sprite.length > 1 && !sprite[1].isEmpty()) {
                     BIG_ICONS.put(item, padded(sprite[1], BIG_WIDTH, font));
                 }
@@ -71,7 +73,7 @@ public final class ItemIcons {
     }
 
     /**
-     * Bild eines Items (flache Item-Textur oder bei Blöcken eine Seite des Blocks); null, wenn keins bekannt ist.
+     * Bild eines Items (flache Item-Textur, bei 3D-Modellen eine kleine gerenderte Ansicht); null, wenn keins bekannt ist.
      */
     public static @Nullable Component of(@Nullable ItemStack stack) {
         if (stack == null || stack.isEmpty()) {
@@ -94,12 +96,16 @@ public final class ItemIcons {
         String[] parts = glyph.split(":");
         int advance = parts.length > 1 ? Integer.parseInt(parts[1]) : width;
         int missing = width - advance;
-        Component image = Component.text(Character.toString(Integer.parseInt(parts[0], 16))).font(font)
-                .color(net.kyori.adventure.text.format.NamedTextColor.WHITE).shadowColor(net.kyori.adventure.text.format.ShadowColor.none());
+        Component image = glyph(glyph, font);
         if (missing == 0) {
             return image;
         }
         return Component.text().append(pad(missing / 2)).append(image).append(pad(missing - missing / 2)).build();
+    }
+
+    private static Component glyph(String glyph, Key font) {
+        return Component.text(Character.toString(Integer.parseInt(glyph.split(":")[0], 16))).font(font)
+                .color(net.kyori.adventure.text.format.NamedTextColor.WHITE).shadowColor(net.kyori.adventure.text.format.ShadowColor.none());
     }
 
     /**

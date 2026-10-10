@@ -623,6 +623,8 @@ class PackBuilder:
                     # Slot-Bild in 64 Pixel (16 Pixel im Spiel, also 4-fach), Stations-Bild in 128 Pixel (32 im Spiel)
                     file = save_icon(ns, item, image.resize((image.width // 2, image.height // 2), Image.BOX))
                     glyph = add_glyph(file, ICON_HEIGHT * image.height // image.width, ICON_ASCENT)
+                    # kleine 3D-Ansicht in Texthöhe (Knöpfe), statt der flachen Partikel-Textur
+                    small = add_glyph(file, 8 * image.height // image.width, 7)
                     if f"{ns}:{item}" in DIAGRAM_ITEMS:
                         large = save_icon(ns, item + "_large", image)
                         shown = image.height // 4
@@ -631,9 +633,9 @@ class PackBuilder:
                     first = resolve(textures, textures.get("particle")) or next((resolve(textures, v) for v in textures.values() if resolve(textures, v)), None)
                     if first and atlas_of(first):
                         tns, tpath = norm(first)
-                        lines.append(f"{ns}:{item}={atlas_of(first)}|{tns}:{tpath}|{glyph}")
+                        lines.append(f"{ns}:{item}={atlas_of(first)}|{tns}:{tpath}|{glyph}|{small}")
                     else:
-                        lines.append(f"{ns}:{item}=minecraft:blocks|minecraft:block/stone|{glyph}")
+                        lines.append(f"{ns}:{item}=minecraft:blocks|minecraft:block/stone|{glyph}|{small}")
                     continue
             for key in self.ICON_TEXTURE_KEYS + tuple(textures):
                 texture = resolve(textures, textures.get(key))
