@@ -72,6 +72,7 @@ Main command: `/kaleidoscope`, aliases `/kc`, `/kochen`
 | `tools/gen_entity_models.py` | Rebuild the mod's Java entity models (millstone, trash can, scarecrow, cold cut ham) as item models |
 | `tools/gen_creative_tabs.py` | Generate the creative menu tabs from the mod's creative tabs |
 | `tools/build_pack.py` | Assemble the pack, check all references, render cookbook images, zip, SHA1 (runs during `mvn package`) |
+| `tools/gen_wiki.py` | Generate the static player wiki (`wiki/`, plain HTML without API calls, copy the folder to any web server) |
 | `tools/lang/` | German translations of the mod texts |
 | `resourcepack/custom/` | Own pack files (override `imported`) |
 
