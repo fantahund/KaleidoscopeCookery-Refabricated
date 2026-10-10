@@ -482,6 +482,16 @@ items:
   "kaleidoscope_cookery:clay_pot_milk_tea":
     model: "kaleidoscope_cookery:clay_pot_milk_tea"
     name: block.kaleidoscope_cookery.clay_pot_milk_tea
+    food:
+      nutrition: 0
+      saturation: 0.0
+      always-edible: true
+      drink: true
+      eat-seconds: 1.6
+      remainder: "minecraft:flower_pot"
+      eat-sound: "minecraft:item.honey_bottle.drink"
+    tooltip: tooltip.kaleidoscope_cookery.clay_pot_milk_tea.effect
+    max-stack: 16
   "kaleidoscope_cookery:cold_cut_ham_slices":
     model: "kaleidoscope_cookery:cold_cut_ham_slices"
     name: block.kaleidoscope_cookery.cold_cut_ham_slices

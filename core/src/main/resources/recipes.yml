@@ -2,7 +2,7 @@
 # Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert
 # und kann dort angepasst werden (/kc reload).
 # Zutaten: Item-ID, "#tag" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.
-data-version: 12
+data-version: 13
 tags:
   "c:cobblestones":
     - "minecraft:cobblestone"

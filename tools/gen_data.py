@@ -489,6 +489,12 @@ def collect_items(foods: dict, bites: dict) -> dict:
             if full_id == "kaleidoscope_cookery:teapot":
                 entry["sneak-place"] = True  # TeapotItem#useOn: nur beim Schleichen platzieren
                 entry["max-stack"] = 1
+            if full_id == "kaleidoscope_cookery:clay_pot_milk_tea":
+                # ClayPotMilkTeaItem: trinken (32 Ticks, Honig-Geräusch), entfernt schädliche Effekte, Blumentopf bleibt
+                entry["food"] = {"nutrition": 0, "saturation": 0.0, "always-edible": True, "drink": True, "eat-seconds": 1.6,
+                                 "remainder": "minecraft:flower_pot", "eat-sound": "minecraft:item.honey_bottle.drink"}
+                entry["tooltip"] = "tooltip.kaleidoscope_cookery.clay_pot_milk_tea.effect"
+                entry["max-stack"] = 16
             if full_id in teas:
                 entry["food"] = teas[full_id]
                 entry["max-stack"] = 16
@@ -697,7 +703,7 @@ def collect_recipes(tags: dict) -> dict:
 
 
 # Bei jeder inhaltlichen Aenderung der erzeugten recipes.yml erhoehen: das Plugin ersetzt dann alte Kopien (mit Backup)
-DATA_VERSION = 12
+DATA_VERSION = 13
 STOCKPOT_DEFAULT_TIME = 300
 POT_DEFAULT_TIME = 200
 POT_DEFAULT_STIR_FRY = 3

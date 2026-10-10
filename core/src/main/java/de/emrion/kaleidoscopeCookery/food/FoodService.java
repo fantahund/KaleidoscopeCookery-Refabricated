@@ -138,6 +138,14 @@ public class FoodService implements Listener {
             Quality quality = quality(stack);
             double ratio = quality == null ? 1 : quality.ratio();
             applyModEffects(player, item.food(), ratio);
+            if (de.emrion.kaleidoscopeCookery.station.teapot.MilkTeaStation.ITEM.equals(item.id())) {
+                // ClayPotMilkTeaItem#finishUsingItem: alle schädlichen Effekte weg, gute bleiben
+                for (PotionEffect effect : player.getActivePotionEffects()) {
+                    if (effect.getType().getCategory() == PotionEffectTypeCategory.HARMFUL) {
+                        player.removePotionEffect(effect.getType());
+                    }
+                }
+            }
             ItemStack eaten = stack.clone();
             plugin.getServer().getScheduler().runTask(plugin, () -> new de.emrion.kaleidoscopeCookery.api.CookeryFoodEatenEvent(player, eaten, item.food(), ratio,
                     de.emrion.kaleidoscopeCookery.api.CookeryFoodEatenEvent.Source.HAND).callEvent());
