@@ -185,6 +185,64 @@ class PackBuilder:
                 if top not in ("block", "item"):
                     self.texture_dirs.add(top)
 
+    def fix_mixed_atlases(self):
+        """
+        Seit 26.x darf ein Item-Modell nur Texturen aus einem Atlas nutzen ("Multiple atlases used in model"), z. B.
+        Spieß = Stab (items) + weißer Beton (blocks). Block-Texturen solcher Modelle werden als Kopie unter
+        textures/item/_block/ abgelegt und im Modell umgebogen. Alle Stationen sind ItemDisplays, gilt also für alle Modelle.
+        """
+        def atlas(texture):
+            top = norm(texture)[1].split("/", 1)[0]
+            return {"item": "items", "block": "blocks"}.get(top)  # eigene Ordner liegen in beiden Atlanten
+
+        def textures_of(path, depth=0):
+            if depth > 20 or not self.exists(path):
+                return {}
+            model = self.read(path)
+            parent = model.get("parent")
+            result = textures_of(self.model_path(parent), depth + 1) if parent and parent not in BUILTIN_PARENTS else {}
+            result.update(model.get("textures", {}))
+            return result
+
+        def resolve(textures, value, depth=0):
+            if isinstance(value, dict):
+                value = value.get("sprite")
+            while isinstance(value, str) and value.startswith("#") and depth < 10:
+                value = textures.get(value[1:])
+                if isinstance(value, dict):
+                    value = value.get("sprite")
+                depth += 1
+            return value if isinstance(value, str) and not value.startswith("#") else None
+
+        fixed = 0
+        for name in list(self.files):
+            if "/models/" not in name or not name.endswith(".json"):
+                continue
+            textures = textures_of(name)
+            resolved = {k: resolve(textures, v) for k, v in textures.items()}
+            atlases = {atlas(t) for t in resolved.values() if t} - {None}
+            if len(atlases) < 2:
+                continue
+            model = self.read(name)
+            model_textures = dict(model.get("textures", {}))
+            for key, texture in resolved.items():
+                if not texture or atlas(texture) != "blocks":
+                    continue
+                tns, tpath = norm(texture)
+                copy = f"{name.split('/')[1]}:item/_block/{tns}/{tpath}"
+                cns, cpath = norm(copy)
+                for suffix in (".png", ".png.mcmeta"):
+                    src = f"assets/{tns}/textures/{tpath}{suffix}"
+                    data = self.files.get(src) or self.base.get(src) or (self.vanilla.read(src) if self.vanilla.has(src) else None)
+                    if data is not None:
+                        self.files[f"assets/{cns}/textures/{cpath}{suffix}"] = data
+                model_textures[key] = copy
+            model["textures"] = model_textures
+            self.files[name] = json.dumps(model, ensure_ascii=False).encode("utf-8")
+            fixed += 1
+        if fixed:
+            print(f"Modelle mit gemischten Atlanten angepasst: {fixed}")
+
     def check_item_definitions(self):
         for name in self.files:
             parts = name.split("/")
@@ -621,6 +679,7 @@ class PackBuilder:
         self.check_json()
         if not self.errors:
             self.check_models()
+            self.fix_mixed_atlases()
             self.check_item_definitions()
             self.check_sounds()
             self.check_fonts()
