@@ -330,9 +330,105 @@ def without_skipped(recipes: dict) -> dict:
     return out
 
 
+# Spieß-Ess-Animationen (MultiBiteSkewerItem.AnimationProfile): Dauer in Ticks und Bisse in Sekunden
+SKEWER_PROFILES = {"ONE": (90, [1.16667, 3.08333]), "TWO": (90, [0.95833, 4.0]),
+                   "THREE": (100, [0.95833, 2.33333, 3.54167]), "THREE_ALT": (90, [0.95833, 2.16667, 3.5]),
+                   "THREE_RANDOM": (100, [0.95833, 2.33333, 3.54167]), "FOUR": (90, [0.95833, 2.33333, 3.45833, 4.08333])}
+
+
+def skewer_profile(item_id: str) -> str:
+    """ModItems#animationProfile"""
+    name = item_id.replace("raw_", "").replace("grilled_", "")
+    if name in ("fish_skewer", "caterpillar_skewer"):
+        return "ONE"
+    if name in ("bun_slice_skewer", "fried_egg_skewer", "slime_skewer", "sweet_potato_sheet_skewer"):
+        return "TWO"
+    if name in ("beef_skewer", "chicken_skin_skewer", "pork_belly_skewer"):
+        return "FOUR"
+    if name == "ender_pearl_skewer":
+        return "THREE"
+    return "THREE_RANDOM"
+
+
+def grilling_effect(expression: str) -> str | None:
+    if m := re.search(r'cookeryEffect\("(\w+)"\)', expression):
+        return "kaleidoscope_cookery:" + m.group(1)
+    if m := re.search(r'grillingEffect\("(\w+)"\)', expression):
+        return "kaleidoscope_grilling:" + m.group(1)
+    if m := re.search(r'withDefaultNamespace\("(\w+)"\)', expression):
+        return "minecraft:" + m.group(1)
+    return None
+
+
+def parse_grilling_foods() -> dict:
+    """Grilling ModItems: Nährwerte und Effekte (Konstruktoren und Hilfsmethoden skewer/rawSkewer/dish …)."""
+    source = (GRILLING / "neoforge-1.21.1/src/main/java/cn/breezeth/kaleidoscope_grilling/registry/ModItems.java").read_text(encoding="utf-8")
+    flat = re.sub(r"\s+", " ", source)
+    foods = {}
+
+    def food(nutrition, modifier, always=False):
+        result = {"nutrition": int(nutrition), "saturation": round(int(nutrition) * float(modifier) * 2, 2)}
+        if always:
+            result["always-edible"] = True
+        return result
+
+    def ticks(expression):
+        return eval_int(expression.replace(" ", ""))
+
+    for chunk in flat.split("public static final")[1:]:
+        m = re.search(r'(?:ITEMS\.register|ingredient)\( ?"(\w+)"', chunk)
+        f = re.search(r"\.nutrition\((\d+)\) ?\.saturationModifier\(([\d.]+)F?\)", chunk)
+        if not m or not f:
+            continue
+        item = food(f.group(1), f.group(2), ".alwaysEdible()" in chunk)
+        tail = chunk[f.end():]
+        effects = []
+        # (effect, ticks) nach den Eigenschaften: EffectFoodItem, DualEffectFoodItem, MultiBiteSkewerItem
+        for e in re.finditer(r'((?:cookeryEffect|grillingEffect)\("\w+"\)|ResourceLocation\.withDefaultNamespace\("\w+"\)), ?([\d* ]+)', tail):
+            effects.append({"effect": grilling_effect(e.group(1)), "duration": ticks(e.group(2))})
+        if effects:
+            item["effects"] = effects
+        if "MultiBiteSkewerItem" in chunk or "SkewerItem" in chunk:
+            item["always-edible"] = True
+            profile = re.search(r"AnimationProfile\.(\w+)", chunk)
+            item["eat-seconds"] = SKEWER_PROFILES[profile.group(1) if profile else skewer_profile(m.group(1))][0] / 20
+            # Eigenes Ess-Geräusch spielt das Grilling-Plugin einmal zu Beginn (statt des Knabberns alle 4 Ticks)
+            item["eat-sound"] = "minecraft:intentionally_empty"
+        foods[m.group(1)] = item
+    static = flat[flat.index("static {"):]
+    for m in re.finditer(r'(skewer|multiBiteSkewer|rawSkewer|animatedRawSkewer)\( ?"(\w+)", ?(\d+), ?([\d.]+)F?, ?([^;]*?)\);', static):
+        kind, item_id, nutrition, modifier, rest = m.groups()
+        item = food(nutrition, modifier, True)
+        if kind in ("skewer", "multiBiteSkewer"):
+            parts = rest.split(",")
+            effect = grilling_effect(rest)
+            if effect:
+                seconds = int(re.search(r"\), ?(\d+)", rest).group(1))
+                item["effects"] = [{"effect": effect, "duration": seconds * 20}]
+        elif rest.strip().startswith("true"):
+            item["effects"] = [{"effect": "minecraft:nausea", "duration": 60}]
+        profile = re.search(r"AnimationProfile\.(\w+)", rest)
+        item["eat-seconds"] = SKEWER_PROFILES[profile.group(1) if profile else skewer_profile(item_id)][0] / 20
+        item["eat-sound"] = "minecraft:intentionally_empty"
+        foods[item_id] = item
+    for m in re.finditer(r'dish\("(\w+)", ?(\d+), ?([\d.]+)F?\)', flat):
+        foods[m.group(1)] = food(m.group(2), m.group(3))
+    # SkewerItem#finishFoodAndEffect: Effekt aus grilling/skewers.json hat Vorrang (z. B. goldener Spieß: unverwundbar)
+    data = read_json(GRILLING / "common/src/main/resources/data/kaleidoscope_grilling/grilling/skewers.json")
+    for entry in data["skewers"]:
+        item_id = entry["id"].split(":")[1]
+        if "effect" in entry and item_id in foods:
+            if entry["effect"]:
+                foods[item_id]["effects"] = [{"effect": entry["effect"], "duration": entry["effect_seconds"] * 20}]
+            else:
+                foods[item_id].pop("effects", None)
+    return foods
+
+
 def collect_items(foods: dict, bites: dict) -> dict:
     items = {}
     teas = parse_teacups()
+    grilling_foods = parse_grilling_foods()
     stack_sizes = parse_stack_sizes()
     for ns in ("kaleidoscope_cookery", "kaleidoscope_grilling"):
         lang = read_json(imported(ns) / "lang" / "en_us.json")
@@ -364,6 +460,8 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry.update(EXTRA_ITEM_DATA.get(full_id, {}))
             elif full_id in stack_sizes:
                 entry["max-stack"] = stack_sizes[full_id]
+            if ns == "kaleidoscope_grilling" and item_id in grilling_foods:
+                entry["food"] = grilling_foods[item_id]
             if ns == "kaleidoscope_cookery" and item_id in foods:
                 entry["food"] = foods[item_id]
             if full_id in WEARABLES:

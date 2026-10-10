@@ -283,6 +283,26 @@
     "tooltip.kaleidoscope_grilling.secret_skewer.cooked": "Gegart",
     "tooltip.kaleidoscope_grilling.secret_skewer.duplicate_penalty": "Enthält doppelte Zutaten; der Nährwert ist geringer.",
     "tooltip.kaleidoscope_grilling.secret_skewer.creator_story": "Selbstgemachter Spieß von %s. Keiner weiß, ob er schmeckt.",
-    "tooltip.kaleidoscope_grilling.secret_skewer.someone": "Jemandem"
+    "tooltip.kaleidoscope_grilling.secret_skewer.someone": "Jemandem",
+    "hud.kaleidoscope_grilling.grill.title": "Grill · Garzustand",
+    "hud.kaleidoscope_grilling.grill.state.0": "Spieße auflegen und mit Öl bestreichen",
+    "hud.kaleidoscope_grilling.grill.state.1": "Gart · Wenden nötig",
+    "hud.kaleidoscope_grilling.grill.state.2": "Gar · Würzen und herunternehmen",
+    "hud.kaleidoscope_grilling.grill.state.3": "Brennt an · Sofort herunternehmen",
+    "hud.kaleidoscope_grilling.grill.slots": "Grillplätze",
+    "hud.kaleidoscope_grilling.grill.timer": "Zeit in dieser Stufe: %1$s/%2$s Ticks",
+    "hud.kaleidoscope_grilling.grill.flips": "Gewendet: %1$s/%2$s",
+    "hud.kaleidoscope_grilling.grill.seasoning.added": "Gewürzt · Bereit zum Herunternehmen",
+    "hud.kaleidoscope_grilling.grill.seasoning.none": "Nicht gewürzt · Herunternehmen gesperrt",
+    "message.kaleidoscope_grilling.oiled": "%s Spieße mit Öl bestrichen",
+    "message.kaleidoscope_grilling.no_brushable_skewers": "Hier sind keine Spieße zum Bestreichen",
+    "message.kaleidoscope_grilling.not_enough_oil": "Nicht genug Öl in der Ölkanne",
+    "message.kaleidoscope_grilling.no_seasonable_skewers": "Hier sind keine Spieße, die gewürzt werden können",
+    "message.kaleidoscope_grilling.not_enough_seasoning": "Nicht genug Spezialgewürz übrig",
+    "message.kaleidoscope_grilling.grill_need_heat": "Die Grillkohle muss erst angezündet werden",
+    "message.kaleidoscope_grilling.grill_need_oil": "Wartet darauf, mit Öl bestrichen zu werden",
+    "message.kaleidoscope_grilling.grill_wait_flip": "Wenden … (%1$s/%2$s)",
+    "message.kaleidoscope_grilling.grill_need_seasoning": "Fertig gegart, wartet aufs Würzen",
+    "message.kaleidoscope_grilling.grill_ready_to_take": "Fertig gegart, kann heruntergenommen werden!"
   }
 }

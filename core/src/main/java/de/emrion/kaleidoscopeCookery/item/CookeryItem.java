@@ -54,9 +54,10 @@ public record CookeryItem(Key id, Material base, @Nullable Material prototype, K
      *
      * @param remainder Item, das nach dem Essen zurückbleibt (z. B. Schüssel), sonst null
      * @param drink     Getränk (Trink-Animation; ohne Nährwert keine food-Komponente)
+     * @param sound     Geräusch beim Essen statt des normalen (z. B. Spieße aus Grilling), sonst null
      */
     public record Food(int nutrition, float saturation, boolean alwaysEdible, float eatSeconds, @Nullable Key remainder, List<FoodEffect> effects,
-                       boolean drink) {
+                       boolean drink, @Nullable Key sound) {
     }
 
     /**

@@ -232,6 +232,40 @@ class Importer:
             if isinstance(value, (dict, list)):
                 self.add_tints(value)
 
+    # MultiBiteSkewerItem.AnimationProfile: Biss-Zeitpunkte in Sekunden (THREE_RANDOM zeigt THREE)
+    BITE_SECONDS = {"ONE": [1.16667, 3.08333], "TWO": [0.95833, 4.0], "THREE": [0.95833, 2.33333, 3.54167],
+                    "FOUR": [0.95833, 2.33333, 3.45833, 4.08333]}
+
+    @staticmethod
+    def skewer_profile(item_id: str) -> str:
+        """ModItems#animationProfile (wie tools/gen_data.py)"""
+        name = item_id.replace("raw_", "").replace("grilled_", "")
+        if name in ("fish_skewer", "caterpillar_skewer"):
+            return "ONE"
+        if name in ("bun_slice_skewer", "fried_egg_skewer", "slime_skewer", "sweet_potato_sheet_skewer"):
+            return "TWO"
+        if name in ("beef_skewer", "chicken_skin_skewer", "pork_belly_skewer"):
+            return "FOUR"
+        return "THREE"
+
+    def bite_stages_to_use_duration(self, node, bites: list):
+        """skewer_bite_stage (vollendete Bisse / 4, im Mod vom Client berechnet) -> minecraft:use_duration in Ticks."""
+        if isinstance(node, list):
+            return [self.bite_stages_to_use_duration(n, bites) for n in node]
+        if not isinstance(node, dict):
+            return node
+        node = {k: self.bite_stages_to_use_duration(v, bites) for k, v in node.items()}
+        index = self.properties.get("kaleidoscope_grilling:skewer_bite_stage")
+        if node.get("type") == "minecraft:range_dispatch" and node.get("property") == "minecraft:custom_model_data" and node.get("index") == index:
+            entries = []
+            for entry in node["entries"]:
+                completed = round(entry["threshold"] / 0.25)
+                if 1 <= completed <= len(bites):
+                    entries.append({"threshold": round(bites[completed - 1] * 20, 2), "model": entry["model"]})
+            return {"type": "minecraft:range_dispatch", "property": "minecraft:use_duration", "entries": entries,
+                    "fallback": node.get("fallback", {"type": "minecraft:empty"})}
+        return node
+
     def add_inline_model(self, ns: str, path: str, model: dict) -> str:
         model_ref = ref(ns, path)
         self.models[model_ref] = clean_model(model)
@@ -325,8 +359,12 @@ class Importer:
         self.convert_models()
         self.apply_fork_items()
         if self.project == "grilling":
-            for definition in self.item_defs.values():
+            for path, definition in self.item_defs.items():
                 self.add_tints(definition)
+                if "kaleidoscope_grilling:skewer_bite_stage" in self.properties:
+                    item_id = path.rsplit("/", 1)[-1][:-5]
+                    bites = self.BITE_SECONDS[self.skewer_profile(item_id)]
+                    self.item_defs[path] = self.bite_stages_to_use_duration(definition, bites)
         self.write()
         print(f"Dateien: {len(self.files)}, Modelle: {len(self.models)}, Item-Definitionen: {len(self.item_defs)}, "
               f"Properties: {len(self.properties)}")

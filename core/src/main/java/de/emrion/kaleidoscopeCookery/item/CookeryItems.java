@@ -120,13 +120,13 @@ public class CookeryItems {
         String remainder = section.getString("remainder");
         return new CookeryItem.Food(section.getInt("nutrition"), (float) section.getDouble("saturation"), section.getBoolean("always-edible"),
                 (float) section.getDouble("eat-seconds", 1.6), remainder == null ? null : Key.key(remainder), List.copyOf(effects),
-                section.getBoolean("drink"));
+                section.getBoolean("drink"), section.isString("eat-sound") ? Key.key(section.getString("eat-sound")) : null);
     }
 
     private static CookeryItem.Plate loadPlate(String id, ConfigurationSection section, Logger logger) {
         ConfigurationSection foodSection = section.getConfigurationSection("food");
         CookeryItem.Food food = foodSection != null ? loadFood(id, foodSection, logger)
-                : new CookeryItem.Food(0, 0, true, 1.6f, null, List.of(), false);
+                : new CookeryItem.Food(0, 0, true, 1.6f, null, List.of(), false, null);
         List<Key> loot = new ArrayList<>();
         for (String value : section.getStringList("loot")) {
             if (Key.parseable(value)) {
@@ -285,7 +285,7 @@ public class CookeryItems {
         Consumable.Builder consumable = Consumable.consumable()
                 .consumeSeconds(food.eatSeconds())
                 .animation(food.drink() ? ItemUseAnimation.DRINK : ItemUseAnimation.EAT)
-                .sound(food.drink() ? org.bukkit.Sound.ENTITY_GENERIC_DRINK.key() : org.bukkit.Sound.ENTITY_GENERIC_EAT.key())
+                .sound(food.sound() != null ? food.sound() : food.drink() ? org.bukkit.Sound.ENTITY_GENERIC_DRINK.key() : org.bukkit.Sound.ENTITY_GENERIC_EAT.key())
                 .hasConsumeParticles(!food.drink());
         for (CookeryItem.FoodEffect effect : food.effects()) {
             PotionEffectType type = vanillaEffect(effect.effect());
