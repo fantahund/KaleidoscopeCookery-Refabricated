@@ -29,7 +29,48 @@ import java.util.concurrent.ThreadLocalRandom;
 public class OilPotStation extends Station {
 
     private static final NamespacedKey OIL = Keys.key("oil");
+    private static final NamespacedKey VARIANT = Keys.key("oil_variant");
     private int oil;
+    /** Ölsorte eines Addons ("" = Fett aus Cookery) */
+    private String variant = "";
+
+    /**
+     * Ölsorten eines Addons (Grilling: Rapsöl, Chiliöl …) in der hingestellten Kanne.
+     */
+    public interface Variants {
+        /** Sorte des Kannen-Items ("" = Fett) */
+        String of(ItemStack pot);
+
+        /** Sorte auf das Kannen-Item schreiben (beim Abbauen) */
+        void apply(ItemStack pot, String variant);
+
+        /** Modelle der hingestellten Kanne mit dieser Sorte; das zweite (falls da) leuchtet */
+        java.util.List<Key> models(String variant);
+
+        /** Rechtsklick mit einem Item, das Cookery nicht kennt (z. B. Öleimer); true = erledigt */
+        boolean interact(OilPotStation pot, Player player, ItemStack held);
+    }
+
+    private static @Nullable Variants variants;
+
+    public static void setVariants(Variants variants) {
+        OilPotStation.variants = variants;
+    }
+
+    public int oil() {
+        return oil;
+    }
+
+    public String variant() {
+        return variant;
+    }
+
+    /** Inhalt setzen (Addons); leer wird die Kanne wieder zur Fett-Kanne */
+    public void setContent(int oil, String variant) {
+        this.oil = Math.max(0, oil);
+        this.variant = this.oil == 0 ? "" : variant;
+        changed();
+    }
 
     public OilPotStation(StationContext context) {
         super(context);
@@ -41,23 +82,32 @@ public class OilPotStation extends Station {
 
     public void initFrom(ItemStack item) {
         oil = OilItems.oilCount(item);
+        variant = variants == null || oil == 0 ? "" : variants.of(item);
         markDirty();
     }
 
     @Override
     protected void load(PersistentDataContainer state) {
         oil = state.getOrDefault(OIL, PersistentDataType.INTEGER, 0);
+        variant = state.getOrDefault(VARIANT, PersistentDataType.STRING, "");
     }
 
     @Override
     protected void save(PersistentDataContainer state) {
         state.set(OIL, PersistentDataType.INTEGER, oil);
+        state.set(VARIANT, PersistentDataType.STRING, variant);
     }
 
     @Override
     public boolean onInteract(Player player, EquipmentSlot hand) {
         ItemStack held = player.getInventory().getItemInMainHand();
         ThreadLocalRandom random = ThreadLocalRandom.current();
+        if (variants != null && variants.interact(this, player, held)) {
+            return true;
+        }
+        if (!variant.isEmpty()) {
+            return false; // Ölsorten (Addon) lassen sich nicht als Fett herausnehmen oder mit Fett mischen
+        }
         if (held.isEmpty()) {
             if (oil <= 0) {
                 return false;
@@ -99,13 +149,24 @@ public class OilPotStation extends Station {
         ItemStack pot = items().create(OilItems.OIL_POT, 1);
         if (pot != null) {
             OilItems.setOilCount(pot, oil);
+            if (variants != null && !variant.isEmpty()) {
+                variants.apply(pot, variant);
+            }
         }
         return pot;
     }
 
     @Override
     public void updateDisplay() {
-        showPart("body", Key.key("kaleidoscope_cookery", oil > 0 ? "block/oil_pot_with_oil" : "block/oil_pot"), blockTransform(0));
+        java.util.List<Key> models = oil > 0 && !variant.isEmpty() && variants != null ? variants.models(variant) : java.util.List.of();
+        showPart("body", models.isEmpty() ? Key.key("kaleidoscope_cookery", oil > 0 ? "block/oil_pot_with_oil" : "block/oil_pot") : models.getFirst(),
+                blockTransform(0));
+        if (models.size() > 1) {
+            showPart("glow", new PartLook(modelStack(models.get(1)), org.bukkit.entity.ItemDisplay.ItemDisplayTransform.NONE, blockTransform(0),
+                    new org.bukkit.entity.Display.Brightness(15, 15)), 0);
+        } else {
+            hidePart("glow");
+        }
     }
 
     @Override
