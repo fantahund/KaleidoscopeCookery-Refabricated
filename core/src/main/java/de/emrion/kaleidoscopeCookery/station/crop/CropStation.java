@@ -49,6 +49,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class CropStation extends Station {
 
     private static final NamespacedKey AGE = Keys.key("age");
+    private static final NamespacedKey VARIANT = Keys.key("variant");
     private static final Set<EntityType> RICE_BOOSTERS = Set.of(EntityType.COD, EntityType.SALMON, EntityType.TROPICAL_FISH, EntityType.PUFFERFISH,
             EntityType.TADPOLE, EntityType.AXOLOTL);
     /** Bonus-Samen: binomial_with_bonus_count extra 3, p = 4/7 (wie Vanilla-Weizen) */
@@ -56,6 +57,8 @@ public class CropStation extends Station {
 
     private final CropKind kind;
     private int age;
+    /** zweites Aussehen (CropKind#variant), beim Pflanzen ausgewürfelt */
+    private boolean variant;
 
     public CropStation(StationContext context, CropKind kind) {
         super(context);
@@ -76,6 +79,14 @@ public class CropStation extends Station {
         return age;
     }
 
+    /**
+     * Stufe und Aussehen von außen setzen (z. B. Fischminze in Netherfestungen, Grilling).
+     */
+    public void setGrowth(int newAge, boolean newVariant) {
+        variant = newVariant;
+        grow(newAge);
+    }
+
     private boolean isMature() {
         return age >= kind.maxAge();
     }
@@ -83,11 +94,18 @@ public class CropStation extends Station {
     @Override
     protected void load(PersistentDataContainer state) {
         age = Math.clamp(state.getOrDefault(AGE, PersistentDataType.INTEGER, 0), 0, kind.maxAge());
+        if (kind.variant() != null) {
+            Boolean stored = state.get(VARIANT, PersistentDataType.BOOLEAN);
+            variant = stored != null ? stored : block(-1).getType() == kind.variant().soil() || ThreadLocalRandom.current().nextDouble() < kind.variant().chance();
+        }
     }
 
     @Override
     protected void save(PersistentDataContainer state) {
         state.set(AGE, PersistentDataType.INTEGER, age);
+        if (kind.variant() != null) {
+            state.set(VARIANT, PersistentDataType.BOOLEAN, variant);
+        }
     }
 
     @Override
@@ -125,6 +143,8 @@ public class CropStation extends Station {
             case FARMLAND -> below.getType() == Material.FARMLAND && (rawLight(block(0)) >= 8 || canSeeSky());
             case DIRT -> CropKind.DIRT_121.contains(below.getType());
             case WATER -> below.getType() == Material.FARMLAND && isWaterSource(block(0)) && (rawLight(block(0)) >= 8 || canSeeSky());
+            // HouttuyniaCropBlock#canSurvive
+            case FARMLAND_OR_SOUL_SAND -> below.getType() == Material.SOUL_SAND || (below.getType() == Material.FARMLAND && rawLight(block(0)) >= 8);
         };
     }
 
@@ -155,14 +175,13 @@ public class CropStation extends Station {
             return;
         }
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        switch (kind) {
-            case TEA -> {
-                int chance = isPlantedInRow() ? 4 : 5;
-                if (!isMature() && rawLight(block(1)) >= 9 && random.nextInt(chance) == 0) {
-                    grow(age + 1);
-                }
+        if (kind == CropKind.TEA) {
+            int chance = isPlantedInRow() ? 4 : 5;
+            if (!isMature() && rawLight(block(1)) >= 9 && random.nextInt(chance) == 0) {
+                grow(age + 1);
             }
-            case RICE -> {
+        } else if (kind == CropKind.RICE) {
+            {
                 if (world().getTime() >= 13000 && world().getTime() < 23000) {
                     world().playSound(block(1).getLocation().toCenterLocation(), "kaleidoscope_cookery:block.paddy", SoundCategory.BLOCKS,
                             random.nextFloat() * 0.2f + 0.2f, random.nextFloat() * 0.1f + 0.9f);
@@ -180,11 +199,8 @@ public class CropStation extends Station {
                     }
                 }
             }
-            default -> {
-                if (rawLight(block(0)) >= 9 && !isMature() && random.nextInt((int) (25.0f / growthSpeed()) + 1) == 0) {
-                    grow(age + 1);
-                }
-            }
+        } else if (rawLight(block(0)) >= 9 && !isMature() && random.nextInt((int) (25.0f / growthSpeed()) + 1) == 0) {
+            grow(age + 1);
         }
     }
 
@@ -285,11 +301,8 @@ public class CropStation extends Station {
         if (isMature()) {
             return false;
         }
-        int increase = switch (kind) {
-            case RICE -> ThreadLocalRandom.current().nextInt(1, 3);
-            case TEA -> 1;
-            default -> ThreadLocalRandom.current().nextInt(2, 6);
-        };
+        int increase = kind == CropKind.RICE ? ThreadLocalRandom.current().nextInt(1, 3)
+                : kind == CropKind.TEA ? 1 : ThreadLocalRandom.current().nextInt(2, 6);
         if (player.getGameMode() != GameMode.CREATIVE) {
             held.subtract();
         }
@@ -334,8 +347,8 @@ public class CropStation extends Station {
         }
         int resultCount = kind == CropKind.RICE ? random.nextInt(2, 5) : 1;
         add(drops, kind.result(), resultCount);
-        int seeds = 0;
-        for (int i = 0; i < 3 + fortune; i++) {
+        int seeds = kind.matureExtra();
+        for (int i = 0; i < kind.seedTrials() + fortune; i++) {
             if (random.nextDouble() < SEED_PROBABILITY) {
                 seeds++;
             }
@@ -379,7 +392,8 @@ public class CropStation extends Station {
             return;
         }
         Vector3f offset = kind == CropKind.TEA ? randomOffset() : new Vector3f();
-        showPart("plant", kind.model(age, null), translated(offset.x, offset.y, offset.z));
+        boolean showVariant = variant && kind.variant() != null && age >= kind.variant().fromAge();
+        showPart("plant", kind.model(age, showVariant ? kind.variant().suffix() : null), translated(offset.x, offset.y, offset.z));
         float height = kind == CropKind.TEA ? (4 + age) / 16f : (2 + age) / 16f;
         if (Math.abs(root().getInteractionHeight() - height) > 0.001f) {
             root().setInteractionHeight(height);

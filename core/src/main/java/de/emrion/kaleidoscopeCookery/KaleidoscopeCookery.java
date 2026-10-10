@@ -290,6 +290,14 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         return cookeryConfig;
     }
 
+    /**
+     * Pflanzenart eines Addons anmelden (Samen setzen sie dann wie Cookery-Pflanzen).
+     */
+    public void registerCrop(CropKind kind) {
+        CropKind.register(kind);
+        stations.register(CropStation.type(kind));
+    }
+
     /** Angemeldete Addons (eigene Plugins wie KaleidoscopeGrilling) */
     public java.util.List<org.bukkit.plugin.Plugin> getAddons() {
         return java.util.Collections.unmodifiableList(addons);

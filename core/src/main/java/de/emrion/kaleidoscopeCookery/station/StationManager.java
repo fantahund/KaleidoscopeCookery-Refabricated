@@ -79,6 +79,9 @@ public class StationManager implements Listener {
     public void register(StationType type) {
         types.put(type.id(), type);
         typesByItem.put(type.item(), type);
+        if (task != null) {
+            attachLoaded(); // Typ eines Addons: dessen Stationen in schon geladenen Chunks übernehmen
+        }
     }
 
     public @Nullable StationType typeByItem(@Nullable Key item) {
@@ -94,6 +97,11 @@ public class StationManager implements Listener {
     }
 
     public void start() {
+        attachLoaded();
+        task = plugin.getServer().getScheduler().runTaskTimer(plugin, this::tick, 1, 1);
+    }
+
+    private void attachLoaded() {
         for (World world : plugin.getServer().getWorlds()) {
             for (Chunk chunk : world.getLoadedChunks()) {
                 if (chunk.isEntitiesLoaded()) {
@@ -101,7 +109,6 @@ public class StationManager implements Listener {
                 }
             }
         }
-        task = plugin.getServer().getScheduler().runTaskTimer(plugin, this::tick, 1, 1);
     }
 
     public void stop() {

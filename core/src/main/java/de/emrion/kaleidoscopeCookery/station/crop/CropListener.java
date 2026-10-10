@@ -120,6 +120,7 @@ public class CropListener implements Listener {
                     && target.getY() < target.getWorld().getMaxHeight() - 2
                     && target.getRelative(0, 1, 0).getType().isAir() && target.getRelative(0, 2, 0).getType().isAir()
                     && stations.at(target.getRelative(0, 1, 0)) == null && stations.at(target.getRelative(0, 2, 0)) == null;
+            case FARMLAND_OR_SOUL_SAND -> target.getType().isAir() && (below.getType() == Material.FARMLAND || below.getType() == Material.SOUL_SAND);
         };
     }
 
