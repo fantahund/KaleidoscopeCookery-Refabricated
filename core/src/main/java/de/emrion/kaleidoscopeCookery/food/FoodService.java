@@ -43,12 +43,10 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Essen: Qualität (Kaleidoscope Cookery), Hitze/烟火气 (Kaleidoscope Grilling), Mod-Effekte beim Essen und die
+ * Essen: Qualität (Kaleidoscope Cookery), Mod-Effekte beim Essen und die
  * Abschwächung von Vanilla-Essen.
  * <ul>
  *     <li>Qualität steht im PDC und skaliert Nährwert, Sättigung und Effektdauer (wie QualityUtils im Mod)</li>
- *     <li>Hitze: Zeitstempel (Spielzeit der Welt) im PDC, auf 5 s gerundet, damit gleich heiße Stücke stapeln.
- *         Heißes Essen sättigt stärker (Standard 125 %).</li>
  * </ul>
  */
 public class FoodService implements Listener {

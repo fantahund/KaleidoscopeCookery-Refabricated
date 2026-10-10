@@ -8,7 +8,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
- * Zusätzliche Zeilen in der Beschreibung von Mod-Items (nach Beschreibung, Spruch und Qualität), z. B. "noch 0:45 heiß".
+ * Zusätzliche Zeilen in der Beschreibung von Mod-Items (nach Beschreibung, Spruch und Qualität).
  * Anmelden über FoodService#addLoreExtension.
  */
 @FunctionalInterface

@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 /**
  * Ein fertiges Gericht wird aus einer Station genommen (Wok, Suppentopf), kurz bevor der Spieler es bekommt.
- * Das Item darf verändert werden (z. B. macht Grilling es heiß).
+ * Das Item darf verändert werden.
  */
 public class DishServedEvent extends Event {
 
