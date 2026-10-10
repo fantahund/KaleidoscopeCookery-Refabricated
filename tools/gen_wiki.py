@@ -518,7 +518,7 @@ STATIONS = [
       ("Fertig: 4 Eimer Rapsöl laufen in ein großes Fass in der Nähe (±4 Blöcke), 4 {item:kaleidoscope_grilling:oil_residue} fallen vorne heraus.",
        "Done: 4 buckets of canola oil run into a big vat nearby (±4 blocks), 4 {item:kaleidoscope_grilling:oil_residue} drop out at the front."),
       ("Das Fass fasst 8 Eimer einer Flüssigkeit. Ölkannen werden daran mit 8 Öl pro Eimer gefüllt.",
-       "The vat holds 8 buckets of one liquid. Oil pots are filled there with 8 oil per bucket."),
+       "The vat holds 8 buckets of one liquid. An oil pot is filled there with 8 oil per bucket."),
       ("Ölsorten: Rapsöl, Chiliöl, Magma-Chiliöl. Eine Ölkanne mit Ölsorte fasst 64, mit Fett 256.",
        "Oil types: canola oil, chili oil, magma chili oil. An oil pot with an oil type holds 64, with fat 256.")]),
     ("seasoning", ("Gewürze", "Seasoning"), "kaleidoscope_grilling:empty_seasoning_bottle", ("Grillen", "Grilling"),
@@ -593,7 +593,7 @@ CROPS = [
      ("8 Stufen, reif gibt es mindestens 2 zusätzliche Süßkartoffeln.", "8 stages, ripe it gives at least 2 extra sweet potatoes.")),
     (("Fischminze", "Houttuynia"), "kaleidoscope_grilling:houttuynia", ["kaleidoscope_grilling:houttuynia"], ("Ackerland oder Seelensand", "Farmland or soul sand"),
      ("8 Stufen. Auf Seelensand (sonst zu 30 %) färbt sie sich ab Stufe 5 rot.", "8 stages. On soul sand (otherwise with 30%) it turns red from stage 5.")),
-    (("Sichuanpfeffer", "Sichuan pepper"), "kaleidoscope_grilling:sichuan_pepper_seeds", ["kaleidoscope_grilling:sichuan_pepper"], ("Ackerland", "Farmland"),
+    (("Szechuanpfeffer", "Sichuan pepper"), "kaleidoscope_grilling:sichuan_pepper_seeds", ["kaleidoscope_grilling:sichuan_pepper"], ("Ackerland", "Farmland"),
      ("Strauch mit 6 Stufen. Reif per Rechtsklick 1–2 Pfeffer ernten, danach blüht er und reift erneut.",
       "Bush with 6 stages. Harvest 1–2 peppers with right-click when ripe, then it flowers and ripens again.")),
 ]
@@ -693,6 +693,20 @@ EFFECT_DESCRIPTIONS = {
 TAB_NAMES = {"kitchen": ("Küche & Werkzeuge", "Kitchen & tools"), "food": ("Essen & Zutaten", "Food & ingredients"),
              "furniture": ("Möbel & Deko", "Furniture & decoration"), "grilling": ("Grillen", "Grilling")}
 
+# Names in plain wiki text become switchable names automatically (exact item/effect names plus these spellings).
+# Not converted: generic words that happen to be item names (de "Rezept", en "Oil" as in "canola oil").
+NAME_ALIASES = {
+    "de": {"Dampfgarer": "item:kaleidoscope_cookery:steamer", "Ölpresse": "item:kaleidoscope_grilling:oil_press",
+           "großes Fass": "item:kaleidoscope_grilling:big_vat", "großen Fass": "item:kaleidoscope_grilling:big_vat",
+           "großem Fass": "item:kaleidoscope_grilling:big_vat", "Langsamkeit": "effect:minecraft:slowness",
+           "Sichuanpfeffer": "item:kaleidoscope_grilling:sichuan_pepper"},
+    "en": {"spatula": "item:kaleidoscope_cookery:kitchen_shovel", "oil pot": "item:kaleidoscope_cookery:oil_pot",
+"oil press": "item:kaleidoscope_grilling:oil_press",
+           "big vat": "item:kaleidoscope_grilling:big_vat", "vat": "item:kaleidoscope_grilling:big_vat",
+           "enamel basin": "item:kaleidoscope_cookery:enamel_basin", "Slowness": "effect:minecraft:slowness"},
+}
+NAME_EXCLUDE = {"de": {"kaleidoscope_cookery:recipe_item"}, "en": {"kaleidoscope_cookery:recipe_item", "kaleidoscope_cookery:oil"}}
+
 FURNITURE = ("chair", "table", "cook_stool", "long_bench", "eight_immortals", "red_lantern", "tea_banner")
 
 # ---------------------------------------------------------------- HTML
@@ -736,6 +750,20 @@ class Site:
         self.stations = {s[0]: s for s in STATIONS}
         self.search = []
         self.sources = sources(data.config)
+        self.auto_names = {}
+        for code in ("de", "en"):
+            names = {}
+            for item in data.items:
+                if item not in NAME_EXCLUDE[code]:
+                    names[data.name(item, code).lower()] = f"item:{item}"
+            for key in data.lang["en"]:
+                if re.match(r"effect\.kaleidoscope_(cookery|grilling)\.[a-z_]+$", key):
+                    _, ns, path = key.split(".")
+                    names[data.lang[code][key].lower()] = f"effect:{ns}:{path}"
+            names.update({k.lower(): v for k, v in NAME_ALIASES[code].items()})
+            names = {n: v for n, v in names.items() if len(n) > 2}
+            pattern = "|".join(re.escape(n) for n in sorted(names, key=len, reverse=True))
+            self.auto_names[code] = (re.compile(rf"(?<![\w-])({pattern})(?![\w-])", re.IGNORECASE), names)
 
     # ---- Helpers ----
 
@@ -759,7 +787,13 @@ class Site:
                     return f'<a href="{e(link)}">{label}</a>' if link else label
                 return N(e(self.data.keyed(kind, key, "de")), e(self.data.keyed(kind, key, "en")))
             return re.sub(r"\{(item|entity|effect):(#?[a-z_]+:[a-z_0-9/]+)\}", repl, e(text))
-        return L(render(pair[0]), render(pair[1]))
+        return L(render(self.auto(pair[0], "de")), render(self.auto(pair[1], "en")))
+
+    def auto(self, text: str, code: str) -> str:
+        """Plain names in a text -> placeholders (only outside existing placeholders)."""
+        pattern, names = self.auto_names[code]
+        parts = re.split(r"(\{[^}]+\})", text)
+        return "".join(part if part.startswith("{") else pattern.sub(lambda m: "{" + names[m.group(1).lower()] + "}", part) for part in parts)
 
     def rich_item(self, item: str, root: str) -> str:
         link = self.item_link(item, root)
@@ -1069,12 +1103,12 @@ class Site:
             _, ns, path = key.split(".")
             effect_id = f"{ns}:{path}"
             if f"{key}.description" in self.data.lang["en"]:
-                desc = (self.data.lang["de"][f"{key}.description"], self.data.lang["en"][f"{key}.description"])
+                desc_html = L(e(self.data.lang["de"][f"{key}.description"]), e(self.data.lang["en"][f"{key}.description"]))
             else:
-                desc = EFFECT_DESCRIPTIONS.get(effect_id, ("–", "–"))
+                desc_html = self.rich(EFFECT_DESCRIPTIONS.get(effect_id, ("–", "–")), "")
             foods = "".join(f'<a class="mini" href="items/{slug(i)}.html" {self.tip(i)}>{self.icon(i, "", 24, "icon-sm")}</a>' for i in users.get(effect_id, []))
             name = N(e(self.data.lang["de"].get(key, path)), e(self.data.lang["en"].get(key, path)))
-            rows += (f'<div class="effect-card panel" id="{ns}-{path}"><h3>{self.effect_icon(effect_id, "", 36)}{name}</h3><p>{L(e(desc[0]), e(desc[1]))}</p>'
+            rows += (f'<div class="effect-card panel" id="{ns}-{path}"><h3>{self.effect_icon(effect_id, "", 36)}{name}</h3><p>{desc_html}</p>'
                      f'{f"<div class=minis>{foods}</div>" if foods else ""}</div>')
         body = (f'<h1>{L("Effekte", "Effects")}</h1><p class="lead">'
                 + L("Eigene Effekte der Mods. Sie stehen während der Wirkung in der Seitenleiste rechts, weil Minecraft eigene Effekte nicht im Inventar anzeigen kann.",
@@ -1164,7 +1198,7 @@ class Site:
         for title, seed, harvest, soil, details in CROPS:
             seed_link = f'<a class="mini" href="items/{slug(seed)}.html" {self.tip(seed)}>{self.icon(seed, "", 32)}</a>'
             harvest_html = "".join(f'<a class="mini" href="items/{slug(h)}.html" {self.tip(h)}>{self.icon(h, "", 32)}</a>' for h in harvest)
-            rows += (f'<div class="crop panel"><h3>{L(*title)}</h3><div class="crop-row"><div><small>{L("Samen", "Seed")}</small>{seed_link}</div>'
+            rows += (f'<div class="crop panel"><h3>{N(e(title[0]), e(title[1]))}</h3><div class="crop-row"><div><small>{L("Samen", "Seed")}</small>{seed_link}</div>'
                      f'<div class="arrow"><span></span></div><div><small>{L("Ernte", "Harvest")}</small><div class="minis">{harvest_html}</div></div></div>'
                      f'<p><b>{L("Boden", "Soil")}:</b> {L(*soil)}</p><p class="muted">{L(*details)}</p></div>')
         tips = [("Setze einen {item:kaleidoscope_cookery:straw_hat} auf und baue Gras ab: Mit etwas Glück fallen Samen heraus (je 12,5 % pro Samenart).",
