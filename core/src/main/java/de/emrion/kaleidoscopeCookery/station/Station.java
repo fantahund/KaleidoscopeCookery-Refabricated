@@ -327,6 +327,7 @@ public abstract class Station {
         }
         String owner = root().getUniqueId().toString();
         hitbox = world().spawn(location, Interaction.class, interaction -> {
+            interaction.setVisibleByDefault(false); // nur Spielern in Reichweite gezeigt (StationManager#updateVisibility)
             interaction.setInteractionWidth(width);
             interaction.setInteractionHeight(height);
             interaction.setResponsive(true);
@@ -336,6 +337,7 @@ public abstract class Station {
         });
         hitboxes.put(name, hitbox);
         context.manager().registerHitbox(hitbox, this);
+        context.manager().revealNear(this);
     }
 
     protected void hideHitbox(String name) {
@@ -368,11 +370,30 @@ public abstract class Station {
             display.setTransformation(look.transformation());
             display.setBrightness(look.brightness());
             display.setPersistent(true);
+            display.setViewRange(viewRange());
             display.setDisplayWidth(displaySize());
             display.setDisplayHeight(displaySize());
             display.getPersistentDataContainer().set(Keys.STATION_OWNER, PersistentDataType.STRING, owner);
             display.getPersistentDataContainer().set(Keys.STATION_PART, PersistentDataType.STRING, name);
         });
+    }
+
+    /**
+     * Render-Distanz der Displays (view_range: Vielfaches von 64 Blöcken, mal der Entity-Distanz des Clients).
+     * Pflanzen stehen zu Hunderten auf Feldern und nutzen weniger.
+     */
+    protected float viewRange() {
+        return 1.0f;
+    }
+
+    /**
+     * Klick-Entities dieser Station (Wurzel und zusätzliche Hitboxen).
+     */
+    public List<Interaction> interactions() {
+        List<Interaction> result = new java.util.ArrayList<>(hitboxes.size() + 1);
+        result.add(root());
+        result.addAll(hitboxes.values());
+        return result;
     }
 
     /**
@@ -416,6 +437,9 @@ public abstract class Station {
     }
 
     void adoptPart(String name, ItemDisplay display) {
+        if (display.getViewRange() != viewRange()) {
+            display.setViewRange(viewRange());
+        }
         ItemDisplay previous = parts.put(name, display);
         if (previous != null && previous != display) {
             previous.remove();
@@ -424,6 +448,7 @@ public abstract class Station {
     }
 
     void adoptHitbox(String name, Interaction hitbox) {
+        hitbox.setVisibleByDefault(false);
         Interaction previous = hitboxes.put(name, hitbox);
         if (previous != null && previous != hitbox) {
             context.manager().unregisterHitbox(previous);

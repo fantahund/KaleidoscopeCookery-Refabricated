@@ -151,6 +151,76 @@ public class StationManager implements Listener {
         if (serverTick % HUD_INTERVAL == 0) {
             updateHud();
         }
+        if (serverTick % VISIBILITY_INTERVAL == 0) {
+            updateVisibility();
+        }
+    }
+
+    // ---- Sichtbarkeit der Klick-Entities ----
+
+    /** Interaction-Entities bekommt nur, wer so nah ist (Klick-Reichweite im Survival 3, Kreativ 5 Blöcke) */
+    private static final double SHOW_DISTANCE = 8;
+    private static final double HIDE_DISTANCE = 10;
+    private static final int VISIBILITY_INTERVAL = 5;
+    /** Spieler -> Interaction-Entities, die er gerade sieht */
+    private final Map<UUID, java.util.Set<UUID>> visible = new HashMap<>();
+
+    /**
+     * Klick-Entities sind standardmäßig unsichtbar (sonst schickt der Server Hunderte Felder-Pflanzen an jeden
+     * Client in 96 Blöcken). Gezeigt werden sie nur Spielern in der Nähe.
+     */
+    private void updateVisibility() {
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            java.util.Set<UUID> shown = visible.computeIfAbsent(player.getUniqueId(), k -> new java.util.HashSet<>());
+            Location eye = player.getLocation();
+            java.util.Set<UUID> keep = new java.util.HashSet<>();
+            for (Station station : byRoot.values()) {
+                Interaction root = station.root();
+                if (root.getWorld() != eye.getWorld()) {
+                    continue;
+                }
+                double distance = root.getLocation().distanceSquared(eye);
+                boolean near = distance < SHOW_DISTANCE * SHOW_DISTANCE;
+                boolean stay = distance < HIDE_DISTANCE * HIDE_DISTANCE;
+                for (Interaction interaction : station.interactions()) {
+                    UUID id = interaction.getUniqueId();
+                    if (near && !shown.contains(id)) {
+                        player.showEntity(plugin, interaction);
+                        shown.add(id);
+                    }
+                    if ((near || stay) && shown.contains(id)) {
+                        keep.add(id);
+                    }
+                }
+            }
+            for (java.util.Iterator<UUID> it = shown.iterator(); it.hasNext(); ) {
+                UUID id = it.next();
+                if (!keep.contains(id)) {
+                    Entity entity = plugin.getServer().getEntity(id);
+                    if (entity != null) {
+                        player.hideEntity(plugin, entity);
+                    }
+                    it.remove();
+                }
+            }
+        }
+        visible.keySet().removeIf(id -> plugin.getServer().getPlayer(id) == null);
+    }
+
+    /**
+     * Neue Station bzw. Hitbox sofort den Spielern in der Nähe zeigen (nicht erst beim nächsten Durchlauf).
+     */
+    public void revealNear(Station station) {
+        for (Player player : station.world().getPlayers()) {
+            if (player.getLocation().distanceSquared(station.root().getLocation()) < SHOW_DISTANCE * SHOW_DISTANCE) {
+                java.util.Set<UUID> shown = visible.computeIfAbsent(player.getUniqueId(), k -> new java.util.HashSet<>());
+                for (Interaction interaction : station.interactions()) {
+                    if (shown.add(interaction.getUniqueId())) {
+                        player.showEntity(plugin, interaction);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -306,6 +376,9 @@ public class StationManager implements Listener {
     }
 
     private @Nullable Station create(Interaction root) {
+        if (root.isVisibleByDefault()) {
+            root.setVisibleByDefault(false); // ältere Stationen: Klick-Entity nur noch in der Nähe zeigen
+        }
         PersistentDataContainer pdc = root.getPersistentDataContainer();
         String typeId = pdc.get(Keys.STATION_TYPE, PersistentDataType.STRING);
         StationType type = types.get(typeId);
@@ -437,6 +510,7 @@ public class StationManager implements Listener {
         float finalWidth = hitboxWidth(type);
         float finalHeight = hitboxHeight(type);
         Interaction root = block.getWorld().spawn(location, Interaction.class, interaction -> {
+            interaction.setVisibleByDefault(false); // nur Spielern in Reichweite gezeigt (updateVisibility)
             interaction.setInteractionWidth(finalWidth);
             interaction.setInteractionHeight(finalHeight);
             interaction.setResponsive(true);
@@ -463,6 +537,7 @@ public class StationManager implements Listener {
         station.flush();
         station.updateDisplay();
         updateTicking(station);
+        revealNear(station);
         return station;
     }
 
