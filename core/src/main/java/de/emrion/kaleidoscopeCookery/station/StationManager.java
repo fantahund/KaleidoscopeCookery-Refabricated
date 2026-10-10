@@ -125,6 +125,7 @@ public class StationManager implements Listener {
         }
         flushAll();
         byRoot.clear();
+        byChunk.clear();
         byBlock.clear();
         byHitbox.clear();
         ticking.clear();
@@ -164,6 +165,14 @@ public class StationManager implements Listener {
     private static final int VISIBILITY_INTERVAL = 5;
     /** Spieler -> Interaction-Entities, die er gerade sieht */
     private final Map<UUID, java.util.Set<UUID>> visible = new HashMap<>();
+    /** Stationen je Chunk, damit jeder Spieler nur die Stationen um sich prüft (nicht alle auf dem Server) */
+    private final Map<ChunkKey, java.util.List<Station>> byChunk = new HashMap<>();
+
+    private record ChunkKey(UUID world, int x, int z) {
+        static ChunkKey of(BlockKey block) {
+            return new ChunkKey(block.world(), block.x() >> 4, block.z() >> 4);
+        }
+    }
 
     /**
      * Klick-Entities sind standardmäßig unsichtbar (sonst schickt der Server Hunderte Felder-Pflanzen an jeden
@@ -174,11 +183,19 @@ public class StationManager implements Listener {
             java.util.Set<UUID> shown = visible.computeIfAbsent(player.getUniqueId(), k -> new java.util.HashSet<>());
             Location eye = player.getLocation();
             java.util.Set<UUID> keep = new java.util.HashSet<>();
-            for (Station station : byRoot.values()) {
-                Interaction root = station.root();
-                if (root.getWorld() != eye.getWorld()) {
-                    continue;
+            UUID world = eye.getWorld().getUID();
+            int minX = (int) Math.floor(eye.getX() - HIDE_DISTANCE) >> 4;
+            int maxX = (int) Math.floor(eye.getX() + HIDE_DISTANCE) >> 4;
+            int minZ = (int) Math.floor(eye.getZ() - HIDE_DISTANCE) >> 4;
+            int maxZ = (int) Math.floor(eye.getZ() + HIDE_DISTANCE) >> 4;
+            List<Station> nearby = new ArrayList<>();
+            for (int cx = minX; cx <= maxX; cx++) {
+                for (int cz = minZ; cz <= maxZ; cz++) {
+                    nearby.addAll(byChunk.getOrDefault(new ChunkKey(world, cx, cz), List.of()));
                 }
+            }
+            for (Station station : nearby) {
+                Interaction root = station.root();
                 double distance = root.getLocation().distanceSquared(eye);
                 boolean near = distance < SHOW_DISTANCE * SHOW_DISTANCE;
                 boolean stay = distance < HIDE_DISTANCE * HIDE_DISTANCE;
@@ -402,6 +419,7 @@ public class StationManager implements Listener {
             station.forceDirty();
         }
         byRoot.put(root.getUniqueId(), station);
+        byChunk.computeIfAbsent(ChunkKey.of(station.position()), k -> new java.util.ArrayList<>()).add(station);
         for (BlockKey block : station.occupied()) {
             Station previous = byBlock.put(block, station);
             if (previous != null && previous != station) {
@@ -416,6 +434,13 @@ public class StationManager implements Listener {
 
     private void detach(Station station) {
         byRoot.remove(station.root().getUniqueId());
+        java.util.List<Station> inChunk = byChunk.get(ChunkKey.of(station.position()));
+        if (inChunk != null) {
+            inChunk.remove(station);
+            if (inChunk.isEmpty()) {
+                byChunk.remove(ChunkKey.of(station.position()));
+            }
+        }
         for (BlockKey block : station.occupied()) {
             byBlock.remove(block, station);
         }
