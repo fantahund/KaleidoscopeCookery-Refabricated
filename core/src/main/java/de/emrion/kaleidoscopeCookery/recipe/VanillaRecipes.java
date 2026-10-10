@@ -25,7 +25,6 @@ import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.SmithingTransformRecipe;
 import org.bukkit.inventory.SmokingRecipe;
 import org.bukkit.inventory.StonecuttingRecipe;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.Nullable;
 
@@ -321,8 +320,9 @@ public class VanillaRecipes implements Listener {
         if (base.hasData(DataComponentTypes.CUSTOM_NAME)) {
             result.setData(DataComponentTypes.CUSTOM_NAME, base.getData(DataComponentTypes.CUSTOM_NAME));
         }
-        if (base.getItemMeta() instanceof Damageable damaged && damaged.hasDamage()) {
-            result.editMeta(Damageable.class, meta -> meta.setDamage(damaged.getDamage()));
+        Integer damage = base.getData(DataComponentTypes.DAMAGE);
+        if (damage != null && damage > 0) {
+            result.setData(DataComponentTypes.DAMAGE, damage);
         }
         event.setResult(result);
     }
