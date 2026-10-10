@@ -80,9 +80,10 @@ public class GiveCommand extends SubCommand {
     private CookeryItem find(String id) {
         CookeryItem item = plugin.getItems().get(id);
         if (item == null && !id.contains(":")) {
+            // Ohne Namespace: Cookery zuerst, dann die Addons
             item = plugin.getItems().get(Key.key("kaleidoscope_cookery", id));
             if (item == null) {
-                item = plugin.getItems().get(Key.key("kaleidoscope_grilling", id));
+                item = plugin.getItems().all().values().stream().filter(i -> i.id().value().equals(id)).findFirst().orElse(null);
             }
         }
         return item;

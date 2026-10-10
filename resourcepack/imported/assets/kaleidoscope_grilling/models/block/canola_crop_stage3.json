@@ -1,6 +1,0 @@
-{
-  "parent": "kaleidoscope_grilling:block/tall_crop",
-  "textures": {
-    "crop": "kaleidoscope_grilling:block/crop/canola/stage3"
-  }
-}

@@ -2,7 +2,7 @@
   "model": {
     "type": "minecraft:range_dispatch",
     "property": "minecraft:custom_model_data",
-    "index": 4,
+    "index": 2,
     "entries": [
       {
         "threshold": 0.0,

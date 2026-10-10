@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
 Importiert Texturen, Modelle, Sounds und die englischen Sprachdateien aus
-Kaleidoscope Cookery (Branch 1.21.1-neoforge) und Kaleidoscope Grilling
-(neoforge-1.21.1 + common) nach resourcepack/imported und konvertiert sie auf
-das Format von Minecraft 26.3.
+Kaleidoscope Cookery (Branch 1.21.1-neoforge) nach resourcepack/imported bzw. mit
+--project grilling --dest ../KaleidoscopeGrilling Kaleidoscope Grilling (neoforge-1.21.1 + common)
+in dessen resourcepack/imported und konvertiert sie auf das Format von Minecraft 26.3.
 
 Konvertierung:
   * NeoForge-Felder entfernen (render_type, neoforge_data, ...)
@@ -25,8 +25,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "resourcepack" / "imported"
-PROPERTIES_OUT = ROOT / "core" / "src" / "main" / "resources" / "generated" / "model_properties.yml"
+PROPERTIES_FILE = Path("src") / "main" / "resources" / "generated" / "model_properties.yml"
 
 SOURCES = {
     "cookery": ("https://github.com/KaleidoscopeMods/KaleidoscopeCookery.git", "1.21.1-neoforge",
@@ -35,13 +34,12 @@ SOURCES = {
                  "9a1acdab27698457bec16c9362678e574895a28c"),
 }
 
-# Reihenfolge = Prioritaet (spaetere Ebenen ueberschreiben fruehere)
-LAYERS = [
-    ("cookery", "src/main/resources/assets"),
-    ("cookery", "src/generated/resources/assets"),
-    ("grilling", "common/src/main/resources/assets"),
-    ("grilling", "neoforge-1.21.1/src/main/resources/assets"),
-]
+# Reihenfolge = Prioritaet (spaetere Ebenen ueberschreiben fruehere). Grilling ist ein eigenes Plugin mit eigenem Pack
+# (Repo KaleidoscopeGrilling); seine Overrides im Cookery-Namespace (Oelkanne) landen in dessen Pack.
+LAYERS = {
+    "cookery": [("cookery", "src/main/resources/assets"), ("cookery", "src/generated/resources/assets")],
+    "grilling": [("grilling", "common/src/main/resources/assets"), ("grilling", "neoforge-1.21.1/src/main/resources/assets")],
+}
 NAMESPACES = {"kaleidoscope_cookery", "kaleidoscope_grilling", "minecraft"}
 COPY_DIRS = {"models", "textures", "sounds"}
 # Nur fuer Mod-Code relevante Modelle
@@ -90,18 +88,23 @@ def clean_model(model: dict) -> dict:
 
 
 class Importer:
-    def __init__(self, cache: Path):
+    def __init__(self, cache: Path, project: str, dest: Path, base_properties: dict):
         self.cache = cache
+        self.project = project
+        self.out = dest / "resourcepack" / "imported"
+        self.properties_out = dest / ("core" if project == "cookery" else ".") / PROPERTIES_FILE
         self.files = {}          # Zielpfad relativ zu assets -> Quelldatei
         self.sounds = {}         # namespace -> dict
         self.lang = {}           # namespace -> dict (en_us)
         self.models = {}         # "ns:path" -> model dict (bereits bereinigt)
         self.item_defs = {}      # "ns/items/<path>.json" -> definition
-        self.properties = {}     # predicate-Name -> custom_model_data-Index
+        # predicate-Name -> custom_model_data-Index; Grilling zaehlt nach den Cookery-Indizes weiter (gleiche Items, z. B. Oelkanne)
+        self.properties = dict(base_properties)
+        self.base_properties = set(base_properties)
         self.notes = []
 
     def collect(self):
-        for repo, rel in LAYERS:
+        for repo, rel in LAYERS[self.project]:
             base = ensure_source(self.cache, repo) / rel
             for ns_dir in sorted(base.iterdir()):
                 if ns_dir.name not in NAMESPACES:
@@ -219,9 +222,9 @@ class Importer:
         return build(0, {})
 
     def write(self):
-        if OUT.exists():
-            shutil.rmtree(OUT)
-        assets = OUT / "assets"
+        if self.out.exists():
+            shutil.rmtree(self.out)
+        assets = self.out / "assets"
         for target, source in sorted(self.files.items()):
             if "/models/" in target and target.endswith(".json"):
                 continue
@@ -238,15 +241,17 @@ class Importer:
         for ns, lang in sorted(self.lang.items()):
             write_json(assets / ns / "lang" / "en_us.json", lang)
 
-        PROPERTIES_OUT.parent.mkdir(parents=True, exist_ok=True)
-        with open(PROPERTIES_OUT, "w", encoding="utf-8") as f:
+        self.properties_out.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.properties_out, "w", encoding="utf-8") as f:
             f.write("# Generiert von tools/import_assets.py - nicht von Hand bearbeiten.\n")
             f.write("# Item-Property (aus den Mod-Overrides) -> Index in custom_model_data.floats\n")
             for name, index in self.properties.items():
+                if name in self.base_properties:
+                    continue
                 f.write(f"\"{name}\": {index}\n")
 
-        sources = {name: SOURCES[name][2] for name in SOURCES}
-        write_json(OUT / "SOURCES.json", sources)
+        sources = {name: SOURCES[name][2] for name in {repo for repo, _ in LAYERS[self.project]}}
+        write_json(self.out / "SOURCES.json", sources)
 
     def run(self):
         self.collect()
@@ -259,10 +264,20 @@ class Importer:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--cache", default=str(Path.home() / ".cache" / "kaleidoscope-pack"))
+    parser.add_argument("--project", choices=sorted(LAYERS), default="cookery")
+    parser.add_argument("--dest", help="Projekt-Wurzel (Standard: dieses Repo; fuer grilling das Repo KaleidoscopeGrilling)")
     args = parser.parse_args()
     cache = Path(args.cache).expanduser()
     cache.mkdir(parents=True, exist_ok=True)
-    Importer(cache).run()
+    dest = Path(args.dest).resolve() if args.dest else ROOT
+    base = {}
+    if args.project != "cookery":
+        base_file = ROOT / "core" / PROPERTIES_FILE
+        for line in base_file.read_text(encoding="utf-8").splitlines():
+            if line.startswith('"'):
+                name, index = line.rsplit(":", 1)
+                base[name.strip().strip('"')] = int(index)
+    Importer(cache, args.project, dest, base).run()
 
 
 if __name__ == "__main__":

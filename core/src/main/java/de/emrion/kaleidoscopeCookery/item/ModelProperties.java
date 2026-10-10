@@ -28,6 +28,13 @@ public final class ModelProperties {
 
     public static void load(Plugin plugin) {
         INDICES.clear();
+        add(plugin);
+    }
+
+    /**
+     * Properties eines Addons dazunehmen (eigene Namen, Indizes passend zu dessen Pack).
+     */
+    public static void add(Plugin plugin) {
         try (Reader reader = new InputStreamReader(plugin.getResource("generated/model_properties.yml"), StandardCharsets.UTF_8)) {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(reader);
             for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {

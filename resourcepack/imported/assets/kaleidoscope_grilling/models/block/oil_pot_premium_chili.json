@@ -1,7 +1,0 @@
-{
-  "parent": "kaleidoscope_cookery:block/oil_pot",
-  "textures": {
-    "3": "kaleidoscope_grilling:block/oil_pot_secret_chili",
-    "particle": "kaleidoscope_grilling:block/oil_pot_secret_chili"
-  }
-}

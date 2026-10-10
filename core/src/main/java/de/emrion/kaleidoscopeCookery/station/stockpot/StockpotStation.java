@@ -693,7 +693,7 @@ public class StockpotStation extends Station {
         if (status == PUT_SOUP_BASE) {
             state = Lang.get("hud.stockpot.need_soup").color(NamedTextColor.GOLD);
         } else if (!hasHeatSource()) {
-            state = Lang.raw("hud.kaleidoscope_grilling.pot.state.need_heat").color(NamedTextColor.RED);
+            state = Lang.get("station.need_heat").color(NamedTextColor.RED);
         } else if (status == PUT_INGREDIENT) {
             state = (hasLid() ? Lang.get("hud.stockpot.lid_wait") : Lang.get("hud.stockpot.add", inputCount(), StockpotRecipe.SLOTS)).color(NamedTextColor.YELLOW);
         } else if (status == COOKING) {

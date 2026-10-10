@@ -19,8 +19,22 @@ ROOT = Path(__file__).resolve().parent.parent
 CACHE = Path.home() / ".cache" / "kaleidoscope-pack"
 COOKERY = CACHE / "cookery"
 GRILLING = CACHE / "grilling"
-IMPORTED = ROOT / "resourcepack" / "imported" / "assets"
-CUSTOM = ROOT / "resourcepack" / "custom" / "assets"
+# Grilling ist ein eigenes Plugin (Repo KaleidoscopeGrilling neben diesem); seine Daten und Sprachdateien landen dort
+GRILLING_ROOT = ROOT.parent / "KaleidoscopeGrilling"
+
+
+def project_root(ns: str) -> Path:
+    return GRILLING_ROOT if ns == "kaleidoscope_grilling" else ROOT
+
+
+def imported(ns: str) -> Path:
+    return project_root(ns) / "resourcepack" / "imported" / "assets" / ns
+
+
+def custom(ns: str) -> Path:
+    return project_root(ns) / "resourcepack" / "custom" / "assets" / ns
+
+
 RESOURCES = ROOT / "core" / "src" / "main" / "resources"
 COOKERY_JAVA = COOKERY / "src/main/java/com/github/ysbbbbbb/kaleidoscopecookery"
 
@@ -255,13 +269,13 @@ def collect_items(foods: dict, bites: dict) -> dict:
     teas = parse_teacups()
     stack_sizes = parse_stack_sizes()
     for ns in ("kaleidoscope_cookery", "kaleidoscope_grilling"):
-        lang = read_json(IMPORTED / ns / "lang" / "en_us.json")
+        lang = read_json(imported(ns) / "lang" / "en_us.json")
         for key in lang:
             parts = key.split(".")
             if len(parts) != 3 or parts[0] not in ("item", "block") or parts[1] != ns:
                 continue
             item_id = parts[2]
-            if not (IMPORTED / ns / "items" / f"{item_id}.json").exists():
+            if not (imported(ns) / "items" / f"{item_id}.json").exists():
                 continue  # reine Bloecke ohne Item (Pflanzen-Stufen, ...)
             full_id = f"{ns}:{item_id}"
             if full_id in items and parts[0] == "block":
@@ -704,7 +718,7 @@ def write_german_lang():
     extra_path = ROOT / "tools" / "lang" / "de_de_extra.json"
     extra = read_json(extra_path) if extra_path.exists() else {}
     for ns in ("kaleidoscope_cookery", "kaleidoscope_grilling"):
-        english = read_json(IMPORTED / ns / "lang" / "en_us.json")
+        english = read_json(imported(ns) / "lang" / "en_us.json")
         german = {}
         missing = []
         for key in english:
@@ -726,20 +740,20 @@ def write_german_lang():
                     english_lines[f"{key}.line{i + 1}"] = en[i] if i < len(en) else ""
                     german[f"{key}.line{i + 1}"] = de[i] if i < len(de) else ""
         if english_lines:
-            out_en = CUSTOM / ns / "lang" / "en_us.json"
+            out_en = custom(ns) / "lang" / "en_us.json"
             existing = read_json(out_en) if out_en.exists() else {}
             existing = {k: v for k, v in existing.items() if ".maxim.line" not in k}
             existing.update(english_lines)
             out_en.parent.mkdir(parents=True, exist_ok=True)
             out_en.write_text(json.dumps(dict(sorted(existing.items())), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        out = CUSTOM / ns / "lang" / "de_de.json"
+        out = custom(ns) / "lang" / "de_de.json"
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(dict(sorted(german.items())), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         if missing:
             print(f"Ohne deutsche Übersetzung ({ns}): {', '.join(missing)}")
 
 
-GRILLING_RESOURCES = ROOT / "grilling" / "src" / "main" / "resources"
+GRILLING_RESOURCES = GRILLING_ROOT / "src" / "main" / "resources"
 # Bei jeder inhaltlichen Aenderung der Grilling-recipes.yml erhoehen
 GRILLING_DATA_VERSION = 1
 

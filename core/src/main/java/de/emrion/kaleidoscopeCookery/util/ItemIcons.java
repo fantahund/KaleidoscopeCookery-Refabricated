@@ -20,7 +20,6 @@ public final class ItemIcons {
     private static final java.util.Map<Key, Component> ICONS = new java.util.HashMap<>();
     /** Item -> großes Bild (16 Pixel) als Zeichen der Schrift kaleidoscope:icons */
     private static final java.util.Map<Key, Component> BIG_ICONS = new java.util.HashMap<>();
-    private static final Key ICON_FONT = Key.key("kaleidoscope", "icons");
     /** Item -> großes Stations-Bild fürs Rezept-Diagramm (32 Pixel) */
     private static final java.util.Map<Key, Component> DIAGRAMS = new java.util.HashMap<>();
 
@@ -31,15 +30,27 @@ public final class ItemIcons {
         ICONS.clear();
         BIG_ICONS.clear();
         DIAGRAMS.clear();
+        add(plugin);
+    }
+
+    /**
+     * Bilder eines weiteren Plugins (Addon mit eigenem Pack und eigener Bild-Schrift) dazunehmen.
+     */
+    public static void add(org.bukkit.plugin.Plugin plugin) {
+        Key font = Key.key("kaleidoscope", "icons");
         try (java.io.InputStream in = plugin.getResource("item_icons.txt")) {
             if (in == null) {
                 plugin.getLogger().warning("item_icons.txt fehlt im Plugin – keine Bilder im Kochbuch");
                 return;
             }
             for (String line : new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).split("\n")) {
+                if (line.startsWith("@font|")) {
+                    font = Key.key(line.substring("@font|".length()).trim());
+                    continue;
+                }
                 if (line.startsWith("@diagram|")) {
                     String[] parts = line.substring("@diagram|".length()).trim().split("=");
-                    DIAGRAMS.put(Key.key(parts[0]), padded(parts[1], DIAGRAM_WIDTH));
+                    DIAGRAMS.put(Key.key(parts[0]), padded(parts[1], DIAGRAM_WIDTH, font));
                     continue;
                 }
                 int equals = line.indexOf('=');
@@ -51,7 +62,7 @@ public final class ItemIcons {
                 Key item = Key.key(line.substring(0, equals));
                 ICONS.put(item, Component.object(ObjectContents.sprite(Key.key(line.substring(equals + 1, bar)), Key.key(sprite[0]))));
                 if (sprite.length > 1 && !sprite[1].isEmpty()) {
-                    BIG_ICONS.put(item, padded(sprite[1], BIG_WIDTH));
+                    BIG_ICONS.put(item, padded(sprite[1], BIG_WIDTH, font));
                 }
             }
         } catch (java.io.IOException e) {
@@ -79,11 +90,11 @@ public final class ItemIcons {
      * Schriftzeichen "HEX:Vorschub" auf eine feste Breite bringen: der Client kürzt Bilder rechts auf den letzten
      * sichtbaren Pixel, schmalere Bilder werden deshalb mit Abständen links und rechts mittig ausgeglichen.
      */
-    private static Component padded(String glyph, int width) {
+    private static Component padded(String glyph, int width, Key font) {
         String[] parts = glyph.split(":");
         int advance = parts.length > 1 ? Integer.parseInt(parts[1]) : width;
         int missing = width - advance;
-        Component image = Component.text(Character.toString(Integer.parseInt(parts[0], 16))).font(ICON_FONT)
+        Component image = Component.text(Character.toString(Integer.parseInt(parts[0], 16))).font(font)
                 .color(net.kyori.adventure.text.format.NamedTextColor.WHITE).shadowColor(net.kyori.adventure.text.format.ShadowColor.none());
         if (missing == 0) {
             return image;

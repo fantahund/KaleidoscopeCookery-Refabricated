@@ -462,7 +462,7 @@ public class SteamerStation extends Station {
         if (!hasItems()) {
             state = Lang.get("hud.steamer.empty").color(NamedTextColor.GRAY);
         } else if (lit == 0) {
-            state = Lang.raw("hud.kaleidoscope_grilling.pot.state.need_heat").color(NamedTextColor.RED);
+            state = Lang.get("station.need_heat").color(NamedTextColor.RED);
         } else if (steamerAt(1) == null && !lid) {
             state = Lang.get("hud.steamer.need_lid").color(NamedTextColor.GOLD);
         } else {

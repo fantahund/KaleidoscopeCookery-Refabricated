@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/crop",
-  "textures": {
-    "crop": "kaleidoscope_grilling:block/crop/houttuynia/stage1"
-  }
-}

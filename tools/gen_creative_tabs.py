@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Erzeugt core/src/main/resources/generated/creative_tabs.yml: Kategorien und Reihenfolge des Kreativ-Menüs
-(/kc menu) nach den Kreativ-Tabs der Mods (ModCreativeTabs von Cookery und Grilling).
+Erzeugt generated/creative_tabs.yml: Kategorien und Reihenfolge des Kreativ-Menüs (/kc menu) nach den Kreativ-Tabs
+der Mods (ModCreativeTabs) – für Cookery in core/src/main/resources, für Grilling im Repo KaleidoscopeGrilling daneben.
 
 Aufruf: python3 -I tools/gen_creative_tabs.py [--cache ~/.cache/kaleidoscope-pack]
 Items, die das Plugin nicht kennt, filtert das Plugin selbst heraus; Items ohne Tab landen dort unter "Sonstiges".
@@ -12,6 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "core" / "src" / "main" / "resources" / "generated" / "creative_tabs.yml"
+GRILLING_OUT = ROOT.parent / "KaleidoscopeGrilling" / "src" / "main" / "resources" / "generated" / "creative_tabs.yml"
 
 COOKERY_JAVA = "cookery/src/main/java/com/github/ysbbbbbb/kaleidoscopecookery/init"
 GRILLING_JAVA = "grilling/neoforge-1.21.1/src/main/java/cn/breezeth/kaleidoscope_grilling/registry"
@@ -69,21 +70,24 @@ def main():
         if key not in grilling:
             grilling.append(key)
 
-    tabs = {
+    write(OUT, {
         "kitchen": ("kaleidoscope_cookery:iron_kitchen_knife", kitchen),
         "food": ("kaleidoscope_cookery:red_chili", food),
         "furniture": ("kaleidoscope_cookery:chair_oak", furniture),
-        "grilling": ("kaleidoscope_grilling:grill", grilling),
-    }
+    })
+    write(GRILLING_OUT, {"grilling": ("kaleidoscope_grilling:grill", grilling)})
+
+
+def write(out: Path, tabs: dict):
     lines = ["# Generiert von tools/gen_creative_tabs.py aus den Kreativ-Tabs der Mods - nicht von Hand bearbeiten.", "tabs:"]
     for name, (icon, items) in tabs.items():
         lines.append(f"  {name}:")
         lines.append(f"    icon: \"{icon}\"")
         lines.append("    items:")
         lines.extend(f"      - \"{i}\"" for i in items)
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(", ".join(f"{n}: {len(v[1])}" for n, v in tabs.items()))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(out.name + ": " + ", ".join(f"{n}: {len(v[1])}" for n, v in tabs.items()))
 
 
 if __name__ == "__main__":

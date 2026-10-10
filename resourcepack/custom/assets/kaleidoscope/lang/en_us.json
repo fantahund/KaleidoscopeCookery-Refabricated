@@ -119,5 +119,6 @@
   "kaleidoscope.menu.tab.kitchen": "Kitchen",
   "kaleidoscope.menu.tab.food": "Food",
   "kaleidoscope.menu.tab.furniture": "Furniture",
-  "kaleidoscope.menu.tab.grilling": "Grilling"
+  "kaleidoscope.station.need_heat": "Waiting for heat source",
+  "kaleidoscope.station.need_oil": "Waiting for oil"
 }

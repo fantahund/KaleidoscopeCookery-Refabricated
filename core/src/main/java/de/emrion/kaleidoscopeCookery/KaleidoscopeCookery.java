@@ -77,7 +77,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         updateRecipeFile(this);
 
         resourcePack = new ResourcePackService(this);
-        try (ZipFile pack = new ZipFile(resourcePack.extract().toFile())) {
+        try (ZipFile pack = new ZipFile(resourcePack.extract(this, "").toFile())) {
             Lang.load(pack, getLogger());
             de.emrion.kaleidoscopeCookery.util.ItemIcons.load(this);
         } catch (IOException e) {
@@ -240,13 +240,26 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     }
 
     /**
-     * Addon anmelden (KaleidoscopeGrilling): dessen items.yml und recipes.yml kommen dazu, Rezepte werden neu geladen.
+     * Addon anmelden (eigenes Plugin wie KaleidoscopeGrilling): dessen items.yml und recipes.yml kommen dazu, Rezepte
+     * werden neu geladen. Ein eigenes Pack (&lt;Name&gt;-Pack.zip im Jar, URL aus resource-pack.external-url der
+     * Addon-config.yml) wird mit an die Spieler geschickt, seine Sprachdateien und Kochbuch-Bilder werden übernommen.
      */
     public void registerAddon(org.bukkit.plugin.Plugin addon) {
         if (addons.contains(addon)) {
             return;
         }
         addons.add(addon);
+        if (addon.getResource(addon.getName() + "-Pack.zip") != null) {
+            try (ZipFile pack = new ZipFile(resourcePack.extract(addon, addon.getConfig().getString("resource-pack.external-url", "")).toFile())) {
+                Lang.add(pack, addon.getLogger());
+            } catch (IOException e) {
+                getLogger().log(Level.SEVERE, "Resourcepack von " + addon.getName() + " konnte nicht geladen werden", e);
+            }
+            de.emrion.kaleidoscopeCookery.util.ItemIcons.add(addon);
+        }
+        if (addon.getResource("generated/model_properties.yml") != null) {
+            ModelProperties.add(addon);
+        }
         if (addon.getResource("items.yml") != null) {
             items = items.merge(CookeryItems.loadBundled(addon));
         }
@@ -275,6 +288,11 @@ public final class KaleidoscopeCookery extends JavaPlugin {
 
     public CookeryConfig getCookeryConfig() {
         return cookeryConfig;
+    }
+
+    /** Angemeldete Addons (eigene Plugins wie KaleidoscopeGrilling) */
+    public java.util.List<org.bukkit.plugin.Plugin> getAddons() {
+        return java.util.Collections.unmodifiableList(addons);
     }
 
     public ResourcePackService getResourcePack() {

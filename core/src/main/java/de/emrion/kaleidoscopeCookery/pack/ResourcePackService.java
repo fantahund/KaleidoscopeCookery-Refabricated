@@ -29,42 +29,60 @@ import java.util.logging.Level;
 /**
  * Das Server-Resourcepack: liegt im Plugin-Jar (beim Bauen erzeugt, siehe tools/build_pack.py),
  * wird ins Plugin-Verzeichnis entpackt und entweder über einen kleinen eingebauten Webserver
- * oder über eine externe URL an die Spieler geschickt.
+ * oder über eine externe URL an die Spieler geschickt. Addons (eigene Plugins wie KaleidoscopeGrilling)
+ * bringen ein eigenes Pack mit, das zusammen mit diesem geschickt wird.
  */
 public class ResourcePackService implements Listener {
 
-    public static final String PACK_FILE = "KaleidoscopeCookery-Pack.zip";
-    private static final UUID PACK_ID = UUID.nameUUIDFromBytes("kaleidoscope-cookery-pack".getBytes(StandardCharsets.UTF_8));
+    /** Ein Pack: Datei im Plugin-Verzeichnis, SHA1 aus dem Jar und optional eine externe URL */
+    private record Pack(UUID id, Path path, String sha1, String externalUrl) {
+    }
 
     private final Plugin plugin;
-    private final Path packPath;
+    /** Cookery zuerst, danach die Addons (spätere Packs liegen beim Client oben) */
+    private final java.util.List<Pack> packs = new java.util.concurrent.CopyOnWriteArrayList<>();
     private ResourcePackSettings settings;
-    private String sha1;
     private HttpServer server;
 
     public ResourcePackService(Plugin plugin) {
         this.plugin = plugin;
-        this.packPath = plugin.getDataPath().resolve(PACK_FILE);
     }
 
     /**
-     * Pack aus dem Jar entpacken. Muss vor {@link Lang#load} laufen, die Sprachdateien kommen aus dem Pack.
+     * Pack des Plugins (&lt;Name&gt;-Pack.zip) aus dessen Jar entpacken. Muss vor {@link Lang#load} laufen, die
+     * Sprachdateien kommen aus dem Pack.
+     *
+     * @param externalUrl externe Download-URL dieses Packs; leer = eingebauter Webserver
      */
-    public Path extract() throws IOException {
-        Files.createDirectories(packPath.getParent());
-        try (InputStream in = plugin.getResource(PACK_FILE); InputStream hash = plugin.getResource(PACK_FILE + ".sha1")) {
+    public Path extract(Plugin owner, String externalUrl) throws IOException {
+        String file = owner.getName() + "-Pack.zip";
+        Path path = owner.getDataPath().resolve(file);
+        Files.createDirectories(path.getParent());
+        try (InputStream in = owner.getResource(file); InputStream hash = owner.getResource(file + ".sha1")) {
             if (in == null || hash == null) {
-                throw new IOException(PACK_FILE + " fehlt im Plugin-Jar");
+                throw new IOException(file + " fehlt im Plugin-Jar");
             }
-            Files.copy(in, packPath, StandardCopyOption.REPLACE_EXISTING);
-            sha1 = new String(hash.readAllBytes(), StandardCharsets.US_ASCII).trim();
+            Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+            String sha1 = new String(hash.readAllBytes(), StandardCharsets.US_ASCII).trim();
+            UUID id = UUID.nameUUIDFromBytes(file.getBytes(StandardCharsets.UTF_8));
+            packs.removeIf(pack -> pack.id().equals(id));
+            packs.add(new Pack(id, path, sha1, externalUrl == null ? "" : externalUrl));
         }
-        return packPath;
+        if (settings != null) {
+            startServerIfNeeded();
+        }
+        return path;
     }
 
     public void start(ResourcePackSettings settings) {
         this.settings = settings;
-        if (!settings.enabled() || !settings.externalUrl().isBlank()) {
+        startServerIfNeeded();
+    }
+
+    /** Eingebauter Webserver nur, wenn ein Pack keine externe URL hat */
+    private void startServerIfNeeded() {
+        if (settings == null || !settings.enabled() || server != null
+                || packs.stream().noneMatch(pack -> pack == packs.getFirst() ? settings.externalUrl().isBlank() : pack.externalUrl().isBlank())) {
             return;
         }
         try {
@@ -72,7 +90,7 @@ public class ResourcePackService implements Listener {
             server.createContext("/", this::handle);
             server.setExecutor(Executors.newSingleThreadExecutor(Thread.ofPlatform().name("KaleidoscopeCookery-Pack").daemon().factory()));
             server.start();
-            plugin.getLogger().info("Resourcepack wird unter " + url() + " ausgeliefert (SHA1 " + sha1 + ")");
+            plugin.getLogger().info("Resourcepacks ohne externe URL werden über Port " + settings.port() + " ausgeliefert");
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Webserver für das Resourcepack konnte nicht starten (Port " + settings.port() + ")", e);
         }
@@ -92,47 +110,55 @@ public class ResourcePackService implements Listener {
     public void updateSettings(ResourcePackSettings settings) {
         ResourcePackSettings old = this.settings;
         this.settings = settings;
-        if (old != null && (old.port() != settings.port() || !old.bindAddress().equals(settings.bindAddress()) || old.externalUrl().isBlank() != settings.externalUrl().isBlank())) {
+        if (old != null && (old.port() != settings.port() || !old.bindAddress().equals(settings.bindAddress()))) {
             plugin.getLogger().warning("Geänderte Webserver-Einstellungen werden erst nach einem Neustart aktiv");
         }
     }
 
     private void handle(HttpExchange exchange) throws IOException {
         try (exchange) {
-            if (!"GET".equals(exchange.getRequestMethod()) || !exchange.getRequestURI().getPath().equals("/" + sha1 + ".zip")) {
+            String requested = exchange.getRequestURI().getPath();
+            Pack pack = packs.stream().filter(p -> requested.equals("/" + p.sha1() + ".zip")).findFirst().orElse(null);
+            if (!"GET".equals(exchange.getRequestMethod()) || pack == null) {
                 exchange.sendResponseHeaders(404, -1);
                 return;
             }
             exchange.getResponseHeaders().add("Content-Type", "application/zip");
-            exchange.sendResponseHeaders(200, Files.size(packPath));
+            exchange.sendResponseHeaders(200, Files.size(pack.path()));
             try (OutputStream out = exchange.getResponseBody()) {
-                Files.copy(packPath, out);
+                Files.copy(pack.path(), out);
             }
         }
     }
 
-    private String url() {
-        if (!settings.externalUrl().isBlank()) {
-            return settings.externalUrl();
+    private String url(Pack pack) {
+        if (!pack.externalUrl().isBlank()) {
+            return pack.externalUrl();
         }
-        return "http://" + settings.publicHost() + ":" + settings.port() + "/" + sha1 + ".zip";
+        return "http://" + settings.publicHost() + ":" + settings.port() + "/" + pack.sha1() + ".zip";
     }
 
     public void send(Player player) {
-        if (settings == null || !settings.enabled() || sha1 == null) {
+        if (settings == null || !settings.enabled() || packs.isEmpty()) {
             return;
         }
-        ResourcePackInfo info = ResourcePackInfo.resourcePackInfo(PACK_ID, URI.create(url()), sha1);
+        // Cookery-Pack mit der URL aus der eigenen config.yml (bei /kc reload änderbar)
+        java.util.List<ResourcePackInfo> infos = new java.util.ArrayList<>();
+        for (Pack pack : packs) {
+            String url = pack == packs.getFirst() && !settings.externalUrl().isBlank() ? settings.externalUrl() : url(pack);
+            infos.add(ResourcePackInfo.resourcePackInfo(pack.id(), URI.create(url), pack.sha1()));
+        }
         player.sendResourcePacks(ResourcePackRequest.resourcePackRequest()
-                .packs(info)
+                .packs(infos)
                 .required(settings.required())
                 .replace(false)
                 .prompt(Lang.get("pack.prompt"))
                 .build());
     }
 
+    /** SHA1 des Cookery-Packs */
     public String getSha1() {
-        return sha1;
+        return packs.isEmpty() ? null : packs.getFirst().sha1();
     }
 
     @EventHandler
@@ -142,7 +168,7 @@ public class ResourcePackService implements Listener {
 
     @EventHandler
     public void onStatus(PlayerResourcePackStatusEvent event) {
-        if (!PACK_ID.equals(event.getID()) || settings == null || !settings.required()) {
+        if (packs.stream().noneMatch(pack -> pack.id().equals(event.getID())) || settings == null || !settings.required()) {
             return;
         }
         switch (event.getStatus()) {

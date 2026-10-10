@@ -14,6 +14,8 @@ Geprueft wird:
 Vanilla-Assets kommen aus dem 26.3-Client-Jar (wird einmalig in den Cache geladen).
 
 Aufruf: python3 -I tools/build_pack.py --out target/generated-resources/pack
+Addon-Pack (eigenes Plugin, z. B. KaleidoscopeGrilling): --root <Addon-Repo> --base <dieses Repo> --zip-name ...
+--icon-font ...; das Basis-Pack wird nur zum Pruefen der Referenzen gelesen, nicht mit gezippt.
 """
 import argparse
 import hashlib
@@ -28,9 +30,7 @@ from PIL import Image
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-LAYERS = [ROOT / "resourcepack" / "imported", ROOT / "resourcepack" / "custom"]
 MC_VERSION = "26.3"
-ZIP_NAME = "KaleidoscopeCookery-Pack.zip"
 # Große Item-Bilder fürs Kochbuch (Schrift kaleidoscope:icons): Zeichen ab U+F0000, 16 Pixel hoch, oben an der Zeile
 ICON_FIRST_CHAR = 0xF0000
 ICON_HEIGHT = 16
@@ -88,15 +88,25 @@ class Vanilla:
 
 
 class PackBuilder:
-    def __init__(self, vanilla: Vanilla):
+    def __init__(self, vanilla: Vanilla, root: Path, base: Path | None, zip_name: str, icon_font: str):
         self.vanilla = vanilla
+        self.root = root
+        self.zip_name = zip_name
+        self.icon_font = icon_font
         self.files: dict[str, bytes] = {}
+        # Dateien des Basis-Packs (nur lesen: der Client hat es zusätzlich geladen)
+        self.base: dict[str, bytes] = self.read_layers(base) if base else {}
         self.errors: list[str] = []
         self.warnings: list[str] = []
         self.texture_dirs: set[str] = set()
 
     def collect(self):
-        for layer in LAYERS:
+        self.files = self.read_layers(self.root)
+
+    @staticmethod
+    def read_layers(root: Path) -> dict[str, bytes]:
+        files = {}
+        for layer in (root / "resourcepack" / "imported", root / "resourcepack" / "custom"):
             if not layer.exists():
                 continue
             for file in sorted(layer.rglob("*")):
@@ -104,20 +114,21 @@ class PackBuilder:
                     continue
                 rel = file.relative_to(layer).as_posix()
                 data = file.read_bytes()
-                if rel in self.files and rel.endswith(".json") and any(m in rel for m in MERGE_JSON):
-                    merged = load_json(self.files[rel], rel)
+                if rel in files and rel.endswith(".json") and any(m in rel for m in MERGE_JSON):
+                    merged = load_json(files[rel], rel)
                     merged.update(load_json(data, rel))
                     data = json.dumps(merged, ensure_ascii=False).encode("utf-8")
-                self.files[rel] = data
+                files[rel] = data
+        return files
 
     # ---- Pruefungen ----
 
     def exists(self, path: str) -> bool:
-        return path in self.files or self.vanilla.has(path)
+        return path in self.files or path in self.base or self.vanilla.has(path)
 
     def read(self, path: str):
-        if path in self.files:
-            return load_json(self.files[path], path)
+        if path in self.files or path in self.base:
+            return load_json(self.files.get(path) or self.base[path], path)
         return load_json(self.vanilla.read(path), path)
 
     def model_path(self, reference: str) -> str:
@@ -217,7 +228,7 @@ class PackBuilder:
                         sound = sound.get("name", "")
                     sound_ns, sound_path = norm(sound) if ":" in sound else (ns, sound)
                     path = f"assets/{sound_ns}/sounds/{sound_path}.ogg"
-                    if path not in self.files:
+                    if path not in self.files and path not in self.base:
                         if sound_ns == "minecraft":
                             continue  # Vanilla-Sounds liegen im Asset-Index, nicht im Jar
                         self.errors.append(f"{name}: Sound {sound} ({event}) fehlt")
@@ -248,8 +259,8 @@ class PackBuilder:
         def read(path):
             if path in cache:
                 return cache[path]
-            if path in self.files:
-                data = load_json(self.files[path], path)
+            if path in self.files or path in self.base:
+                data = load_json(self.files.get(path) or self.base[path], path)
             elif path in self.vanilla.names:
                 data = json.loads(jar.read(path))
             else:
@@ -325,8 +336,8 @@ class PackBuilder:
             """Textur in Originalgröße; animierte (Streifen) nur das erste Bild."""
             tns, tpath = norm(texture)
             png = f"assets/{tns}/textures/{tpath}.png"
-            if png in self.files:
-                data = self.files[png]
+            if png in self.files or png in self.base:
+                data = self.files.get(png) or self.base[png]
             elif png in self.vanilla.names:
                 data = jar.read(png)
             else:
@@ -339,7 +350,7 @@ class PackBuilder:
         def is_animated(texture):
             tns, tpath = norm(texture)
             meta = f"assets/{tns}/textures/{tpath}.png.mcmeta"
-            data = read(meta) if (meta in self.files or meta in self.vanilla.names) else None
+            data = read(meta) if (meta in self.files or meta in self.base or meta in self.vanilla.names) else None
             return bool(data and "animation" in data)
 
         def shade(image, factor, tint=None):
@@ -515,10 +526,13 @@ class PackBuilder:
         def save_icon(ns, item, image):
             buffer = io.BytesIO()
             image.save(buffer, "PNG")
-            self.files[f"assets/kaleidoscope/textures/icon/{ns}/{item}.png"] = buffer.getvalue()
-            return f"kaleidoscope:icon/{ns}/{item}.png"
+            self.files[f"assets/{font_ns}/textures/icon/{ns}/{item}.png"] = buffer.getvalue()
+            return f"{font_ns}:icon/{ns}/{item}.png"
 
-        definitions = [n for n in set(self.files) | self.vanilla.names if "/items/" in n and n.startswith("assets/") and n.endswith(".json")
+        font_ns, font_path = norm(self.icon_font)
+        # Addon-Pack: nur die eigenen Items (Vanilla und Basis-Items stehen schon in der item_icons.txt des Basis-Packs)
+        candidates = set(self.files) if self.base else set(self.files) | self.vanilla.names
+        definitions = [n for n in candidates if "/items/" in n and n.startswith("assets/") and n.endswith(".json")
                        and n.count("/") == 3]
         lines = []
         providers = []
@@ -574,9 +588,9 @@ class PackBuilder:
                             diagrams.append(f"@diagram|{ns}:{item}={add_glyph(file, 32, 14)}")
                     lines.append(f"{ns}:{item}={atlas_of(texture)}|{tns}:{tpath}|{glyph}")
                     break
-        self.files["assets/kaleidoscope/font/icons.json"] = json.dumps({"providers": providers}, ensure_ascii=True).encode("utf-8")
+        self.files[f"assets/{font_ns}/font/{font_path}.json"] = json.dumps({"providers": providers}, ensure_ascii=True).encode("utf-8")
         out.mkdir(parents=True, exist_ok=True)
-        (out / "item_icons.txt").write_text("\n".join(lines + diagrams) + "\n", encoding="utf-8")
+        (out / "item_icons.txt").write_text("\n".join([f"@font|{self.icon_font}"] + lines + diagrams) + "\n", encoding="utf-8")
         print(f"Item-Bilder: {len(lines)}, davon groß: {len(providers)}")
 
     # ---- Ausgabe ----
@@ -595,8 +609,8 @@ class PackBuilder:
         content = buffer.getvalue()
         sha1 = hashlib.sha1(content).hexdigest()
         out.mkdir(parents=True, exist_ok=True)
-        (out / ZIP_NAME).write_bytes(content)
-        (out / (ZIP_NAME + ".sha1")).write_text(sha1 + "\n", encoding="ascii")
+        (out / self.zip_name).write_bytes(content)
+        (out / (self.zip_name + ".sha1")).write_text(sha1 + "\n", encoding="ascii")
         return sha1
 
     def run(self, out: Path) -> int:
@@ -620,7 +634,7 @@ class PackBuilder:
         self.add_atlases()
         self.write_item_icons(out)
         sha1 = self.write_zip(out)
-        size = (out / ZIP_NAME).stat().st_size
+        size = (out / self.zip_name).stat().st_size
         print(f"Resourcepack OK: {len(self.files)} Dateien, {size / 1024 / 1024:.2f} MiB")
         print(f"SHA1: {sha1}")
         return 0
@@ -630,9 +644,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", default=str(ROOT / "target" / "generated-resources" / "pack"))
     parser.add_argument("--cache", default=str(Path.home() / ".cache" / "kaleidoscope-pack"))
+    parser.add_argument("--root", default=str(ROOT), help="Projekt mit resourcepack/imported und resourcepack/custom")
+    parser.add_argument("--base", help="Basis-Projekt, dessen Pack der Client zusätzlich hat (nur für die Prüfung)")
+    parser.add_argument("--zip-name", default="KaleidoscopeCookery-Pack.zip")
+    parser.add_argument("--icon-font", default="kaleidoscope:icons", help="Schrift für die großen Item-Bilder im Kochbuch")
     args = parser.parse_args()
     vanilla = Vanilla(Path(args.cache).expanduser())
-    sys.exit(PackBuilder(vanilla).run(Path(args.out)))
+    builder = PackBuilder(vanilla, Path(args.root).resolve(), Path(args.base).resolve() if args.base else None, args.zip_name, args.icon_font)
+    sys.exit(builder.run(Path(args.out)))
 
 
 if __name__ == "__main__":

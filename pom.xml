@@ -10,11 +10,10 @@
     <packaging>pom</packaging>
 
     <name>Kaleidoscope</name>
-    <description>Kaleidoscope Cookery (core) und Kaleidoscope Grilling (Addon) als Paper-Plugins – mit Display-Entities und gemeinsamem Server-Resourcepack</description>
+    <description>Kaleidoscope Cookery als Paper-Plugin – mit Display-Entities und Server-Resourcepack (Kaleidoscope Grilling ist ein eigenes Repo)</description>
 
     <modules>
         <module>core</module>
-        <module>grilling</module>
     </modules>
 
     <properties>

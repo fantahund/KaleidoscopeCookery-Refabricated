@@ -1,18 +1,13 @@
-Kaleidoscope Cookery & Grilling – Server-Resourcepack
-=====================================================
+Kaleidoscope Cookery – Server-Resourcepack
+==========================================
 
-Dieses Resourcepack ist nicht-kommerziell. Es enthält veränderte Assets aus zwei Minecraft-Mods.
-This resource pack is non-commercial. It contains modified assets from two Minecraft mods.
+Dieses Resourcepack ist nicht-kommerziell. Es enthält veränderte Assets aus dem Minecraft-Mod Kaleidoscope Cookery.
+This resource pack is non-commercial. It contains modified assets from the Minecraft mod Kaleidoscope Cookery.
 
 Kaleidoscope Cookery (森罗物语：厨房)
   Copyright (c) 2025, Kaleidoscope Official Production Team
   https://github.com/KaleidoscopeMods/KaleidoscopeCookery (Branch 1.21.1-neoforge)
   Lizenz der Assets: CC BY-NC-SA 4.0 – siehe KaleidoscopeCookery-LICENSE-ASSETS.txt
-
-Kaleidoscope Grilling (森罗物语：烟火)
-  Copyright (c) 2026, breezeth
-  https://github.com/breezeth-CN/KaleidoscopeGrilling (Ordner common/ und neoforge-1.21.1/)
-  Lizenz der Assets: CC BY-NC-SA 4.0 – siehe KaleidoscopeGrilling-LICENSE-ASSETS.txt
 
 Lizenztext: https://creativecommons.org/licenses/by-nc-sa/4.0/
 
@@ -27,5 +22,5 @@ Lizenztext: https://creativecommons.org/licenses/by-nc-sa/4.0/
 * Eigene Modelle (z. B. Strohhut als Kopf-Item) auf Basis der Original-Texturen nachgebaut.
 
 Das Pack wird unter derselben Lizenz (CC BY-NC-SA 4.0) weitergegeben.
-Die Urheber der Mods unterstützen oder empfehlen dieses Projekt nicht.
+Die Urheber des Mods unterstützen oder empfehlen dieses Projekt nicht.
 No endorsement by the original authors is implied.

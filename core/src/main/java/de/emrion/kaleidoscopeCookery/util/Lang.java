@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -29,7 +28,7 @@ import java.util.zip.ZipFile;
  */
 public final class Lang {
 
-    private static final List<String> NAMESPACES = List.of(Keys.NAMESPACE, "kaleidoscope_cookery", "kaleidoscope_grilling");
+    private static final Pattern LANG_FILE = Pattern.compile("assets/[a-z0-9_.-]+/lang/([a-z_]+)\\.json");
     private static final Map<String, Locale> LANGUAGES = Map.of("en_us", Locale.US, "de_de", Locale.GERMANY);
     private static final Pattern MINECRAFT_ARGUMENT = Pattern.compile("%(?:(\\d+)\\$)?[sd]");
 
@@ -43,28 +42,33 @@ public final class Lang {
      */
     public static void load(ZipFile pack, Logger logger) throws IOException {
         unload();
-        TranslationStore.StringBased<MessageFormat> newStore = TranslationStore.messageFormat(Key.key(Keys.NAMESPACE, "lang"));
-        newStore.defaultLocale(Locale.US);
+        store = TranslationStore.messageFormat(Key.key(Keys.NAMESPACE, "lang"));
+        store.defaultLocale(Locale.US);
+        GlobalTranslator.translator().addSource(store);
+        add(pack, logger);
+    }
+
+    /**
+     * Sprachdateien eines weiteren Packs (Addon) dazunehmen; schon bekannte Schlüssel bleiben.
+     */
+    public static void add(ZipFile pack, Logger logger) throws IOException {
         int count = 0;
-        for (String namespace : NAMESPACES) {
-            for (Map.Entry<String, Locale> language : LANGUAGES.entrySet()) {
-                ZipEntry entry = pack.getEntry("assets/" + namespace + "/lang/" + language.getKey() + ".json");
-                if (entry == null) {
-                    continue;
-                }
-                try (InputStreamReader reader = new InputStreamReader(pack.getInputStream(entry), StandardCharsets.UTF_8)) {
-                    JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
-                    for (String key : json.keySet()) {
-                        if (!newStore.contains(key, language.getValue())) {
-                            newStore.register(key, language.getValue(), toMessageFormat(json.get(key).getAsString(), language.getValue()));
-                            count++;
-                        }
+        for (ZipEntry entry : java.util.Collections.list(pack.entries())) {
+            Matcher name = LANG_FILE.matcher(entry.getName());
+            Locale locale = name.matches() ? LANGUAGES.get(name.group(1)) : null;
+            if (locale == null) {
+                continue;
+            }
+            try (InputStreamReader reader = new InputStreamReader(pack.getInputStream(entry), StandardCharsets.UTF_8)) {
+                JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+                for (String key : json.keySet()) {
+                    if (!store.contains(key, locale)) {
+                        store.register(key, locale, toMessageFormat(json.get(key).getAsString(), locale));
+                        count++;
                     }
                 }
             }
         }
-        GlobalTranslator.translator().addSource(newStore);
-        store = newStore;
         logger.info(count + " Übersetzungen geladen");
     }
 

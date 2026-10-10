@@ -1,16 +1,5 @@
 # Generiert von tools/import_assets.py - nicht von Hand bearbeiten.
 # Item-Property (aus den Mod-Overrides) -> Index in custom_model_data.floats
 "kaleidoscope_cookery:has_oil": 0
-"kaleidoscope_grilling:oil_brushing": 1
-"kaleidoscope_grilling:oil_type": 2
-"kaleidoscope_cookery:has_recipe": 3
-"kaleidoscope_cookery:has_items": 4
-"kaleidoscope_grilling:skewer_bite_stage": 5
-"kaleidoscope_grilling:failed_skewer_source": 6
-"kaleidoscope_grilling:skewer_state": 7
-"kaleidoscope_grilling:seasoning_fill": 8
-"kaleidoscope_grilling:slime_skewer_frame": 9
-"kaleidoscope_grilling:skewer_cooking_stage": 10
-"kaleidoscope_grilling:skewer_outline": 11
-"kaleidoscope_grilling:seasoning_remaining": 12
-"kaleidoscope_grilling:seasoning_variant": 13
+"kaleidoscope_cookery:has_recipe": 1
+"kaleidoscope_cookery:has_items": 2

@@ -41,7 +41,7 @@ public class CreativeMenuWindow extends AbstractWindow {
     private static final int PAGE_SLOT = 49;
     private static final int NEXT_SLOT = 53;
 
-    /** Tab -> (Symbol, Items), einmal geladen; Items, die kein Tab nennt, kommen in "food" bzw. "grilling" */
+    /** Tab mit Symbol und Items; Items, die kein Tab nennt, kommen in den ersten Tab ihres Namespaces bzw. "food" */
     private record Tab(String name, Key icon, List<Key> items) {
     }
 
@@ -57,16 +57,25 @@ public class CreativeMenuWindow extends AbstractWindow {
     }
 
     private static List<Tab> loadTabs(KaleidoscopeCookery plugin) {
-        YamlConfiguration config;
-        try (Reader reader = new InputStreamReader(plugin.getResource("generated/creative_tabs.yml"), StandardCharsets.UTF_8)) {
-            config = YamlConfiguration.loadConfiguration(reader);
-        } catch (java.io.IOException | NullPointerException e) {
-            config = new YamlConfiguration();
-        }
         Map<String, Tab> tabs = new LinkedHashMap<>();
         Set<Key> listed = new LinkedHashSet<>();
-        ConfigurationSection section = config.getConfigurationSection("tabs");
-        if (section != null) {
+        // Tabs von Cookery, dann von den Addons (jedes bringt seine generated/creative_tabs.yml mit)
+        List<org.bukkit.plugin.Plugin> sources = new ArrayList<>(List.of(plugin));
+        sources.addAll(plugin.getAddons());
+        for (org.bukkit.plugin.Plugin source : sources) {
+            if (source.getResource("generated/creative_tabs.yml") == null) {
+                continue;
+            }
+            YamlConfiguration config;
+            try (Reader reader = new InputStreamReader(source.getResource("generated/creative_tabs.yml"), StandardCharsets.UTF_8)) {
+                config = YamlConfiguration.loadConfiguration(reader);
+            } catch (java.io.IOException e) {
+                continue;
+            }
+            ConfigurationSection section = config.getConfigurationSection("tabs");
+            if (section == null) {
+                continue;
+            }
             for (String name : section.getKeys(false)) {
                 List<Key> items = new ArrayList<>();
                 for (String id : section.getStringList(name + ".items")) {
@@ -84,8 +93,12 @@ public class CreativeMenuWindow extends AbstractWindow {
             if (listed.contains(key)) {
                 continue;
             }
-            String target = key.namespace().equals("kaleidoscope_grilling") ? "grilling" : "food";
-            tabs.computeIfAbsent(target, name -> new Tab(name, key, new ArrayList<>())).items().add(key);
+            // In "food", sonst in den ersten Tab mit Items desselben Namespaces (Addon-Items in den Addon-Tab)
+            Tab target = tabs.values().stream()
+                    .filter(tab -> tab.items().stream().anyMatch(item -> item.namespace().equals(key.namespace())))
+                    .min(java.util.Comparator.comparing(tab -> !tab.name().equals("food")))
+                    .orElseGet(() -> tabs.computeIfAbsent("food", name -> new Tab(name, key, new ArrayList<>())));
+            target.items().add(key);
         }
         tabs.values().removeIf(tab -> tab.items().isEmpty());
         return List.copyOf(tabs.values());

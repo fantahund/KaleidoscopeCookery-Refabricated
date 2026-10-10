@@ -715,9 +715,9 @@ public class PotStation extends Station {
     public @Nullable Component hud(Player viewer) {
         Component state;
         if (!hasHeatSource()) {
-            state = Lang.raw("hud.kaleidoscope_grilling.pot.state.need_heat").color(NamedTextColor.RED);
+            state = Lang.get("station.need_heat").color(NamedTextColor.RED);
         } else if (!hasOil) {
-            state = Lang.raw("hud.kaleidoscope_grilling.pot.state.need_oil").color(NamedTextColor.GOLD);
+            state = Lang.get("station.need_oil").color(NamedTextColor.GOLD);
         } else if (status == PUT_INGREDIENT) {
             state = Lang.get("hud.pot.add", inputCount(), PotRecipe.SLOTS, seconds(currentTick)).color(NamedTextColor.YELLOW);
         } else if (status == COOKING) {

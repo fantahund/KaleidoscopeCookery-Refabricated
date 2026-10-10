@@ -1,9 +1,12 @@
 # KaleidoscopeCookery
 
-Paper-Plugin (26.3) mit Server-Resourcepack: Kochstationen, Gerichte und Pflanzen nach den Mods
-[Kaleidoscope Cookery](https://github.com/KaleidoscopeMods/KaleidoscopeCookery) (Branch `1.21.1-neoforge`) und
-[Kaleidoscope Grilling](https://github.com/breezeth-CN/KaleidoscopeGrilling). Spieler brauchen keine Mods, nur das Resourcepack,
-das das Plugin selbst ausliefert.
+Paper-Plugin (26.3) mit Server-Resourcepack: Kochstationen, Gerichte und Pflanzen nach dem Mod
+[Kaleidoscope Cookery](https://github.com/KaleidoscopeMods/KaleidoscopeCookery) (Branch `1.21.1-neoforge`). Spieler brauchen
+keine Mods, nur das Resourcepack, das das Plugin selbst ausliefert.
+
+[Kaleidoscope Grilling](https://github.com/breezeth-CN/KaleidoscopeGrilling) ist ein eigenes Plugin (Repo `KaleidoscopeGrilling`
+neben diesem) mit eigenem Pack. Es meldet sich über `KaleidoscopeCookery#registerAddon` an: Items, Rezepte, Pack, Übersetzungen,
+Kochbuch-Bilder und Kreativ-Menü-Tabs kommen dazu, die Packs werden zusammen verschickt.
 
 Stationen bestehen aus einer Interaction-Entity (Klicks, Zustand im PDC), ItemDisplays (Modelle) und bei vollen Blöcken
 einer Barriere. Alle Items basieren auf Papier (Werkzeuge wie das Küchenmesser auf dem passenden Schwert) und bekommen
@@ -41,6 +44,7 @@ Hauptbefehl: `/kaleidoscope`, Aliase `/kc`, `/kochen`
 | Befehl | Recht |
 |---|---|
 | `/kc give <item> [spieler] [anzahl]` | `kaleidoscope.admin.give` |
+| `/kc menu` (Kreativ-Menü: Klick 1 Stück, Shift-Klick ein Stapel) | `kaleidoscope.admin.give` |
 | `/kc place <typ> <x> <y> <z> [welt] [ausrichtung]` | `kaleidoscope.admin.place` |
 | `/kc info`, `/kc list` | `kaleidoscope.admin.info` |
 | `/kc repair` | `kaleidoscope.admin.repair` |
