@@ -481,6 +481,9 @@ def collect_items(foods: dict, bites: dict) -> dict:
             if full_id in ("kaleidoscope_grilling:empty_seasoning_bottle", "kaleidoscope_grilling:pending_seasoning",
                            "kaleidoscope_grilling:special_seasoning", "kaleidoscope_grilling:skewer_recipe_book"):
                 entry["max-stack"] = 1  # stacksTo(1)
+            if full_id == "kaleidoscope_grilling:skewer_plate":
+                entry["max-stack"] = 1
+                entry["sneak-place"] = True  # SkewerPlateItem#useOn: nur mit Schleichen hinstellen, sonst essen
             if full_id == "kaleidoscope_grilling:pending_seasoning":
                 entry["sneak-place"] = True  # PendingSeasoningItem#useOn: ohne Schleichen wird geschüttelt
             if full_id == "kaleidoscope_cookery:teapot":

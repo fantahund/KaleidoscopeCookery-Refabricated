@@ -349,6 +349,12 @@
     "message.kaleidoscope_grilling.press_vat_full": "Im Fass in der Nähe ist nicht genug Platz; der Fortschritt bleibt",
     "item.kaleidoscope_grilling.sichuan_pepper_seeds": "Sichuanpfeffer-Samen",
     "block.kaleidoscope_grilling.sichuan_pepper_crop": "Sichuanpfeffer-Strauch",
-    "tooltip.kaleidoscope_grilling.sichuan_pepper_seeds": "Kann mit Strohhut beim Grasabbauen fallen; auf Ackerland pflanzen"
+    "tooltip.kaleidoscope_grilling.sichuan_pepper_seeds": "Kann mit Strohhut beim Grasabbauen fallen; auf Ackerland pflanzen",
+    "tooltip.kaleidoscope_grilling.skewer_plate.count": "Spieße: %1$s/%2$s",
+    "tooltip.kaleidoscope_grilling.skewer_plate.use": "Benutzen: den nahrhaftesten Spieß essen",
+    "tooltip.kaleidoscope_grilling.skewer_plate.place": "Schleichen + Rechtsklick auf einen Block: hinstellen",
+    "tooltip.kaleidoscope_grilling.skewer_plate.contents": "Darauf:",
+    "container.kaleidoscope_grilling.advanced_rack": "Erweitertes Küchenregal",
+    "tooltip.kaleidoscope_grilling.advanced_rack.saved_contents": "Gespeicherter Inhalt:"
   }
 }

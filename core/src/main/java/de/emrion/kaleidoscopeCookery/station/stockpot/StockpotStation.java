@@ -213,6 +213,11 @@ public class StockpotStation extends Station {
         return null;
     }
 
+    /** Liegt ein fertiges Gericht zum Herausnehmen bereit (Addons: Gewürz nach dem letzten Teller löschen) */
+    public boolean hasDish() {
+        return result != null;
+    }
+
     public boolean hasHeatSource() {
         long now = context.manager().serverTick();
         if (now - heatCheckedAt >= 10) {
