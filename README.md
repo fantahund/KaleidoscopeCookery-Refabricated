@@ -77,8 +77,11 @@ Main command: `/kaleidoscope`, aliases `/kc`, `/kochen`
 
 ## Licenses
 
-The assets in the resource pack (`resourcepack/`) come from Kaleidoscope Cookery (© 2025 Kaleidoscope Official Production Team)
-and Kaleidoscope Grilling (© 2026 breezeth), licensed under **CC BY-NC-SA 4.0**, and were modified for 26.3
-(see `resourcepack/custom/CREDITS.txt`). The pack is non-commercial and is distributed under the same license.
+This project uses a dual license like the mods: the source code is licensed under the **BSD 3-Clause License**
+(`LICENSE-CODE`), the resource pack under **CC BY-NC-SA 4.0** (`LICENSE-ASSETS`).
+
+The assets in the resource pack (`resourcepack/`) come from Kaleidoscope Cookery (© 2025-2026 Kaleidoscope Official
+Production Team, taken from the Fabric port KaleidoscopeCookery-Refabricated), licensed under **CC BY-NC-SA 4.0**, and were
+modified for 26.3 (see `resourcepack/custom/CREDITS.txt`). Kaleidoscope Grilling (© 2026 breezeth) has its own plugin and pack. The pack is non-commercial and is distributed under the same license.
 Game mechanics (e.g. the quality rating) are rebuilt following the source code of the mods (BSD 3-Clause, see `licenses/`).
 The authors of the mods do not endorse or recommend this project.

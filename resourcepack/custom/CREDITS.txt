@@ -1,26 +1,36 @@
-Kaleidoscope Cookery – Server-Resourcepack
-==========================================
+Kaleidoscope Cookery - server resource pack
+===========================================
 
-Dieses Resourcepack ist nicht-kommerziell. Es enthält veränderte Assets aus dem Minecraft-Mod Kaleidoscope Cookery.
 This resource pack is non-commercial. It contains modified assets from the Minecraft mod Kaleidoscope Cookery.
 
 Kaleidoscope Cookery (森罗物语：厨房)
-  Copyright (c) 2025, Kaleidoscope Official Production Team
-  https://github.com/KaleidoscopeMods/KaleidoscopeCookery (Branch 1.21.1-neoforge)
-  Lizenz der Assets: CC BY-NC-SA 4.0 – siehe KaleidoscopeCookery-LICENSE-ASSETS.txt
+  Copyright (c) 2025-2026, Kaleidoscope Official Production Team
+  https://github.com/KaleidoscopeMods/KaleidoscopeCookery
+  Asset license: CC BY-NC-SA 4.0 - see KaleidoscopeCookery-LICENSE-ASSETS.txt
 
-Lizenztext: https://creativecommons.org/licenses/by-nc-sa/4.0/
+The assets were taken from the Fabric port of the mod, which carries the same copyright and license:
+  KaleidoscopeCookery-Refabricated
+  https://github.com/NightEpiphany/KaleidoscopeCookery-Refabricated
+  (branch 26.4-fabric, commit 796f94dd7eb00b85988366ae0f623d46148b7612,
+  including its built-in resource pack "kaleidoscope_eating_animation")
 
-Änderungen / Changes
---------------------
-* Modelle auf das Format von Minecraft 26.3 konvertiert: NeoForge-Felder (render_type, loader) entfernt,
-  "neoforge:separate_transforms" als Item-Model-Definition mit select auf display_context aufgelöst,
-  Item-Overrides in range_dispatch-Definitionen auf custom_model_data umgewandelt.
-* Item-Model-Definitionen (assets/<namespace>/items/) für alle Modelle ergänzt.
-* Atlas-Einträge für zusätzliche Textur-Ordner ergänzt.
-* Deutsche Übersetzungen und zusätzliche Texte für das Server-Plugin ergänzt.
-* Eigene Modelle (z. B. Strohhut als Kopf-Item) auf Basis der Original-Texturen nachgebaut.
+License text: https://creativecommons.org/licenses/by-nc-sa/4.0/
 
-Das Pack wird unter derselben Lizenz (CC BY-NC-SA 4.0) weitergegeben.
-Die Urheber des Mods unterstützen oder empfehlen dieses Projekt nicht.
+Changes
+-------
+* Models converted to the Minecraft 26.3 format: NeoForge/Fabric-only fields (render_type, loader) removed,
+  "neoforge:separate_transforms" resolved into item model definitions with select on display_context,
+  item overrides converted into range_dispatch definitions on custom_model_data.
+* Item model definitions (assets/<namespace>/items/) added for all models.
+* Models that use textures from both the item and block atlas redirected to copies of the block textures
+  under textures/item/_block/.
+* Atlas entries added for additional texture folders.
+* German translations and additional texts for the server plugin added.
+* Own models rebuilt from the original textures and the mod's entity model code (e.g. straw hat as a head item,
+  millstone, trash can, scarecrow, cold cut ham slices per bite stage); the scarecrow entity texture is copied
+  to textures/block/scarecrow_entity.png.
+* Own pixel art for the cookbook item; cookbook images rendered from the item models and cut from the mod's
+  JEI backgrounds.
+
+The pack is distributed under the same license (CC BY-NC-SA 4.0).
 No endorsement by the original authors is implied.

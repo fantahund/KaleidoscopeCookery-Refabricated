@@ -70,6 +70,15 @@
                 <directory>${pack.output}</directory>
                 <filtering>false</filtering>
             </resource>
+            <resource>
+                <!-- Licenses of this project (code and assets) -->
+                <directory>${project.basedir}/..</directory>
+                <includes>
+                    <include>LICENSE-CODE</include>
+                    <include>LICENSE-ASSETS</include>
+                </includes>
+                <targetPath>licenses</targetPath>
+            </resource>
         </resources>
     </build>
 
