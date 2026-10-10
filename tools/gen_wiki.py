@@ -566,19 +566,6 @@ def sources(config: dict) -> dict:
     return found
 
 
-COMMANDS = [
-    ("/kc recipes [Suche]", "Kochbuch öffnen bzw. durchsuchen (auch /kc rezepte)", "kaleidoscope.use"),
-    ("/kc recipe", "Rezepte für das Item in der Hand (auch /kc rezept)", "kaleidoscope.use"),
-    ("/kc pack", "Resourcepack erneut laden", "kaleidoscope.use"),
-    ("/kc give <item> [spieler] [anzahl]", "Item vergeben", "kaleidoscope.admin.give"),
-    ("/kc menu", "Kreativ-Menü mit allen Items", "kaleidoscope.admin.give"),
-    ("/kc place <typ> <x> <y> <z> [welt] [ausrichtung]", "Station ohne Item setzen", "kaleidoscope.admin.place"),
-    ("/kc info", "Zustand der angeschauten Station", "kaleidoscope.admin.info"),
-    ("/kc list", "Alle geladenen Stationen", "kaleidoscope.admin.info"),
-    ("/kc repair", "Stationen in geladenen Chunks prüfen und reparieren", "kaleidoscope.admin.repair"),
-    ("/kc reload", "config.yml und recipes.yml neu laden", "kaleidoscope.admin.reload"),
-]
-
 # Effect descriptions missing in the language files (behaviour as implemented in EffectManager / GrillingEffects)
 EFFECT_DESCRIPTIONS = {
     "kaleidoscope_cookery:hinder": "Deine Treffer verlangsamen das Ziel (Langsamkeit II für 5 Sekunden).",
@@ -694,7 +681,7 @@ class Site:
         root = "../" * depth
         nav = [("index.html", "Start", "home"), ("einstieg.html", "Einstieg", "start"), ("stations.html", "Stationen", "stations"),
                ("items.html", "Items", "items"), ("anbau.html", "Anbau", "farming"),
-               ("effects.html", "Effekte", "effects"), ("guides.html", "Anleitungen", "guides"), ("commands.html", "Befehle", "commands")]
+               ("effects.html", "Effekte", "effects"), ("guides.html", "Anleitungen", "guides")]
         links = "".join(f'<a class="nav-link{" active" if key == active else ""}" href="{root}{href}">{label}</a>' for href, label, key in nav)
         doc = f"""<!DOCTYPE html>
 <html lang="de">
@@ -964,14 +951,6 @@ mit genug Licht. Knochenmehl beschleunigt das Wachstum, feuchtes Ackerland drumh
 <section><h2>Pflanzen</h2><div class="crop-grid">{rows}</div></section>"""
         self.page("anbau.html", "Anbau", body, 0, "farming")
 
-    def commands_page(self):
-        rows = "".join(f"<tr><td><code>{e(c)}</code></td><td>{e(d)}</td><td><code>{e(p)}</code></td></tr>" for c, d, p in COMMANDS)
-        body = f"""<h1>Befehle &amp; Rechte</h1>
-<p class="lead">Hauptbefehl <code>/kaleidoscope</code>, Kurzformen <code>/kc</code> und <code>/kochen</code>.</p>
-<div class="panel"><table class="table"><tr><th>Befehl</th><th>Beschreibung</th><th>Recht</th></tr>{rows}</table></div>
-<p class="muted">Stationen benutzen und setzen erfordert <code>kaleidoscope.use</code> (Standard: alle). <code>kaleidoscope.admin</code> enthält alle Admin-Rechte.</p>"""
-        self.page("commands.html", "Befehle", body, 0, "commands")
-
     def index_page(self, groups):
         food_count = sum(1 for v in self.data.items.values() if v.get("food"))
         stats = [("Items", len(self.data.items)), ("Rezepte", len(self.recipes)), ("Gerichte & Getränke", food_count), ("Stationen", len(STATIONS))]
@@ -1049,7 +1028,6 @@ def main():
     site.guides_page()
     site.start_page()
     site.farming_page()
-    site.commands_page()
     site.index_page(groups)
     site.assets()
     install_font(cache, out)
