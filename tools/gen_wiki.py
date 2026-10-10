@@ -579,6 +579,19 @@ COMMANDS = [
     ("/kc reload", "config.yml und recipes.yml neu laden", "kaleidoscope.admin.reload"),
 ]
 
+# Effect descriptions missing in the language files (behaviour as implemented in EffectManager / GrillingEffects)
+EFFECT_DESCRIPTIONS = {
+    "kaleidoscope_cookery:hinder": "Deine Treffer verlangsamen das Ziel (Langsamkeit II für 5 Sekunden).",
+    "kaleidoscope_cookery:instant_smelting": "Abgebaute Erze lassen ihre Drops gleich geschmolzen fallen – je Stufe ein Drop mehr.",
+    "kaleidoscope_cookery:projectile_dodge": "Pfeile und andere Geschosse verfehlen dich; du weichst mit einem kurzen Teleport aus. Jedes Ausweichen kostet 10 Sekunden Effektdauer.",
+    "kaleidoscope_cookery:vitality": "Erwachsene Tiere, die du tötest, hinterlassen ein Jungtier; Zombies einen Baby-Zombie (zu 5 % ein Dorfbewohner-Kind).",
+    "kaleidoscope_grilling:dragon_blood": "Mehr maximale Gesundheit: +3 Herzen, auf Stufe II +5 Herzen.",
+    "kaleidoscope_grilling:heavy_metal": "Verhindert einmal den Tod: tödlicher Schaden lässt dich mit einem halben Herz überleben. Danach folgt Schwermetallvergiftung.",
+    "kaleidoscope_grilling:heavy_metal_poisoning": "Abklingzeit von Schwermetall (10 Minuten): solange schützt Schwermetall nicht erneut vor dem Tod.",
+    "kaleidoscope_grilling:invincible": "Du nimmst keinerlei Schaden (außer durch /kill); Funken zeigen den Schutz an.",
+    "kaleidoscope_grilling:numb": "Scharfer Sichuanpfeffer betäubt die Zunge. Im Mod wackelt das Fadenkreuz; auf dem Server wird der Effekt nur angezeigt.",
+}
+
 TAB_NAMES = {"kitchen": "Küche & Werkzeuge", "food": "Essen & Zutaten", "furniture": "Möbel & Deko", "grilling": "Grillen"}
 
 # ---------------------------------------------------------------- HTML
@@ -861,7 +874,7 @@ Assets unter CC BY-NC-SA 4.0. Keine offizielle Seite der Mod-Autoren.</footer>
         for key in keys:
             _, ns, path = key.split(".")
             effect_id = f"{ns}:{path}"
-            desc = lang.get(f"{key}.description", "")
+            desc = lang.get(f"{key}.description") or EFFECT_DESCRIPTIONS.get(effect_id, "")
             foods = users.get(effect_id, [])
             food_html = "".join(f'<a class="mini" href="items/{slug(i)}.html" data-tip="{e(self.data.name(i))}">{self.icon(i, "", 24, "icon-sm")}</a>' for i in foods)
             rows += (f'<div class="effect-card panel" id="{ns}-{path}"><h3>{e(lang[key])}</h3><p>{e(desc) or "–"}</p>'
