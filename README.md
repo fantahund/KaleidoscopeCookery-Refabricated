@@ -1,71 +1,84 @@
 # KaleidoscopeCookery
 
-Paper-Plugin (26.3) mit Server-Resourcepack: Kochstationen, Gerichte und Pflanzen nach dem Mod
-[Kaleidoscope Cookery](https://github.com/KaleidoscopeMods/KaleidoscopeCookery) (Branch `1.21.1-neoforge`). Spieler brauchen
-keine Mods, nur das Resourcepack, das das Plugin selbst ausliefert.
+Paper plugin (26.3) with a server resource pack: cooking stations, dishes and crops based on the mod
+[Kaleidoscope Cookery](https://github.com/KaleidoscopeMods/KaleidoscopeCookery), following its Fabric port
+[KaleidoscopeCookery-Refabricated](https://github.com/NightEpiphany/KaleidoscopeCookery-Refabricated). Players need
+no mods, only the resource pack, which the plugin delivers itself.
 
-[Kaleidoscope Grilling](https://github.com/breezeth-CN/KaleidoscopeGrilling) ist ein eigenes Plugin (Repo `KaleidoscopeGrilling`
-neben diesem) mit eigenem Pack. Es meldet sich über `KaleidoscopeCookery#registerAddon` an: Items, Rezepte, Pack, Übersetzungen,
-Kochbuch-Bilder und Kreativ-Menü-Tabs kommen dazu, die Packs werden zusammen verschickt.
+[Kaleidoscope Grilling](https://github.com/breezeth-CN/KaleidoscopeGrilling) is a separate plugin (repo `KaleidoscopeGrilling`
+next to this one) with its own pack. It registers itself via `KaleidoscopeCookery#registerAddon`: its items, recipes, pack,
+translations, cookbook images and creative menu tabs are added, and the packs are sent together.
 
-Stationen bestehen aus einer Interaction-Entity (Klicks, Zustand im PDC), ItemDisplays (Modelle) und bei vollen Blöcken
-einer Barriere. Alle Items basieren auf Papier (Werkzeuge wie das Küchenmesser auf dem passenden Schwert) und bekommen
-ihr Aussehen über die `item_model`-Komponente.
+Stations consist of an Interaction entity (clicks, state in the PDC), ItemDisplays (models) and, for some full blocks,
+a barrier. All items are based on paper (tools such as the kitchen knife on a hidden vanilla item with the matching
+components) and get their look from the `item_model` component.
 
-## Stand
+## Features
 
-Phase 1: Projekt, Resourcepack-Pipeline, Station-Framework, Schneidebrett, Öl-Drops, Werkbank-/Ofen-Rezepte der Mods.
+- Stations: stove, wok, stockpot, steamer, teapot and cups, chopping board, millstone, bamboo tray, shawarma spit,
+  oil pot, enamel basin, kitchenware rack, fruit basket, trash can, recipe notes, plated dishes (1x1, 1x2, 3x3)
+- Crops (tomato, chili, lettuce, rice, tea bush) with random-tick growth like vanilla, straw hat seed drops, sickle
+- Dish quality, the mod's food effects, a configurable nerf for vanilla food
+- Cookbook as a dialog with search, recipe images and guides (`/kc recipes`, cookbook item)
+- Scarecrow, clay pot milk tea, oil and oil block as furnace fuel, optional dispenser support
+- Recipes can be disabled without deleting them (`disabled-recipes` in `config.yml`)
+- Addon API for further plugins (items, recipes, crops, effects, cookbook pages, oil types)
 
 ## Installation
 
-1. **CubesideUtils** muss installiert sein, **CubesideNMSUtils** ist optional.
-2. `mvn package` (braucht `python3`, lädt beim ersten Mal den 26.3-Client für die Pack-Prüfung) und
-   `core/target/KaleidoscopeCookery-*.jar` nach `plugins/` kopieren.
-3. Server starten. Das Plugin legt `config.yml`, `recipes.yml` und das Pack-Zip an und startet einen kleinen Webserver
-   (Standard: Port 8163), über den die Spieler das Pack laden. Für einen öffentlichen Server `resource-pack.public-host`
-   auf die erreichbare Adresse setzen oder `resource-pack.external-url` nutzen.
+1. **CubesideUtils** must be installed, **CubesideNMSUtils** is optional.
+2. Run `mvn package` (needs `python3`; downloads the 26.3 client once for checking the pack) and copy
+   `core/target/KaleidoscopeCookery-*.jar` into `plugins/`.
+3. Start the server. The plugin creates `config.yml`, `recipes.yml` and the pack zip and starts a small web server
+   (default port 8163) from which players download the pack. For a public server set `resource-pack.public-host`
+   to the reachable address, or upload the pack and use `resource-pack.external-url`.
 
-## Bedienung
+## Usage
 
-| Aktion | Wirkung |
+| Action | Effect |
 |---|---|
-| Rechtsklick mit Stations-Item auf einen Block | Station platzieren (zeigt zum Spieler) |
-| Schleichen + Linksklick auf eine Station | Station abbauen, Inhalt und Item fallen heraus |
-| Schneidebrett: Rechtsklick mit Zutat | Zutat auflegen |
-| Schneidebrett: Linksklick mit Küchenmesser | Schneiden (1 Schnitt pro Hieb wie im Mod, siehe `cutting.tools`) |
-| Schneidebrett: Klick, wenn fertig | Ergebnisse fallen heraus |
-| Schneidebrett: Schleichen + Rechtsklick vor dem ersten Schnitt | Zutat zurücknehmen |
-| Schwein, Hoglin, Piglin, Zoglin mit Küchenmesser töten | Öl |
+| Right-click a block with a station item | Place the station (it faces the player) |
+| Sneak + left-click a station | Break the station, contents and item drop |
+| Right-click a chest, furnace, door ... while holding a station item or seeds | Uses the block; sneak to place instead |
+| Chopping board: right-click with an ingredient | Put the ingredient on the board |
+| Chopping board: left-click with a kitchen knife | Cut (1 cut per hit as in the mod, see `cutting.tools`) |
+| Chopping board: click when done | The results drop |
+| Chopping board: sneak + right-click before the first cut | Take the ingredient back |
+| Kill a pig, hoglin, piglin or zoglin with a kitchen knife | Oil |
 
-## Befehle und Rechte
+## Commands and permissions
 
-Hauptbefehl: `/kaleidoscope`, Aliase `/kc`, `/kochen`
+Main command: `/kaleidoscope`, aliases `/kc`, `/kochen`
 
-| Befehl | Recht |
+| Command | Permission |
 |---|---|
-| `/kc give <item> [spieler] [anzahl]` | `kaleidoscope.admin.give` |
-| `/kc menu` (Kreativ-Menü: Klick 1 Stück, Shift-Klick ein Stapel) | `kaleidoscope.admin.give` |
-| `/kc place <typ> <x> <y> <z> [welt] [ausrichtung]` | `kaleidoscope.admin.place` |
+| `/kc give <item> [player] [amount]` | `kaleidoscope.admin.give` |
+| `/kc menu` (creative menu: click gives 1, shift-click a stack) | `kaleidoscope.admin.give` |
+| `/kc place <type> <x> <y> <z> [world] [facing]` | `kaleidoscope.admin.place` |
 | `/kc info`, `/kc list` | `kaleidoscope.admin.info` |
 | `/kc repair` | `kaleidoscope.admin.repair` |
 | `/kc reload` | `kaleidoscope.admin.reload` |
-| `/kc pack` | `kaleidoscope.use` |
-| Stationen platzieren und benutzen | `kaleidoscope.use` (Standard: alle) |
+| `/kc recipes [search]`, `/kc recipe` (also `rezepte`/`rezept`), `/kc pack` | `kaleidoscope.use` |
+| Placing and using stations | `kaleidoscope.use` (default: everyone) |
 
-## Entwicklung
+`kaleidoscope.admin` includes all admin permissions.
 
-| Datei | Zweck |
+## Development
+
+| File | Purpose |
 |---|---|
-| `tools/import_assets.py` | Assets aus den Mod-Repos (feste Commits) nach `resourcepack/imported` holen und auf 26.3 konvertieren |
-| `tools/gen_data.py` | `items.yml`, `recipes.yml` und die deutschen Namen aus den Mod-Quellen erzeugen |
-| `tools/build_pack.py` | Pack zusammenbauen, alle Referenzen prüfen, zippen, SHA1 (läuft bei `mvn package`) |
-| `tools/lang/` | Deutsche Übersetzungen der Mod-Texte |
-| `resourcepack/custom/` | Eigene Pack-Dateien (überschreiben `imported`) |
+| `tools/import_assets.py` | Fetch the assets from the mod repos (fixed commits) into `resourcepack/imported` and convert them to 26.3 |
+| `tools/gen_data.py` | Generate `items.yml`, `recipes.yml` and the German names from the mod sources |
+| `tools/gen_entity_models.py` | Rebuild the mod's Java entity models (millstone, trash can, scarecrow, cold cut ham) as item models |
+| `tools/gen_creative_tabs.py` | Generate the creative menu tabs from the mod's creative tabs |
+| `tools/build_pack.py` | Assemble the pack, check all references, render cookbook images, zip, SHA1 (runs during `mvn package`) |
+| `tools/lang/` | German translations of the mod texts |
+| `resourcepack/custom/` | Own pack files (override `imported`) |
 
-## Lizenzen
+## Licenses
 
-Die Assets im Resourcepack (`resourcepack/`) stammen aus Kaleidoscope Cookery (© 2025 Kaleidoscope Official Production Team)
-und Kaleidoscope Grilling (© 2026 breezeth), lizenziert unter **CC BY-NC-SA 4.0**, und wurden für 26.3 verändert
-(siehe `resourcepack/custom/CREDITS.txt`). Das Pack ist nicht-kommerziell und wird unter derselben Lizenz weitergegeben.
-Spiel-Mechaniken (z. B. die Qualitätsbewertung) sind nach dem Quellcode der Mods (BSD 3-Clause, siehe `licenses/`)
-nachgebaut. Die Urheber der Mods unterstützen oder empfehlen dieses Projekt nicht.
+The assets in the resource pack (`resourcepack/`) come from Kaleidoscope Cookery (© 2025 Kaleidoscope Official Production Team)
+and Kaleidoscope Grilling (© 2026 breezeth), licensed under **CC BY-NC-SA 4.0**, and were modified for 26.3
+(see `resourcepack/custom/CREDITS.txt`). The pack is non-commercial and is distributed under the same license.
+Game mechanics (e.g. the quality rating) are rebuilt following the source code of the mods (BSD 3-Clause, see `licenses/`).
+The authors of the mods do not endorse or recommend this project.
