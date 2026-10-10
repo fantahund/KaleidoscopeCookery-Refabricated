@@ -120,7 +120,7 @@ public class ChoppingBoardStation extends Station {
         showPart("board", BOARD_MODEL, blockTransform(0));
         if (isOccupied() && model != null) {
             int stage = Math.min(cuts, maxCuts);
-            showPart("food", Key.key(model.namespace(), "chopping_board/" + model.value() + "/" + stage), rendererTransform(FOOD_OFFSET));
+            showPart("food", de.emrion.kaleidoscopeCookery.recipe.ChoppingBoardRecipe.stageModel(model, stage), rendererTransform(FOOD_OFFSET));
         } else {
             hidePart("food");
         }

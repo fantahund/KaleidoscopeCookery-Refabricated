@@ -15,6 +15,14 @@ public record ChoppingBoardRecipe(String id, Ingredient ingredient, int cuts, Ke
      * Item-Model-Definition der Stufe (0 = ungeschnitten, cuts = fertig).
      */
     public Key stageModel(int stage) {
-        return Key.key(model.namespace(), "chopping_board/" + model.value() + "/" + Math.clamp(stage, 0, cuts));
+        return stageModel(model, Math.clamp(stage, 0, cuts));
+    }
+
+    /**
+     * Cookery (Fabric-Fork): models/item/chopping_board/…; Grilling: models/chopping_board/….
+     */
+    public static Key stageModel(Key model, int stage) {
+        String folder = model.namespace().equals("kaleidoscope_cookery") ? "item/chopping_board/" : "chopping_board/";
+        return Key.key(model.namespace(), folder + model.value() + "/" + stage);
     }
 }
