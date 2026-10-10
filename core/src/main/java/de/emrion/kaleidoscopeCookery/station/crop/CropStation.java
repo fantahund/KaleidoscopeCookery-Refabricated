@@ -71,6 +71,12 @@ public class CropStation extends Station {
                 context -> new CropStation(context, kind));
     }
 
+    /** Felder haben Hunderte Pflanzen: nur bis 48 Blöcke rendern (view_range 0,75 × 64, bei 100 % Entity-Distanz) */
+    @Override
+    protected float viewRange() {
+        return 0.75f;
+    }
+
     public CropKind kind() {
         return kind;
     }
