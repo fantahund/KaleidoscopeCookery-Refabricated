@@ -105,6 +105,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         stations.register(TeapotStation.type());
         stations.register(CupStation.type());
         stations.register(de.emrion.kaleidoscopeCookery.station.teapot.MilkTeaStation.type());
+        stations.register(de.emrion.kaleidoscopeCookery.station.scarecrow.ScarecrowStation.type());
         stations.register(OilPotStation.type());
         stations.register(EnamelBasinStation.type());
         stations.register(OilBlockStation.type());

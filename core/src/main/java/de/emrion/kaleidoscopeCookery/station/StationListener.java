@@ -322,7 +322,7 @@ public class StationListener implements Listener {
             replaced.update(true, false);
             return false;
         }
-        Station placed = stations.place(type, target, facing, station -> initPlaced(station, item.asOne(), itemId, face));
+        Station placed = stations.place(type, target, facing, station -> initPlaced(station, item.asOne(), itemId, face, player));
         if (!placed.canSurvive()) {
             // z. B. Chili-Kette ohne Halt darüber
             stations.remove(placed);
@@ -339,7 +339,7 @@ public class StationListener implements Listener {
     /**
      * Daten des Items auf die frisch gesetzte Station übernehmen.
      */
-    private static void initPlaced(Station station, ItemStack placedFrom, @Nullable Key placedId, BlockFace face) {
+    private static void initPlaced(Station station, ItemStack placedFrom, @Nullable Key placedId, BlockFace face, @Nullable Player placer) {
         if (station instanceof PlateStation plate) {
             plate.initFrom(placedFrom, placedId);
         } else if (station instanceof TeapotStation teapot) {
@@ -354,9 +354,35 @@ public class StationListener implements Listener {
             straw.initAxis(face);
         } else if (station instanceof de.emrion.kaleidoscopeCookery.station.decor.RecipeBlockStation recipe) {
             recipe.initFrom(placedFrom, face);
+        } else if (station instanceof de.emrion.kaleidoscopeCookery.station.scarecrow.ScarecrowStation scarecrow && placer != null) {
+            scarecrow.initYaw(placer.getYaw());
         } else if (station instanceof PlacedFromItem addon) {
             addon.initFrom(placedFrom, face);
         }
+    }
+
+    // ---- Vogelscheuche (ScarecrowFarmlandTrampleEvent) ----
+
+    /** Ackerland in 16 Blöcken um eine Vogelscheuche wird nicht zertrampelt */
+    private static final int SCARECROW_RANGE = 16;
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onTrample(PlayerInteractEvent event) {
+        if (event.getAction() == org.bukkit.event.block.Action.PHYSICAL && protectedFarmland(event.getClickedBlock())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onEntityTrample(org.bukkit.event.entity.EntityInteractEvent event) {
+        if (protectedFarmland(event.getBlock())) {
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean protectedFarmland(@Nullable Block block) {
+        return block != null && block.getType() == Material.FARMLAND
+                && stations.anyNear(BlockKey.of(block), SCARECROW_RANGE, de.emrion.kaleidoscopeCookery.station.scarecrow.ScarecrowStation.TYPE_ID);
     }
 
     // ---- Spender (block/dispenser im Mod) ----
@@ -400,7 +426,7 @@ public class StationListener implements Listener {
         if (done) {
             // Ausrichtung wie DirectionalPlaceContext: zum Spender hin, nach oben/unten zeigend nach Norden
             Facing placeFacing = facing.getModY() != 0 ? Facing.NORTH : Facing.towards(yawOf(facing));
-            Station placed = stations.place(type, front, placeFacing, station -> initPlaced(station, item.asOne(), id, BlockFace.UP));
+            Station placed = stations.place(type, front, placeFacing, station -> initPlaced(station, item.asOne(), id, BlockFace.UP, null));
             if (!placed.canSurvive()) {
                 stations.remove(placed);
                 done = false;

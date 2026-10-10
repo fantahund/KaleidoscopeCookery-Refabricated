@@ -4,6 +4,8 @@ Baut Java-Entity-Modelle des Mods (createBodyLayer) als Item-Modelle nach:
 - Mühlstein (MillstoneModel): Sockel (fest), Rad mit Deichsel (dreht sich um die Blockmitte)
   und Walze (rollt zusätzlich um ihre eigene Achse)
 - Mülleimer (TrashCanModel): Körper, Deckel, Auge und Pupillen einzeln für die Animationen
+- Vogelscheuche (ScarecrowModel, Entity 2,375 Blöcke hoch): Körper und Kopf (fällt weg, wenn ein Kopf aufgesetzt ist),
+  auf 1/2 verkleinert; Textur nach block/scarecrow_entity kopiert (Entity-Texturen liegen in keinem Item-Atlas)
 - Aufschnitt-Schinken (ColdCutHamSlicesModel, 3x3 Blöcke): je Bissstufe 0–8 ein Modell aus dem Blockbench-Itemmodell
   des Mods (cold_cut_ham_slices_block), Biss k verschwindet ab bites >= 9 - k wie in updateBites
 
@@ -62,6 +64,31 @@ TRASH_CAN = [
         ("eye", (0, -8.5, 0), (0, 0, 0), [cube((24, 22), (-5, -1.5, -5), (10, 3, 10))], [
             ("bone3", (0, 1.5, -0.1), (0, 0, 0), [cube((34, 36), (-5, -3, -5), (10, 3, 0))], []),
         ]),
+    ]),
+]
+
+# ScarecrowModel#createBodyLayer (Radiant in Grad umgerechnet, mirror() ohne Einfluss auf die Form)
+SCARECROW = [
+    ("group", (0, 23.0278, 0.0278), (0, 0, 0), [
+        cube((85, 82), (-4, -26.0278, -2.0278), (8, 10, 4)),
+        cube((54, 69), (-4, -17.0278, -2.0278), (8, 0, 4)),
+        cube((73, 60), (8, -26.0278, -2.0278), (0, 4, 4)),
+        cube((73, 60), (-8, -26.0278, -2.0278), (0, 4, 4)),
+        cube((10, 107), (-14, -25.7778, -1.0278), (28, 2, 2)),
+        cube((101, 65), (4, -26.0278, -2.0278), (5, 4, 4)),
+        cube((82, 65), (-9, -26.0278, -2.0278), (5, 4, 4)),
+        cube((28, 70), (-1, -18.0278, -1.0278), (2, 19, 2)),
+    ], [
+        ("head", (0, -2.8, 0.1), (0, 0, 0), [cube((13, 3), (-4.5, -32.2278, -4.3778), (9, 9, 9))], [
+            ("hat", (0.1198, -30.4846, 0.5972), (0, 0, 0), [], [
+                ("headwear_r1", (0, -0.25, -0.5), (0, 0, 12.5023), [
+                    cube((66, 8), (-5, -3.775, -5.025), (10, 5, 10)),
+                    cube((77, 25), (-8, 1.275, -7.975), (16, 0, 16)),
+                ], []),
+            ]),
+        ]),
+        ("rightArm", (-12, -24.8, -0.05), (0, 0, 0), [cube((0, 0), (-1, -1, -1), (2, 2, 2))], []),
+        ("leftArm", (12, -24.8, -0.05), (0, 0, 0), [cube((0, 0), (-1, -1, -1), (2, 2, 2))], []),
     ]),
 ]
 
@@ -183,6 +210,21 @@ def main():
         print(f"{name}: {len(elements)} Elemente")
     for part, pivot in pivots.items():
         print(f"Drehpunkt {part} (Welt-Pixel, Norden): {to_world(pivot)}")
+
+    # Vogelscheuche: auf 1/2 um die Blockmitte verkleinert (im Display Faktor 2)
+    texture_file = ROOT / "resourcepack" / "imported" / "assets" / "kaleidoscope_cookery" / "textures" / "entity" / "scarecrow.png"
+    (OUT / "textures" / "block").mkdir(parents=True, exist_ok=True)
+    (OUT / "textures" / "block" / "scarecrow_entity.png").write_bytes(texture_file.read_bytes())
+    cubes = []
+    collect(SCARECROW, (0, 0, 0), [], cubes)
+    groups = {"scarecrow_body": [], "scarecrow_head": []}
+    for path, pivot, rotation, c in cubes:
+        groups["scarecrow_head" if "head" in path else "scarecrow_body"].append(element(pivot, rotation, c, BLOCK_CENTER, 2, 128))
+    for name, elements in groups.items():
+        write_model(name, elements, "kaleidoscope_cookery:block/scarecrow_entity")
+        print(f"{name}: {len(elements)} Elemente")
+    for arm in ("rightArm", "leftArm"):
+        print(f"Arm {arm} (Welt-Pixel, Norden): {to_world((12 if arm == 'leftArm' else -12, 23.0278 - 24.8, 0.0278 - 0.05))}")
 
     ham_stages()
 

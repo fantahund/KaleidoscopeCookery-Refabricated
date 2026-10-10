@@ -190,6 +190,25 @@ public class StationManager implements Listener {
     }
 
     /**
+     * Gibt es eine Station dieses Typs, deren Block höchstens radius Blöcke (je Achse) von block entfernt ist?
+     * Sucht nur in den Chunks der Umgebung (Index byChunk).
+     */
+    public boolean anyNear(BlockKey block, int radius, String typeId) {
+        for (int cx = (block.x() - radius) >> 4; cx <= (block.x() + radius) >> 4; cx++) {
+            for (int cz = (block.z() - radius) >> 4; cz <= (block.z() + radius) >> 4; cz++) {
+                for (Station station : byChunk.getOrDefault(new ChunkKey(block.world(), cx, cz), List.of())) {
+                    BlockKey at = station.position();
+                    if (station.context().type().id().equals(typeId) && Math.abs(at.x() - block.x()) <= radius
+                            && Math.abs(at.y() - block.y()) <= radius && Math.abs(at.z() - block.z()) <= radius) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Klick-Entities sind standardmäßig unsichtbar (sonst schickt der Server Hunderte Felder-Pflanzen an jeden
      * Client in 96 Blöcken). Gezeigt werden sie nur Spielern in der Nähe.
      */
