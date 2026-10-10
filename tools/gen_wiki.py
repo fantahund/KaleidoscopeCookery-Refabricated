@@ -750,13 +750,20 @@ class Site:
         def render(text):
             def repl(match):
                 kind, key = match.group(1), match.group(2)
+                if kind == "item" and key.startswith("#"):
+                    alts = self.data.resolve(key)  # tag, e.g. #c:foods/cooked_rice as carrier
+                    return " / ".join(self.rich_item(a, root) for a in alts[:4]) or e(key)
                 if kind == "item":
                     link = self.item_link(key, root)
                     label = self.name(key)
                     return f'<a href="{e(link)}">{label}</a>' if link else label
                 return N(e(self.data.keyed(kind, key, "de")), e(self.data.keyed(kind, key, "en")))
-            return re.sub(r"\{(item|entity|effect):([a-z_]+:[a-z_0-9/]+)\}", repl, e(text))
+            return re.sub(r"\{(item|entity|effect):(#?[a-z_]+:[a-z_0-9/]+)\}", repl, e(text))
         return L(render(pair[0]), render(pair[1]))
+
+    def rich_item(self, item: str, root: str) -> str:
+        link = self.item_link(item, root)
+        return f'<a href="{e(link)}">{self.name(item)}</a>' if link else self.name(item)
 
     def station_title(self, station) -> str:
         sid, title, icon = station[0], station[1], station[2]
