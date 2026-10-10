@@ -71,7 +71,7 @@ public class CropListener implements Listener {
         }
         ItemStack item = event.getItem();
         CropKind kind = CropKind.bySeed(CookeryItems.idOf(item));
-        if (kind == null) {
+        if (kind == null || de.emrion.kaleidoscopeCookery.station.StationListener.opensOnClick(event)) {
             return;
         }
         event.setCancelled(true);

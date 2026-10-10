@@ -394,6 +394,9 @@ public class CropStation extends Station {
             }
         }
         add(drops, kind.lootSeed(), seeds);
+        if (kind == CropKind.CHILI && random.nextDouble() < 0.2) {
+            add(drops, Key.key("kaleidoscope_cookery", "green_chili"), 1); // blocks/chili_crop.json: 20 % grüne Chili zusätzlich
+        }
         if (kind == CropKind.LETTUCE && random.nextDouble() < 0.1) {
             add(drops, Key.key("kaleidoscope_cookery", "caterpillar"), 1);
         }

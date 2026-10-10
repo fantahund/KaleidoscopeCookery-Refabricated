@@ -216,6 +216,14 @@ public class StationListener implements Listener {
 
     // ---- Platzieren ----
 
+    /**
+     * Wie bei Blöcken in Vanilla: ein Klick auf Kiste, Ofen, Tür ... benutzt den Block, nur schleichend wird gesetzt.
+     */
+    public static boolean opensOnClick(PlayerInteractEvent event) {
+        Block clicked = event.getClickedBlock();
+        return clicked != null && !event.getPlayer().isSneaking() && clicked.getType().isInteractable();
+    }
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlace(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getClickedBlock() == null || event.getHand() == null) {
@@ -228,6 +236,9 @@ public class StationListener implements Listener {
         CookeryItem placed = plugin.getItems().get(CookeryItems.typeOf(item));
         if (placed != null && placed.sneakToPlace() && !event.getPlayer().isSneaking()) {
             return; // Tee trinken, Teekanne benutzen
+        }
+        if (opensOnClick(event)) {
+            return;
         }
         event.setCancelled(true);
         if (event.getPlayer().isSneaking() && stations.at(event.getClickedBlock()) != null) {
