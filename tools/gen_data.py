@@ -492,7 +492,8 @@ def collect_items(foods: dict, bites: dict) -> dict:
             if full_id == "kaleidoscope_grilling:pending_seasoning":
                 entry["sneak-place"] = True  # PendingSeasoningItem#useOn: ohne Schleichen wird geschüttelt
             if full_id == "kaleidoscope_cookery:teapot":
-                entry["sneak-place"] = True  # TeapotItem#useOn: nur beim Schleichen platzieren
+                # TeapotItem#useOn setzt nur beim Schleichen (sonst Wasser schöpfen) – hier wie alle Stationen ohne
+                # Schleichen, Schöpfen per Item gibt es im Plugin nicht (Wunsch: einheitlich)
                 entry["max-stack"] = 1
             if full_id == "kaleidoscope_cookery:clay_pot_milk_tea":
                 # ClayPotMilkTeaItem: trinken (32 Ticks, Honig-Geräusch), entfernt schädliche Effekte, Blumentopf bleibt

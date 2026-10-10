@@ -2426,7 +2426,6 @@ items:
     model: "kaleidoscope_cookery:teapot"
     name: block.kaleidoscope_cookery.teapot
     tooltip: tooltip.kaleidoscope_cookery.teapot
-    sneak-place: true
     max-stack: 1
   "kaleidoscope_cookery:tieguanyin":
     model: "kaleidoscope_cookery:tieguanyin"
