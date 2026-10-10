@@ -66,6 +66,14 @@ disabled-recipes:
   # Ölblock und Strohballen herstellen (zurück in Öl bzw. Reisrispen geht weiter)
   - "kaleidoscope_cookery:oil_block"
   - "kaleidoscope_cookery:straw_block"
+  # Möbel und Deko ohne Funktion (Stühle, Kochhocker, Tische, Langbank, Acht-Unsterblichen-Tisch, Laterne, Tee-Banner)
+  - "kaleidoscope_cookery:chair_*"
+  - "kaleidoscope_cookery:cook_stool_*"
+  - "kaleidoscope_cookery:table_*"
+  - "kaleidoscope_cookery:long_bench"
+  - "kaleidoscope_cookery:eight_immortals_table"
+  - "kaleidoscope_cookery:red_lantern"
+  - "kaleidoscope_cookery:tea_banner"
   # Mühle und Bambustablett: nur Mod-Items herstellen, Rezepte mit Vanilla-Ergebnis abgeschaltet (Zeile löschen = wieder an)
   - "kaleidoscope_cookery:millstone/amethyst_shard_from_amethyst_block"
   - "kaleidoscope_cookery:millstone/black_dye_from_wither_rose"
