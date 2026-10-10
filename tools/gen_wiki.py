@@ -259,6 +259,7 @@ def build_recipes(data: Data) -> list:
                 notes.append("1–9 gleiche Zutaten ergeben entsprechend viele Portionen")
             if flex:
                 notes.append("Flex-Rezept: jede Zutat mindestens einmal, die Mengen bestimmen die Qualität")
+            notes.append(f"Kochzeit {seconds(v.get('time', 200))}, {v.get('stir-fry', 3)}× rühren")
             carrier = v.get("carrier")
             notes.append(f"Herausnehmen mit: {data.name(carrier)}" if carrier else "Herausnehmen mit dem Pfannenwender")
             out.append(Recipe("pot", rid, count_inputs(data, v["ingredients"]), [(item, count, 1.0)], notes))
@@ -270,8 +271,7 @@ def build_recipes(data: Data) -> list:
             notes = []
             if flex:
                 notes.append("Flex-Rezept: jede Zutat mindestens einmal, die Mengen bestimmen die Qualität")
-            if v.get("time"):
-                notes.append(f"Kochzeit {seconds(v['time'])}")
+            notes.append(f"Kochzeit {seconds(v.get('time', 300))}")
             carrier = v.get("carrier")
             if carrier:
                 notes.append(f"Portionen nehmen mit: {data.name(carrier)}")
@@ -470,12 +470,6 @@ OTHER_GUIDES = [
      ["Öl erhältst du, wenn du Schweine, Hoglins, Piglins oder Zoglins mit einem Küchenmesser tötest, oder aus der Mühle.",
       "Die Ölkanne speichert bis zu 256 Öl; hingestellt füllst du sie mit Öl nach und nimmst mit leerer Hand bis zu 64 heraus.",
       "Der Fetttopf (Emaillebecken) fasst 32 Öl und hat einen Deckel; der Pfannenwender nimmt dort ein Öl auf."]),
-    ("Pflanzen", "kaleidoscope_cookery:tomato",
-     ["Tomaten, Chilis, Salat, Reis und Tee werden wie Vanilla-Pflanzen angebaut und wachsen über zufällige Ticks.",
-      "Samen bekommst du aus Gras, während du einen Strohhut trägst.",
-      "Reis wächst im Wasser auf Ackerland, Tee auf Erde. Reife Tomaten und Chilis erntest du per Rechtsklick, sie wachsen nach.",
-      "Die Sichel erntet reife Pflanzen und räumt Gras in einem großen Bereich ab.",
-      "Grilling bringt Raps, Zwiebeln, Süßkartoffeln, Fischminze (auch auf Seelensand) und einen Sichuanpfeffer-Strauch."]),
     ("Teller-Gerichte", "kaleidoscope_cookery:braised_beef",
      ["Viele Gerichte lassen sich hinstellen und dann bissweise essen; nach dem letzten Biss bleibt das Geschirr übrig.",
       "Große Gerichte belegen 2 Blöcke, der Aufschnitt-Schinken sogar 3×3 Blöcke.",
@@ -493,6 +487,84 @@ OTHER_GUIDES = [
       "Milchtee im Tontopf: trinken entfernt alle schädlichen Effekte; er lässt sich auch als Deko hinstellen.",
       "Grilling: Spießteller (bis 5 Spieße) und erweitertes Küchenregal (9 Fächer)."]),
 ]
+
+# Crops: (name, seed, harvest, soil, details) - CropKind (Cookery) and GrillingCrops
+CROPS = [
+    ("Tomate", "kaleidoscope_cookery:tomato_seed", ["kaleidoscope_cookery:tomato"], "Ackerland",
+     "8 Stufen. Reif per Rechtsklick ernten, die Pflanze wächst nach."),
+    ("Chili", "kaleidoscope_cookery:chili_seed", ["kaleidoscope_cookery:red_chili", "kaleidoscope_cookery:green_chili"], "Ackerland",
+     "8 Stufen. Reif per Rechtsklick ernten (20 % grüne statt rote Chili) oder abbauen (20 % zusätzlich eine grüne)."),
+    ("Salat", "kaleidoscope_cookery:lettuce_seed", ["kaleidoscope_cookery:lettuce", "kaleidoscope_cookery:caterpillar"], "Ackerland",
+     "8 Stufen. Nur durch Abbauen ernten; mit 10 % Chance sitzt eine Raupe darin."),
+    ("Reis", "kaleidoscope_cookery:wild_rice", ["kaleidoscope_cookery:rice_panicle"], "Ackerland unter einer Wasserquelle",
+     "Wächst im Wasser und wird 3 Blöcke hoch. Ergibt 2–4 Reisrispen; gepflanzt wird mit Wildreis oder Reis. Die Hacke funktioniert auch unter Wasser."),
+    ("Teestrauch", "kaleidoscope_cookery:tea_seed", ["kaleidoscope_cookery:fresh_tea_leaves"], "Erde, Gras, Podsol, Moos u. Ä.",
+     "6 Stufen. Reif per Rechtsklick ernten, der Strauch wächst nach."),
+    ("Raps", "kaleidoscope_grilling:canola_seeds", ["kaleidoscope_grilling:canola_seeds"], "Ackerland",
+     "8 Stufen. Die Samen werden zu Rapspulver gemahlen oder zu Ölkuchen verarbeitet."),
+    ("Zwiebel", "kaleidoscope_grilling:onion", ["kaleidoscope_grilling:onion"], "Ackerland", "8 Stufen, Ernte durch Abbauen."),
+    ("Süßkartoffel", "kaleidoscope_grilling:sweet_potato", ["kaleidoscope_grilling:sweet_potato"], "Ackerland",
+     "8 Stufen, reif gibt es mindestens 2 zusätzliche Süßkartoffeln."),
+    ("Fischminze", "kaleidoscope_grilling:houttuynia", ["kaleidoscope_grilling:houttuynia"], "Ackerland oder Seelensand",
+     "8 Stufen. Auf Seelensand (sonst zu 30 %) färbt sie sich ab Stufe 5 rot."),
+    ("Sichuanpfeffer", "kaleidoscope_grilling:sichuan_pepper_seeds", ["kaleidoscope_grilling:sichuan_pepper"], "Ackerland",
+     "Strauch mit 6 Stufen. Reif per Rechtsklick 1–2 Pfeffer ernten, danach blüht er und reift erneut."),
+]
+
+GRASS_SEEDS = ["kaleidoscope_cookery:tomato_seed", "kaleidoscope_cookery:chili_seed", "kaleidoscope_cookery:lettuce_seed",
+               "kaleidoscope_cookery:wild_rice", "kaleidoscope_cookery:tea_seed"]
+GRILLING_GRASS = ["kaleidoscope_grilling:canola_seeds", "kaleidoscope_grilling:sweet_potato", "kaleidoscope_grilling:onion",
+                  "kaleidoscope_grilling:sichuan_pepper_seeds"]
+
+
+def sources(config: dict) -> dict:
+    """Item -> where it is found (drops, loot, harvest). From OilDropListener, CropListener, GrillingDrops, CropStation."""
+    found = {}
+
+    def add(item, text):
+        found.setdefault(item, []).append(text)
+
+    oil = config.get("oil-drops", {})
+    if oil.get("enabled", True):
+        mobs = {"PIG": "Schwein", "HOGLIN": "Hoglin", "PIGLIN": "Piglin", "PIGLIN_BRUTE": "Piglin-Barbar", "ZOGLIN": "Zoglin",
+                "ZOMBIFIED_PIGLIN": "Zombifizierter Piglin"}
+        names = ", ".join(mobs.get(m, m.title()) for m in oil.get("entities", []))
+        add("kaleidoscope_cookery:oil", f"Mit einem Küchenmesser töten: {names} – {oil.get('min', 1)}–{oil.get('max', 2)} Öl (Plünderung erhöht).")
+    add("kaleidoscope_cookery:raw_donkey_meat", "Einen Esel mit einem Küchenmesser töten: 2–4 Stück (Plünderung erhöht).")
+    add("kaleidoscope_grilling:chicken_wing", "Ein Huhn mit einem Küchenmesser töten: 1–2 Hähnchenflügel.")
+    add("kaleidoscope_cookery:raw_cow_offal", "Eine Kuh mit einem Küchenmesser töten: 1–2 Stück.")
+    add("kaleidoscope_grilling:squid_tentacle", "Einen Tintenfisch mit einem Küchenmesser töten: zu 50 % 2–3 Tentakel.")
+    for seed in GRASS_SEEDS:
+        add(seed, "Gras abbauen, während du einen Strohhut trägst (12,5 % je Samenart).")
+    for seed in GRILLING_GRASS:
+        add(seed, "Gras abbauen, während du einen Strohhut trägst (je 12,5 %).")
+    add("kaleidoscope_grilling:houttuynia", "Truhen in Netherfestungen (65 %, 1–3 Stück).")
+    add("kaleidoscope_grilling:houttuynia", "Wächst in neu erzeugten Netherfestungen an einem Viertel der Netherwarzen-Stellen.")
+    add("kaleidoscope_grilling:sichuan_pepper", "Dorf-Truhen (40 %, 3–10 Stück).")
+    add("kaleidoscope_grilling:sichuan_pepper_seeds", "Dorf-Truhen (20 %).")
+    for name, seed, harvest, soil, _ in CROPS:
+        for item in harvest:
+            add(item, f"Ernte von {name} (auf {soil}).")
+    add("kaleidoscope_cookery:red_chili", "Von einer hängenden Chili-Kette ernten.")
+    add("kaleidoscope_grilling:chicken_skin", "Rohes Hähnchen auf dem Schneidebrett zerteilen: zusätzlich 1–3 Hühnerhaut.")
+    add("kaleidoscope_grilling:dragon_egg_powder", "Rechtsklick mit einem Küchenmesser auf ein Drachenei (1 Stück, Plünderung erhöht; kostet 1 Haltbarkeit).")
+    add("kaleidoscope_cookery:suspicious_stir_fry", "Wok: Zutaten ohne passendes Rezept oder nicht genug gerührt.")
+    add("kaleidoscope_cookery:dark_cuisine", "Wok: ein fertiges Gericht nicht rechtzeitig herausgenommen – es brennt an.")
+    add("kaleidoscope_cookery:mystery_tea", "Teekanne: eine Zutat ohne passendes Rezept ergibt 4 Tassen davon.")
+    add("kaleidoscope_grilling:mysterious_skewer", "Grill: ein Spieß ohne gegrillte Form.")
+    add("kaleidoscope_grilling:dark_grilling", "Grill: einen Spieß zu lange liegen lassen – er brennt an.")
+    add("kaleidoscope_grilling:unfinished_skewer", "Entsteht beim Aufspießen, solange noch nicht alle Zutaten auf dem Stock sind.")
+    add("kaleidoscope_grilling:pending_seasoning", "Gewürzflasche mit grünem Chilipulver, Sichuanpfeffer und Zwiebelpulver; 4 s schütteln ergibt Spezialgewürz.")
+    add("kaleidoscope_grilling:skewer_plate", "Schleichen + Rechtsklick mit einem Spieß auf die Oberseite eines festen Blocks stellt einen Spießteller hin.")
+    add("kaleidoscope_grilling:skewer_recipe_book", "Werkbank: leeres Rezept + roher Spieß (oder Geheimspieß); der Spieß bleibt im Raster.")
+    for brush in ("canola_oil_brush", "secret_chili_oil_brush", "premium_chili_oil_brush"):
+        add(f"kaleidoscope_grilling:{brush}", "Nur Darstellung: so sieht die Ölkanne beim Bestreichen am Grill aus. Nicht als Item erhältlich.")
+    add("kaleidoscope_grilling:wedding_candy", "Event-Item des Mods (September 2026), auf dem Server nicht erhältlich.")
+    add("kaleidoscope_cookery:suspicious_stir_fry_rice_bowl", "Im Mod nur über den Koch-Dorfbewohner erhältlich, den es auf dem Server (noch) nicht gibt.")
+    for block in ("oil_block", "straw_block"):
+        add(f"kaleidoscope_cookery:{block}", "Das Rezept ist auf diesem Server abgeschaltet (disabled-recipes).")
+    return found
+
 
 COMMANDS = [
     ("/kc recipes [Suche]", "Kochbuch öffnen bzw. durchsuchen (auch /kc rezepte)", "kaleidoscope.use"),
@@ -535,6 +607,7 @@ class Site:
                 self.by_input.setdefault(item, []).append(recipe)
         self.stations = {s[0]: s for s in STATIONS}
         self.search = []
+        self.sources = sources(yaml_load(ROOT / "core/src/main/resources/config.yml"))
 
     # ---- Helpers ----
 
@@ -606,7 +679,8 @@ class Site:
 
     def page(self, path: str, title: str, body: str, depth: int, active: str = ""):
         root = "../" * depth
-        nav = [("index.html", "Start", "home"), ("stations.html", "Stationen", "stations"), ("items.html", "Items", "items"),
+        nav = [("index.html", "Start", "home"), ("einstieg.html", "Einstieg", "start"), ("stations.html", "Stationen", "stations"),
+               ("items.html", "Items", "items"), ("anbau.html", "Anbau", "farming"),
                ("effects.html", "Effekte", "effects"), ("guides.html", "Anleitungen", "guides"), ("commands.html", "Befehle", "commands")]
         links = "".join(f'<a class="nav-link{" active" if key == active else ""}" href="{root}{href}">{label}</a>' for href, label, key in nav)
         doc = f"""<!DOCTYPE html>
@@ -676,13 +750,15 @@ Assets unter CC BY-NC-SA 4.0. Keine offizielle Seite der Mod-Autoren.</footer>
             effects = self.effect_list(food.get("effects", []) if food else [], root)
             made = self.by_output.get(item, [])
             used = [r for r in self.by_input.get(item, []) if r not in made]
+            found = self.sources.get(item, [])
             if not made:
                 hint = "Dieses Item lässt sich nicht herstellen."
-                if any(item.startswith(p) for p in ("kaleidoscope_cookery:chair", "kaleidoscope_cookery:table", "kaleidoscope_cookery:cook_stool")):
-                    hint = "Möbel sind noch ohne Funktion und derzeit nicht herstellbar."
-                made_html = f'<p class="muted">{hint} Fundorte stehen unter <a href="{root}guides.html">Anleitungen</a>.</p>'
+                if any(f"kaleidoscope_cookery:{p}" in item for p in ("chair", "table", "cook_stool", "long_bench", "eight_immortals", "red_lantern", "tea_banner")):
+                    hint = "Möbel und Deko sind noch ohne Funktion und derzeit nicht herstellbar."
+                made_html = "" if found else f'<p class="muted">{hint}</p>'
             else:
                 made_html = "".join(self.recipe_card(r, root) for r in made[:40])
+            found_html = "".join(f"<li>{e(t)}</li>" for t in found)
             used_html = "".join(self.recipe_card(r, root) for r in used[:60]) or '<p class="muted">Wird in keinem Rezept verwendet.</p>'
             stat_rows = "".join(f"<tr><th>{e(k)}</th><td>{v if k == 'ID' else e(v)}</td></tr>" for k, v in stats)
             tooltip = "".join(f'<div class="tt-lore">{e(l)}</div>' for l in lore) + "".join(f'<div class="tt-maxim">{e(m)}</div>' for m in maxims)
@@ -697,7 +773,8 @@ Assets unter CC BY-NC-SA 4.0. Keine offizielle Seite der Mod-Autoren.</footer>
   <table class="stats">{stat_rows}</table>
 </section>
 {f'<section><h2>Effekte beim Essen</h2>{effects}</section>' if effects else ''}
-<section><h2>Herstellung</h2><div class="recipes">{made_html}</div></section>
+{f'<section><h2>Fundorte</h2><ul class="panel sources">{found_html}</ul></section>' if found_html else ''}
+{f'<section><h2>Herstellung</h2><div class="recipes">{made_html}</div></section>' if made_html else ''}
 <section><h2>Verwendung</h2><div class="recipes">{used_html}</div></section>
 """
             self.page(f"items/{slug(item)}.html", name, body, 2, "items")
@@ -795,16 +872,83 @@ Assets unter CC BY-NC-SA 4.0. Keine offizielle Seite der Mod-Autoren.</footer>
 
     def guides_page(self):
         body = '<h1>Anleitungen</h1><p class="lead">Grundlagen, Anbau und alles, was keine eigene Station ist.</p>'
-        body += """<section class="panel guide"><h2>Erste Schritte</h2><ol class="steps">
-<li>Beim Betreten des Servers wird das Resourcepack automatisch geladen. Klappt das nicht, hilft <code>/kc pack</code>.</li>
-<li>Stationen setzt du mit Rechtsklick auf einen Block; sie schauen dann zu dir. Klickst du dabei eine Kiste, einen Ofen oder eine Tür an, wird stattdessen der Block benutzt – schleiche, um trotzdem zu setzen.</li>
-<li>Schleichen + Linksklick baut eine Station ab; Inhalt und Item fallen heraus.</li>
-<li>Das Kochbuch (Buch + beliebige Samen) zeigt alle Rezepte im Spiel; Rechtsklick damit auf eine Station öffnet direkt deren Seite.</li>
-</ol></section>"""
+        body += '<p>Neu? Starte mit dem <a href="einstieg.html">Einstieg</a>; alles zu Pflanzen steht unter <a href="anbau.html">Anbau</a>.</p>'
         for title, icon, lines in OTHER_GUIDES:
             body += (f'<section class="panel guide"><h2>{self.icon(icon, "", 32, "icon-sm")} {e(title)}</h2>'
                      f'<ul>{"".join(f"<li>{e(l)}</li>" for l in lines)}</ul></section>')
         self.page("guides.html", "Anleitungen", body, 0, "guides")
+
+    def recipe_by_id(self, rid: str):
+        return next((r for r in self.recipes if r.id == rid), None)
+
+    def start_page(self):
+        root = ""
+
+        def cards(*ids):
+            found = [self.recipe_by_id(i) for i in ids]
+            return '<div class="recipes">' + "".join(self.recipe_card(r, root) for r in found if r) + "</div>"
+
+        def link(item):
+            return f'<a href="items/{slug(item)}.html">{e(self.data.name(item))}</a>'
+
+        steps = [
+            ("Strohhut und erste Samen",
+             f"<p>Stelle einen {link('kaleidoscope_cookery:straw_hat')} aus Weizen und Faden her und setze ihn auf. Baust du jetzt Gras ab, "
+             "findest du Samen für Tomaten, Chilis, Salat, Wildreis und Tee (mit Grilling auch Raps, Zwiebeln, Süßkartoffeln und Pfeffer).</p>"
+             + cards("kaleidoscope_cookery:straw_hat") +
+             '<p>Pflanze die Samen auf Ackerland. Was wo wächst, steht auf der Seite <a href="anbau.html">Anbau</a>.</p>'),
+            ("Küchenmesser",
+             f"<p>Das {link('kaleidoscope_cookery:copper_kitchen_knife')} ist das wichtigste Werkzeug: Nur damit schneidest du auf dem "
+             "Schneidebrett, und nur damit lassen Tiere Öl und besondere Zutaten fallen.</p>"
+             + cards("kaleidoscope_cookery:copper_kitchen_knife", "kaleidoscope_cookery:iron_kitchen_knife")),
+            ("Öl besorgen",
+             f"<p>Töte ein Schwein (oder Hoglin, Piglin …) mit dem Küchenmesser – es lässt {link('kaleidoscope_cookery:oil')} fallen. "
+             f"Öl lagerst du in der {link('kaleidoscope_cookery:oil_pot')}, die bis zu 256 Öl fasst.</p>"),
+            ("Herd, Wok und Pfannenwender",
+             "<p>Stelle einen Herd auf, zünde ihn mit einem Feuerzeug an und setze den Wok darauf. Zum Rühren brauchst du den Pfannenwender.</p>"
+             + cards("kaleidoscope_cookery:stove_campfire", "kaleidoscope_cookery:pot", "kaleidoscope_cookery:kitchen_shovel")),
+            ("Das erste Gericht",
+             "<ol class=\"steps\"><li>Öl in den Wok geben – jetzt hast du 60 Sekunden für die Zutaten.</li>"
+             "<li>Zutaten hineinlegen, z. B. vier Kartoffeln und zwei Zucker.</li>"
+             "<li>Mit dem Pfannenwender rühren, bis das Gericht fertig ist (meist 3× rühren, 10 Sekunden).</li>"
+             "<li>Mit einer Schüssel herausnehmen – bevor es nach 40 Sekunden anbrennt.</li></ol>"
+             + cards("kaleidoscope_cookery:pot/candied_potato")),
+            ("Weiter geht's",
+             '<ul><li>Das <a href="items/kaleidoscope/cookbook.html">Kochbuch</a> (Buch + beliebige Samen) zeigt alle Rezepte im Spiel; '
+             "Rechtsklick damit auf eine Station öffnet direkt deren Seite.</li>"
+             '<li><a href="stations/stockpot.html">Suppentopf</a> für Suppen, <a href="stations/chopping_board.html">Schneidebrett</a> '
+             'für Zutaten, <a href="stations/millstone.html">Mühlstein</a> für Mehl und Gewürze.</li>'
+             '<li>Mit Grilling: <a href="stations/skewering.html">Spieße aufspießen</a> und auf dem <a href="stations/grill.html">Grill</a> garen.</li>'
+             '<li>Flex-Rezepte belohnen das richtige Mengenverhältnis mit besserer Qualität – siehe <a href="guides.html">Anleitungen</a>.</li></ul>'),
+        ]
+        body = ('<h1>Einstieg</h1><p class="lead">Vom ersten Samen bis zum ersten Gericht – Schritt für Schritt. '
+                "Beim Betreten des Servers lädt das Resourcepack automatisch; klappt das nicht, hilft <code>/kc pack</code>.</p>")
+        for i, (title, content) in enumerate(steps, 1):
+            body += f'<section class="panel guide start-step"><h2><span class="step-no">{i}</span>{e(title)}</h2>{content}</section>'
+        body += """<section class="panel guide"><h2>Bedienung</h2><ul>
+<li>Stationen setzt du mit Rechtsklick auf einen Block; sie schauen dann zu dir.</li>
+<li>Klickst du dabei eine Kiste, einen Ofen oder eine Tür an, wird der Block benutzt – schleiche, um trotzdem zu setzen.</li>
+<li>Schleichen + Linksklick baut eine Station ab; Inhalt und Item fallen heraus.</li>
+<li>Schaust du eine Station an, zeigt die Leiste über der Hotbar ihren Zustand.</li></ul></section>"""
+        self.page("einstieg.html", "Einstieg", body, 0, "start")
+
+    def farming_page(self):
+        rows = ""
+        for name, seed, harvest, soil, details in CROPS:
+            seed_link = f'<a class="mini" href="items/{slug(seed)}.html" data-tip="{e(self.data.name(seed))}">{self.icon(seed, "", 32)}</a>'
+            harvest_html = "".join(f'<a class="mini" href="items/{slug(h)}.html" data-tip="{e(self.data.name(h))}">{self.icon(h, "", 32)}</a>' for h in harvest)
+            rows += (f'<div class="crop panel"><h3>{e(name)}</h3><div class="crop-row"><div><small>Samen</small>{seed_link}</div>'
+                     f'<div class="arrow"><span></span></div><div><small>Ernte</small><div class="minis">{harvest_html}</div></div></div>'
+                     f'<p><b>Boden:</b> {e(soil)}</p><p class="muted">{e(details)}</p></div>')
+        body = f"""<h1>Anbau</h1>
+<p class="lead">Alle Pflanzen wachsen wie Vanilla-Pflanzen über zufällige Ticks, nur in der Simulationsdistanz eines Spielers und
+mit genug Licht. Knochenmehl beschleunigt das Wachstum, feuchtes Ackerland drumherum ebenfalls.</p>
+<section class="panel guide"><h2>Samen finden</h2><ul>
+<li>Setze einen Strohhut auf und baue Gras ab: Mit etwas Glück fallen Samen heraus (je 12,5 % pro Samenart).</li>
+<li>Fischminze findest du in Netherfestungen (Truhen und anstelle mancher Netherwarzen), Sichuanpfeffer in Dorf-Truhen.</li>
+<li>Die Sichel erntet reife Pflanzen in einem großen Bereich auf einmal und räumt dabei Gras und Blumen ab.</li></ul></section>
+<section><h2>Pflanzen</h2><div class="crop-grid">{rows}</div></section>"""
+        self.page("anbau.html", "Anbau", body, 0, "farming")
 
     def commands_page(self):
         rows = "".join(f"<tr><td><code>{e(c)}</code></td><td>{e(d)}</td><td><code>{e(p)}</code></td></tr>" for c, d, p in COMMANDS)
@@ -825,13 +969,13 @@ Assets unter CC BY-NC-SA 4.0. Keine offizielle Seite der Mod-Autoren.</footer>
     <h1>Kaleidoscope <span>Cookery &amp; Grilling</span></h1>
     <p>Kochen wie in den Mods – auf einem normalen Paper-Server, ganz ohne Client-Mods. Wok, Suppentopf, Grill, Mühle und
     über 300 Items; das Resourcepack lädt der Server automatisch.</p>
-    <div class="actions"><a class="btn" href="stations.html">Stationen ansehen</a><a class="btn alt" href="items.html">Alle Items</a></div>
+    <div class="actions"><a class="btn" href="einstieg.html">Erste Schritte</a><a class="btn alt" href="stations.html">Stationen</a><a class="btn alt" href="items.html">Alle Items</a></div>
   </div>
   <div class="hero-art">{self.icon("kaleidoscope_cookery:pot", "", 96, "icon-xl")}{self.icon("kaleidoscope_grilling:grilled_beef_skewer", "", 96, "icon-xl")}{self.icon("kaleidoscope_cookery:braised_beef", "", 96, "icon-xl")}</div>
 </section>
 <div class="stats-row">{stat_html}</div>
 <section><h2>Beliebte Stationen</h2><div class="cards">{featured}</div></section>
-<section class="panel guide"><h2>Schnellstart</h2><ol class="steps">
+<section class="panel guide"><h2>Schnellstart</h2><p>Neu hier? Die <a href="einstieg.html">Einstiegs-Anleitung</a> führt dich Schritt für Schritt vom ersten Samen zum ersten Gericht.</p><ol class="steps">
 <li>Herd setzen und mit einem Feuerzeug anzünden, darauf einen Wok stellen.</li>
 <li>Öl in den Wok geben – Öl bekommst du, wenn du ein Schwein mit einem Küchenmesser tötest.</li>
 <li>Zutaten hineinlegen und mit dem Pfannenwender rühren, bis das Gericht fertig ist.</li>
@@ -889,6 +1033,8 @@ def main():
     site.items_page()
     site.effects_page()
     site.guides_page()
+    site.start_page()
+    site.farming_page()
     site.commands_page()
     site.index_page(groups)
     site.assets()

@@ -275,9 +275,26 @@ public class ChoppingBoardStation extends Station {
         world().playSound(center(), Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 1, 1.2f + ThreadLocalRandom.current().nextFloat() * 0.2f);
     }
 
+    private static final List<java.util.function.Function<ItemStack, List<ItemStack>>> EXTRA_RESULTS = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    /**
+     * Addons add extra results when a fully cut ingredient pops (Grilling: chicken skin from raw chicken):
+     * ingredient -> extra items (empty list = none).
+     */
+    public static void addExtraResults(java.util.function.Function<ItemStack, List<ItemStack>> extra) {
+        EXTRA_RESULTS.add(extra);
+    }
+
     private void popResults() {
         for (ItemStack result : results) {
             drop(result.clone());
+        }
+        if (input != null) {
+            for (java.util.function.Function<ItemStack, List<ItemStack>> extra : EXTRA_RESULTS) {
+                for (ItemStack stack : extra.apply(input.clone())) {
+                    drop(stack);
+                }
+            }
         }
         reset();
         world().playSound(center(), Sound.BLOCK_WOOD_PLACE, SoundCategory.BLOCKS, 1, 2 + ThreadLocalRandom.current().nextFloat() * 0.2f);
