@@ -219,9 +219,19 @@ public class CookeryItems {
         return null;
     }
 
+    /**
+     * Brennstoffe wie im Mod (cookingFuel): Öl wie Kohle, Ölblock wie Kohleblock.
+     * shortcut: Komponente als Text, weil Paper cooking_fuel noch nicht in DataComponentTypes hat; dann dorthin umstellen.
+     */
+    private static final Map<Key, String> COOKING_FUEL = Map.of(
+            Key.key("kaleidoscope_cookery", "oil"), "minecraft:cooking/time_coal",
+            Key.key("kaleidoscope_cookery", "oil_block"), "minecraft:cooking/time_coal_block");
+
     @SuppressWarnings("UnstableApiUsage")
     public ItemStack create(CookeryItem item, int amount) {
-        ItemStack stack = ItemStack.of(item.base(), 1);
+        String fuel = COOKING_FUEL.get(item.id());
+        ItemStack stack = fuel == null ? ItemStack.of(item.base(), 1) : org.bukkit.Bukkit.getItemFactory().createItemStack(
+                item.base().key().asString() + "[cooking_fuel={burn_time:\"" + fuel + "\",speed_multiplier:\"minecraft:cooking/speed_default\"}]");
         if (item.prototype() != null) {
             // Alle Eigenschaften des Vanilla-Items übernehmen (Schaden, Tempo, Haltbarkeit, Reparatur, Abbau ...)
             stack.copyDataFrom(ItemStack.of(item.prototype()), type -> true);

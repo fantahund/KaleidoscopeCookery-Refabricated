@@ -1488,11 +1488,9 @@ items:
     model: "kaleidoscope_cookery:oil"
     name: item.kaleidoscope_cookery.oil
     tooltip: tooltip.kaleidoscope_cookery.oil
-    base: CHARCOAL
   "kaleidoscope_cookery:oil_block":
     model: "kaleidoscope_cookery:oil_block"
     name: block.kaleidoscope_cookery.oil_block
-    base: CHARCOAL
   "kaleidoscope_cookery:oil_pot":
     model: "kaleidoscope_cookery:oil_pot"
     name: block.kaleidoscope_cookery.oil_pot

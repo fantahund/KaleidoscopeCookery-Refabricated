@@ -282,10 +282,6 @@ BASE_MATERIALS = {
     "kaleidoscope_cookery:netherite_kitchen_knife": "JIGSAW",
     # Sichel: Konstruktionsblock (ebenfalls nicht erhältlich und ohne OP nicht platzierbar), eigene Verzauberung "Schwung"
     "kaleidoscope_cookery:sickle": "STRUCTURE_BLOCK",
-    # Öl und Ölblock: Brennstoff wie Kohle bzw. Kohleblock (cookingFuel im Mod). Holzkohle wird nicht von Dorfbewohnern
-    # gekauft und ist nicht platzierbar; den Ölblock verlängert FuelListener auf Kohleblock-Dauer.
-    "kaleidoscope_cookery:oil": "CHARCOAL",
-    "kaleidoscope_cookery:oil_block": "CHARCOAL",
 }
 MAX_DAMAGE = {"kaleidoscope_cookery:stockpot_lid": 120, "kaleidoscope_cookery:sickle": 2000}
 # SickleItem: SwordItem ohne Angriffs-Attribute, Reparatur mit Feuerstein (SICKLE_TIER)
@@ -701,7 +697,7 @@ def collect_recipes(tags: dict) -> dict:
 
 
 # Bei jeder inhaltlichen Aenderung der erzeugten recipes.yml erhoehen: das Plugin ersetzt dann alte Kopien (mit Backup)
-DATA_VERSION = 13
+DATA_VERSION = 12
 STOCKPOT_DEFAULT_TIME = 300
 POT_DEFAULT_TIME = 200
 POT_DEFAULT_STIR_FRY = 3
