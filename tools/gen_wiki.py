@@ -196,8 +196,9 @@ def result_of(value) -> tuple:
 
 
 class Recipe:
-    def __init__(self, station: str, rid: str, inputs: list, outputs: list, notes=None, grid=None, extra=None):
+    def __init__(self, station: str, rid: str, inputs: list, outputs: list, notes=None, grid=None, extra=None, device=None):
         self.station = station
+        self.device = device      # vanilla block shown as the card header instead of the station (furnace, smoker ...)
         self.id = rid
         self.inputs = inputs      # list of (alternatives, count)
         self.outputs = outputs    # list of (item, count, chance)
@@ -337,22 +338,22 @@ def build_recipes(data: Data) -> list:
         elif kind == "crafting_shapeless":
             out.append(Recipe("crafting", rid, count_inputs(data, v["ingredients"]), outputs, [("Formlos", "Shapeless")]))
         elif kind in ("smelting", "smoking", "campfire_cooking", "blasting"):
-            label = {"smelting": ("{item:minecraft:furnace}", "{item:minecraft:furnace}"),
-                     "smoking": ("{item:minecraft:smoker}", "{item:minecraft:smoker}"),
-                     "campfire_cooking": ("{item:minecraft:campfire}", "{item:minecraft:campfire}"),
-                     "blasting": ("{item:minecraft:blast_furnace}", "{item:minecraft:blast_furnace}")}[kind]
+            device = {"smelting": "minecraft:furnace", "smoking": "minecraft:smoker", "campfire_cooking": "minecraft:campfire",
+                      "blasting": "minecraft:blast_furnace"}[kind]
             t = seconds(v.get("time", 200))
-            notes = [(f"{label[0]}, {de_num(t)} s", f"{label[1]}, {t} s")]
             if kind == "campfire_cooking":
-                out.append(Recipe("shawarma_spit", rid, count_inputs(data, [v["ingredient"]]), outputs, notes))
-            out.append(Recipe("furnace", rid, count_inputs(data, [v["ingredient"]]), outputs, notes))
+                out.append(Recipe("shawarma_spit", rid, count_inputs(data, [v["ingredient"]]), outputs,
+                                  [(f"Garzeit: {de_num(t)} s", f"Cooking time: {t} s")]))
+            out.append(Recipe("furnace", rid, count_inputs(data, [v["ingredient"]]), outputs,
+                              [(f"Brenndauer: {de_num(t)} s", f"Cooking time: {t} s")], device=device))
         elif kind == "smithing_transform":
             out.append(Recipe("crafting", rid, count_inputs(data, [v["template"], v["base"], v["addition"]]), outputs,
                               [("{item:minecraft:smithing_table}: Vorlage, Basis, Zusatz", "{item:minecraft:smithing_table}: template, base, addition")]))
     for name, value in data.vanilla.campfire_recipes():
         item = value["result"]["id"] if isinstance(value["result"], dict) else value["result"]
+        t = seconds(value.get("cookingtime", 600))
         out.append(Recipe("shawarma_spit", f"minecraft:{name}", count_inputs(data, [value["ingredient"]]), [(item, 1, 1.0)],
-                          [("Vanilla-Rezept vom {item:minecraft:campfire}", "Vanilla {item:minecraft:campfire} recipe")]))
+                          [(f"Garzeit: {de_num(t)} s", f"Cooking time: {t} s")]))
     for raw, value in data.skewers["recipes"].items():
         if data.disabled_recipe(raw):
             continue
@@ -867,7 +868,9 @@ class Site:
                 outputs += f'<small class="chance">{chance * 100:g} %</small>'
         notes = "".join(f"<li>{self.rich(n, root)}</li>" for n in recipe.notes)
         station_html = ""
-        if station:
+        if recipe.device:
+            station_html = f'<a class="card-station" href="{root}stations/{recipe.station}.html">{self.icon(recipe.device, root, 16, "icon-sm")}{self.name(recipe.device)}</a>'
+        elif station:
             station_html = f'<a class="card-station" href="{root}stations/{station[0]}.html">{self.icon(station[2], root, 16, "icon-sm")}{self.station_title(station)}</a>'
         names = " ".join(self.data.name(o[0], c) for o in recipe.outputs for c in ("de", "en"))
         return (f'<div class="recipe panel" data-name="{e(names.lower())}">{station_html}<div class="recipe-body">{left}{middle}'
@@ -1041,7 +1044,7 @@ class Site:
             root = "../"
             seen, unique = set(), []
             for r in (r for r in self.recipes if r.station == sid):
-                key = (tuple(o[0] for o in r.outputs), tuple(tuple(a) for a, _ in r.inputs))
+                key = (r.device, tuple(o[0] for o in r.outputs), tuple(tuple(a) for a, _ in r.inputs))
                 if key not in seen:
                     seen.add(key)
                     unique.append(r)
