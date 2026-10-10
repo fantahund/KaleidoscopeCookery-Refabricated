@@ -8,6 +8,7 @@ import de.emrion.kaleidoscopeCookery.util.Text;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -56,7 +57,25 @@ public final class OilItems {
         oilPot.editPersistentDataContainer(pdc -> pdc.set(OIL_COUNT, PersistentDataType.INTEGER, clamped));
         ModelProperties.set(oilPot, HAS_OIL_PROPERTY, clamped > 0 ? 1 : 0);
         String key = clamped > 0 ? "tooltip.kaleidoscope_cookery.oil_pot.count" : "tooltip.kaleidoscope_cookery.oil_pot.empty";
-        oilPot.setData(DataComponentTypes.LORE, ItemLore.lore(List.of(Text.noItalic(Lang.raw(key, clamped).color(NamedTextColor.GRAY)))));
+        Component line = Lang.raw(key, clamped);
+        for (java.util.function.BiFunction<ItemStack, Integer, @Nullable Component> provider : LORE_PROVIDERS) {
+            Component replaced = provider.apply(oilPot, clamped);
+            if (replaced != null) {
+                line = replaced;
+                break;
+            }
+        }
+        oilPot.setData(DataComponentTypes.LORE, ItemLore.lore(List.of(Text.noItalic(line.color(NamedTextColor.GRAY)))));
+    }
+
+    private static final List<java.util.function.BiFunction<ItemStack, Integer, @Nullable Component>> LORE_PROVIDERS =
+            new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    /**
+     * Addons (Grilling: Ölsorte) ersetzen die Mengen-Zeile der Ölkanne: (Kanne, Menge) -> Zeile oder null.
+     */
+    public static void addLoreProvider(java.util.function.BiFunction<ItemStack, Integer, @Nullable Component> provider) {
+        LORE_PROVIDERS.add(provider);
     }
 
     // ---- Pfannenwender ----

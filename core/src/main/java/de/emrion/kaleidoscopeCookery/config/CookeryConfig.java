@@ -22,7 +22,8 @@ import java.util.logging.Logger;
 /**
  * Geladene und geprüfte config.yml. Unveränderlich – /kc reload erzeugt eine neue Instanz.
  */
-public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, OilDrops oilDrops, Food food, List<String> disabledRecipes) {
+public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, OilDrops oilDrops, Food food, List<String> disabledRecipes,
+                            boolean dispensers) {
 
     /**
      * Rezept abgeschaltet (disabled-recipes: genaue ID oder Präfix mit "*" am Ende, z. B. "kaleidoscope_cookery:millstone/*")?
@@ -121,6 +122,7 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
         }
         Food food = new Food(config.getBoolean("food.vanilla.enabled", true), Math.max(0, config.getInt("food.vanilla.default-percent", 50)),
                 Collections.unmodifiableMap(percents));
-        return new CookeryConfig(pack, cutting, oilDrops, food, List.copyOf(config.getStringList("disabled-recipes")));
+        return new CookeryConfig(pack, cutting, oilDrops, food, List.copyOf(config.getStringList("disabled-recipes")),
+                config.getBoolean("dispensers", false));
     }
 }

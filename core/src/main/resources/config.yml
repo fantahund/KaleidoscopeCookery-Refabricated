@@ -59,6 +59,10 @@ food:
       DRIED_KELP: 70
       CAKE: 60
 
+# Spender bedienen Stationen wie im Mod: Ölkanne, Bambustablett und Teekanne hinstellen, Zutaten aufs Schneidebrett
+# legen und mit Küchenmessern schneiden. false = Spender verhalten sich wie in Vanilla.
+dispensers: false
+
 # Abgeschaltete Rezepte: Sie bleiben in recipes.yml, werden aber nicht geladen und stehen nicht im Kochbuch.
 # Rezept-ID wie in recipes.yml (bzw. bei Addons deren recipes.yml), mit "*" am Ende für alle mit diesem Anfang,
 # z. B. "kaleidoscope_cookery:millstone/*" (alle Mühlen-Rezepte) oder "kaleidoscope_cookery:bamboo_tray/drying/*".

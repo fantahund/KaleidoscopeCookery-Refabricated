@@ -400,7 +400,7 @@ public class StationListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onDispense(org.bukkit.event.block.BlockDispenseEvent event) {
         Block dispenser = event.getBlock();
-        if (dispenser.getType() != Material.DISPENSER || !(dispenser.getBlockData() instanceof org.bukkit.block.data.Directional directional)) {
+        if (!plugin.getCookeryConfig().dispensers() || dispenser.getType() != Material.DISPENSER || !(dispenser.getBlockData() instanceof org.bukkit.block.data.Directional directional)) {
             return;
         }
         BlockFace facing = directional.getFacing();

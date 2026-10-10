@@ -148,6 +148,8 @@ public class ResourcePackService implements Listener {
             String url = pack == packs.getFirst() && !settings.externalUrl().isBlank() ? settings.externalUrl() : url(pack);
             infos.add(ResourcePackInfo.resourcePackInfo(pack.id(), URI.create(url), pack.sha1()));
         }
+        // Der zuerst geschickte Pack liegt oben: Addons zuerst, damit ihre Dateien (z. B. Ölkanne mit Ölsorten) gewinnen
+        java.util.Collections.reverse(infos);
         player.sendResourcePacks(ResourcePackRequest.resourcePackRequest()
                 .packs(infos)
                 .required(settings.required())
