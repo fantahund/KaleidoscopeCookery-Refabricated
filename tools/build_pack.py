@@ -88,8 +88,9 @@ class Vanilla:
 
 
 class PackBuilder:
-    def __init__(self, vanilla: Vanilla, root: Path, base: Path | None, zip_name: str, icon_font: str):
+    def __init__(self, vanilla: Vanilla, root: Path, base: Path | None, zip_name: str, icon_font: str, palettes: bool = False):
         self.vanilla = vanilla
+        self.palettes = palettes
         self.root = root
         self.zip_name = zip_name
         self.icon_font = icon_font
@@ -647,6 +648,29 @@ class PackBuilder:
                     lines.append(f"{ns}:{item}={atlas_of(texture)}|{tns}:{tpath}|{glyph}")
                     break
         self.files[f"assets/{font_ns}/font/{font_path}.json"] = json.dumps({"providers": providers}, ensure_ascii=True).encode("utf-8")
+        if self.palettes:
+            # Zutaten-Farben für Spieße (Grilling): Partikel-Textur jedes Items (Vanilla, Basis, eigene) als 4x4-Raster
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            import skewer_palette
+            all_items = [n for n in set(self.files) | set(self.base) | self.vanilla.names
+                         if "/items/" in n and n.startswith("assets/") and n.endswith(".json") and n.count("/") == 3]
+            palette_lines = []
+            for name in sorted(all_items):
+                ns, item = name.split("/")[1], name.split("/")[3][:-5]
+                definition = read(name)
+                model = first_model(definition.get("model")) if definition else None
+                if not model:
+                    continue
+                textures = textures_of(model)
+                texture = resolve(textures, textures.get("particle")) or resolve(textures, textures.get("layer0")) \
+                    or next((resolve(textures, v) for v in textures.values() if resolve(textures, v)), None)
+                image = load_texture(texture) if texture else None
+                if image is None:
+                    continue
+                palette_lines.append(f"{ns}:{item}=" + ",".join(f"{c:06X}" for c in skewer_palette.palette(image)))
+            out.mkdir(parents=True, exist_ok=True)
+            (out / "skewer_palettes.txt").write_text("\n".join(palette_lines) + "\n", encoding="utf-8")
+            print(f"Spieß-Paletten: {len(palette_lines)}")
         out.mkdir(parents=True, exist_ok=True)
         (out / "item_icons.txt").write_text("\n".join([f"@font|{self.icon_font}"] + lines + diagrams) + "\n", encoding="utf-8")
         print(f"Item-Bilder: {len(lines)}, davon groß: {len(providers)}")
@@ -707,9 +731,10 @@ def main():
     parser.add_argument("--base", help="Basis-Projekt, dessen Pack der Client zusätzlich hat (nur für die Prüfung)")
     parser.add_argument("--zip-name", default="KaleidoscopeCookery-Pack.zip")
     parser.add_argument("--icon-font", default="kaleidoscope:icons", help="Schrift für die großen Item-Bilder im Kochbuch")
+    parser.add_argument("--palettes", action="store_true", help="skewer_palettes.txt (Zutaten-Farben für Spieße) schreiben")
     args = parser.parse_args()
     vanilla = Vanilla(Path(args.cache).expanduser())
-    builder = PackBuilder(vanilla, Path(args.root).resolve(), Path(args.base).resolve() if args.base else None, args.zip_name, args.icon_font)
+    builder = PackBuilder(vanilla, Path(args.root).resolve(), Path(args.base).resolve() if args.base else None, args.zip_name, args.icon_font, args.palettes)
     sys.exit(builder.run(Path(args.out)))
 
 

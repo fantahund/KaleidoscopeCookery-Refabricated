@@ -206,6 +206,32 @@ class Importer:
         if unknown:
             raise SystemExit(f"Unbekannte Item-Properties: {sorted(unknown)}")
 
+    def max_tint(self, model_ref: str, depth: int = 0) -> int:
+        model = self.models.get(model_ref)
+        if model is None or depth > 16:
+            return -1
+        if "elements" in model:
+            return max((face.get("tintindex", -1) for e in model["elements"] for face in e.get("faces", {}).values()), default=-1)
+        parent = model.get("parent")
+        return self.max_tint(parent if ":" in (parent or "") else f"minecraft:{parent}", depth + 1) if parent else -1
+
+    def add_tints(self, node):
+        """Spieße (Grilling): Zutaten-Farben kommen im Mod vom Client (SkewerColorProvider). Hier liest jedes
+        tintindex die Farbe custom_model_data.colors[tintindex]; das Plugin schreibt die Farben in das Item."""
+        if isinstance(node, list):
+            for n in node:
+                self.add_tints(n)
+            return
+        if not isinstance(node, dict):
+            return
+        if node.get("type") == "minecraft:model" and "tints" not in node:
+            highest = self.max_tint(node.get("model", ""))
+            if highest >= 0:
+                node["tints"] = [{"type": "minecraft:custom_model_data", "index": i, "default": -1} for i in range(highest + 1)]
+        for value in node.values():
+            if isinstance(value, (dict, list)):
+                self.add_tints(value)
+
     def add_inline_model(self, ns: str, path: str, model: dict) -> str:
         model_ref = ref(ns, path)
         self.models[model_ref] = clean_model(model)
@@ -298,6 +324,9 @@ class Importer:
         self.collect()
         self.convert_models()
         self.apply_fork_items()
+        if self.project == "grilling":
+            for definition in self.item_defs.values():
+                self.add_tints(definition)
         self.write()
         print(f"Dateien: {len(self.files)}, Modelle: {len(self.models)}, Item-Definitionen: {len(self.item_defs)}, "
               f"Properties: {len(self.properties)}")

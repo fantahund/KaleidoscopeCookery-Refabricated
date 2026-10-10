@@ -61,6 +61,22 @@ public final class ModelProperties {
             floats.add(0f);
         }
         floats.set(index, value);
-        stack.setData(DataComponentTypes.CUSTOM_MODEL_DATA, CustomModelData.customModelData().addFloats(floats).build());
+        CustomModelData.Builder builder = CustomModelData.customModelData().addFloats(floats);
+        if (current != null) {
+            builder.addFlags(current.flags()).addStrings(current.strings()).addColors(current.colors());
+        }
+        stack.setData(DataComponentTypes.CUSTOM_MODEL_DATA, builder.build());
+    }
+
+    /**
+     * Tint-Farben setzen (custom_model_data.colors, Index = tintindex im Modell), Floats bleiben.
+     */
+    public static void setColors(ItemStack stack, List<org.bukkit.Color> colors) {
+        CustomModelData current = stack.getData(DataComponentTypes.CUSTOM_MODEL_DATA);
+        CustomModelData.Builder builder = CustomModelData.customModelData().addColors(colors);
+        if (current != null) {
+            builder.addFloats(current.floats()).addFlags(current.flags()).addStrings(current.strings());
+        }
+        stack.setData(DataComponentTypes.CUSTOM_MODEL_DATA, builder.build());
     }
 }

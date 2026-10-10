@@ -829,6 +829,37 @@ GRILLING_RESOURCES = GRILLING_ROOT / "src" / "main" / "resources"
 GRILLING_DATA_VERSION = 1
 
 
+def write_skewers():
+    """Grilling: Spieß-Rezepte (grilling/skewers.json, Tags aufgelöst) und Effekte der gegrillten Spieße."""
+    data = read_json(GRILLING / "common/src/main/resources/data/kaleidoscope_grilling/grilling/skewers.json")
+    tags = load_tags()
+
+    def options(slot):
+        values = []
+        for selector in slot:
+            values += resolve_tag(selector[1:], tags) if selector.startswith("#") else [item_id(selector)]
+        return list(dict.fromkeys(values))
+
+    recipes, effects = {}, {}
+    for entry in data["skewers"]:
+        if entry.get("ingredients"):
+            recipe = {"ingredients": [options(slot) for slot in entry["ingredients"]]}
+            if entry.get("cooked_result"):
+                recipe["cooked"] = entry["cooked_result"]
+            recipes[entry["id"]] = recipe
+        if entry.get("effect"):
+            effects[entry["id"]] = {"effect": entry["effect"], "seconds": entry["effect_seconds"]}
+    out = {"recipes": recipes, "effects": effects,
+           "skewerable": resolve_tag("kaleidoscope_grilling:skewerable_ingredients", tags),
+           "unskewerable": resolve_tag("kaleidoscope_grilling:unskewerable_ingredients", tags),
+           "seasoning-effects": {e["ingredient"]: e["kind"] for e in data.get("seasoning_effects", [])}}
+    target = GRILLING_RESOURCES / "generated" / "skewers.yml"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("# Generiert von tools/gen_data.py aus grilling/skewers.json - nicht von Hand bearbeiten.\n"
+                      + to_yaml(out) + "\n", encoding="utf-8")
+    return len(recipes)
+
+
 def split_recipes(core: dict, full: dict) -> dict:
     """Was Grilling dazubringt oder an Cookery-Rezepten aendert (gleiche ID = ueberschreiben)."""
     addon = {}
@@ -872,9 +903,10 @@ def main():
                        "# (gleiche ID = ersetzt). Format wie die recipes.yml von KaleidoscopeCookery.\n")
     (GRILLING_RESOURCES / "recipes.yml").write_text(grilling_header + to_yaml(grilling_recipes) + "\n", encoding="utf-8")
     write_german_lang()
+    skewers = write_skewers()
     print(f"Cookery: {len(core_items)} Items, Wok {len(recipes['pot'])}+{len(recipes['flex-pot'])}, Suppentopf {len(recipes['stockpot'])}+{len(recipes['flex-stockpot'])}, "
           f"Schneidebrett {len(recipes['chopping-board'])}, Vanilla {len(recipes['vanilla'])}, Tags {len(recipes['tags'])}")
-    print(f"Grilling: {len(grilling_items)} Items, Rezepte: " + ", ".join(f"{k} {len(v)}" for k, v in grilling_recipes.items() if isinstance(v, dict)))
+    print(f"Grilling: {len(grilling_items)} Items, {skewers} Spieß-Rezepte, Rezepte: " + ", ".join(f"{k} {len(v)}" for k, v in grilling_recipes.items() if isinstance(v, dict)))
 
 
 if __name__ == "__main__":

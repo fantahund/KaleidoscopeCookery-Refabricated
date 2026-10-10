@@ -41,8 +41,36 @@ public class VanillaRecipes implements Listener {
     private final Plugin plugin;
     private final List<NamespacedKey> registered = new ArrayList<>();
     private final java.util.Map<NamespacedKey, Ingredient> smithingBases = new java.util.HashMap<>();
-    /** Ein Rezept für alle Reisschalen: zwei beliebige Mod-Items, das Ergebnis bestimmt onPrepareRiceBowl */
-    private static final NamespacedKey RICE_BOWL = Keys.key("rice_bowl");
+    /**
+     * Platzhalter-Rezepte "1 bis 9 beliebige Mod-Items" (formlos, zuletzt registriert): greifen nur, wenn kein genaueres
+     * Rezept passt, z. B. bei Mod-Items mit Qualität oder gespeicherten Daten, auf die keine ExactChoice passt.
+     * Das Ergebnis bestimmen die Auflöser (Reisschalen, beschriebene Rezepte zurücksetzen, Addons).
+     */
+    private static final String ANY_PREFIX = "any_items_";
+    private final List<CraftingResolver> resolvers = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    /**
+     * Ergebnis für Mod-Items, die nur auf die Platzhalter-Rezepte passen.
+     */
+    @FunctionalInterface
+    public interface CraftingResolver {
+        /**
+         * @param inputs belegte Felder der Werkbank (nur Mod-Items)
+         * @return Ergebnis oder null, wenn der Auflöser nicht zuständig ist
+         */
+        @Nullable ItemStack resolve(List<ItemStack> inputs);
+    }
+
+    /**
+     * Auflöser anmelden (Addons, z. B. Spieß-Rezeptbuch in KaleidoscopeGrilling).
+     */
+    public void addResolver(CraftingResolver resolver) {
+        resolvers.add(resolver);
+    }
+
+    public static boolean isAnyItemsRecipe(@Nullable Recipe recipe) {
+        return recipe instanceof Keyed keyed && keyed.getKey().getNamespace().equals(Keys.NAMESPACE) && keyed.getKey().getKey().startsWith(ANY_PREFIX);
+    }
     private @Nullable Recipes recipes;
 
     public VanillaRecipes(Plugin plugin) {
@@ -73,17 +101,16 @@ public class VanillaRecipes implements Listener {
                 plugin.getLogger().warning("Rezept " + recipe.id() + " konnte nicht registriert werden: " + e.getMessage());
             }
         }
-        // Zuletzt registrieren, damit genauere Rezepte mit zwei Mod-Items zuerst passen
-        if (!recipes.riceBowl().isEmpty()) {
-            ItemStack icon = recipes.riceBowl().getFirst().result().create(items());
-            if (icon != null) {
-                // Mod-Items mit Qualität/Wärme passen auf keine ExactChoice – deshalb Basis-Material und eigene Prüfung
-                ShapelessRecipe riceBowl = new ShapelessRecipe(RICE_BOWL, icon);
-                riceBowl.addIngredient(new RecipeChoice.MaterialChoice(CookeryItems.BASE_MATERIAL));
-                riceBowl.addIngredient(new RecipeChoice.MaterialChoice(CookeryItems.BASE_MATERIAL));
-                if (Bukkit.addRecipe(riceBowl, false)) {
-                    registered.add(RICE_BOWL);
-                }
+        // Zuletzt registrieren, damit genauere Rezepte zuerst passen
+        ItemStack icon = ItemStack.of(CookeryItems.BASE_MATERIAL);
+        for (int count = 1; count <= 9; count++) {
+            NamespacedKey key = Keys.key(ANY_PREFIX + count);
+            ShapelessRecipe any = new ShapelessRecipe(key, icon);
+            for (int i = 0; i < count; i++) {
+                any.addIngredient(new RecipeChoice.MaterialChoice(CookeryItems.BASE_MATERIAL));
+            }
+            if (Bukkit.addRecipe(any, false)) {
+                registered.add(key);
             }
         }
         Bukkit.updateRecipes();
@@ -102,15 +129,15 @@ public class VanillaRecipes implements Listener {
     }
 
     private List<NamespacedKey> discoverable() {
-        return registered.stream().filter(key -> !key.equals(RICE_BOWL)).toList();
+        return registered.stream().filter(key -> !key.getKey().startsWith(ANY_PREFIX)).toList();
     }
 
     /**
-     * RiceBowlRecipe#matches/assemble: genau eine Zutat und genau ein gekochter Reis, beste Qualität aufs Ergebnis.
+     * Platzhalter-Rezept: Ergebnis von den Auflösern, sonst keins.
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPrepareRiceBowl(org.bukkit.event.inventory.PrepareItemCraftEvent event) {
-        if (!(event.getRecipe() instanceof Keyed keyed) || !keyed.getKey().equals(RICE_BOWL) || recipes == null) {
+    public void onPrepareAnyItems(org.bukkit.event.inventory.PrepareItemCraftEvent event) {
+        if (!isAnyItemsRecipe(event.getRecipe())) {
             return;
         }
         List<ItemStack> inputs = new ArrayList<>();
@@ -118,6 +145,36 @@ public class VanillaRecipes implements Listener {
             if (stack != null && !stack.isEmpty()) {
                 inputs.add(stack);
             }
+        }
+        ItemStack result = riceBowl(inputs);
+        if (result == null) {
+            result = resetRecipe(inputs);
+        }
+        for (CraftingResolver resolver : resolvers) {
+            if (result != null) {
+                break;
+            }
+            result = resolver.resolve(inputs);
+        }
+        event.getInventory().setResult(result);
+    }
+
+    /**
+     * Beschriebenes Rezept allein in der Werkbank: wieder leer (reset_recipe_item; mit Daten passt keine ExactChoice).
+     */
+    private @Nullable ItemStack resetRecipe(List<ItemStack> inputs) {
+        if (inputs.size() != 1 || !de.emrion.kaleidoscopeCookery.item.RecipeItems.ITEM.equals(CookeryItems.idOf(inputs.getFirst()))) {
+            return null;
+        }
+        return items().create(de.emrion.kaleidoscopeCookery.item.RecipeItems.ITEM, 1);
+    }
+
+    /**
+     * RiceBowlRecipe#matches/assemble: genau eine Zutat und genau ein gekochter Reis, beste Qualität aufs Ergebnis.
+     */
+    private @Nullable ItemStack riceBowl(List<ItemStack> inputs) {
+        if (recipes == null) {
+            return null;
         }
         ItemStack result = null;
         if (inputs.size() == 2) {
@@ -142,7 +199,7 @@ public class VanillaRecipes implements Listener {
                 cookery.getFoodService().setQuality(result, best);
             }
         }
-        event.getInventory().setResult(result);
+        return result;
     }
 
     public void unregister() {

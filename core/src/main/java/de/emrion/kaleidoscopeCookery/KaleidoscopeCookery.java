@@ -298,6 +298,10 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         stations.register(CropStation.type(kind));
     }
 
+    public VanillaRecipes getVanillaRecipes() {
+        return vanillaRecipes;
+    }
+
     /** Angemeldete Addons (eigene Plugins wie KaleidoscopeGrilling) */
     public java.util.List<org.bukkit.plugin.Plugin> getAddons() {
         return java.util.Collections.unmodifiableList(addons);
