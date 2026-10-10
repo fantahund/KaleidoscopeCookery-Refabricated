@@ -898,8 +898,9 @@ Assets unter CC BY-NC-SA 4.0. Keine offizielle Seite der Mod-Autoren.</footer>
              + cards("kaleidoscope_cookery:straw_hat") +
              '<p>Pflanze die Samen auf Ackerland. Was wo wächst, steht auf der Seite <a href="anbau.html">Anbau</a>.</p>'),
             ("Küchenmesser",
-             f"<p>Das {link('kaleidoscope_cookery:copper_kitchen_knife')} ist das wichtigste Werkzeug: Nur damit schneidest du auf dem "
-             "Schneidebrett, und nur damit lassen Tiere Öl und besondere Zutaten fallen.</p>"
+             "<p>Ein Küchenmesser ist das wichtigste Werkzeug: Nur mit einem Küchenmesser schneidest du auf dem Schneidebrett, "
+             "und nur damit lassen Tiere Öl und besondere Zutaten fallen. Es gibt sie aus Kupfer, Eisen, Gold und Diamant; "
+             f"das Netherit-Messer entsteht am Schmiedetisch. Für den Anfang reicht das {link('kaleidoscope_cookery:copper_kitchen_knife')}.</p>"
              + cards("kaleidoscope_cookery:copper_kitchen_knife", "kaleidoscope_cookery:iron_kitchen_knife")),
             ("Öl besorgen",
              f"<p>Töte ein Schwein (oder Hoglin, Piglin …) mit dem Küchenmesser – es lässt {link('kaleidoscope_cookery:oil')} fallen. "
