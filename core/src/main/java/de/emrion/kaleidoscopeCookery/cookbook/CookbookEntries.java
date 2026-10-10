@@ -23,7 +23,6 @@ import org.bukkit.inventory.RecipeChoice;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,7 +34,21 @@ import java.util.Set;
  */
 public final class CookbookEntries {
 
-    private final Map<Category, List<CookbookEntry>> byCategory = new EnumMap<>(Category.class);
+    private final Map<Category, List<CookbookEntry>> byCategory = new java.util.LinkedHashMap<>();
+    /** Einträge von Addons (z. B. Grill, Aufspießen aus Grilling), bei jedem Neuaufbau abgefragt */
+    private static final List<java.util.function.Supplier<List<CookbookEntry>>> SOURCES = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    /**
+     * Einträge eines Addons anmelden. Die Kategorie meldet das Addon vorher mit {@link Category#register} an.
+     */
+    public static void addSource(java.util.function.Supplier<List<CookbookEntry>> source) {
+        SOURCES.add(source);
+    }
+
+    /** Anzahl angemeldeter Quellen (das Kochbuch baut neu auf, wenn sich das ändert) */
+    static int sourceCount() {
+        return SOURCES.size();
+    }
 
     public CookbookEntries(Recipes recipes) {
         for (Category category : Category.values()) {
@@ -100,6 +113,11 @@ public final class CookbookEntries {
             addVanilla(recipe);
         }
         addCampfire();
+        for (var source : SOURCES) {
+            for (CookbookEntry entry : source.get()) {
+                byCategory.computeIfAbsent(entry.category(), k -> new ArrayList<>()).add(entry);
+            }
+        }
         for (List<CookbookEntry> entries : byCategory.values()) {
             entries.sort(Comparator.comparing(CookbookEntry::id));
         }
@@ -258,7 +276,7 @@ public final class CookbookEntries {
     }
 
     public List<CookbookEntry> of(Category category) {
-        return byCategory.get(category);
+        return byCategory.getOrDefault(category, List.of());
     }
 
     public List<CookbookEntry> all() {

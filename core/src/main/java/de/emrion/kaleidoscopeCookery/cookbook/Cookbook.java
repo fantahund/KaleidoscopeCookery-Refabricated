@@ -57,11 +57,14 @@ public class Cookbook {
     /**
      * Einträge, neu aufgebaut nach /kc reload.
      */
+    private int cachedSources = -1;
+
     private CookbookEntries entries() {
         Recipes recipes = plugin.getRecipes();
-        if (entries == null || cachedFor != recipes) {
+        if (entries == null || cachedFor != recipes || cachedSources != CookbookEntries.sourceCount()) {
             entries = new CookbookEntries(recipes);
             cachedFor = recipes;
+            cachedSources = CookbookEntries.sourceCount();
         }
         return entries;
     }
@@ -506,17 +509,12 @@ public class Cookbook {
         if (stationItem == null) {
             return null;
         }
-        return switch (stationItem.asString()) {
-            case "kaleidoscope_cookery:pot" -> Category.POT;
-            case "kaleidoscope_cookery:stockpot" -> Category.STOCKPOT;
-            case "kaleidoscope_cookery:steamer" -> Category.STEAMER;
-            case "kaleidoscope_cookery:chopping_board" -> Category.CHOPPING_BOARD;
-            case "kaleidoscope_cookery:teapot" -> Category.TEAPOT;
-            case "kaleidoscope_cookery:millstone" -> Category.MILLSTONE;
-            case "kaleidoscope_cookery:bamboo_tray" -> Category.BAMBOO_TRAY;
-            case "kaleidoscope_cookery:shawarma_spit" -> Category.SHAWARMA_SPIT;
-            default -> null;
-        };
+        for (Category category : Category.values()) {
+            if (stationItem.equals(category.stationItem())) {
+                return category;
+            }
+        }
+        return null;
     }
 
     public static boolean isCookbook(@Nullable ItemStack stack) {

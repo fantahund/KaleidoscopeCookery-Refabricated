@@ -58,3 +58,11 @@ food:
       CHORUS_FRUIT: 100
       DRIED_KELP: 70
       CAKE: 60
+
+# Abgeschaltete Rezepte: Sie bleiben in recipes.yml, werden aber nicht geladen und stehen nicht im Kochbuch.
+# Rezept-ID wie in recipes.yml (bzw. bei Addons deren recipes.yml), mit "*" am Ende für alle mit diesem Anfang,
+# z. B. "kaleidoscope_cookery:millstone/*" (alle Mühlen-Rezepte) oder "kaleidoscope_cookery:bamboo_tray/drying/*".
+disabled-recipes:
+  # Ölblock und Strohballen herstellen (zurück in Öl bzw. Reisrispen geht weiter)
+  - "kaleidoscope_cookery:oil_block"
+  - "kaleidoscope_cookery:straw_block"

@@ -236,6 +236,23 @@ public final class KaleidoscopeCookery extends JavaPlugin {
                 }
             }
         }
+        // disabled-recipes (config.yml): Rezepte bleiben in den Dateien, werden aber nicht geladen
+        int disabled = 0;
+        for (String section : config.getKeys(false)) {
+            org.bukkit.configuration.ConfigurationSection values = config.getConfigurationSection(section);
+            if (values == null || section.equals("tags") || cookeryConfig == null) {
+                continue;
+            }
+            for (String id : java.util.List.copyOf(values.getKeys(false))) {
+                if (cookeryConfig.isRecipeDisabled(id)) {
+                    values.set(id, null);
+                    disabled++;
+                }
+            }
+        }
+        if (disabled > 0) {
+            getLogger().info(disabled + " Rezepte abgeschaltet (disabled-recipes)");
+        }
         return Recipes.load(config, getLogger());
     }
 

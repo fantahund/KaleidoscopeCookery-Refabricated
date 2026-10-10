@@ -355,6 +355,12 @@
     "tooltip.kaleidoscope_grilling.skewer_plate.place": "Schleichen + Rechtsklick auf einen Block: hinstellen",
     "tooltip.kaleidoscope_grilling.skewer_plate.contents": "Darauf:",
     "container.kaleidoscope_grilling.advanced_rack": "Erweitertes Küchenregal",
-    "tooltip.kaleidoscope_grilling.advanced_rack.saved_contents": "Gespeicherter Inhalt:"
+    "tooltip.kaleidoscope_grilling.advanced_rack.saved_contents": "Gespeicherter Inhalt:",
+    "jei.kaleidoscope_grilling.threading": "Feste Spieße",
+    "jei.kaleidoscope_grilling.threading.hint": "Stock in die Nebenhand, dann mit den Zutaten rechtsklicken",
+    "jei.kaleidoscope_grilling.grilling": "Grillen",
+    "jei.kaleidoscope_grilling.seasoning": "Gewürz mischen",
+    "jei.kaleidoscope_grilling.seasoning.optional": "Weitere Pulver nach Wahl",
+    "jei.kaleidoscope_grilling.oil_pressing": "Rapsöl pressen"
   }
 }

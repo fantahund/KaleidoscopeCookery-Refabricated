@@ -36,7 +36,10 @@ ICON_FIRST_CHAR = 0xF0000
 ICON_HEIGHT = 16
 ICON_ASCENT = 7
 # Stations-Bilder im Rezept-Diagramm (32 Pixel, in der mittleren Reihe des Rasters, siehe Cookbook#diagram)
-DIAGRAM_ITEMS = {"minecraft:crafting_table", "minecraft:furnace", "kaleidoscope_cookery:shawarma_spit"}
+DIAGRAM_ITEMS = {"minecraft:crafting_table", "minecraft:furnace", "kaleidoscope_cookery:shawarma_spit",
+                 # Grilling-Seiten (Addon-Pack)
+                 "kaleidoscope_grilling:grill", "kaleidoscope_grilling:oil_press", "kaleidoscope_grilling:empty_seasoning_bottle",
+                 "minecraft:stick"}
 # Items, deren Block aus mehreren Modellen übereinander besteht: (Modell, y-Versatz in Modell-Pixeln)
 MULTIBLOCK_MODELS = {"kaleidoscope_cookery:shawarma_spit": [("kaleidoscope_cookery:block/shawarma_spit_lower", 0),
                                                             ("kaleidoscope_cookery:block/shawarma_spit_upper", 16)]}
