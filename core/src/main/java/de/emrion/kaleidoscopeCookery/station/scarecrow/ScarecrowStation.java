@@ -146,7 +146,7 @@ public class ScarecrowStation extends Station {
         } else {
             // aufrecht in der Hand: Bild um 45° gedreht (Stiel unten, Kopf oben), Vorderseite nach vorn, am Stiel gehalten
             showItemPart("main_hand", mainHand, new Transformation(rotation.transform(new Vector3f(RIGHT_HAND).add(0, 0.3f, 0)),
-                    new Quaternionf(rotation).rotateY((float) Math.PI).rotateZ((float) Math.toRadians(45)), new Vector3f(0.75f),
+                    new Quaternionf(rotation).rotateY((float) Math.PI).rotateZ((float) Math.toRadians(-45)), new Vector3f(0.75f),
                     new Quaternionf()), 0, null);
         }
         Key lantern = lanternModel(offHand);
@@ -154,7 +154,7 @@ public class ScarecrowStation extends Station {
             hidePart("off_hand");
         } else {
             // Laterne hängt mit dem Griff an der linken Hand
-            Vector3f at = rotation.transform(new Vector3f(LEFT_HAND).add(0, -0.1f, 0));
+            Vector3f at = rotation.transform(new Vector3f(LEFT_HAND).add(0, -0.16f, 0));
             showPart("off_hand", lantern, new Transformation(at, rotation, new Vector3f(0.75f), new Quaternionf()));
         }
         updateLight();
