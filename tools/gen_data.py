@@ -291,7 +291,8 @@ BASE_MATERIALS = {
 MAX_DAMAGE = {"kaleidoscope_cookery:stockpot_lid": 120, "kaleidoscope_cookery:sickle": 2000}
 # SickleItem: SwordItem without attack attributes, repaired with flint (SICKLE_TIER)
 EXTRA_ITEM_DATA = {"kaleidoscope_cookery:sickle": {"repair": "FLINT", "attributes": False}}
-# Clothes (ArmorMaterial FARMER in the mod): leather armour as base (enchantments), armour values as in the mod, no durability.
+# Clothes (ArmorMaterial FARMER in the Fabric fork): leather armour as base and prototype, so durability (55/80/75/65),
+# enchantability and repairing with leather match the fork; armour values as in the mod. (The NeoForge original had no durability.)
 # Straw hats without an equipment asset: the client then shows the 3D item model on the head.
 WEARABLES = {
     "kaleidoscope_cookery:straw_hat": ("LEATHER_HELMET", "head", None, 3),
@@ -477,7 +478,6 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry["prototype"] = base
                 entry["equippable"] = {"slot": slot, "asset": asset} if asset else {"slot": slot}
                 entry["armor"] = armor
-                entry["unbreakable"] = True
                 entry.pop("max-stack", None)
             if full_id == "kaleidoscope_cookery:raw_dough":
                 entry["use-animation"] = "bow"  # RawDoughItem: hold it like a bow, then it turns into noodles

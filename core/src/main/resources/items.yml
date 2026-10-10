@@ -988,7 +988,6 @@ items:
       slot: feet
       asset: "kaleidoscope_cookery:cookery_farmer"
     armor: 2
-    unbreakable: true
   "kaleidoscope_cookery:farmer_chest_plate":
     model: "kaleidoscope_cookery:farmer_chest_plate"
     name: item.kaleidoscope_cookery.farmer_chest_plate
@@ -998,7 +997,6 @@ items:
       slot: chest
       asset: "kaleidoscope_cookery:cookery_farmer"
     armor: 4
-    unbreakable: true
   "kaleidoscope_cookery:farmer_leggings":
     model: "kaleidoscope_cookery:farmer_leggings"
     name: item.kaleidoscope_cookery.farmer_leggings
@@ -1008,7 +1006,6 @@ items:
       slot: legs
       asset: "kaleidoscope_cookery:cookery_farmer"
     armor: 5
-    unbreakable: true
   "kaleidoscope_cookery:fearsome_thick_soup":
     model: "kaleidoscope_cookery:fearsome_thick_soup"
     name: item.kaleidoscope_cookery.fearsome_thick_soup
@@ -2176,7 +2173,6 @@ items:
     equippable:
       slot: head
     armor: 3
-    unbreakable: true
   "kaleidoscope_cookery:straw_hat_flower":
     model: "kaleidoscope_cookery:straw_hat_flower"
     name: item.kaleidoscope_cookery.straw_hat_flower
@@ -2185,7 +2181,6 @@ items:
     equippable:
       slot: head
     armor: 3
-    unbreakable: true
   "kaleidoscope_cookery:strung_mushrooms":
     model: "kaleidoscope_cookery:strung_mushrooms"
     name: block.kaleidoscope_cookery.strung_mushrooms
