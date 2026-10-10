@@ -213,6 +213,37 @@ public class ChoppingBoardStation extends Station {
         return true;
     }
 
+    /**
+     * ChoppingBoardDispenseBehavior: Zutat aus dem Spender auflegen (onPutItem ohne Spieler).
+     */
+    public boolean putFromDispenser(ItemStack item) {
+        ChoppingBoardRecipe recipe = isOccupied() ? null : plugin().getRecipes().findChoppingBoard(item);
+        if (recipe == null) {
+            return false;
+        }
+        putOn(recipe, item.asOne());
+        world().playSound(center(), Sound.BLOCK_WOOD_PLACE, SoundCategory.BLOCKS, 1, 1.2f);
+        return true;
+    }
+
+    /**
+     * ChoppingBoardDispenseBehavior: Messer aus dem Spender schneidet einmal (onCutItem), fertige Ergebnisse springen heraus.
+     */
+    public boolean cutFromDispenser(ItemStack knife) {
+        if (!isOccupied()) {
+            return false;
+        }
+        if (isDone()) {
+            popResults();
+            return true;
+        }
+        cuts = (int) Math.min(maxCuts, (long) cuts + (1L << Math.clamp(QuickKnifeListener.level(knife), 0, 2)));
+        markDirty();
+        playCutEffects();
+        updateDisplay();
+        return true;
+    }
+
     private void putOn(ChoppingBoardRecipe recipe, ItemStack item) {
         recipeId = recipe.id();
         model = recipe.model();

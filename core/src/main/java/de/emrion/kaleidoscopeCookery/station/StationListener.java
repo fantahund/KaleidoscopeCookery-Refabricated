@@ -313,27 +313,7 @@ public class StationListener implements Listener {
             replaced.update(true, false);
             return false;
         }
-        ItemStack placedFrom = item.asOne();
-        Key placedId = itemId;
-        Station placed = stations.place(type, target, facing, station -> {
-            if (station instanceof PlateStation plate) {
-                plate.initFrom(placedFrom, placedId);
-            } else if (station instanceof TeapotStation teapot) {
-                teapot.initFrom(placedFrom);
-            } else if (station instanceof CupStation cup) {
-                cup.initFrom(placedId);
-            } else if (station instanceof OilPotStation oilPot) {
-                oilPot.initFrom(placedFrom);
-            } else if (station instanceof de.emrion.kaleidoscopeCookery.station.basket.FruitBasketStation basket) {
-                basket.initFrom(placedFrom);
-            } else if (station instanceof de.emrion.kaleidoscopeCookery.station.decor.StrawBlockStation straw) {
-                straw.initAxis(face);
-            } else if (station instanceof de.emrion.kaleidoscopeCookery.station.decor.RecipeBlockStation recipe) {
-                recipe.initFrom(placedFrom, face);
-            } else if (station instanceof PlacedFromItem addon) {
-                addon.initFrom(placedFrom, face);
-            }
-        });
+        Station placed = stations.place(type, target, facing, station -> initPlaced(station, item.asOne(), itemId, face));
         if (!placed.canSurvive()) {
             // z. B. Chili-Kette ohne Halt darüber
             stations.remove(placed);
@@ -345,6 +325,124 @@ public class StationListener implements Listener {
         player.swingHand(hand);
         target.getWorld().playSound(target.getLocation().toCenterLocation(), Sound.BLOCK_WOOD_PLACE, SoundCategory.BLOCKS, 1, 1);
         return true;
+    }
+
+    /**
+     * Daten des Items auf die frisch gesetzte Station übernehmen.
+     */
+    private static void initPlaced(Station station, ItemStack placedFrom, @Nullable Key placedId, BlockFace face) {
+        if (station instanceof PlateStation plate) {
+            plate.initFrom(placedFrom, placedId);
+        } else if (station instanceof TeapotStation teapot) {
+            teapot.initFrom(placedFrom);
+        } else if (station instanceof CupStation cup) {
+            cup.initFrom(placedId);
+        } else if (station instanceof OilPotStation oilPot) {
+            oilPot.initFrom(placedFrom);
+        } else if (station instanceof de.emrion.kaleidoscopeCookery.station.basket.FruitBasketStation basket) {
+            basket.initFrom(placedFrom);
+        } else if (station instanceof de.emrion.kaleidoscopeCookery.station.decor.StrawBlockStation straw) {
+            straw.initAxis(face);
+        } else if (station instanceof de.emrion.kaleidoscopeCookery.station.decor.RecipeBlockStation recipe) {
+            recipe.initFrom(placedFrom, face);
+        } else if (station instanceof PlacedFromItem addon) {
+            addon.initFrom(placedFrom, face);
+        }
+    }
+
+    // ---- Spender (block/dispenser im Mod) ----
+
+    /** ChoppingBoardDispenseBehavior: diese Zutaten (und roher Teig) legt ein Spender aufs Schneidebrett */
+    private static final java.util.Set<Material> DISPENSER_INGREDIENTS = java.util.EnumSet.of(Material.TROPICAL_FISH, Material.COD,
+            Material.COOKED_COD, Material.SALMON, Material.COOKED_SALMON, Material.MUTTON, Material.COOKED_MUTTON, Material.BEEF,
+            Material.COOKED_BEEF, Material.PORKCHOP, Material.COOKED_PORKCHOP, Material.CHICKEN, Material.COOKED_CHICKEN,
+            Material.RABBIT, Material.COOKED_RABBIT);
+    private static final Key RAW_DOUGH = Key.key("kaleidoscope_cookery", "raw_dough");
+    /** OilPot-, BambooTray- und TeapotDispenseBehavior: diese Items setzt ein Spender vor sich hin */
+    private static final java.util.Set<Key> DISPENSER_PLACED = java.util.Set.of(de.emrion.kaleidoscopeCookery.station.oil.OilItems.OIL_POT,
+            Key.key("kaleidoscope_cookery", "bamboo_tray"), Key.key("kaleidoscope_cookery", "teapot"));
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onDispense(org.bukkit.event.block.BlockDispenseEvent event) {
+        Block dispenser = event.getBlock();
+        if (dispenser.getType() != Material.DISPENSER || !(dispenser.getBlockData() instanceof org.bukkit.block.data.Directional directional)) {
+            return;
+        }
+        BlockFace facing = directional.getFacing();
+        Block front = dispenser.getRelative(facing);
+        ItemStack item = event.getItem();
+        Key id = CookeryItems.idOf(item);
+        if (stations.at(front) instanceof de.emrion.kaleidoscopeCookery.station.choppingboard.ChoppingBoardStation board) {
+            boolean knife = id != null && id.value().endsWith("kitchen_knife");
+            if (!knife && !RAW_DOUGH.equals(id) && (id != null || !DISPENSER_INGREDIENTS.contains(item.getType()))) {
+                return;
+            }
+            event.setCancelled(true);
+            boolean done = knife ? board.cutFromDispenser(item) : board.putFromDispenser(item);
+            afterDispense(dispenser, item, done, knife);
+            return;
+        }
+        if (id == null || !DISPENSER_PLACED.contains(id)) {
+            return;
+        }
+        event.setCancelled(true);
+        StationType type = placeableType(item);
+        boolean done = type != null && canPlaceAt(type, front);
+        if (done) {
+            // Ausrichtung wie DirectionalPlaceContext: zum Spender hin, nach oben/unten zeigend nach Norden
+            Facing placeFacing = facing.getModY() != 0 ? Facing.NORTH : Facing.towards(yawOf(facing));
+            Station placed = stations.place(type, front, placeFacing, station -> initPlaced(station, item.asOne(), id, BlockFace.UP));
+            if (!placed.canSurvive()) {
+                stations.remove(placed);
+                done = false;
+            } else {
+                front.getWorld().playSound(front.getLocation().toCenterLocation(), Sound.BLOCK_WOOD_PLACE, SoundCategory.BLOCKS, 1, 1);
+            }
+        }
+        afterDispense(dispenser, item, done, false);
+    }
+
+    private static float yawOf(BlockFace face) {
+        return switch (face) {
+            case SOUTH -> 0;
+            case WEST -> 90;
+            case NORTH -> 180;
+            default -> 270;
+        };
+    }
+
+    /**
+     * Gelungen: im nächsten Tick ein Item aus dem Spender nehmen bzw. das Messer abnutzen (nach dem abgebrochenen
+     * Auswurf). Fehlgeschlagen: Klick-Geräusch wie OptionalDispenseItemBehavior.
+     */
+    private void afterDispense(Block dispenser, ItemStack used, boolean done, boolean knife) {
+        if (!done) {
+            dispenser.getWorld().playSound(dispenser.getLocation().toCenterLocation(), Sound.BLOCK_DISPENSER_FAIL, SoundCategory.BLOCKS, 1, 1.2f);
+            return;
+        }
+        dispenser.getWorld().playSound(dispenser.getLocation().toCenterLocation(), Sound.BLOCK_DISPENSER_DISPENSE, SoundCategory.BLOCKS, 1, 1);
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            if (!(dispenser.getState(false) instanceof org.bukkit.block.Dispenser state)) {
+                return;
+            }
+            for (ItemStack stack : state.getInventory().getContents()) {
+                if (stack == null || !stack.isSimilar(used)) {
+                    continue;
+                }
+                if (knife) {
+                    Integer damage = stack.getData(io.papermc.paper.datacomponent.DataComponentTypes.DAMAGE);
+                    Integer max = stack.getData(io.papermc.paper.datacomponent.DataComponentTypes.MAX_DAMAGE);
+                    if (damage != null && max != null && damage >= max) {
+                        stack.subtract();
+                    } else if (damage != null) {
+                        stack.setData(io.papermc.paper.datacomponent.DataComponentTypes.DAMAGE, damage + 1);
+                    }
+                } else {
+                    stack.subtract();
+                }
+                return;
+            }
+        });
     }
 
     private boolean canPlaceAt(StationType type, Block target) {
