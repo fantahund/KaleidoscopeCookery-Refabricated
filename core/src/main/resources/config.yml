@@ -19,6 +19,7 @@ resource-pack:
 # Mod: 1 Schnitt pro Hieb (mit "Schnelles Messer" I/II: 2/4).
 cutting:
   tools:
+    kaleidoscope_cookery:copper_kitchen_knife: 1
     kaleidoscope_cookery:iron_kitchen_knife: 1
     kaleidoscope_cookery:gold_kitchen_knife: 1
     kaleidoscope_cookery:diamond_kitchen_knife: 1

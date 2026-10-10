@@ -1,4 +1,5 @@
 {
+  "ambientocclusion": false,
   "credit": "Made with Blockbench",
   "texture_size": [
     32,
@@ -546,7 +547,7 @@
         5.75,
         13.25
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": 0,
         "axis": "y",
@@ -625,7 +626,7 @@
         2.2,
         14.25
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": 0,
         "axis": "y",
@@ -704,7 +705,7 @@
         2.2,
         12.25
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": 0,
         "axis": "y",

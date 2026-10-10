@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "core" / "src" / "main" / "resources" / "generated" / "creative_tabs.yml"
 GRILLING_OUT = ROOT.parent / "KaleidoscopeGrilling" / "src" / "main" / "resources" / "generated" / "creative_tabs.yml"
 
-COOKERY_JAVA = "cookery/src/main/java/com/github/ysbbbbbb/kaleidoscopecookery/init"
+COOKERY_JAVA = "refab/src/main/java/com/github/ysbbbbbb/kaleidoscopecookery/init"  # Fabric-Fork
 GRILLING_JAVA = "grilling/neoforge-1.21.1/src/main/java/cn/breezeth/kaleidoscope_grilling/registry"
 
 # Erstes Möbel-Item im Cookery-Haupttab: ab hier eigener Tab "Möbel"
@@ -23,15 +23,15 @@ FIRST_FURNITURE = "cook_stool_oak"
 
 def accepted(block: str, ids: dict) -> list[str]:
     """Feldnamen aus output.accept(ModItems.X.get()) in Registry-IDs übersetzen (RICE_SEED -> rice)."""
-    return [ids.get(m, m.lower()) for m in re.findall(r"output\.accept\(ModItems\.([A-Z0-9_]+)\.get\(\)\)", block)]
+    return [ids.get(m, m.lower()) for m in re.findall(r"output\.accept\(ModItems\.([A-Z0-9_]+)(?:\.get\(\))?\)", block)]
 
 
 def field_ids(java: str) -> dict:
-    return dict(re.findall(r"\b([A-Z0-9_]+)\s*=\s*ITEMS\.register\(\s*\"([a-z0-9_]+)\"", java))
+    return dict(re.findall(r"\b([A-Z0-9_]+)\s*=\s*(?:ITEMS\.register|registerItem|registerStrawHats)\(\s*\"([a-z0-9_]+)\"", java))
 
 
 def registered(java: str) -> list[str]:
-    return re.findall(r"ITEMS\.register\(\s*\"([a-z0-9_]+)\"", java)
+    return re.findall(r"(?:ITEMS\.register|registerItem)\(\s*\"([a-z0-9_]+)\"", java)
 
 
 def main():
@@ -41,7 +41,7 @@ def main():
 
     tabs_java = (cache / COOKERY_JAVA / "ModCreativeTabs.java").read_text(encoding="utf-8")
     ids = field_ids((cache / COOKERY_JAVA / "ModItems.java").read_text(encoding="utf-8"))
-    main_block, food_block = tabs_java.split("COOKERY_FOOD_TAB", 1)
+    main_block, food_block = tabs_java.split("CREATIVE_MODE_TAB, COOKERY_FOOD_TAB", 1)
     main_items = accepted(main_block, ids)
     split = main_items.index(FIRST_FURNITURE)
     kitchen = ["kaleidoscope:cookbook"] + ["kaleidoscope_cookery:" + i for i in main_items[:split]]

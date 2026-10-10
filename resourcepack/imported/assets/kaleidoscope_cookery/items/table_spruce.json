@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "kaleidoscope_cookery:item/table_spruce"
+    "model": "kaleidoscope_cookery:block/table/spruce_single"
   }
 }

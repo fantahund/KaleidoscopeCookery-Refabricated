@@ -1,4 +1,5 @@
 {
+  "ambientocclusion": false,
   "credit": "Made with Blockbench",
   "texture_size": [
     32,
@@ -706,7 +707,7 @@
         10.19429,
         9
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": -45,
         "axis": "z",
@@ -785,7 +786,7 @@
         4.50303,
         6.8
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": 45,
         "axis": "y",
@@ -870,7 +871,7 @@
         10.2,
         8.9
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": 0,
         "axis": "y",
@@ -949,7 +950,7 @@
         2.1,
         14.2
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": 0,
         "axis": "y",
@@ -1028,7 +1029,7 @@
         2.1,
         15.2
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": 22.5,
         "axis": "y",

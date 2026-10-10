@@ -1,5 +1,5 @@
 {
-  "format_version": "1.21.6",
+  "format_version": "26.3",
   "credit": "Made with Blockbench",
   "ambientocclusion": false,
   "textures": {
@@ -17,7 +17,7 @@
         15,
         8
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": 45,
         "axis": "y",
@@ -60,7 +60,7 @@
         15,
         15.2
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": 45,
         "axis": "y",

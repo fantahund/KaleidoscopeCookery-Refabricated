@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "kaleidoscope_cookery:item/chair_jungle"
+    "model": "kaleidoscope_cookery:block/chair/jungle"
   }
 }

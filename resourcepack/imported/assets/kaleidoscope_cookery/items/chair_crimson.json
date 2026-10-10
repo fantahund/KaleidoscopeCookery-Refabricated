@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "kaleidoscope_cookery:item/chair_crimson"
+    "model": "kaleidoscope_cookery:block/chair/crimson"
   }
 }

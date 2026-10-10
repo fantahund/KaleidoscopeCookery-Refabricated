@@ -1,5 +1,6 @@
 {
-  "format_version": "1.21.6",
+  "ambientocclusion": false,
+  "format_version": "26.3",
   "credit": "Made with Blockbench",
   "texture_size": [
     32,
@@ -95,7 +96,7 @@
         10,
         13
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": -45,
         "axis": "y",
@@ -139,7 +140,7 @@
         10,
         11
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": -45,
         "axis": "y",
@@ -183,7 +184,7 @@
         10,
         9
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": -45,
         "axis": "y",
@@ -227,7 +228,7 @@
         10,
         11
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": -45,
         "axis": "y",
@@ -271,7 +272,7 @@
         10,
         15
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": -45,
         "axis": "y",
@@ -315,7 +316,7 @@
         10,
         13
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": -45,
         "axis": "y",
@@ -359,7 +360,7 @@
         10,
         11
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": -45,
         "axis": "y",
@@ -403,7 +404,7 @@
         10,
         13
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": -45,
         "axis": "y",
@@ -447,7 +448,7 @@
         12,
         14
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": -45,
         "axis": "y",
@@ -491,7 +492,7 @@
         12,
         12
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "angle": -45,
         "axis": "y",

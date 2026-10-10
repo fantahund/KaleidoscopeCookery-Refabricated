@@ -15,11 +15,13 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Öl von Schweinen &amp; Co., wenn sie mit einem Schneidewerkzeug getötet werden
- * (Mod: Loot-Tabellen kaleidoscope_cookery:pig usw. mit Küchenmesser-Bedingung).
+ * (Mod: Loot-Tabellen kaleidoscope_cookery:pig usw. mit Küchenmesser-Bedingung), und Eselfleisch von Eseln
+ * (Fabric-Fork: minecraft:entities/donkey, 2 Würfe je 1–2 mit Küchenmesser).
  */
 public class OilDropListener implements Listener {
 
     private static final Key OIL = Key.key("kaleidoscope_cookery", "oil");
+    private static final Key RAW_DONKEY_MEAT = Key.key("kaleidoscope_cookery", "raw_donkey_meat");
 
     private final KaleidoscopeCookery plugin;
 
@@ -32,14 +34,26 @@ public class OilDropListener implements Listener {
         CookeryConfig config = plugin.getCookeryConfig();
         CookeryConfig.OilDrops drops = config.oilDrops();
         Player killer = event.getEntity().getKiller();
-        if (!drops.enabled() || killer == null || !drops.entities().contains(event.getEntityType())) {
+        if (killer == null || !config.cutting().isTool(killer.getInventory().getItemInMainHand())) {
             return;
         }
         ItemStack tool = killer.getInventory().getItemInMainHand();
-        if (!config.cutting().isTool(tool)) {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        if (event.getEntityType() == org.bukkit.entity.EntityType.DONKEY) {
+            int looting = tool.getEnchantmentLevel(Enchantment.LOOTING);
+            int meat = 0;
+            for (int roll = 0; roll < 2; roll++) {
+                meat += random.nextInt(1, 3) + Math.round(looting * random.nextFloat());
+            }
+            ItemStack stack = plugin.getItems().create(RAW_DONKEY_MEAT, meat);
+            if (stack != null) {
+                event.getDrops().add(stack);
+            }
             return;
         }
-        ThreadLocalRandom random = ThreadLocalRandom.current();
+        if (!drops.enabled() || !drops.entities().contains(event.getEntityType())) {
+            return;
+        }
         int count = random.nextInt(drops.min(), drops.max() + 1);
         // enchanted_count_increase: pro Stufe Plünderung 0..1 zusätzlich
         int looting = tool.getEnchantmentLevel(Enchantment.LOOTING);

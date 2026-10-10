@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "kaleidoscope_cookery:item/cook_stool_crimson"
+    "model": "kaleidoscope_cookery:block/cook_stool/crimson"
   }
 }

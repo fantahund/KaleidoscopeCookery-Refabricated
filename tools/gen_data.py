@@ -17,7 +17,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CACHE = Path.home() / ".cache" / "kaleidoscope-pack"
-COOKERY = CACHE / "cookery"
+# Fabric-Fork (Refabricated) ist seit 2026-10-10 die Grundlage
+COOKERY = CACHE / "refab"
 GRILLING = CACHE / "grilling"
 # Grilling ist ein eigenes Plugin (Repo KaleidoscopeGrilling neben diesem); seine Daten und Sprachdateien landen dort
 GRILLING_ROOT = ROOT.parent / "KaleidoscopeGrilling"
@@ -39,12 +40,11 @@ RESOURCES = ROOT / "core" / "src" / "main" / "resources"
 COOKERY_JAVA = COOKERY / "src/main/java/com/github/ysbbbbbb/kaleidoscopecookery"
 
 RECIPE_DIRS = [
-    COOKERY / "src/generated/resources/data/kaleidoscope_cookery/recipe",
+    COOKERY / "src/main/resources/data/kaleidoscope_cookery/recipe",
     GRILLING / "common/src/main/resources/data/kaleidoscope_grilling/recipe",
     GRILLING / "common/src/main/resources/data/kaleidoscope_cookery/recipe",
 ]
 TAG_DIRS = [
-    COOKERY / "src/generated/resources/data",
     COOKERY / "src/main/resources/data",
     GRILLING / "common/src/main/resources/data",
 ]
@@ -115,7 +115,42 @@ def eval_int(expression: str) -> int:
     return int(eval(expression))  # nur Ziffern und Operatoren, siehe Pruefung
 
 
+def mod_effects() -> set:
+    return set(re.findall(r"Holder<MobEffect>\s+(\w+)\s*=", (COOKERY_JAVA / "init/ModEffects.java").read_text(encoding="utf-8")))
+
+
+MOD_EFFECTS = mod_effects()
+
+
+def effect_key(name: str) -> str:
+    name = name.split(".")[-1]
+    if name in MOD_EFFECTS:
+        return "kaleidoscope_cookery:" + name.lower()
+    return "minecraft:" + VANILLA_EFFECTS.get(name, name.lower())
+
+
+def parse_effect_instances(body: str) -> list:
+    effects = []
+    for e in re.finditer(r"MobEffectInstance\(\s*([\w.]+)\s*,\s*([^,)]+?)\s*(?:,\s*(\d+))?\s*\)", body):
+        effect = {"effect": effect_key(e.group(1)), "duration": eval_int(e.group(2))}
+        if e.group(3) and int(e.group(3)) > 0:
+            effect["amplifier"] = int(e.group(3))
+        effects.append(effect)
+    return effects
+
+
+def balanced(text: str, start: int) -> str:
+    """Inhalt der Klammer, die bei text[start] == '(' beginnt."""
+    depth = 0
+    for i in range(start, len(text)):
+        depth += {"(": 1, ")": -1}.get(text[i], 0)
+        if depth == 0:
+            return text[start + 1:i]
+    raise ValueError("Klammer nicht geschlossen")
+
+
 def parse_cookery_foods() -> dict:
+    """ModFoods (Nährwert, Sättigung): Konstante -> Werte."""
     source = (COOKERY_JAVA / "init/ModFoods.java").read_text(encoding="utf-8")
     foods = {}
     for match in re.finditer(r"FoodProperties\s+(\w+)\s*=\s*\(?new FoodProperties\.Builder\(\)\)?(.*?)\.build\(\);", source, re.S):
@@ -128,35 +163,52 @@ def parse_cookery_foods() -> dict:
             food["saturation"] = round(food.get("nutrition", 0) * float(m.group(1)) * 2, 2)
         if ".alwaysEdible()" in body:
             food["always-edible"] = True
-        if ".fast()" in body:
-            food["eat-seconds"] = 0.8
-        effects = []
-        for e in re.finditer(r"MobEffectInstance\(\s*([\w.]+)\s*,\s*([^,)]+?)\s*(?:,\s*(\d+))?\s*\)\s*,\s*([\d.]+)F?\s*\)", body):
-            effect_name = e.group(1).split(".")[-1]
-            key = "minecraft:" + VANILLA_EFFECTS[effect_name] if effect_name in VANILLA_EFFECTS else "kaleidoscope_cookery:" + effect_name.lower()
-            effect = {"effect": key, "duration": eval_int(e.group(2))}
-            if e.group(3) and int(e.group(3)) > 0:
-                effect["amplifier"] = int(e.group(3))
-            if float(e.group(4)) < 1:
-                effect["probability"] = float(e.group(4))
-            effects.append(effect)
-        if effects:
-            food["effects"] = effects
         foods[name] = food
     return foods
 
 
+def parse_consumables() -> dict:
+    """ModConsumables (26.x): Essdauer und Effekte beim Essen, Konstante -> Werte."""
+    source = (COOKERY_JAVA / "init/ModConsumables.java").read_text(encoding="utf-8")
+    consumables = {}
+    for match in re.finditer(r"Consumable\s+(\w+)\s*=\s*(Consumables\.\w+\(\).*?)\.build\(\);", source, re.S):
+        name, body = match.group(1), match.group(2)
+        entry = {}
+        if m := re.search(r"\.consumeSeconds\(([\d.]+)[fF]?\)", body):
+            entry["eat-seconds"] = float(m.group(1))
+        effects = []
+        for m in re.finditer(r"ApplyStatusEffectsConsumeEffect\(", body):
+            inner = balanced(body, m.end() - 1)
+            probability = re.search(r",\s*([\d.]+)[fF]?\s*$", inner.strip())
+            for effect in parse_effect_instances(inner):
+                if probability and float(probability.group(1)) < 1:
+                    effect["probability"] = float(probability.group(1))
+                effects.append(effect)
+        if effects:
+            entry["effects"] = effects
+        consumables[name] = entry
+    return consumables
+
+
+def food_of(foods: dict, consumables: dict, food: str, consumable: str | None) -> dict:
+    result = dict(foods.get(food, {}))
+    result.update(consumables.get(consumable, {}) if consumable else {})
+    return result
+
+
 def parse_cookery_item_foods(foods: dict) -> dict:
+    """ModItems: registerItem("id", ... ModFoods.X, ModConsumables.Y ...)."""
+    consumables = parse_consumables()
     result = {}
-    for file in ("init/ModItems.java", "init/ModBlocks.java"):
-        source = (COOKERY_JAVA / file).read_text(encoding="utf-8")
-        for match in re.finditer(r'register\("(\w+)"(.*?)\);\s*$', source, re.M):
-            item_id, rest = match.group(1), match.group(2)
-            if m := re.search(r"ModFoods\.(\w+)", rest):
-                food = dict(foods.get(m.group(1), {}))
-                if "BowlFoodOnlyItem" in rest or "BowlFood" in rest:
-                    food["remainder"] = "minecraft:bowl"
-                result.setdefault(item_id, food)
+    source = (COOKERY_JAVA / "init/ModItems.java").read_text(encoding="utf-8")
+    for match in re.finditer(r'registerItem\("(\w+)"(.*?)\);\s*$', source, re.M | re.S):
+        item_id, rest = match.group(1), match.group(2)
+        if m := re.search(r"ModFoods\.(\w+)", rest):
+            c = re.search(r"ModConsumables\.(\w+)", rest)
+            food = food_of(foods, consumables, m.group(1), c.group(1) if c else None)
+            if "BowlFood" in rest:
+                food["remainder"] = "minecraft:bowl"
+            result.setdefault(item_id, food)
     return result
 
 
@@ -171,16 +223,18 @@ def java_item(name: str) -> str:
 
 def parse_food_bites(foods: dict) -> dict:
     source = (COOKERY_JAVA / "init/registry/FoodBiteRegistry.java").read_text(encoding="utf-8")
-    blockstates = COOKERY / "src/generated/resources/assets/kaleidoscope_cookery/blockstates"
+    consumables = parse_consumables()
+    blockstates = COOKERY / "src/main/resources/assets/kaleidoscope_cookery/blockstates"
     bites = {}
-    for match in re.finditer(r'registerFoodData\("(\w+)",\s*FoodData\s*\.(create|createOneByTwo)\((\d+),\s*(\w+),\s*(\w+)\)(.*?)\);', source, re.S):
-        name, kind, max_bites, block_food, item_food, rest = match.groups()
+    for match in re.finditer(r'registerFoodData\("(\w+)",\s*FoodData\s*\.(create|createOneByTwo)\((\d+),\s*(\w+),\s*(\w+),\s*(?:ModConsumables\.)?(\w+),\s*(?:ModConsumables\.)?(\w+)\)(.*?)\);', source, re.S):
+        name, kind, max_bites, block_food, item_food, block_consumable, item_consumable, rest = match.groups()
         loot = ["minecraft:bowl"]
         if m := re.search(r"setLootItem\(Items\.(\w+)\)", rest):
             loot = [java_item(m.group(1))]
         for m in re.finditer(r"addLootItems\(([^)]*)\)", rest):
             loot += [java_item(x.strip().split(".")[-1]) for x in m.group(1).split(",") if x.strip()]
-        entry = {"max-bites": int(max_bites), "food": foods.get(block_food, {}), "item-food": foods.get(item_food, {}), "loot": loot}
+        entry = {"max-bites": int(max_bites), "food": food_of(foods, consumables, block_food, block_consumable),
+                 "item-food": food_of(foods, consumables, item_food, item_consumable), "loot": loot}
         if kind == "createOneByTwo":
             entry["size"] = "1x2"
         state_file = blockstates / f"{name}.json"
@@ -202,17 +256,11 @@ def parse_food_bites(foods: dict) -> dict:
 def parse_teacups() -> dict:
     """TeacupRegistry: Tee-Getränke mit Effekten (Trinken 32 Ticks, leere Tasse bleibt)."""
     source = (COOKERY_JAVA / "init/registry/TeacupRegistry.java").read_text(encoding="utf-8")
+    ids = dict(re.findall(r'(\w+)\s*=\s*id\("(\w+)"\)', source))
     teas = {}
-    for match in re.finditer(r'registerTeacupData\("(\w+)",\s*TeacupData\.create\((\d+)\)(.*?)\);', source, re.S):
-        name, _, body = match.groups()
-        effects = []
-        for e in re.finditer(r"new MobEffectInstance\(\s*([\w.]+)\s*,\s*([^,)]+?)\s*(?:,\s*(\d+))?\s*\)", body):
-            effect_name = e.group(1).split(".")[-1]
-            key = "minecraft:" + VANILLA_EFFECTS[effect_name] if effect_name in VANILLA_EFFECTS else "kaleidoscope_cookery:" + effect_name.lower()
-            effect = {"effect": key, "duration": eval_int(e.group(2))}
-            if e.group(3) and int(e.group(3)) > 0:
-                effect["amplifier"] = int(e.group(3))
-            effects.append(effect)
+    for match in re.finditer(r'registerTeacupData\((\w+),\s*TeacupData\.create\((\d+)\)(.*?)\);\s*$', source, re.S | re.M):
+        name, body = ids.get(match.group(1), match.group(1).lower()), match.group(3)
+        effects = parse_effect_instances(body)
         teas[f"kaleidoscope_cookery:{name}"] = {"nutrition": 0, "saturation": 0.0, "always-edible": True, "drink": True,
                                                 "eat-seconds": 1.6, "remainder": "kaleidoscope_cookery:empty_cup", "effects": effects}
     return teas
@@ -227,6 +275,7 @@ BASE_MATERIALS = {
     "kaleidoscope_cookery:stockpot_lid": "SHIELD",
     # Küchenmesser: Verbundblock (im Survival nicht erhältlich, ohne OP nicht platzierbar, keine Rechtsklick-Funktion)
     # mit allen Komponenten des passenden Schwerts. Das Plugin trägt ihn in #minecraft:swords ein (wie die Messer im Mod).
+    "kaleidoscope_cookery:copper_kitchen_knife": "JIGSAW",
     "kaleidoscope_cookery:iron_kitchen_knife": "JIGSAW",
     "kaleidoscope_cookery:gold_kitchen_knife": "JIGSAW",
     "kaleidoscope_cookery:diamond_kitchen_knife": "JIGSAW",
@@ -247,6 +296,7 @@ WEARABLES = {
     "kaleidoscope_cookery:farmer_boots": ("LEATHER_BOOTS", "feet", "kaleidoscope_cookery:cookery_farmer", 2),
 }
 PROTOTYPES = {
+    "kaleidoscope_cookery:copper_kitchen_knife": "COPPER_SWORD",
     "kaleidoscope_cookery:iron_kitchen_knife": "IRON_SWORD",
     "kaleidoscope_cookery:gold_kitchen_knife": "GOLDEN_SWORD",
     "kaleidoscope_cookery:diamond_kitchen_knife": "DIAMOND_SWORD",
@@ -258,10 +308,26 @@ PROTOTYPES = {
 def parse_stack_sizes() -> dict:
     sizes = {}
     source = (COOKERY_JAVA / "init/ModItems.java").read_text(encoding="utf-8")
-    for match in re.finditer(r'register\("(\w+)"(.*?)\);\s*$', source, re.M):
+    for match in re.finditer(r'registerItem\("(\w+)"(.*?)\);\s*$', source, re.M):
         if m := re.search(r"stacksTo\((\d+)\)", match.group(2)):
             sizes["kaleidoscope_cookery:" + match.group(1)] = int(m.group(1))
     return sizes
+
+
+# Nicht übernommen: Strohbett (nicht gewünscht), Modell-Vorschau (Debug-Item), Pappel-Möbel (Pappel gibt es in 26.3 nicht)
+SKIP_ITEM = re.compile(r"kaleidoscope_cookery:(straw_bed|model_display|\w+_poplar)$")
+
+
+def without_skipped(recipes: dict) -> dict:
+    """Rezepte entfernen, die ein nicht übernommenes Item oder Pappel-Holz brauchen oder ergeben."""
+    out = {}
+    for section, values in recipes.items():
+        if not isinstance(values, dict) or section == "tags":
+            out[section] = values
+            continue
+        out[section] = {k: v for k, v in values.items()
+                        if not re.search(r"kaleidoscope_cookery:(straw_bed|model_display|\w+_poplar)\b|minecraft:poplar", json.dumps(v) + k)}
+    return out
 
 
 def collect_items(foods: dict, bites: dict) -> dict:
@@ -278,7 +344,7 @@ def collect_items(foods: dict, bites: dict) -> dict:
             if not (imported(ns) / "items" / f"{item_id}.json").exists():
                 continue  # reine Bloecke ohne Item (Pflanzen-Stufen, ...)
             full_id = f"{ns}:{item_id}"
-            if full_id in items and parts[0] == "block":
+            if (full_id in items and parts[0] == "block") or SKIP_ITEM.match(full_id):
                 continue
             entry = {"model": full_id, "name": key}
             tooltip_key = f"tooltip.{ns}.{item_id}"
@@ -404,6 +470,12 @@ def ingredient(value, used_tags: set) -> str | list:
     if isinstance(value, list):
         options = [ingredient(v, used_tags) for v in value]
         return options[0] if len(options) == 1 else options
+    if isinstance(value, str):
+        # 26.x-Format: "item" oder "#tag"
+        if value.startswith("#"):
+            used_tags.add(value[1:])
+            return value
+        return item_id(value)
     if "tag" in value:
         used_tags.add(value["tag"])
         return "#" + value["tag"]
@@ -515,7 +587,7 @@ def collect_recipes(tags: dict) -> dict:
 
 
 # Bei jeder inhaltlichen Aenderung der erzeugten recipes.yml erhoehen: das Plugin ersetzt dann alte Kopien (mit Backup)
-DATA_VERSION = 11
+DATA_VERSION = 12
 STOCKPOT_DEFAULT_TIME = 300
 POT_DEFAULT_TIME = 200
 POT_DEFAULT_STIR_FRY = 3
@@ -662,9 +734,8 @@ COMMON_TAGS = {
 VANILLA_RECIPE_TYPES = {"minecraft:crafting_shaped", "minecraft:crafting_shapeless", "minecraft:smelting", "minecraft:smoking",
                         "minecraft:campfire_cooking", "minecraft:blasting", "minecraft:smithing_transform", "minecraft:stonecutting"}
 VANILLA_RECIPE_DIRS = [
-    (COOKERY / "src/generated/resources/data/kaleidoscope_cookery/recipe", "kaleidoscope_cookery"),
     (COOKERY / "src/main/resources/data/kaleidoscope_cookery/recipe", "kaleidoscope_cookery"),
-    (COOKERY / "src/generated/resources/data/minecraft/recipe", "kaleidoscope_cookery"),
+    (COOKERY / "src/main/resources/data/minecraft/recipe", "kaleidoscope_cookery"),
     (GRILLING / "common/src/main/resources/data/kaleidoscope_grilling/recipe", "kaleidoscope_grilling"),
 ]
 
@@ -787,9 +858,9 @@ def main():
     RECIPE_DIRS = [d for d in all_dirs if "grilling" not in str(d)]
     VANILLA_RECIPE_DIRS = [d for d in all_vanilla if "grilling" not in str(d[0])]
     TAG_DIRS = [d for d in all_tags if "grilling" not in str(d)]
-    recipes = collect_recipes(load_tags())
+    recipes = without_skipped(collect_recipes(load_tags()))
     RECIPE_DIRS, VANILLA_RECIPE_DIRS, TAG_DIRS = all_dirs, all_vanilla, all_tags
-    grilling_recipes = split_recipes(recipes, collect_recipes(load_tags()))
+    grilling_recipes = split_recipes(recipes, without_skipped(collect_recipes(load_tags())))
     grilling_recipes["data-version"] = GRILLING_DATA_VERSION
     recipe_header = ("# Rezepte der Kochstationen, erzeugt aus den Mod-Daten (tools/gen_data.py).\n"
                      "# Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert\n"

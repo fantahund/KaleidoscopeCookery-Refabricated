@@ -1,26 +1,23 @@
 {
   "model": {
     "type": "minecraft:select",
-    "property": "minecraft:display_context",
     "cases": [
       {
-        "when": "fixed",
         "model": {
           "type": "minecraft:model",
-          "model": "kaleidoscope_cookery:item/cold_cut_ham_slices__fixed"
-        }
-      },
-      {
-        "when": "gui",
-        "model": {
-          "type": "minecraft:model",
-          "model": "kaleidoscope_cookery:item/cold_cut_ham_slices__gui"
-        }
+          "model": "kaleidoscope_cookery:item/cold_cut_ham_slices_in_gui"
+        },
+        "when": [
+          "gui",
+          "ground",
+          "fixed"
+        ]
       }
     ],
     "fallback": {
       "type": "minecraft:model",
-      "model": "kaleidoscope_cookery:item/cold_cut_ham_slices__base"
-    }
+      "model": "kaleidoscope_cookery:item/cold_cut_ham_slices_block"
+    },
+    "property": "minecraft:display_context"
   }
 }

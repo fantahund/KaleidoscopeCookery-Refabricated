@@ -1,33 +1,23 @@
 {
   "model": {
     "type": "minecraft:select",
-    "property": "minecraft:display_context",
     "cases": [
       {
-        "when": "fixed",
         "model": {
           "type": "minecraft:model",
-          "model": "kaleidoscope_cookery:item/fruit_basket__fixed"
-        }
-      },
-      {
-        "when": "ground",
-        "model": {
-          "type": "minecraft:model",
-          "model": "kaleidoscope_cookery:item/fruit_basket__ground"
-        }
-      },
-      {
-        "when": "gui",
-        "model": {
-          "type": "minecraft:model",
-          "model": "kaleidoscope_cookery:item/fruit_basket__gui"
-        }
+          "model": "kaleidoscope_cookery:item/fruit_basket_in_gui"
+        },
+        "when": [
+          "gui",
+          "ground",
+          "fixed"
+        ]
       }
     ],
     "fallback": {
       "type": "minecraft:model",
-      "model": "kaleidoscope_cookery:item/fruit_basket__base"
-    }
+      "model": "kaleidoscope_cookery:item/fruit_basket_3d"
+    },
+    "property": "minecraft:display_context"
   }
 }

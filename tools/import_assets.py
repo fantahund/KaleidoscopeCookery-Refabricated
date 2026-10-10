@@ -18,6 +18,7 @@ Die Mod-Repos werden bei Bedarf in den Cache geklont (feste Commits, siehe SOURC
 """
 import argparse
 import itertools
+import re
 import json
 import shutil
 import subprocess
@@ -28,8 +29,9 @@ ROOT = Path(__file__).resolve().parent.parent
 PROPERTIES_FILE = Path("src") / "main" / "resources" / "generated" / "model_properties.yml"
 
 SOURCES = {
-    "cookery": ("https://github.com/KaleidoscopeMods/KaleidoscopeCookery.git", "1.21.1-neoforge",
-                "4d39e36cfa749939ba5f9d6d3b715ef9a984cb9c"),
+    # Fabric-Fork (Refabricated, 26.x): Grundlage seit 2026-10-10
+    "refab": ("https://github.com/NightEpiphany/KaleidoscopeCookery-Refabricated.git", "26.4-fabric",
+              "796f94dd7eb00b85988366ae0f623d46148b7612"),
     "grilling": ("https://github.com/breezeth-CN/KaleidoscopeGrilling.git", "main",
                  "9a1acdab27698457bec16c9362678e574895a28c"),
 }
@@ -37,11 +39,12 @@ SOURCES = {
 # Reihenfolge = Prioritaet (spaetere Ebenen ueberschreiben fruehere). Grilling ist ein eigenes Plugin mit eigenem Pack
 # (Repo KaleidoscopeGrilling); seine Overrides im Cookery-Namespace (Oelkanne) landen in dessen Pack.
 LAYERS = {
-    "cookery": [("cookery", "src/main/resources/assets"), ("cookery", "src/generated/resources/assets")],
+    # Ess-Animationen: eingebautes Pack des Forks (nur Vanilla-Properties using_item/use_duration)
+    "cookery": [("refab", "src/main/resources/assets"), ("refab", "src/main/resources/resourcepacks/kaleidoscope_eating_animation/assets")],
     "grilling": [("grilling", "common/src/main/resources/assets"), ("grilling", "neoforge-1.21.1/src/main/resources/assets")],
 }
 NAMESPACES = {"kaleidoscope_cookery", "kaleidoscope_grilling", "minecraft"}
-COPY_DIRS = {"models", "textures", "sounds"}
+COPY_DIRS = {"models", "textures", "sounds", "equipment"}
 # Nur fuer Mod-Code relevante Modelle
 SKIP_FILES = {"models/item_render_replacer.json"}
 REMOVE_MODEL_KEYS = {"render_type", "neoforge_data", "forge_data", "loader", "visibility", "renderTypes"}
@@ -102,6 +105,7 @@ class Importer:
         self.properties = dict(base_properties)
         self.base_properties = set(base_properties)
         self.notes = []
+        self.fork_items = {}     # "ns/items/<path>.json" -> Definition aus dem Fork
 
     def collect(self):
         for repo, rel in LAYERS[self.project]:
@@ -117,8 +121,11 @@ class Importer:
                     top = sub.split("/", 1)[0]
                     if sub == "sounds.json":
                         self.sounds.setdefault(ns, {}).update(read_json(file))
-                    elif sub == "lang/en_us.json":
+                    elif sub == "lang/en_us.json" and ns != "minecraft":
                         self.lang.setdefault(ns, {}).update(read_json(file))
+                    elif top == "items" and sub.endswith(".json"):
+                        # Fertige Item-Model-Definitionen (26.x) des Forks
+                        self.fork_items[f"{ns}/{sub}"] = read_json(file)
                     elif top in COPY_DIRS and sub not in SKIP_FILES:
                         self.files[f"{ns}/{sub}"] = file
 
@@ -164,6 +171,40 @@ class Importer:
             else:
                 item_def_path = f"{ns}/items/{path}.json"
             self.item_defs[item_def_path] = definition
+
+    # Mod-eigene Item-Properties der Fork-Definitionen -> Name in model_properties.yml (wie die alten Predicates)
+    FORK_PROPERTIES = {
+        "kaleidoscope_cookery:oil_pot/has_oil": "kaleidoscope_cookery:has_oil",
+        "kaleidoscope_cookery:kitchen_shovel/has_oil": "kaleidoscope_cookery:has_oil",
+        "kaleidoscope_cookery:recipe_item/has_recipe": "kaleidoscope_cookery:has_recipe",
+        "kaleidoscope_cookery:steamer/has_item": "kaleidoscope_cookery:has_items",
+        "kaleidoscope_cookery:transmutation_lunch_bag/has_food": "kaleidoscope_cookery:has_items",
+        "kaleidoscope_cookery:ingredient/special_render": "kaleidoscope_cookery:special_render",
+    }
+
+    def convert_fork_node(self, node):
+        """Mod-Conditions in Vanilla umwandeln: Bool-Properties -> custom_model_data-Index (>= 1 = wahr)."""
+        if isinstance(node, list):
+            return [self.convert_fork_node(n) for n in node]
+        if not isinstance(node, dict):
+            return node
+        node = {k: self.convert_fork_node(v) for k, v in node.items()}
+        if node.get("type") == "minecraft:condition" and node.get("property") == "kaleidoscope_cookery:stockpot_lid/using":
+            node["property"] = "minecraft:using_item"
+        elif node.get("type") == "minecraft:condition" and node.get("property") in self.FORK_PROPERTIES:
+            index = self.property_index(self.FORK_PROPERTIES[node["property"]])
+            return {"type": "minecraft:range_dispatch", "property": "minecraft:custom_model_data", "index": index,
+                    "entries": [{"threshold": 1.0, "model": node["on_true"]}], "fallback": node["on_false"]}
+        return node
+
+    def apply_fork_items(self):
+        for path, definition in sorted(self.fork_items.items()):
+            if "kaleidoscope_cookery:model_arguments" in json.dumps(definition):
+                continue  # Modell-Vorschau (Debug-Item) braucht Mod-Code
+            self.item_defs[path] = self.convert_fork_node(definition)
+        unknown = {p for d in self.item_defs.values() for p in re.findall(r'"property": "(kaleidoscope_cookery:[^"]+)"', json.dumps(d))}
+        if unknown:
+            raise SystemExit(f"Unbekannte Item-Properties: {sorted(unknown)}")
 
     def add_inline_model(self, ns: str, path: str, model: dict) -> str:
         model_ref = ref(ns, path)
@@ -256,6 +297,7 @@ class Importer:
     def run(self):
         self.collect()
         self.convert_models()
+        self.apply_fork_items()
         self.write()
         print(f"Dateien: {len(self.files)}, Modelle: {len(self.models)}, Item-Definitionen: {len(self.item_defs)}, "
               f"Properties: {len(self.properties)}")
