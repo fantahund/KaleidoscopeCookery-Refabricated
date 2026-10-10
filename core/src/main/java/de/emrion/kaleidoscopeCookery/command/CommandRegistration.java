@@ -24,6 +24,7 @@ public record CommandRegistration(KaleidoscopeCookery plugin) {
         router.addCommandMapping(new RepairCommand(plugin), "repair");
         router.addCommandMapping(new ReloadCommand(plugin), "reload");
         router.addCommandMapping(new PackCommand(plugin), "pack");
+        router.addCommandMapping(new MenuCommand(plugin), "menu");
         router.addCommandMapping(new CookbookCommand(plugin, false), "rezepte");
         router.addCommandMapping(new CookbookCommand(plugin, false), "recipes");
         router.addCommandMapping(new CookbookCommand(plugin, true), "rezept");

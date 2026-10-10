@@ -113,5 +113,11 @@
   "kaleidoscope.cookbook.variants.ingredients": "%s variants with different ingredients.",
   "kaleidoscope.cookbook.variant.previous": "◀ Previous recipe",
   "kaleidoscope.cookbook.variant.next": "Next recipe ▶",
-  "kaleidoscope.cookbook.variants.recipes": "%s recipes for this item – browse to see all."
+  "kaleidoscope.cookbook.variants.recipes": "%s recipes for this item – browse to see all.",
+  "kaleidoscope.command.menu.description": "Open the creative menu with all items",
+  "kaleidoscope.menu.title": "Kaleidoscope items",
+  "kaleidoscope.menu.tab.kitchen": "Kitchen",
+  "kaleidoscope.menu.tab.food": "Food",
+  "kaleidoscope.menu.tab.furniture": "Furniture",
+  "kaleidoscope.menu.tab.grilling": "Grilling"
 }
