@@ -105,7 +105,7 @@ public class PotStation extends Station {
     }
 
     public static StationType type() {
-        return new StationType("pot", ITEM, true, 1f, 1f, false, PotStation::new);
+        return new StationType("pot", ITEM, false, 1f, 1f, false, PotStation::new);
     }
 
     // ---- Zustand ----

@@ -357,10 +357,13 @@ public class StationListener implements Listener {
         return !type.needsSupport() || hasSupport(target);
     }
 
+    private static final java.util.Set<String> STACK_BASES = java.util.Set.of("pot", "stockpot", "steamer");
+
     private boolean hasSupport(Block block) {
         Block below = block.getRelative(BlockFace.DOWN);
-        if (stations.at(below) != null && stations.at(below).context().type().barrier()) {
-            return true;
+        Station base = stations.at(below);
+        if (base != null && (base.context().type().barrier() || STACK_BASES.contains(base.context().type().id()))) {
+            return true; // Dampfgarer auf Dampfgarer, Wok oder Suppentopf (ohne Barriere)
         }
         return below.getType().isSolid() && below.getType() != Material.BARRIER;
     }

@@ -111,7 +111,7 @@ public class StockpotStation extends Station {
     }
 
     public static StationType type() {
-        return new StationType("stockpot", ITEM, true, 1f, 1f, false, StockpotStation::new);
+        return new StationType("stockpot", ITEM, false, 1f, 1f, false, StockpotStation::new);
     }
 
     private static Key surface(String name) {

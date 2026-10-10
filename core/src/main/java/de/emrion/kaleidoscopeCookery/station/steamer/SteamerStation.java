@@ -70,7 +70,7 @@ public class SteamerStation extends Station {
     }
 
     public static StationType type() {
-        return new StationType("steamer", ITEM, true, 0.9f, 1f, true, SteamerStation::new);
+        return new StationType("steamer", ITEM, false, 0.9f, 1f, true, SteamerStation::new);
     }
 
     // ---- Zustand ----

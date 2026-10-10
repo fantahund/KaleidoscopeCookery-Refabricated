@@ -432,6 +432,11 @@ public class StationManager implements Listener {
             root.setInteractionHeight(hitboxHeight(type));
         }
         BlockKey position = BlockKey.of(root.getLocation().add(0, 0.05, 0));
+        // Typ hat keine Barriere mehr (Wok, Suppentopf, Dampfgarer): alte Barriere entfernen
+        Block old = type.barrier() ? null : position.block();
+        if (old != null && old.getType() == Material.BARRIER) {
+            old.setType(Material.AIR, false);
+        }
         Station station = type.factory().create(new StationContext(this, type, root, position, facing));
         try {
             station.loadState();
