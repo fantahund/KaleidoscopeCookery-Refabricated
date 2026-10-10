@@ -30,22 +30,22 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Alle Rezepte aus recipes.yml (und die Lagerfeuer-Rezepte für den Dönerspieß) als Kochbuch-Einträge.
+ * All recipes from recipes.yml (and the campfire recipes for the shawarma spit) as cookbook entries.
  */
 public final class CookbookEntries {
 
     private final Map<Category, List<CookbookEntry>> byCategory = new java.util.LinkedHashMap<>();
-    /** Einträge von Addons (z. B. Grill, Aufspießen aus Grilling), bei jedem Neuaufbau abgefragt */
+    /** Entries of addons (e.g. grill, skewering from Grilling), queried on every rebuild */
     private static final List<java.util.function.Supplier<List<CookbookEntry>>> SOURCES = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     /**
-     * Einträge eines Addons anmelden. Die Kategorie meldet das Addon vorher mit {@link Category#register} an.
+     * Register an addon's entries. The addon registers the category beforehand with {@link Category#register}.
      */
     public static void addSource(java.util.function.Supplier<List<CookbookEntry>> source) {
         SOURCES.add(source);
     }
 
-    /** Anzahl angemeldeter Quellen (das Kochbuch baut neu auf, wenn sich das ändert) */
+    /** Number of registered sources (the cookbook rebuilds when it changes) */
     static int sourceCount() {
         return SOURCES.size();
     }
@@ -196,7 +196,7 @@ public final class CookbookEntries {
     }
 
     /**
-     * Dönerspieß: alle Lagerfeuer-Rezepte des Servers (Vanilla und eigene).
+     * Shawarma spit: all of the server's campfire recipes (vanilla and custom).
      */
     private void addCampfire() {
         Iterator<Recipe> iterator = Bukkit.recipeIterator();
@@ -233,7 +233,7 @@ public final class CookbookEntries {
     }
 
     /**
-     * Gleiche Zutaten zusammenfassen (3× Tomate statt dreimal Tomate).
+     * Merge identical ingredients (3× tomato instead of tomato three times).
      */
     private static List<CookbookEntry.Input> inputs(List<Ingredient> ingredients) {
         Map<Ingredient, Integer> counts = new LinkedHashMap<>();
@@ -262,7 +262,7 @@ public final class CookbookEntries {
     }
 
     /**
-     * Brühe bzw. Tee-Flüssigkeit als Eimer-Name (Wasser, Lava, Milch, Fischeimer ...).
+     * Broth or tea liquid as a bucket name (water, lava, milk, fish bucket ...).
      */
     private static Component soupBase(Key base) {
         String value = base.value();

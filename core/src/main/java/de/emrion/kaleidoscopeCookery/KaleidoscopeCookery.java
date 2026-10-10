@@ -59,7 +59,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     private ResourcePackService resourcePack;
     private CookeryItems items;
     private Recipes recipes;
-    /** Angemeldete Addons (registerAddon), deren Rezepte beim Laden dazukommen */
+    /** Registered addons (registerAddon) whose recipes are added when loading */
     private final java.util.List<org.bukkit.plugin.Plugin> addons = new java.util.ArrayList<>();
     private VanillaRecipes vanillaRecipes;
     private StationManager stations;
@@ -146,7 +146,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         pluginManager.registerEvents(new de.emrion.kaleidoscopeCookery.item.LunchBag(this), this);
         pluginManager.registerEvents(new de.emrion.kaleidoscopeCookery.item.RecipeItems(this), this);
         cookbook = new de.emrion.kaleidoscopeCookery.cookbook.Cookbook(this);
-        // Einträge erst nach dem Laden aller Rezepte aufbauen (auch die Lagerfeuer-Rezepte anderer Plugins)
+        // Build the entries only after all recipes are loaded (including the campfire recipes of other plugins)
         getServer().getScheduler().runTask(this, () -> getLogger().info("Kochbuch: " + cookbook.size() + " Rezepte"));
         pluginManager.registerEvents(new de.emrion.kaleidoscopeCookery.cookbook.CookbookListener(this), this);
         pluginManager.registerEvents(new de.emrion.kaleidoscopeCookery.station.decor.StrawBlockListener(stations), this);
@@ -191,8 +191,8 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     }
 
     /**
-     * recipes.yml eines Plugins (Core oder Addon) anlegen bzw. ersetzen, wenn die mitgelieferte Version neuer ist
-     * (alte Datei bleibt als Backup).
+     * Create or replace a plugin's recipes.yml (core or addon) if the bundled version is newer
+     * (the old file is kept as a backup).
      */
     private static void updateRecipeFile(org.bukkit.plugin.Plugin plugin) {
         File file = new File(plugin.getDataFolder(), "recipes.yml");
@@ -217,8 +217,8 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     }
 
     /**
-     * Rezepte des Cores und aller Addons: deren Abschnitte (Tags, Stationen) werden in die des Cores gemischt,
-     * gleiche IDs überschreibt das Addon.
+     * Recipes of the core and all addons: their sections (tags, stations) are merged into those of the core,
+     * the addon overrides identical ids.
      */
     private Recipes loadRecipes() {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "recipes.yml"));
@@ -238,7 +238,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
                 }
             }
         }
-        // disabled-recipes (config.yml): Rezepte bleiben in den Dateien, werden aber nicht geladen
+        // disabled-recipes (config.yml): the recipes stay in the files but are not loaded
         int disabled = 0;
         for (String section : config.getKeys(false)) {
             org.bukkit.configuration.ConfigurationSection values = config.getConfigurationSection(section);
@@ -259,9 +259,9 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     }
 
     /**
-     * Addon anmelden (eigenes Plugin wie KaleidoscopeGrilling): dessen items.yml und recipes.yml kommen dazu, Rezepte
-     * werden neu geladen. Ein eigenes Pack (&lt;Name&gt;-Pack.zip im Jar, URL aus resource-pack.external-url der
-     * Addon-config.yml) wird mit an die Spieler geschickt, seine Sprachdateien und Kochbuch-Bilder werden übernommen.
+     * Register an addon (separate plugin such as KaleidoscopeGrilling): its items.yml and recipes.yml are added, recipes
+     * are reloaded. Its own pack (&lt;Name&gt;-Pack.zip in the jar, URL from resource-pack.external-url of the
+     * addon's config.yml) is sent to the players as well, its language files and cookbook images are adopted.
      */
     public void registerAddon(org.bukkit.plugin.Plugin addon) {
         if (addons.contains(addon)) {
@@ -291,7 +291,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     }
 
     /**
-     * /kc reload: config.yml und recipes.yml neu einlesen.
+     * /kc reload: re-read config.yml and recipes.yml.
      */
     public void reloadAll() {
         reloadConfig();
@@ -310,7 +310,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     }
 
     /**
-     * Pflanzenart eines Addons anmelden (Samen setzen sie dann wie Cookery-Pflanzen).
+     * Register an addon's crop kind (its seeds then plant it like the Cookery crops).
      */
     public void registerCrop(CropKind kind) {
         CropKind.register(kind);
@@ -321,7 +321,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         return vanillaRecipes;
     }
 
-    /** Angemeldete Addons (eigene Plugins wie KaleidoscopeGrilling) */
+    /** Registered addons (separate plugins such as KaleidoscopeGrilling) */
     public java.util.List<org.bukkit.plugin.Plugin> getAddons() {
         return java.util.Collections.unmodifiableList(addons);
     }

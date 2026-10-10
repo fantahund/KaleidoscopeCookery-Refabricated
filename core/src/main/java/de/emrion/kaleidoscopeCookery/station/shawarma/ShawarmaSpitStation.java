@@ -37,12 +37,12 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Dönerspieß (ShawarmaSpitBlock/ShawarmaSpitBlockEntity im Mod), 2 Blöcke hoch mit je einer Ebene.
+ * Shawarma spit (ShawarmaSpitBlock/ShawarmaSpitBlockEntity in the mod), 2 blocks tall with one level each.
  * <ul>
- *     <li>Jede Ebene nimmt bis zu 8 gleiche Zutaten mit Lagerfeuer-Rezept</li>
- *     <li>Gegart wird nur mit Redstone-Signal an einem der beiden Blöcke – dann dreht sich der Spieß</li>
- *     <li>Rechtsklick ohne passende Zutat nimmt das Fertige (oder die rohen Zutaten) heraus;
- *     ist der Spieß an, verbrennt man sich dabei (1 Schaden)</li>
+ *     <li>Each level takes up to 8 identical ingredients with a campfire recipe</li>
+ *     <li>It only cooks with a redstone signal on one of the two blocks - then the spit rotates</li>
+ *     <li>Right-click without a matching ingredient takes out the finished food (or the raw ingredients);
+ *     if the spit is on, you burn yourself doing so (1 damage)</li>
  * </ul>
  */
 public class ShawarmaSpitStation extends Station {
@@ -51,14 +51,14 @@ public class ShawarmaSpitStation extends Station {
     private static final int MAX_ITEMS = 8;
     private static final int LAYERS = 2;
     private static final int SPIN_UPDATE_TICKS = 4;
-    /** Mod-Renderer: System.currentTimeMillis() / 10 Grad = 100 Grad pro Sekunde */
+    /** Mod renderer: System.currentTimeMillis() / 10 degrees = 100 degrees per second */
     private static final float DEGREES_PER_TICK = 5;
 
     private static final NamespacedKey COOKING = Keys.key("cooking");
     private static final NamespacedKey COOKED = Keys.key("cooked");
     private static final NamespacedKey COOK_TIME = Keys.key("cook_time");
 
-    /** Index 0 = unten, 1 = oben */
+    /** Index 0 = bottom, 1 = top */
     private final @Nullable ItemStack[] cooking = new ItemStack[LAYERS];
     private final @Nullable ItemStack[] cooked = new ItemStack[LAYERS];
     private final int[] cookTime = new int[LAYERS];
@@ -73,7 +73,7 @@ public class ShawarmaSpitStation extends Station {
         return new StationType("shawarma_spit", ITEM, true, 1f, 2f, false, ShawarmaSpitStation::new, 0, 2);
     }
 
-    // ---- Zustand ----
+    // ---- State ----
 
     @Override
     protected void load(PersistentDataContainer state) {
@@ -100,10 +100,10 @@ public class ShawarmaSpitStation extends Station {
         state.set(COOK_TIME, PersistentDataType.INTEGER_ARRAY, cookTime);
     }
 
-    // ---- Anzeige ----
+    // ---- Display ----
 
     /**
-     * Der Mod dreht das Modell zur Blickrichtung des Spielers (nicht zu ihm hin wie die anderen Stationen).
+     * The mod turns the model in the player's view direction (not towards them like the other stations).
      */
     private Facing modelFacing() {
         return Facing.byDataValue((facing().dataValue() + 2) % 4);
@@ -121,7 +121,7 @@ public class ShawarmaSpitStation extends Station {
     }
 
     /**
-     * ShawarmaSpitBlockEntityRender: Zutaten im Kreis um den Spieß, unten auf 0,875, oben auf 1,5 Blöcken.
+     * ShawarmaSpitBlockEntityRender: ingredients in a circle around the spit, the lower ones at 0.875, the upper ones at 1.5 blocks.
      */
     private void updateItems(int interpolation) {
         for (int layer = 0; layer < LAYERS; layer++) {
@@ -164,7 +164,7 @@ public class ShawarmaSpitStation extends Station {
         return Lang.get("hud.shawarma.empty").color(NamedTextColor.GRAY);
     }
 
-    // ---- Interaktion ----
+    // ---- Interaction ----
 
     @Override
     public boolean onInteract(Player player, EquipmentSlot hand) {
@@ -181,7 +181,7 @@ public class ShawarmaSpitStation extends Station {
     }
 
     /**
-     * ShawarmaSpitBlockEntity#onPutCookingItem: nimmt bis zu 8 Stück (auch im Kreativmodus, wie im Mod).
+     * ShawarmaSpitBlockEntity#onPutCookingItem: takes up to 8 items (also in creative mode, as in the mod).
      */
     private boolean putCookingItem(int layer, ItemStack stack) {
         if (cooking[layer] != null || cooked[layer] != null || stack.isEmpty()) {

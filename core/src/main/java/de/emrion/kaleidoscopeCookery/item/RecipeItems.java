@@ -32,11 +32,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Rezept (RecipeItem im Mod).
+ * Recipe (RecipeItem in the mod).
  * <ul>
- *     <li>Leeres Rezept auf einen Wok/Suppentopf mit Zutaten: merkt sich Zutaten und Ergebnis (ein Rezept vom Stapel)</li>
- *     <li>Beschriebenes Rezept auf einen leeren Wok (mit Öl) bzw. Suppentopf (ohne Deckel): nimmt die Zutaten aus dem
- *     Inventar und legt sie ein; fehlt etwas, steht im Chat was</li>
+ *     <li>Empty recipe on a wok/stockpot with ingredients: remembers ingredients and result (one recipe from the stack)</li>
+ *     <li>Written recipe on an empty wok (with oil) or stockpot (without lid): takes the ingredients from the
+ *     inventory and adds them; if something is missing, the chat says what</li>
  * </ul>
  */
 public class RecipeItems implements Listener {
@@ -78,7 +78,7 @@ public class RecipeItems implements Listener {
     }
 
     /**
-     * Rezept aufschreiben: Name "Rezept: Ergebnis, zubereitet im Wok", Zutaten und Ergebnis in der Beschreibung.
+     * Write down a recipe: name "Recipe: result, prepared in the wok", ingredients and result in the description.
      */
     @SuppressWarnings("UnstableApiUsage")
     public static void write(ItemStack stack, Record record) {
@@ -110,7 +110,7 @@ public class RecipeItems implements Listener {
     }
 
     /**
-     * Item-Art wie Item#equals im Mod (Komponenten wie Qualität zählen nicht).
+     * Item kind like Item#equals in the mod (components such as quality do not count).
      */
     private static String typeKey(ItemStack stack) {
         Key id = CookeryItems.idOf(stack);
@@ -127,10 +127,10 @@ public class RecipeItems implements Listener {
         return counts;
     }
 
-    // ---- Benutzen ----
+    // ---- Use ----
 
     /**
-     * Vor dem StationListener: sonst würde das Rezept als Zettel neben den Wok gelegt.
+     * Before the StationListener: otherwise the recipe would be placed as a note next to the wok.
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onUse(PlayerInteractEntityEvent event) {
@@ -175,7 +175,7 @@ public class RecipeItems implements Listener {
         ItemStack recordStack = held.asOne();
         held.subtract();
         write(recordStack, new Record(type, inputs, result.getKey(), result.getValue()));
-        // Qualität des Flex-Rezepts steht auch auf dem Rezept selbst
+        // The quality of the flex recipe is stored on the recipe itself too
         de.emrion.kaleidoscopeCookery.food.Quality quality = de.emrion.kaleidoscopeCookery.food.FoodService.quality(result.getKey());
         if (result.getValue() && quality != null) {
             recordStack.editPersistentDataContainer(pdc -> pdc.set(de.emrion.kaleidoscopeCookery.food.FoodService.QUALITY, PersistentDataType.STRING, quality.id()));
@@ -187,7 +187,7 @@ public class RecipeItems implements Listener {
     }
 
     /**
-     * RecipeItem#onPutRecipe + handlePutRecipe: Zutaten zählen, fehlende melden, sonst abziehen und einlegen.
+     * RecipeItem#onPutRecipe + handlePutRecipe: count ingredients, report missing ones, otherwise take and add them.
      */
     private boolean putInto(Player player, Record record, Station station) {
         boolean pot = station instanceof PotStation potStation && record.type().equals(POT) && potStation.canReceiveRecipe();

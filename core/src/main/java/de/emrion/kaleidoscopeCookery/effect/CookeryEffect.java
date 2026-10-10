@@ -5,8 +5,8 @@ import net.kyori.adventure.text.format.TextColor;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Effekte aus Kaleidoscope Cookery. Eigene MobEffects gibt es ohne Mod nicht – das Plugin verwaltet sie selbst
- * ({@link EffectManager}) und zeigt sie in einer Bossbar mit den Original-Icons an (Font kaleidoscope:effects).
+ * Effects from Kaleidoscope Cookery. Custom MobEffects do not exist without the mod - the plugin manages them itself
+ * ({@link EffectManager}) and shows them in a boss bar with the original icons (font kaleidoscope:effects).
  */
 public enum CookeryEffect {
     FLATULENCE(0xFFC6C6),
@@ -48,7 +48,7 @@ public enum CookeryEffect {
     }
 
     /**
-     * Zeichen des Icons im Font kaleidoscope:effects.
+     * Character of the icon in the font kaleidoscope:effects.
      */
     public char icon() {
         return (char) (FIRST_ICON + ordinal());

@@ -7,8 +7,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Ein fertiges Gericht wird aus einer Station genommen (Wok, Suppentopf), kurz bevor der Spieler es bekommt.
- * Das Item darf verändert werden.
+ * A finished dish is taken out of a station (wok, stockpot), right before the player receives it.
+ * The item may be modified.
  */
 public class DishServedEvent extends Event {
 
@@ -33,7 +33,7 @@ public class DishServedEvent extends Event {
     }
 
     /**
-     * Typ der Station ("pot", "stockpot" ...).
+     * Type of the station ("pot", "stockpot" ...).
      */
     public String getStationType() {
         return station.context().type().id();

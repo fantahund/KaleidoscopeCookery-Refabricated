@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Keyframe-Animationen des Mülleimers (TrashCanAnimation im Mod) und ihre Auswertung wie KeyframeAnimations#animate.
- * Werte in Modell-Einheiten: Position in Pixeln (posVec), Rotation in Grad (degreeVec).
+ * Keyframe animations of the trash can (TrashCanAnimation in the mod) and their evaluation like KeyframeAnimations#animate.
+ * Values in model units: position in pixels (posVec), rotation in degrees (degreeVec).
  */
 public enum TrashCanAnimation {
 
@@ -68,7 +68,7 @@ public enum TrashCanAnimation {
     }
 
     /**
-     * Rotation (Grad) und Position (Pixel) eines Teils zur Zeit elapsed (Sekunden) auf rotation/position addieren.
+     * Add the rotation (degrees) and position (pixels) of a part at time elapsed (seconds) to rotation/position.
      */
     public void apply(String part, float elapsed, Vector3f rotation, Vector3f position) {
         Channels channels = parts.get(part);
@@ -83,7 +83,7 @@ public enum TrashCanAnimation {
         if (keyframes.isEmpty()) {
             return new Vector3f();
         }
-        // Erster Keyframe, dessen Zeit >= elapsed ist, davor der Startpunkt
+        // First keyframe whose time is >= elapsed, the start point before it
         int search = keyframes.size();
         for (int k = 0; k < keyframes.size(); k++) {
             if (elapsed <= keyframes.get(k).time()) {

@@ -4,13 +4,13 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Station, die beim Setzen Daten aus dem Item übernimmt (für Addons; Cookery-Stationen stehen im StationListener).
+ * Station that takes data from the item when placed (for addons; Cookery stations are handled in the StationListener).
  */
 public interface PlacedFromItem {
 
     /**
-     * @param item die gesetzte Einheit (Menge 1)
-     * @param face angeklickte Fläche
+     * @param item the placed unit (amount 1)
+     * @param face clicked face
      */
     void initFrom(ItemStack item, BlockFace face);
 }

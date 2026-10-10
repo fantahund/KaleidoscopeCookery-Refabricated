@@ -34,12 +34,12 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * Bambustablett (BambooTrayBlock/BambooTrayBlockEntity im Mod) mit 4 Plätzen.
+ * Bamboo tray (BambooTrayBlock/BambooTrayBlockEntity in the mod) with 4 slots.
  * <ul>
- *     <li>Rechtsklick auf ein Viertel legt den ganzen Stapel dort ab, mit leerer Hand nimmt man 1 (Schleichen: alles)</li>
- *     <li>Trocknen: kein Regen und freier Himmel (Glas und weitere Tabletts darüber sind erlaubt)</li>
- *     <li>Befeuchten: Regen auf dem Tablett oder ein Tropfstein mit Wasser darüber</li>
- *     <li>Gestapelte Tabletts stehen auf Füßen</li>
+ *     <li>Right-clicking a quarter puts the whole stack there, with an empty hand you take 1 (sneaking: everything)</li>
+ *     <li>Drying: no rain and open sky (glass and further trays above are allowed)</li>
+ *     <li>Wetting: rain on the tray or a dripstone with water above it</li>
+ *     <li>Stacked trays stand on feet</li>
  * </ul>
  */
 public class BambooTrayStation extends Station {
@@ -49,7 +49,7 @@ public class BambooTrayStation extends Station {
     private static final Key MODEL_STAND = Key.key("kaleidoscope_cookery", "block/bamboo_tray/stand");
     private static final int SLOTS = 4;
     private static final int TICK_INTERVAL = 19;
-    /** Der Mod zeigt bis zu 5 Kopien pro Platz – hier höchstens 3, um Entities zu sparen */
+    /** The mod shows up to 5 copies per slot - at most 3 here to save entities */
     private static final int MAX_COPIES = 3;
     private static final float[][] SLOT_POSITIONS = {{0.25f, 0.25f}, {0.75f, 0.25f}, {0.25f, 0.75f}, {0.75f, 0.75f}};
     private static final Set<Material> TRANSPARENT = Set.of(Material.GLASS, Material.GLASS_PANE);
@@ -58,7 +58,7 @@ public class BambooTrayStation extends Station {
     private static final NamespacedKey PROGRESS = Keys.key("progress");
     private static final NamespacedKey COMPLETED = Keys.key("completed");
 
-    /** CompletionState im Mod */
+    /** CompletionState in the mod */
     private enum Completion {
         NONE, DRYING, WETTING
     }
@@ -67,7 +67,7 @@ public class BambooTrayStation extends Station {
     private final int[] progress = new int[SLOTS];
     private final Completion[] completed = new Completion[SLOTS];
     private boolean stand;
-    /** Was gerade passiert (für die Anzeige), null = nichts */
+    /** What is happening right now (for the display), null = nothing */
     private BambooTrayRecipe.@Nullable Type activeType;
 
     public BambooTrayStation(StationContext context) {
@@ -79,7 +79,7 @@ public class BambooTrayStation extends Station {
         return new StationType("bamboo_tray", ITEM, false, 1f, 0.2f, false, BambooTrayStation::new);
     }
 
-    // ---- Zustand ----
+    // ---- State ----
 
     @Override
     protected void load(PersistentDataContainer state) {
@@ -112,7 +112,7 @@ public class BambooTrayStation extends Station {
         state.set(COMPLETED, PersistentDataType.BYTE_ARRAY, storedCompleted);
     }
 
-    // ---- Anzeige ----
+    // ---- Display ----
 
     @Override
     public void updateDisplay() {
@@ -172,7 +172,7 @@ public class BambooTrayStation extends Station {
                 .append(Component.text(" · ", NamedTextColor.DARK_GRAY)).append(state).build();
     }
 
-    // ---- Interaktion ----
+    // ---- Interaction ----
 
     @Override
     public boolean onInteract(Player player, EquipmentSlot hand) {
@@ -183,12 +183,12 @@ public class BambooTrayStation extends Station {
             markDirty();
             updateDisplay();
         }
-        // Der Mod verbraucht den Klick immer
+        // The mod always consumes the click
         return true;
     }
 
     /**
-     * Viertel aus der Klickposition (BambooTrayBlock#useItemOn).
+     * Quarter from the click position (BambooTrayBlock#useItemOn).
      */
     private static int slotAt(@Nullable Vector click) {
         if (click == null) {
@@ -271,7 +271,7 @@ public class BambooTrayStation extends Station {
         if ((world().getGameTime() + offset) % TICK_INTERVAL != 0) {
             return;
         }
-        // Füße anpassen, wenn darunter ein Tablett dazukommt oder wegfällt
+        // Adjust the feet when a tray below is added or removed
         if (stand != context.manager().at(position().below()) instanceof BambooTrayStation) {
             updateDisplay();
         }
@@ -333,7 +333,7 @@ public class BambooTrayStation extends Station {
     }
 
     /**
-     * BambooTrayBlockEntity#hasDryingExposure: freier Himmel, nur farbloses Glas und Tabletts darüber.
+     * BambooTrayBlockEntity#hasDryingExposure: open sky, only clear glass and trays above.
      */
     private boolean hasDryingExposure(Block above) {
         if (Weather.canSeeSky(above)) {

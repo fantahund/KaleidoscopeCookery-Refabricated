@@ -16,8 +16,8 @@ import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Sitzplätze (SitEntity im Mod): ein unsichtbares, nicht gespeichertes Display, auf dem der Spieler reitet.
- * Absteigen (Schleichen), Ausloggen oder Abbauen entfernt den Sitz.
+ * Seats (SitEntity in the mod): an invisible, unsaved display the player rides on.
+ * Dismounting (sneaking), logging out or breaking removes the seat.
  */
 public class Seats implements Listener {
 
@@ -26,12 +26,12 @@ public class Seats implements Listener {
             org.bukkit.inventory.EquipmentSlot.LEGS, org.bukkit.inventory.EquipmentSlot.FEET);
 
     private final Plugin plugin;
-    /** Versteckte Spieler (Mülleimer): unsichtbar, Ausrüstung wird für andere ausgeblendet */
+    /** Hidden players (trash can): invisible, equipment is hidden for others */
     private final java.util.Set<java.util.UUID> hidden = new java.util.HashSet<>();
 
     public Seats(Plugin plugin) {
         this.plugin = plugin;
-        // Ausrüstung regelmäßig erneut ausblenden (Itemwechsel, neue Zuschauer in Sichtweite)
+        // Hide the equipment again regularly (item changes, new viewers in sight)
         plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             for (java.util.UUID id : java.util.List.copyOf(hidden)) {
                 Player player = plugin.getServer().getPlayer(id);
@@ -48,17 +48,17 @@ public class Seats implements Listener {
     }
 
     /**
-     * Spieler hinsetzen.
+     * Seat a player.
      *
-     * @param location Sitzhöhe und Blickrichtung
-     * @param kind     Art des Sitzes (z. B. "trash_can"), steht im PDC
+     * @param location seat height and view direction
+     * @param kind     kind of seat (e.g. "trash_can"), stored in the PDC
      */
     public void sit(Player player, Location location, String kind) {
         sit(player, location, kind, false);
     }
 
     /**
-     * @param hide Spieler unsichtbar machen (versteckt im Mülleimer)
+     * @param hide make the player invisible (hidden in the trash can)
      */
     public void sit(Player player, Location location, String kind, boolean hide) {
         if (player.isInsideVehicle()) {
@@ -81,7 +81,7 @@ public class Seats implements Listener {
     }
 
     /**
-     * Ausrüstung des Spielers allen anderen in der Welt leer bzw. wieder echt zeigen.
+     * Show the player's equipment as empty to everyone else in the world, or real again.
      */
     private static void sendEquipment(Player player, boolean empty) {
         java.util.Map<org.bukkit.inventory.EquipmentSlot, org.bukkit.inventory.ItemStack> equipment = new java.util.EnumMap<>(org.bukkit.inventory.EquipmentSlot.class);
@@ -106,7 +106,7 @@ public class Seats implements Listener {
     }
 
     /**
-     * Im Sitz steckt man im Block (Mülleimer) – kein Erstickungsschaden.
+     * In the seat you are inside the block (trash can) - no suffocation damage.
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onSuffocate(org.bukkit.event.entity.EntityDamageEvent event) {
@@ -120,14 +120,14 @@ public class Seats implements Listener {
     }
 
     /**
-     * Gibt es an dieser Sitzposition schon einen Sitz?
+     * Is there already a seat at this seat position?
      */
     public static boolean isOccupied(Location seat) {
         return !seat.getWorld().getNearbyEntities(seat, 0.3, 0.3, 0.3, Seats::isSeat).isEmpty();
     }
 
     /**
-     * Sitze im Block entfernen (Station abgebaut).
+     * Remove the seats in the block (station broken).
      */
     public static void removeAt(World world, Location blockCorner) {
         world.getNearbyEntities(blockCorner.clone().add(0.5, 0.5, 0.5), 0.5, 0.5, 0.5, Seats::isSeat).forEach(Entity::remove);
@@ -137,7 +137,7 @@ public class Seats implements Listener {
     public void onDismount(EntityDismountEvent event) {
         if (isSeat(event.getDismounted())) {
             Entity seat = event.getDismounted();
-            // Nach dem Absteigen etwas anheben, damit man nicht im Block steckt
+            // Lift slightly after dismounting so you are not stuck in the block
             Entity rider = event.getEntity();
             plugin.getServer().getScheduler().runTask(plugin, () -> {
                 seat.remove();

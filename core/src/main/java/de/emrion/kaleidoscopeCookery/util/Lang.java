@@ -21,10 +21,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * Übersetzungen: Alle Texte sind Übersetzungs-Keys. Die Sprachdateien liegen im Resourcepack
- * (der Client übersetzt damit z. B. Item-Namen) und werden zusätzlich serverseitig beim
- * GlobalTranslator registriert, damit Chat, Actionbar und Konsole auch ohne Pack lesbar sind.
- * Englisch ist Fallback für fehlende Keys.
+ * Translations: all texts are translation keys. The language files are in the resource pack
+ * (the client uses them to translate e.g. item names) and are also registered server-side with the
+ * GlobalTranslator so that chat, action bar and console are readable even without the pack.
+ * English is the fallback for missing keys.
  */
 public final class Lang {
 
@@ -38,7 +38,7 @@ public final class Lang {
     }
 
     /**
-     * Lädt die Sprachdateien aus dem Resourcepack-Zip.
+     * Loads the language files from the resource pack zip.
      */
     public static void load(ZipFile pack, Logger logger) throws IOException {
         unload();
@@ -49,7 +49,7 @@ public final class Lang {
     }
 
     /**
-     * Sprachdateien eines weiteren Packs (Addon) dazunehmen; schon bekannte Schlüssel bleiben.
+     * Add the language files of another pack (addon); keys that are already known stay.
      */
     public static void add(ZipFile pack, Logger logger) throws IOException {
         int count = 0;
@@ -80,7 +80,7 @@ public final class Lang {
     }
 
     /**
-     * Minecraft-Platzhalter (%s, %1$s) in MessageFormat ({0}) umwandeln.
+     * Convert Minecraft placeholders (%s, %1$s) to MessageFormat ({0}).
      */
     static MessageFormat toMessageFormat(String text, Locale locale) {
         StringBuilder result = new StringBuilder();
@@ -102,14 +102,14 @@ public final class Lang {
     }
 
     /**
-     * Übersetzbarer Text aus dem Plugin-Namespace (kaleidoscope.&lt;key&gt;).
+     * Translatable text from the plugin namespace (kaleidoscope.&lt;key&gt;).
      */
     public static Component get(String key, Object... args) {
         return Component.translatable(Keys.NAMESPACE + "." + key, arguments(args));
     }
 
     /**
-     * Übersetzbarer Text mit vollem Key (z. B. aus den Mod-Sprachdateien).
+     * Translatable text with a full key (e.g. from the mod language files).
      */
     public static Component raw(String key, Object... args) {
         return Component.translatable(key, arguments(args));
@@ -124,7 +124,7 @@ public final class Lang {
     }
 
     /**
-     * Text für die Suche: in der Sprache des Spielers gerendert, ohne Formatierung (unbekannte Schlüssel bleiben stehen).
+     * Text for searching: rendered in the player's language, without formatting (unknown keys stay as they are).
      */
     public static String plain(Component component, Locale locale) {
         return net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText()

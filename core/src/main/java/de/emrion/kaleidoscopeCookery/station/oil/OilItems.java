@@ -18,7 +18,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
- * Öl in Items: Ölkanne (OilPotItem, bis 256 Öl) und Pfannenwender mit Öl (KitchenShovelItem#hasOil).
+ * Oil in items: oil pot (OilPotItem, up to 256 oil) and spatula with oil (KitchenShovelItem#hasOil).
  */
 @SuppressWarnings("UnstableApiUsage")
 public final class OilItems {
@@ -46,7 +46,7 @@ public final class OilItems {
         return KITCHEN_SHOVEL.equals(CookeryItems.idOf(stack));
     }
 
-    // ---- Ölkanne ----
+    // ---- Oil pot ----
 
     public static int oilCount(ItemStack oilPot) {
         return oilPot.getPersistentDataContainer().getOrDefault(OIL_COUNT, PersistentDataType.INTEGER, 0);
@@ -72,13 +72,13 @@ public final class OilItems {
             new java.util.concurrent.CopyOnWriteArrayList<>();
 
     /**
-     * Addons (Grilling: Ölsorte) ersetzen die Mengen-Zeile der Ölkanne: (Kanne, Menge) -> Zeile oder null.
+     * Addons (Grilling: oil type) replace the oil pot's amount line: (pot, amount) -> line or null.
      */
     public static void addLoreProvider(java.util.function.BiFunction<ItemStack, Integer, @Nullable Component> provider) {
         LORE_PROVIDERS.add(provider);
     }
 
-    // ---- Pfannenwender ----
+    // ---- Spatula ----
 
     public static boolean shovelHasOil(ItemStack shovel) {
         return shovel.getPersistentDataContainer().getOrDefault(HAS_OIL, PersistentDataType.BOOLEAN, false);
@@ -90,9 +90,9 @@ public final class OilItems {
     }
 
     /**
-     * Ein Öl aus Öl-Item, Ölkanne oder Pfannenwender nehmen (PotBlockEntity#onPlaceOil).
+     * Take one oil from an oil item, oil pot or spatula (PotBlockEntity#onPlaceOil).
      *
-     * @return true, wenn Öl da war
+     * @return true if there was oil
      */
     public static boolean takeOne(ItemStack stack, boolean creative) {
         if (isOil(stack)) {

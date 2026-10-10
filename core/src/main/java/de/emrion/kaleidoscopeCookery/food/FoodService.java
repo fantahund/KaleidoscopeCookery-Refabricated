@@ -43,10 +43,10 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Essen: Qualität (Kaleidoscope Cookery), Mod-Effekte beim Essen und die
- * Abschwächung von Vanilla-Essen.
+ * Eating: quality (Kaleidoscope Cookery), mod effects on eating and the
+ * nerf of vanilla food.
  * <ul>
- *     <li>Qualität steht im PDC und skaliert Nährwert, Sättigung und Effektdauer (wie QualityUtils im Mod)</li>
+ *     <li>The quality is stored in the PDC and scales nutrition, saturation and effect duration (like QualityUtils in the mod)</li>
  * </ul>
  */
 public class FoodService implements Listener {
@@ -67,7 +67,7 @@ public class FoodService implements Listener {
     public void stop() {
     }
 
-    // ---- Qualität ----
+    // ---- Quality ----
 
     public static @Nullable Quality quality(@Nullable ItemStack stack) {
         if (stack == null || stack.isEmpty()) {
@@ -77,7 +77,7 @@ public class FoodService implements Listener {
     }
 
     /**
-     * Qualität setzen und Nahrungswerte entsprechend skalieren.
+     * Set the quality and scale the food values accordingly.
      */
     public void setQuality(ItemStack stack, Quality quality) {
         stack.editPersistentDataContainer(pdc -> pdc.set(QUALITY, PersistentDataType.STRING, quality.id()));
@@ -89,16 +89,16 @@ public class FoodService implements Listener {
     }
 
     /**
-     * Zusätzliche Beschreibungs-Zeilen (Addons, z. B. "heiß" von Grilling).
+     * Additional description lines (addons, e.g. "hot" from Grilling).
      */
     public void addLoreExtension(de.emrion.kaleidoscopeCookery.api.FoodLoreExtension extension) {
         loreExtensions.add(extension);
     }
 
     /**
-     * Lore neu aufbauen: Beschreibung, Spruch, Qualität und die Zeilen der Addons.
+     * Rebuild the lore: description, maxim, quality and the lines of the addons.
      *
-     * @return true, wenn sich etwas geändert hat
+     * @return true if something changed
      */
     @SuppressWarnings("UnstableApiUsage")
     public boolean refreshLore(ItemStack stack, @Nullable World world) {
@@ -126,7 +126,7 @@ public class FoodService implements Listener {
         return true;
     }
 
-    // ---- Essen ----
+    // ---- Eating ----
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onConsume(PlayerItemConsumeEvent event) {
@@ -139,7 +139,7 @@ public class FoodService implements Listener {
             double ratio = quality == null ? 1 : quality.ratio();
             applyModEffects(player, item.food(), ratio);
             if (de.emrion.kaleidoscopeCookery.station.teapot.MilkTeaStation.ITEM.equals(item.id())) {
-                // ClayPotMilkTeaItem#finishUsingItem: alle schädlichen Effekte weg, gute bleiben
+                // ClayPotMilkTeaItem#finishUsingItem: all harmful effects removed, beneficial ones stay
                 for (PotionEffect effect : player.getActivePotionEffects()) {
                     if (effect.getType().getCategory() == PotionEffectTypeCategory.HARMFUL) {
                         player.removePotionEffect(effect.getType());
@@ -160,9 +160,9 @@ public class FoodService implements Listener {
     }
 
     /**
-     * Biss von einem Teller (FoodBiteBlock#eat im Mod).
+     * Bite from a plate (FoodBiteBlock#eat in the mod).
      *
-     * @return false, wenn der Spieler gerade nicht essen kann
+     * @return false if the player cannot eat right now
      */
     public boolean eatBite(Player player, CookeryItem.Food food, double ratio, ItemStack dish) {
         if (!food.alwaysEdible() && player.getFoodLevel() >= 20) {
@@ -190,10 +190,10 @@ public class FoodService implements Listener {
     }
 
     /**
-     * Ein Stück aus dem Lunchbeutel essen bzw. trinken (TransmutationLunchBagItem#consumeOne): Nährwerte, Wirkungen
-     * und Mod-Effekte wie beim normalen Essen, aber ohne Animation.
+     * Eat or drink one item from the lunch bag (TransmutationLunchBagItem#consumeOne): nutrition, effects
+     * and mod effects like normal eating, but without animation.
      *
-     * @return was übrig bleibt (Schüssel, Flasche ...), sonst null
+     * @return what remains (bowl, bottle ...), otherwise null
      */
     @SuppressWarnings("UnstableApiUsage")
     public @Nullable ItemStack eatFromBag(Player player, ItemStack stack) {
@@ -265,17 +265,17 @@ public class FoodService implements Listener {
         return result;
     }
 
-    // ---- Vanilla-Essen abschwächen ----
+    // ---- Nerfing vanilla food ----
 
     /**
-     * Vanilla-Essen: nach dem Essen Hunger und Sättigung auf den eingestellten Anteil zurücksetzen
-     * (das Item selbst bleibt unverändert, damit es weiter normal stapelt).
+     * Vanilla food: after eating, reset hunger and saturation to the configured share
+     * (the item itself stays unchanged so it keeps stacking normally).
      */
     @SuppressWarnings("UnstableApiUsage")
     private void nerfVanilla(Player player, ItemStack stack) {
         CookeryConfig.Food config = plugin.getCookeryConfig().food();
         int percent = config.vanillaPercent(stack.getType());
-        // Vanilla-Werte des Typs, nicht die des Stapels (der ist normalerweise schon angepasst, siehe VanillaFoodAdjuster)
+        // Vanilla values of the type, not those of the stack (it is normally already adjusted, see VanillaFoodAdjuster)
         FoodProperties food = VanillaFoodAdjuster.vanillaFood(stack.getType());
         if (!config.vanillaNerfEnabled() || percent >= 100 || food == null) {
             return;
@@ -288,7 +288,7 @@ public class FoodService implements Listener {
             }
             int foodLevel = Math.min(20, foodBefore + (int) Math.round(food.nutrition() * percent / 100.0));
             float saturation = Math.min(foodLevel, saturationBefore + food.saturation() * percent / 100f);
-            // Nur kürzen, nie mehr geben als Vanilla (andere Plugins/Effekte können dazwischen gewirkt haben)
+            // Only reduce, never give more than vanilla (other plugins/effects may have acted in between)
             player.setFoodLevel(Math.min(player.getFoodLevel(), foodLevel));
             player.setSaturation(Math.min(player.getSaturation(), saturation));
         });
@@ -304,7 +304,7 @@ public class FoodService implements Listener {
     }
 
     /**
-     * Kuchen wird nicht als Item gegessen: Hungeränderung direkt kürzen.
+     * Cake is not eaten as an item: reduce the hunger change directly.
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onFoodLevel(FoodLevelChangeEvent event) {

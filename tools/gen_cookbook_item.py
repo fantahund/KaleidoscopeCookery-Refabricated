@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Item-Bild des Kochbuchs (eigene Pixelgrafik, 16x16): rotes Leinenbuch mit Goldecken, Lesebändchen und einer
-dampfenden Schüssel auf dem Umschlag.
-Ausgabe: resourcepack/custom/assets/kaleidoscope/{textures/item,models/item,items}/cookbook.*
+Item image of the cookbook (own pixel art, 16x16): red linen book with golden corners, a ribbon bookmark and a
+steaming bowl on the cover.
+Output: resourcepack/custom/assets/kaleidoscope/{textures/item,models/item,items}/cookbook.*
 """
 import json
 from pathlib import Path
@@ -12,18 +12,18 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "resourcepack" / "custom" / "assets" / "kaleidoscope"
 
-# Farben
+# Colours
 _ = None
-O = (43, 20, 14, 255)       # Umriss
-R = (150, 42, 33, 255)      # Umschlag
-r = (118, 30, 25, 255)      # Umschlag dunkel (Rücken, Schatten)
-H = (185, 64, 48, 255)      # Umschlag hell (Kante)
-P = (240, 228, 196, 255)    # Seiten
-p = (206, 190, 150, 255)    # Seiten Schatten
+O = (43, 20, 14, 255)       # outline
+R = (150, 42, 33, 255)      # cover
+r = (118, 30, 25, 255)      # cover dark (spine, shadow)
+H = (185, 64, 48, 255)      # cover light (edge)
+P = (240, 228, 196, 255)    # pages
+p = (206, 190, 150, 255)    # pages shadow
 G = (232, 184, 48, 255)     # Gold
-g = (176, 128, 30, 255)     # Gold dunkel
-W = (236, 232, 226, 170)    # Dampf
-L = (62, 120, 200, 255)     # Lesebändchen
+g = (176, 128, 30, 255)     # gold dark
+W = (236, 232, 226, 170)    # steam
+L = (62, 120, 200, 255)     # ribbon bookmark
 
 PIXELS = [
     [_, _, O, O, O, O, O, O, O, O, O, O, O, _, _, _],

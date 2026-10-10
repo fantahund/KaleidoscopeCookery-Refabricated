@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 """
-Baut Java-Entity-Modelle des Mods (createBodyLayer) als Item-Modelle nach:
-- Mühlstein (MillstoneModel): Sockel (fest), Rad mit Deichsel (dreht sich um die Blockmitte)
-  und Walze (rollt zusätzlich um ihre eigene Achse)
-- Mülleimer (TrashCanModel): Körper, Deckel, Auge und Pupillen einzeln für die Animationen
-- Vogelscheuche (ScarecrowModel, Entity 2,375 Blöcke hoch): Körper und Kopf (fällt weg, wenn ein Kopf aufgesetzt ist),
-  auf 1/2 verkleinert; Textur nach block/scarecrow_entity kopiert (Entity-Texturen liegen in keinem Item-Atlas)
-- Aufschnitt-Schinken (ColdCutHamSlicesModel, 3x3 Blöcke): je Bissstufe 0–8 ein Modell aus dem Blockbench-Itemmodell
-  des Mods (cold_cut_ham_slices_block), Biss k verschwindet ab bites >= 9 - k wie in updateBites
+Rebuilds the mod's Java entity models (createBodyLayer) as item models:
+- Millstone (MillstoneModel): base (fixed), wheel with shaft (rotates around the block centre)
+  and roller (additionally rolls around its own axis)
+- Trash can (TrashCanModel): body, lid, eye and pupils separately for the animations
+- Scarecrow (ScarecrowModel, entity 2.375 blocks tall): body and head (hidden when a head is put on),
+  scaled down to 1/2; texture copied to block/scarecrow_entity (entity textures are not in any item atlas)
+- Cold cut ham slices (ColdCutHamSlicesModel, 3x3 blocks): one model per bite stage 0-8 from the mod's Blockbench item model
+  (cold_cut_ham_slices_block), bite k disappears from bites >= 9 - k like in updateBites
 
-Koordinaten: Die Mod-Renderer legen die Modelle mit translate(0.5, 1.5, 0.5) und ZN(180) in den Block
-(Ausrichtung Norden). Ein Modellpunkt (x, y, z) in Pixeln liegt damit bei (8 - x, 24 - y, 8 + z)
-relativ zur Blockecke. Die Mühlstein-Teile sind 3 Blöcke groß, Blockmodelle erlauben aber nur -16..32 –
-deshalb werden sie um den Ankerpunkt auf 1/4 verkleinert und im Display mit Faktor 4 skaliert.
+Coordinates: the mod's renderers place the models in the block with translate(0.5, 1.5, 0.5) and ZN(180)
+(facing north). A model point (x, y, z) in pixels is therefore at (8 - x, 24 - y, 8 + z)
+relative to the block corner. The millstone parts are 3 blocks large, but block models only allow -16..32 -
+so they are scaled down to 1/4 around the anchor point and scaled by a factor of 4 in the display.
 
-Ausgabe nach resourcepack/custom/assets/kaleidoscope_cookery/{models,items}/block/*.json
+Output to resourcepack/custom/assets/kaleidoscope_cookery/{models,items}/block/*.json
 """
 import json
 from pathlib import Path
@@ -27,7 +27,7 @@ def cube(tex, box, size, grow=0.0):
     return {"tex": tex, "box": box, "size": size, "grow": grow}
 
 
-# Teile wie in den Mod-Modellen: (Name, Pivot relativ zum Elternteil, Rotation in Grad (x, y, z), Würfel, Kinder)
+# Parts as in the mod models: (name, pivot relative to the parent, rotation in degrees (x, y, z), cubes, children)
 MILLSTONE = [
     ("base", (8, 24, -8), (0, 0, 0), [
         cube((6, 8), (-13, -15, -10), (2, 3, 5)),
@@ -67,7 +67,7 @@ TRASH_CAN = [
     ]),
 ]
 
-# ScarecrowModel#createBodyLayer (Radiant in Grad umgerechnet, mirror() ohne Einfluss auf die Form)
+# ScarecrowModel#createBodyLayer (radians converted to degrees, mirror() does not affect the shape)
 SCARECROW = [
     ("group", (0, 23.0278, 0.0278), (0, 0, 0), [
         cube((85, 82), (-4, -26.0278, -2.0278), (8, 10, 4)),
@@ -105,8 +105,8 @@ def uv(u0, v0, u1, v1, texture_size):
 
 def faces(u, v, w, h, d, texture_size):
     """
-    Box-UV von ModelPart.Cube auf Blockmodell-Flächen. Durch ZN(180) liegt die Entity-Westseite (minX)
-    im Osten und die Entity-Unterseite (minY) oben.
+    Box UV of ModelPart.Cube onto block model faces. Because of ZN(180) the entity's west side (minX)
+    is in the east and the entity's bottom (minY) at the top.
     """
     f4, f5, f6, f7, f8, f9 = u, u + d, u + d + w, u + d + 2 * w, u + 2 * d + w, u + 2 * d + 2 * w
     f10, f11, f12 = v, v + d, v + d + h
@@ -119,7 +119,7 @@ def faces(u, v, w, h, d, texture_size):
         "up": {"uv": uv(f6, f11, f5, f10, texture_size), "texture": tex},
         "down": {"uv": uv(f7, f10, f6, f11, texture_size), "texture": tex},
     }
-    # Flache Würfel (Breite, Höhe oder Tiefe 0): nur die beiden großen Flächen
+    # Flat cubes (width, height or depth 0): only the two large faces
     if d == 0:
         result = {k: result[k] for k in ("north", "south")}
     elif h == 0:
@@ -130,7 +130,7 @@ def faces(u, v, w, h, d, texture_size):
 
 
 def collect(parts, offset, path, out):
-    """Würfel mit absolutem Pivot sammeln. Elternteile sind in Ruhe unverdreht, nur Blätter haben Rotation."""
+    """Collect cubes with an absolute pivot. Parents are unrotated at rest, only leaves have a rotation."""
     for name, pivot, rotation, cubes, children in parts:
         absolute = tuple(o + p for o, p in zip(offset, pivot))
         for c in cubes:
@@ -156,7 +156,7 @@ def element(pivot, rotation, c, anchor, scale, texture_size):
     }
     rx, ry, rz = rotation
     if rx or ry or rz:
-        # Rz(180)-Konjugation: x- und y-Drehungen kehren ihr Vorzeichen um
+        # Rz(180) conjugation: x and y rotations flip their sign
         result["rotation"] = {"origin": scaled(to_world(pivot)), "x": -rx, "y": -ry, "z": rz}
     return result
 
@@ -174,13 +174,13 @@ def write_model(name, elements, texture):
     (OUT / "items" / "block" / f"{name}.json").write_text(json.dumps(item, indent=2) + "\n", encoding="utf-8")
 
 
-# Anker in Welt-Pixeln (Norden): Blockmitte für Sockel und Rad, Walzenmitte für die Walze
+# Anchor in world pixels (north): block centre for base and wheel, roller centre for the roller
 BLOCK_CENTER = (8, 8, 8)
 ROLL_CENTER = to_world((0, 3, -8))
 
 
 def main():
-    # Mühlstein: drei Teile, auf 1/4 verkleinert
+    # Millstone: three parts, scaled down to 1/4
     texture = "kaleidoscope_cookery:block/millstone"
     cubes = []
     collect(MILLSTONE, (0, 0, 0), [], cubes)
@@ -196,7 +196,7 @@ def main():
         write_model(name, elements, texture)
         print(f"{name}: {len(elements)} Elemente")
 
-    # Mülleimer: vier animierte Teile in Originalgröße, jeweils um ihren Drehpunkt (TrashCanAnimation)
+    # Trash can: four animated parts in original size, each around its pivot (TrashCanAnimation)
     cubes = []
     collect(TRASH_CAN, (0, 0, 0), [], cubes)
     pivots = {"bone": (0, 18, 0), "bone2": (0, 9.25, 0), "eye": (0, 15.5, 0), "bone3": (0, 17, -0.1)}
@@ -211,7 +211,7 @@ def main():
     for part, pivot in pivots.items():
         print(f"Drehpunkt {part} (Welt-Pixel, Norden): {to_world(pivot)}")
 
-    # Vogelscheuche: auf 1/2 um die Blockmitte verkleinert (im Display Faktor 2)
+    # Scarecrow: scaled down to 1/2 around the block centre (factor 2 in the display)
     texture_file = ROOT / "resourcepack" / "imported" / "assets" / "kaleidoscope_cookery" / "textures" / "entity" / "scarecrow.png"
     (OUT / "textures" / "block").mkdir(parents=True, exist_ok=True)
     (OUT / "textures" / "block" / "scarecrow_entity.png").write_bytes(texture_file.read_bytes())

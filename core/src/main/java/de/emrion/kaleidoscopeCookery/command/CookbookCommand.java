@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * /kc rezepte [Suche] – Kochbuch öffnen bzw. suchen; /kc rezept – Rezepte für das Item in der Hand.
+ * /kc rezepte [search] - open or search the cookbook; /kc rezept - recipes for the item in hand.
  */
 public class CookbookCommand extends PlayerSubCommand {
 

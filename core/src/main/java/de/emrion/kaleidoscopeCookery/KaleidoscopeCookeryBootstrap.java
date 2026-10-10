@@ -22,11 +22,11 @@ import org.bukkit.inventory.ItemType;
 import java.util.List;
 
 /**
- * Registriert beim Serverstart die Verzauberung "Schnelles Messer" (quick_knife aus Kaleidoscope Cookery)
- * über die Registry-API von Paper – ohne Datapack und ohne NMS.
+ * Registers the "Quick Knife" enchantment (quick_knife from Kaleidoscope Cookery) on server start
+ * via Paper's registry API - without a datapack and without NMS.
  * <p>
- * Werte wie im Mod (data/kaleidoscope_cookery/enchantment/quick_knife.json). Erlaubtes Item ist der Verbundblock,
- * auf dem die Küchenmesser basieren; normale Schwerter bekommen sie dadurch nie.
+ * Values as in the mod (data/kaleidoscope_cookery/enchantment/quick_knife.json). The supported item is the jigsaw block
+ * the kitchen knives are based on; regular swords therefore never get it.
  */
 @SuppressWarnings("UnstableApiUsage")
 public class KaleidoscopeCookeryBootstrap implements PluginBootstrap {
@@ -36,7 +36,7 @@ public class KaleidoscopeCookeryBootstrap implements PluginBootstrap {
 
     @Override
     public void bootstrap(BootstrapContext context) {
-        // Die Küchenmesser basieren auf dem Verbundblock (im Survival nicht erhältlich)
+        // The kitchen knives are based on the jigsaw block (not obtainable in survival)
         List<TypedKey<ItemType>> knifeBases = List.of(ItemTypeKeys.JIGSAW);
         context.getLifecycleManager().registerEventHandler(RegistryEvents.ENCHANTMENT.compose().newHandler(event ->
                 event.registry().register(QUICK_KNIFE, builder -> builder
@@ -49,7 +49,7 @@ public class KaleidoscopeCookeryBootstrap implements PluginBootstrap {
                         .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(21, 11))
                         .anvilCost(2)
                         .activeSlots(EquipmentSlotGroup.MAINHAND))));
-        // Sichel (Konstruktionsblock): "Schwung" vergrößert den Ernte-Bereich (data/kaleidoscope_cookery/enchantment/sweep.json)
+        // Sickle (structure block): "Sweeping" enlarges the harvest area (data/kaleidoscope_cookery/enchantment/sweep.json)
         List<TypedKey<ItemType>> sickleBases = List.of(ItemTypeKeys.STRUCTURE_BLOCK);
         context.getLifecycleManager().registerEventHandler(RegistryEvents.ENCHANTMENT.compose().newHandler(event ->
                 event.registry().register(SWEEP, builder -> builder
@@ -62,10 +62,10 @@ public class KaleidoscopeCookeryBootstrap implements PluginBootstrap {
                         .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(21, 11))
                         .anvilCost(2)
                         .activeSlots(EquipmentSlotGroup.MAINHAND))));
-        // Wie im Mod stehen die Küchenmesser in #minecraft:swords: alle Schwert-Verzauberungen gelten auch für sie
+        // As in the mod the kitchen knives are in #minecraft:swords: all sword enchantments apply to them too
         context.getLifecycleManager().registerEventHandler(LifecycleEvents.TAGS.preFlatten(RegistryKey.ITEM), event ->
                 event.registrar().addToTag(ItemTypeTagKeys.SWORDS, List.of(TagEntry.valueEntry(ItemTypeKeys.JIGSAW), TagEntry.valueEntry(ItemTypeKeys.STRUCTURE_BLOCK))));
-        // Wie im Mod: am Zaubertisch erhältlich, kein Schatz
+        // As in the mod: available at the enchanting table, not a treasure
         context.getLifecycleManager().registerEventHandler(LifecycleEvents.TAGS.postFlatten(RegistryKey.ENCHANTMENT), event -> {
             event.registrar().addToTag(EnchantmentTagKeys.IN_ENCHANTING_TABLE, List.of(QUICK_KNIFE, SWEEP));
             event.registrar().addToTag(EnchantmentTagKeys.NON_TREASURE, List.of(QUICK_KNIFE, SWEEP));

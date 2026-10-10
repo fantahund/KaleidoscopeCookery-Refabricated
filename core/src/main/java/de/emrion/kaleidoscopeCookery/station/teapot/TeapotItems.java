@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Die Teekanne als Item (TeapotItem im Mod): trägt Teebasis bzw. fertigen Tee, schöpft aus Wasser/Lava und gießt in Tassen.
+ * The teapot as an item (TeapotItem in the mod): carries tea base or finished tea, scoops from water/lava and pours into cups.
  */
 public class TeapotItems implements Listener {
 
@@ -47,7 +47,7 @@ public class TeapotItems implements Listener {
     }
 
     /**
-     * Tee, der ausgegossen werden kann (getPourOut), sonst null.
+     * Tea that can be poured out (getPourOut), otherwise null.
      */
     public static @Nullable ItemStack pourOut(ItemStack teapot) {
         PersistentDataContainerView pdc = teapot.getPersistentDataContainer();
@@ -59,7 +59,7 @@ public class TeapotItems implements Listener {
     }
 
     /**
-     * Eine Tasse ausgießen (pourOut): Rest zurückschreiben bzw. Kanne leeren.
+     * Pour out one cup (pourOut): write back the rest or empty the pot.
      */
     public static void pourOne(ItemStack teapot) {
         ItemStack result = pourOut(teapot);
@@ -100,7 +100,7 @@ public class TeapotItems implements Listener {
     }
 
     /**
-     * Leere Kanne schöpft aus einer Wasser- oder Lavaquelle (TeapotItem#use). Platzieren geht nur beim Schleichen.
+     * An empty pot scoops from a water or lava source (TeapotItem#use).
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onUse(PlayerInteractEvent event) {

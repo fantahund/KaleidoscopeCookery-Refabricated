@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Registriert die Werkbank-/Ofen-/Schmiede-Rezepte der Mods beim Server (Namespace kaleidoscope).
+ * Registers the crafting/furnace/smithing recipes of the mods with the server (namespace kaleidoscope).
  */
 public class VanillaRecipes implements Listener {
 
@@ -41,27 +41,27 @@ public class VanillaRecipes implements Listener {
     private final List<NamespacedKey> registered = new ArrayList<>();
     private final java.util.Map<NamespacedKey, Ingredient> smithingBases = new java.util.HashMap<>();
     /**
-     * Platzhalter-Rezepte "1 bis 9 beliebige Mod-Items" (formlos, zuletzt registriert): greifen nur, wenn kein genaueres
-     * Rezept passt, z. B. bei Mod-Items mit Qualität oder gespeicherten Daten, auf die keine ExactChoice passt.
-     * Das Ergebnis bestimmen die Auflöser (Reisschalen, beschriebene Rezepte zurücksetzen, Addons).
+     * Placeholder recipes "1 to 9 arbitrary mod items" (shapeless, registered last): only apply if no more specific
+     * recipe matches, e.g. for mod items with quality or stored data that no ExactChoice matches.
+     * The resolvers determine the result (rice bowls, resetting written recipes, addons).
      */
     private static final String ANY_PREFIX = "any_items_";
     private final List<CraftingResolver> resolvers = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     /**
-     * Ergebnis für Mod-Items, die nur auf die Platzhalter-Rezepte passen.
+     * Result for mod items that only match the placeholder recipes.
      */
     @FunctionalInterface
     public interface CraftingResolver {
         /**
-         * @param inputs belegte Felder der Werkbank (nur Mod-Items)
-         * @return Ergebnis oder null, wenn der Auflöser nicht zuständig ist
+         * @param inputs occupied slots of the crafting table (mod items only)
+         * @return result, or null if the resolver is not responsible
          */
         @Nullable ItemStack resolve(List<ItemStack> inputs);
     }
 
     /**
-     * Auflöser anmelden (Addons, z. B. Spieß-Rezeptbuch in KaleidoscopeGrilling).
+     * Register a resolver (addons, e.g. the skewer recipe book in KaleidoscopeGrilling).
      */
     public void addResolver(CraftingResolver resolver) {
         resolvers.add(resolver);
@@ -77,7 +77,7 @@ public class VanillaRecipes implements Listener {
     }
 
     /**
-     * Immer die aktuellen Items (Addons fügen eigene hinzu).
+     * Always the current items (addons add their own).
      */
     private CookeryItems items() {
         return de.emrion.kaleidoscopeCookery.KaleidoscopeCookery.getInstance().getItems();
@@ -100,7 +100,7 @@ public class VanillaRecipes implements Listener {
                 plugin.getLogger().warning("Rezept " + recipe.id() + " konnte nicht registriert werden: " + e.getMessage());
             }
         }
-        // Zuletzt registrieren, damit genauere Rezepte zuerst passen
+        // Register last so that more specific recipes match first
         ItemStack icon = ItemStack.of(CookeryItems.BASE_MATERIAL);
         for (int count = 1; count <= 9; count++) {
             NamespacedKey key = Keys.key(ANY_PREFIX + count);
@@ -120,7 +120,7 @@ public class VanillaRecipes implements Listener {
     }
 
     /**
-     * Plugin-Rezepte stehen erst im Rezeptbuch, wenn der Spieler sie kennt.
+     * Plugin recipes only show up in the recipe book once the player knows them.
      */
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
@@ -132,7 +132,7 @@ public class VanillaRecipes implements Listener {
     }
 
     /**
-     * Platzhalter-Rezept: Ergebnis von den Auflösern, sonst keins.
+     * Placeholder recipe: result from the resolvers, otherwise none.
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onPrepareAnyItems(org.bukkit.event.inventory.PrepareItemCraftEvent event) {
@@ -159,7 +159,7 @@ public class VanillaRecipes implements Listener {
     }
 
     /**
-     * Beschriebenes Rezept allein in der Werkbank: wieder leer (reset_recipe_item; mit Daten passt keine ExactChoice).
+     * A written recipe alone in the crafting table: empty again (reset_recipe_item; no ExactChoice matches items with data).
      */
     private @Nullable ItemStack resetRecipe(List<ItemStack> inputs) {
         if (inputs.size() != 1 || !de.emrion.kaleidoscopeCookery.item.RecipeItems.ITEM.equals(CookeryItems.idOf(inputs.getFirst()))) {
@@ -169,7 +169,7 @@ public class VanillaRecipes implements Listener {
     }
 
     /**
-     * RiceBowlRecipe#matches/assemble: genau eine Zutat und genau ein gekochter Reis, beste Qualität aufs Ergebnis.
+     * RiceBowlRecipe#matches/assemble: exactly one ingredient and exactly one cooked rice, best quality onto the result.
      */
     private @Nullable ItemStack riceBowl(List<ItemStack> inputs) {
         if (recipes == null) {
@@ -238,7 +238,7 @@ public class VanillaRecipes implements Listener {
             case CAMPFIRE_COOKING -> new CampfireRecipe(key, result, choice(ingredients.getFirst()), recipe.experience(), recipe.time());
             case STONECUTTING -> new StonecuttingRecipe(key, result, choice(ingredients.getFirst()));
             case SMITHING_TRANSFORM -> {
-                // Basis nach Material (verzauberte/beschädigte Messer passen nicht exakt), geprüft in onPrepareSmithing
+                // Base by material (enchanted/damaged knives do not match exactly), checked in onPrepareSmithing
                 smithingBases.put(key, ingredients.get(1));
                 yield new SmithingTransformRecipe(key, result, choice(ingredients.get(0)), materialChoice(ingredients.get(1)), choice(ingredients.get(2)), false);
             }
@@ -260,7 +260,7 @@ public class VanillaRecipes implements Listener {
     }
 
     /**
-     * Nur Vanilla-Items: MaterialChoice (beliebige Varianten erlaubt), sonst ExactChoice mit den Mod-Items.
+     * Vanilla items only: MaterialChoice (any variant allowed), otherwise ExactChoice with the mod items.
      */
     private RecipeChoice choice(Ingredient ingredient) {
         List<Material> materials = new ArrayList<>();
@@ -295,8 +295,8 @@ public class VanillaRecipes implements Listener {
     }
 
     /**
-     * Schmieden (Netherit-Küchenmesser): Ergebnis neu erzeugen und nur Verzauberungen, Name und Abnutzung übernehmen –
-     * sonst würde das Ergebnis Modell und ID des Diamant-Messers erben.
+     * Smithing (netherite kitchen knife): create the result anew and copy only enchantments, name and damage -
+     * otherwise the result would inherit the diamond knife's model and id.
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onPrepareSmithing(PrepareSmithingEvent event) {

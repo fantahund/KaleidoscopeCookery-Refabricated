@@ -12,8 +12,8 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 /**
- * Alle Nachrichten an Spieler laufen hierüber (Aufbau wie EssentialsChatUtil in CubesideEssentials).
- * Texte kommen als Übersetzungs-Keys aus den Sprachdateien (siehe {@link Lang}).
+ * All messages to players go through here (structured like EssentialsChatUtil in CubesideEssentials).
+ * Texts come as translation keys from the language files (see {@link Lang}).
  */
 public final class ChatUtil {
 
@@ -58,14 +58,14 @@ public final class ChatUtil {
     }
 
     /**
-     * Kurzer Hinweis über der Hotbar (Status von Stationen, Fehlbedienung ...).
+     * Short hint above the hotbar (station status, wrong usage ...).
      */
     public static void sendActionBar(Player player, Component message) {
         player.sendActionBar(message);
     }
 
     /**
-     * Hervorgehobener Wert innerhalb einer Nachricht.
+     * Highlighted value within a message.
      */
     public static Component highlight(Object value) {
         return value instanceof Component component ? component.colorIfAbsent(NamedTextColor.WHITE) : Component.text(String.valueOf(value), NamedTextColor.WHITE);

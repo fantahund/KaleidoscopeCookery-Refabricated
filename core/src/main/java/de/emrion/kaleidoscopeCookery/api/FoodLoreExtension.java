@@ -8,15 +8,15 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
- * Zusätzliche Zeilen in der Beschreibung von Mod-Items (nach Beschreibung, Spruch und Qualität).
- * Anmelden über FoodService#addLoreExtension.
+ * Additional lines in the description of mod items (after description, maxim and quality).
+ * Register via FoodService#addLoreExtension.
  */
 @FunctionalInterface
 public interface FoodLoreExtension {
 
     /**
-     * @param world Welt des Spielers, null wenn unbekannt
-     * @param lore  hier Zeilen anhängen
+     * @param world the player's world, null if unknown
+     * @param lore  append lines here
      */
     void extend(ItemStack stack, @Nullable World world, List<Component> lore);
 }

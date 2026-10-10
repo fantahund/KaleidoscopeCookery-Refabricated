@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * /kc reload – config.yml und recipes.yml neu laden.
+ * /kc reload - reload config.yml and recipes.yml.
  */
 public class ReloadCommand extends SubCommand {
 

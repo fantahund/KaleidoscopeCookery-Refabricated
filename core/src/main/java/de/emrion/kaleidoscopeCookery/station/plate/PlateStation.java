@@ -27,10 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Hingestelltes Gericht (FoodBiteBlock im Mod): Rechtsklick isst einen Biss, nach dem letzten Biss bleibt
- * Geschirr übrig (Schüssel, Knochen ...). Unangetastet abgebaut gibt es das Gericht zurück.
- * 1x2-Gerichte belegen zusätzlich den Block links daneben (vom Gericht aus gesehen), 3x3-Gerichte
- * (FoodBiteThreeByThreeBlock, Aufschnitt-Schinken) die acht Blöcke rundherum.
+ * Placed dish (FoodBiteBlock in the mod): right-click eats one bite, after the last bite
+ * the dishware remains (bowl, bone ...). Broken untouched, it returns the dish.
+ * 1x2 dishes also occupy the block to the left (seen from the dish), 3x3 dishes
+ * (FoodBiteThreeByThreeBlock, cold cut ham slices) the eight blocks around it.
  */
 public class PlateStation extends Station {
 
@@ -48,12 +48,12 @@ public class PlateStation extends Station {
     }
 
     public static StationType type() {
-        // Item des Typs ist nur ein Platzhalter: hingestellt wird jedes Gericht mit Teller-Daten
+        // The item of the type is only a placeholder: every dish with plate data can be placed
         return new StationType(TYPE_ID, Key.key("kaleidoscope", "plate"), false, 0.8f, 0.4f, true, PlateStation::new);
     }
 
     /**
-     * Zweiter Block eines 1x2-Gerichts: links vom Gericht aus gesehen (Mod: pos.relative(facing.getClockWise())).
+     * Second block of a 1x2 dish: to the left as seen from the dish (mod: pos.relative(facing.getClockWise())).
      */
     public static BlockFace secondBlock(Facing facing) {
         return switch (facing) {
@@ -127,7 +127,7 @@ public class PlateStation extends Station {
             return;
         }
         if (plate.wide()) {
-            // Teil "right" steht auf dem Block der Station, "left" daneben
+            // Part "right" stands on the block of the station, "left" next to it
             showStage("right", plate, blockTransform(0));
             BlockFace side = secondBlock(facing());
             org.bukkit.util.Transformation left = blockTransform(0);
@@ -137,7 +137,7 @@ public class PlateStation extends Station {
         } else {
             showStage("main", plate, blockTransform(0));
             if (plate.large()) {
-                // ganze Platte anklickbar: flache Hitboxen auf den acht Nachbarblöcken
+                // Whole platter clickable: flat hitboxes on the eight neighbouring blocks
                 for (int dx = -1; dx <= 1; dx++) {
                     for (int dz = -1; dz <= 1; dz++) {
                         if (dx != 0 || dz != 0) {

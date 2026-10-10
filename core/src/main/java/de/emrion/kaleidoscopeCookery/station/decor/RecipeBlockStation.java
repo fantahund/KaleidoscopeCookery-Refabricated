@@ -25,8 +25,8 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
- * Rezept-Zettel (RecipeBlock im Mod): ein Rezept, auf den Boden, an die Wand oder unter die Decke gelegt.
- * Rechtsklick mit leerer Hand nimmt es wieder auf.
+ * Recipe note (RecipeBlock in the mod): a recipe placed on the floor, on a wall or below the ceiling.
+ * Right-click with an empty hand picks it up again.
  */
 public class RecipeBlockStation extends Station {
 
@@ -35,9 +35,9 @@ public class RecipeBlockStation extends Station {
     private static final NamespacedKey FACE = Keys.key("face");
     private static final NamespacedKey DIRECTION = Keys.key("direction");
 
-    /** AttachFace: 0 = Boden, 1 = Wand, 2 = Decke */
+    /** AttachFace: 0 = floor, 1 = wall, 2 = ceiling */
     private int face;
-    /** Blockstate-Richtung (facing) als 2D-Wert */
+    /** Blockstate direction (facing) as a 2D value */
     private int direction = Facing.NORTH.dataValue();
     private @Nullable ItemStack recipe;
 
@@ -67,9 +67,9 @@ public class RecipeBlockStation extends Station {
     }
 
     /**
-     * FaceAttachedHorizontalDirectionalBlock#getStateForPlacement: Boden/Decke in Blickrichtung, Wand von der Wand weg.
+     * FaceAttachedHorizontalDirectionalBlock#getStateForPlacement: floor/ceiling in view direction, wall facing away from the wall.
      *
-     * @param clickedFace angeklickte Fläche des Blocks, an dem der Zettel hängt
+     * @param clickedFace clicked face of the block the note is attached to
      */
     public void initFrom(ItemStack item, BlockFace clickedFace) {
         recipe = item.asOne();
@@ -105,7 +105,7 @@ public class RecipeBlockStation extends Station {
 
     @Override
     public void updateDisplay() {
-        // Blockstate: Boden y; Wand x 90; Decke x 180, y + 180
+        // Blockstate: floor y; wall x 90; ceiling x 180, y + 180
         Facing facing = Facing.byDataValue(direction);
         int x = switch (face) {
             case 1 -> 90;
@@ -123,7 +123,7 @@ public class RecipeBlockStation extends Station {
     }
 
     /**
-     * Hält nur an einem festen Block (Boden, Wand dahinter bzw. Decke).
+     * Only holds on a solid block (floor, wall behind it or ceiling).
      */
     @Override
     public boolean canSurvive() {

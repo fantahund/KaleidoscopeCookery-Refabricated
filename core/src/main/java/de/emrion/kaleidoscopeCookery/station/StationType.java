@@ -3,18 +3,18 @@ package de.emrion.kaleidoscopeCookery.station;
 import net.kyori.adventure.key.Key;
 
 /**
- * Art einer Station.
+ * Kind of station.
  *
- * @param id                 gespeicherter Typ-Name (nie ändern, steht im PDC)
- * @param item               Item, mit dem die Station platziert wird und das sie beim Abbauen zurückgibt
- * @param barrier            Barriere-Block für die Kollision (volle Blöcke wie Herd/Wok)
- * @param interactionWidth   Breite der Klick-Hitbox
- * @param interactionHeight  Höhe der Klick-Hitbox
- * @param needsSupport       braucht einen festen Block darunter (wird sonst abgebaut)
- * @param factory            erzeugt das Stations-Objekt
- * @param width              Mehrblock-Stationen: Kantenlänge des belegten Quadrats (Mühlstein: 2 = 2x2). Ungerade Breiten liegen
- *                           mittig um den Stationsblock, gerade reichen nach +x/+z (die Mitte liegt dann auf der Blockkante)
- * @param height             Anzahl belegter Blöcke übereinander (Dönerspieß: 2)
+ * @param id                 stored type name (never change it, it is in the PDC)
+ * @param item               item that places the station and that it returns when broken
+ * @param barrier            barrier block for collision (full blocks such as the stove)
+ * @param interactionWidth   width of the click hitbox
+ * @param interactionHeight  height of the click hitbox
+ * @param needsSupport       needs a solid block below (otherwise it is broken)
+ * @param factory            creates the station object
+ * @param width              multi-block stations: edge length of the occupied square (millstone: 2 = 2x2). Odd widths are
+ *                           centred on the station block, even ones extend towards +x/+z (the centre is then on the block edge)
+ * @param height             number of occupied blocks stacked on top of each other (shawarma spit: 2)
  */
 public record StationType(String id, Key item, boolean barrier, float interactionWidth, float interactionHeight, boolean needsSupport, StationFactory factory,
                           int width, int height) {
@@ -24,7 +24,7 @@ public record StationType(String id, Key item, boolean barrier, float interactio
     }
 
     /**
-     * Alle Blöcke, die eine Station dieses Typs mit Mittelblock center belegt.
+     * All blocks a station of this type with centre block center occupies.
      */
     public java.util.List<BlockKey> footprint(BlockKey center) {
         if (width == 1 && height == 1) {
@@ -55,7 +55,7 @@ public record StationType(String id, Key item, boolean barrier, float interactio
     }
 
     /**
-     * Mitte der Grundfläche relativ zur Mitte des Stationsblocks (bei gerader Breite eine halbe Block-Breite versetzt).
+     * Centre of the footprint relative to the centre of the station block (offset by half a block for even widths).
      */
     public double centerOffset() {
         return (minOffset() + maxOffset()) / 2.0;

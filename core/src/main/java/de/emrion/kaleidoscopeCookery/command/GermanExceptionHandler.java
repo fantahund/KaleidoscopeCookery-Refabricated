@@ -11,7 +11,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 /**
- * Fehlermeldungen des CommandRouters über ChatUtil (Texte aus der Sprachdatei).
+ * Error messages of the CommandRouter via ChatUtil (texts from the language file).
  */
 public class GermanExceptionHandler implements CommandExceptionHandler {
 

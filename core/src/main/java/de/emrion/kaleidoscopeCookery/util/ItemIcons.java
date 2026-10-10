@@ -9,18 +9,18 @@ import org.jspecify.annotations.Nullable;
 
 
 /**
- * Kleine Item-Bilder als Text (Sprite aus dem Item-Atlas), z. B. für Knöpfe im Kochbuch.
+ * Small item images as text (sprite from the item atlas), e.g. for buttons in the cookbook.
  */
 public final class ItemIcons {
 
     private static final Key ITEMS_ATLAS = Key.key("minecraft", "items");
     private static final Key GUI_ATLAS = Key.key("minecraft", "gui");
     private static final Key BLOCKS_ATLAS = Key.key("minecraft", "blocks");
-    /** Item -> Sprite (aus item_icons.txt, erzeugt von tools/build_pack.py aus den Item-Modellen) */
+    /** Item -> sprite (from item_icons.txt, created by tools/build_pack.py from the item models) */
     private static final java.util.Map<Key, Component> ICONS = new java.util.HashMap<>();
-    /** Item -> großes Bild (16 Pixel) als Zeichen der Schrift kaleidoscope:icons */
+    /** Item -> large image (16 pixels) as a character of the font kaleidoscope:icons */
     private static final java.util.Map<Key, Component> BIG_ICONS = new java.util.HashMap<>();
-    /** Item -> großes Stations-Bild fürs Rezept-Diagramm (32 Pixel) */
+    /** Item -> large station image for the recipe diagram (32 pixels) */
     private static final java.util.Map<Key, Component> DIAGRAMS = new java.util.HashMap<>();
 
     private ItemIcons() {
@@ -34,7 +34,7 @@ public final class ItemIcons {
     }
 
     /**
-     * Bilder eines weiteren Plugins (Addon mit eigenem Pack und eigener Bild-Schrift) dazunehmen.
+     * Add the images of another plugin (addon with its own pack and its own image font).
      */
     public static void add(org.bukkit.plugin.Plugin plugin) {
         Key font = Key.key("kaleidoscope", "icons");
@@ -60,7 +60,7 @@ public final class ItemIcons {
                 }
                 String[] sprite = line.substring(bar + 1).trim().split("\\|");
                 Key item = Key.key(line.substring(0, equals));
-                // 3D-Modelle haben eine kleine gerenderte Ansicht, sonst die flache Textur
+                // 3D models have a small rendered view, otherwise the flat texture
                 ICONS.put(item, sprite.length > 2 ? glyph(sprite[2], font)
                         : Component.object(ObjectContents.sprite(Key.key(line.substring(equals + 1, bar)), Key.key(sprite[0]))));
                 if (sprite.length > 1 && !sprite[1].isEmpty()) {
@@ -73,7 +73,7 @@ public final class ItemIcons {
     }
 
     /**
-     * Bild eines Items (flache Item-Textur, bei 3D-Modellen eine kleine gerenderte Ansicht); null, wenn keins bekannt ist.
+     * Image of an item (flat item texture, a small rendered view for 3D models); null if none is known.
      */
     public static @Nullable Component of(@Nullable ItemStack stack) {
         if (stack == null || stack.isEmpty()) {
@@ -83,14 +83,14 @@ public final class ItemIcons {
         return ICONS.get(id != null ? id : stack.getType().key());
     }
 
-    /** Vorschub eines großen Item-Bildes bzw. Stations-Bildes, wie die Slots im Kochbuch ihn erwarten */
+    /** Advance of a large item image or station image, as the slots in the cookbook expect it */
     public static final int BIG_WIDTH = 17;
     public static final int DIAGRAM_WIDTH = 33;
     private static final Key PAD_FONT = Key.key("kaleidoscope", "cookbook");
 
     /**
-     * Schriftzeichen "HEX:Vorschub" auf eine feste Breite bringen: der Client kürzt Bilder rechts auf den letzten
-     * sichtbaren Pixel, schmalere Bilder werden deshalb mit Abständen links und rechts mittig ausgeglichen.
+     * Bring a font character "HEX:advance" to a fixed width: the client trims images on the right to the last
+     * visible pixel, so narrower images are centred with spaces on the left and right.
      */
     private static Component padded(String glyph, int width, Key font) {
         String[] parts = glyph.split(":");
@@ -109,7 +109,7 @@ public final class ItemIcons {
     }
 
     /**
-     * Leerraum von n Pixeln (auch negativ), Schrift kaleidoscope:cookbook.
+     * Empty space of n pixels (also negative), font kaleidoscope:cookbook.
      */
     public static Component pad(int pixels) {
         int clamped = Math.clamp(pixels, -63, 63);
@@ -121,7 +121,7 @@ public final class ItemIcons {
     }
 
     /**
-     * Großes Bild (16 Pixel, für das Werkbank-Raster), null wenn keins bekannt ist.
+     * Large image (16 pixels, for the crafting grid), null if none is known.
      */
     public static @Nullable Component big(@Nullable ItemStack stack) {
         if (stack == null || stack.isEmpty()) {
@@ -130,7 +130,7 @@ public final class ItemIcons {
         Key id = CookeryItems.idOf(stack);
         Component icon = BIG_ICONS.get(id != null ? id : stack.getType().key());
         if (icon == null) {
-            // Eigene Items mit Vanilla-Aussehen (Kochbuch = Buch): Bild des Modells
+            // Own items with a vanilla look (cookbook = book): image of the model
             @SuppressWarnings("UnstableApiUsage")
             Key model = stack.getData(io.papermc.paper.datacomponent.DataComponentTypes.ITEM_MODEL);
             icon = model == null ? null : BIG_ICONS.get(model);
@@ -139,7 +139,7 @@ public final class ItemIcons {
     }
 
     /**
-     * Bild + Leerzeichen + Text, ohne Bild nur der Text.
+     * Image + space + text, only the text without an image.
      */
     public static Component withIcon(@Nullable ItemStack stack, Component text) {
         Component icon = of(stack);

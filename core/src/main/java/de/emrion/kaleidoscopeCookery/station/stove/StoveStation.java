@@ -27,10 +27,10 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Herd (StoveBlock im Mod): Hitzequelle für Wok und Suppentopf.
+ * Stove (StoveBlock in the mod): heat source for wok and stockpot.
  * <ul>
- *     <li>Anzünden mit Feuerzeug (1 Haltbarkeit) oder Feuerkugel (verbraucht) oder brennendem Projektil</li>
- *     <li>Löschen mit einer Schaufel (auch Pfannenwender), Regen oder Wasser darüber</li>
+ *     <li>Light it with flint and steel (1 durability), a fire charge (consumed) or a burning projectile</li>
+ *     <li>Extinguish it with a shovel (also the spatula), rain or water above it</li>
  * </ul>
  */
 public class StoveStation extends Station {
@@ -39,7 +39,7 @@ public class StoveStation extends Station {
     private static final Key MODEL = Key.key("kaleidoscope_cookery", "block/stove");
     private static final Key MODEL_LIT = Key.key("kaleidoscope_cookery", "block/stove_lit");
     private static final NamespacedKey LIT = Keys.key("lit");
-    /** Mittlere Zeit bis zum zufälligen Block-Tick bei randomTickSpeed 3 (≈ 68 s): Chance pro Sekunde */
+    /** Mean time until the random block tick at randomTickSpeed 3 (~68 s): chance per second */
     private static final double RAIN_CHANCE_PER_SECOND = 1 / 68.0;
 
     private boolean lit;
@@ -68,7 +68,7 @@ public class StoveStation extends Station {
 
     @Override
     public void updateDisplay() {
-        // Brennender Herd leuchtet (Mod: Lichtlevel 13)
+        // A burning stove emits light (mod: light level 13)
         showPart("body", new PartLook(modelStack(lit ? MODEL_LIT : MODEL), org.bukkit.entity.ItemDisplay.ItemDisplayTransform.NONE,
                 blockTransform(0), lit ? new Display.Brightness(13, 15) : null), 0);
     }
@@ -115,7 +115,7 @@ public class StoveStation extends Station {
     }
 
     /**
-     * Brennendes Projektil trifft den Herd.
+     * A burning projectile hits the stove.
      */
     public void onBurningProjectile() {
         if (!lit) {
@@ -143,7 +143,7 @@ public class StoveStation extends Station {
     public void tick(long serverTick) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         Location center = center();
-        // animateTick im Mod läuft clientseitig jeden Tick – hier etwas seltener, dafür für alle sichtbar
+        // animateTick in the mod runs client-side every tick - a bit less often here, but visible to everyone
         if (serverTick % 4 == 0) {
             world().spawnParticle(Particle.SMOKE, center.clone().add(randomOffset(random), 0.5 + random.nextDouble() / 3, randomOffset(random)), 1, 0, 0.02, 0, 0.01);
             BlockFace front = facing().face();

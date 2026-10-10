@@ -38,13 +38,13 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Verwandlungs-Lunchbeutel (TransmutationLunchBagItem im Mod): fasst 24 Stapel Essen und Tränke.
+ * Transmutation lunch bag (TransmutationLunchBagItem in the mod): holds 24 stacks of food and potions.
  * <ul>
- *     <li>Im Inventar wie ein Bündel: Rechtsklick mit Essen auf den Beutel legt es hinein, Rechtsklick mit dem Beutel
- *     auf Essen nimmt es auf; auf leere Plätze bzw. mit leerer Hand kommt der erste Stapel wieder heraus</li>
- *     <li>Rechtsklick in der Hand: isst so lange, bis man satt ist; Tränke werden alle getrunken</li>
- *     <li>Schleichen + Schlagen: alles ins Inventar</li>
- *     <li>Am Obstkorb: leerer Korb wird befüllt, sonst nimmt der Beutel den Korb-Inhalt auf</li>
+ *     <li>In the inventory like a bundle: right-clicking the bag with food puts it in, right-clicking food with the bag
+ *     picks it up; on empty slots or with an empty hand the first stack comes out again</li>
+ *     <li>Right-click in hand: eats until full; potions are all drunk</li>
+ *     <li>Sneak + hit: everything into the inventory</li>
+ *     <li>At the fruit basket: an empty basket is filled, otherwise the bag takes the basket contents</li>
  * </ul>
  */
 public class LunchBag implements Listener {
@@ -66,7 +66,7 @@ public class LunchBag implements Listener {
         return stack != null && ITEM.equals(CookeryItems.idOf(stack));
     }
 
-    // ---- Inhalt ----
+    // ---- Contents ----
 
     public static List<ItemStack> contents(ItemStack bag) {
         List<ItemStack> items = new ArrayList<>();
@@ -77,7 +77,7 @@ public class LunchBag implements Listener {
     }
 
     /**
-     * Inhalt speichern und Beschreibung, Modell (voll/leer) und Ess-Animation anpassen.
+     * Save the contents and update description, model (full/empty) and eating animation.
      */
     @SuppressWarnings("UnstableApiUsage")
     public static void setContents(ItemStack bag, List<ItemStack> items) {
@@ -102,7 +102,7 @@ public class LunchBag implements Listener {
         }
         bag.setData(DataComponentTypes.LORE, ItemLore.lore(lore));
         ModelProperties.set(bag, HAS_ITEMS_PROPERTY, items.isEmpty() ? 0 : 1);
-        // getUseAnimation: Essen vor Tränken; ohne Verzehrbares kein Benutzen
+        // getUseAnimation: food before potions; nothing consumable means no use
         ItemUseAnimation animation = null;
         for (ItemStack item : items) {
             if (item.hasData(DataComponentTypes.FOOD)) {
@@ -115,7 +115,7 @@ public class LunchBag implements Listener {
         }
         boolean hasFood = items.stream().anyMatch(item -> item.hasData(DataComponentTypes.FOOD));
         boolean hasPotion = items.stream().anyMatch(item -> item.getType() == Material.POTION);
-        // Satt und nur Essen drin: wie normales Essen nicht benutzbar (Client und Server). Tränke gehen immer.
+        // Full and only food inside: not usable like normal food (client and server). Potions always work.
         if (hasFood) {
             bag.setData(DataComponentTypes.FOOD, io.papermc.paper.datacomponent.item.FoodProperties.food()
                     .nutrition(0).saturation(0).canAlwaysEat(hasPotion).build());
@@ -132,7 +132,7 @@ public class LunchBag implements Listener {
     }
 
     /**
-     * TransmutationLunchBagItem#canAdd: Essen oder Trank, nichts mit eigenem Inhalt.
+     * TransmutationLunchBagItem#canAdd: food or potion, nothing with contents of its own.
      */
     @SuppressWarnings("UnstableApiUsage")
     public static boolean canAdd(@Nullable ItemStack stack) {
@@ -144,9 +144,9 @@ public class LunchBag implements Listener {
     }
 
     /**
-     * ItemHandlerHelper#insertItemStacked: erst auf gleiche Stapel, dann in freie Plätze.
+     * ItemHandlerHelper#insertItemStacked: first onto matching stacks, then into free slots.
      *
-     * @return wie viele Items aufgenommen wurden (der Stapel wird entsprechend verkleinert)
+     * @return how many items were taken (the stack shrinks accordingly)
      */
     public static int add(ItemStack bag, ItemStack food) {
         if (!canAdd(food)) {
@@ -185,10 +185,10 @@ public class LunchBag implements Listener {
         return first;
     }
 
-    // ---- Inventar ----
+    // ---- Inventory ----
 
     /**
-     * overrideStackedOnOther / overrideOtherStackedOnMe: Rechtsklick im Inventar wie bei einem Bündel.
+     * overrideStackedOnOther / overrideOtherStackedOnMe: right-click in the inventory like a bundle.
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
@@ -199,7 +199,7 @@ public class LunchBag implements Listener {
         ItemStack current = event.getCurrentItem();
         HumanEntity player = event.getWhoClicked();
         if (isBag(current) && current.getAmount() == 1) {
-            // Etwas auf den Beutel klicken
+            // Clicking something onto the bag
             event.setCancelled(true);
             if (cursor.isEmpty()) {
                 ItemStack removed = removeFirst(current);
@@ -214,7 +214,7 @@ public class LunchBag implements Listener {
                 sound(player, Sound.ITEM_BUNDLE_INSERT);
             }
         } else if (isBag(cursor) && cursor.getAmount() == 1) {
-            // Mit dem Beutel auf etwas klicken
+            // Clicking the bag onto something
             event.setCancelled(true);
             if (current == null || current.isEmpty()) {
                 ItemStack removed = removeFirst(cursor);
@@ -235,10 +235,10 @@ public class LunchBag implements Listener {
         player.getWorld().playSound(player.getLocation(), sound, SoundCategory.PLAYERS, 0.8f, 0.8f + ThreadLocalRandom.current().nextFloat() * 0.4f);
     }
 
-    // ---- Essen ----
+    // ---- Eating ----
 
     /**
-     * TransmutationLunchBagItem#finishUsingItem: Essen bis der Hunger voll ist, Tränke immer ganz.
+     * TransmutationLunchBagItem#finishUsingItem: food until hunger is full, potions always completely.
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onConsume(PlayerItemConsumeEvent event) {
@@ -264,7 +264,7 @@ public class LunchBag implements Listener {
                 }
             }
         }
-        // Der Beutel selbst bleibt in der Hand (Event abgebrochen) – Inhalt dort aktualisieren
+        // The bag itself stays in hand (event cancelled) - update its contents there
         EquipmentSlot hand = event.getHand();
         ItemStack inHand = player.getInventory().getItem(hand);
         if (isBag(inHand)) {
@@ -280,7 +280,7 @@ public class LunchBag implements Listener {
     }
 
     /**
-     * onEntitySwing beim Schleichen: alles ins Inventar.
+     * onEntitySwing while sneaking: everything into the inventory.
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSwing(PlayerAnimationEvent event) {
@@ -304,7 +304,7 @@ public class LunchBag implements Listener {
     }
 
     /**
-     * Den Beutel nie als Block oder auf andere Weise benutzen (Basis ist Papier).
+     * Never use the bag as a block or in any other way (its base is paper).
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onInteract(PlayerInteractEvent event) {
@@ -315,9 +315,9 @@ public class LunchBag implements Listener {
     }
 
     /**
-     * Austausch mit dem Obstkorb (TransmutationLunchBagItem#useOn).
+     * Exchange with the fruit basket (TransmutationLunchBagItem#useOn).
      *
-     * @param basket Inhalt des Korbs (wird angepasst)
+     * @param basket contents of the basket (adjusted)
      */
     public static void exchange(Player player, ItemStack bag, List<@Nullable ItemStack> basket) {
         boolean basketEmpty = basket.stream().allMatch(item -> item == null || item.isEmpty());

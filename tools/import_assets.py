@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 """
-Importiert Texturen, Modelle, Sounds und die englischen Sprachdateien aus
-Kaleidoscope Cookery (Branch 1.21.1-neoforge) nach resourcepack/imported bzw. mit
+Imports textures, models, sounds and the English language files from
+Kaleidoscope Cookery (branch 1.21.1-neoforge) into resourcepack/imported, or together with
 --project grilling --dest ../KaleidoscopeGrilling Kaleidoscope Grilling (neoforge-1.21.1 + common)
-in dessen resourcepack/imported und konvertiert sie auf das Format von Minecraft 26.3.
+into its resourcepack/imported, and converts them to the Minecraft 26.3 format.
 
-Konvertierung:
-  * NeoForge-Felder entfernen (render_type, neoforge_data, ...)
-  * neoforge:separate_transforms -> Item-Model-Definition mit select auf display_context
-  * Item-Overrides (predicate) -> range_dispatch auf custom_model_data (Index pro Property,
-    siehe core/src/main/resources/generated/model_properties.yml)
-  * Fuer jedes Modell eine Item-Model-Definition unter assets/<ns>/items/
-  * sounds.json pro Namespace zusammenfuehren
+Conversion:
+  * remove NeoForge fields (render_type, neoforge_data, ...)
+  * neoforge:separate_transforms -> item model definition with select on display_context
+  * item overrides (predicate) -> range_dispatch on custom_model_data (index per property,
+    see core/src/main/resources/generated/model_properties.yml)
+  * an item model definition under assets/<ns>/items/ for every model
+  * merge sounds.json per namespace
 
-Aufruf: python3 -I tools/import_assets.py [--cache ~/.cache/kaleidoscope-pack]
-Die Mod-Repos werden bei Bedarf in den Cache geklont (feste Commits, siehe SOURCES).
+Usage: python3 -I tools/import_assets.py [--cache ~/.cache/kaleidoscope-pack]
+The mod repos are cloned into the cache when needed (fixed commits, see SOURCES).
 """
 import argparse
 import itertools
@@ -29,23 +29,23 @@ ROOT = Path(__file__).resolve().parent.parent
 PROPERTIES_FILE = Path("src") / "main" / "resources" / "generated" / "model_properties.yml"
 
 SOURCES = {
-    # Fabric-Fork (Refabricated, 26.x): Grundlage seit 2026-10-10
+    # Fabric fork (Refabricated, 26.x): the base since 2026-10-10
     "refab": ("https://github.com/NightEpiphany/KaleidoscopeCookery-Refabricated.git", "26.4-fabric",
               "796f94dd7eb00b85988366ae0f623d46148b7612"),
     "grilling": ("https://github.com/breezeth-CN/KaleidoscopeGrilling.git", "main",
                  "9a1acdab27698457bec16c9362678e574895a28c"),
 }
 
-# Reihenfolge = Prioritaet (spaetere Ebenen ueberschreiben fruehere). Grilling ist ein eigenes Plugin mit eigenem Pack
-# (Repo KaleidoscopeGrilling); seine Overrides im Cookery-Namespace (Oelkanne) landen in dessen Pack.
+# Order = priority (later layers override earlier ones). Grilling is a separate plugin with its own pack
+# (repo KaleidoscopeGrilling); its overrides in the Cookery namespace (oil pot) go into its pack.
 LAYERS = {
-    # Ess-Animationen: eingebautes Pack des Forks (nur Vanilla-Properties using_item/use_duration)
+    # Eating animations: the fork's built-in pack (only vanilla properties using_item/use_duration)
     "cookery": [("refab", "src/main/resources/assets"), ("refab", "src/main/resources/resourcepacks/kaleidoscope_eating_animation/assets")],
     "grilling": [("grilling", "common/src/main/resources/assets"), ("grilling", "neoforge-1.21.1/src/main/resources/assets")],
 }
 NAMESPACES = {"kaleidoscope_cookery", "kaleidoscope_grilling", "minecraft"}
 COPY_DIRS = {"models", "textures", "sounds", "equipment"}
-# Nur fuer Mod-Code relevante Modelle
+# Models only relevant for mod code
 SKIP_FILES = {"models/item_render_replacer.json"}
 REMOVE_MODEL_KEYS = {"render_type", "neoforge_data", "forge_data", "loader", "visibility", "renderTypes"}
 
@@ -96,16 +96,16 @@ class Importer:
         self.project = project
         self.out = dest / "resourcepack" / "imported"
         self.properties_out = dest / ("core" if project == "cookery" else ".") / PROPERTIES_FILE
-        self.files = {}          # Zielpfad relativ zu assets -> Quelldatei
+        self.files = {}          # target path relative to assets -> source file
         self.sounds = {}         # namespace -> dict
         self.lang = {}           # namespace -> dict (en_us)
-        self.models = {}         # "ns:path" -> model dict (bereits bereinigt)
+        self.models = {}         # "ns:path" -> model dict (already cleaned up)
         self.item_defs = {}      # "ns/items/<path>.json" -> definition
-        # predicate-Name -> custom_model_data-Index; Grilling zaehlt nach den Cookery-Indizes weiter (gleiche Items, z. B. Oelkanne)
+        # predicate name -> custom_model_data index; Grilling continues counting after the Cookery indices (same items, e.g. oil pot)
         self.properties = dict(base_properties)
         self.base_properties = set(base_properties)
         self.notes = []
-        self.fork_items = {}     # "ns/items/<path>.json" -> Definition aus dem Fork
+        self.fork_items = {}     # "ns/items/<path>.json" -> definition from the fork
 
     def collect(self):
         for repo, rel in LAYERS[self.project]:
@@ -120,13 +120,13 @@ class Importer:
                     sub = file.relative_to(ns_dir).as_posix()
                     top = sub.split("/", 1)[0]
                     if re.search(r"pepper_(log|leaves|sapling)", sub):
-                        continue  # Pfefferbaum ersetzt durch den Pfefferstrauch (tools/gen_pepper_bush.py)
+                        continue  # pepper tree replaced by the pepper bush (tools/gen_pepper_bush.py)
                     if sub == "sounds.json":
                         self.sounds.setdefault(ns, {}).update(read_json(file))
                     elif sub == "lang/en_us.json" and ns != "minecraft":
                         self.lang.setdefault(ns, {}).update(read_json(file))
                     elif top == "items" and sub.endswith(".json"):
-                        # Fertige Item-Model-Definitionen (26.x) des Forks
+                        # The fork's finished item model definitions (26.x)
                         self.fork_items[f"{ns}/{sub}"] = read_json(file)
                     elif top in COPY_DIRS and sub not in SKIP_FILES:
                         self.files[f"{ns}/{sub}"] = file
@@ -151,7 +151,7 @@ class Importer:
                 for context, perspective in model.get("perspectives", {}).items():
                     perspective_ref = self.add_inline_model(ns, f"{path}__{context}", perspective)
                     cases.append({"when": context, "model": {"type": "minecraft:model", "model": perspective_ref}})
-                # Das Modell selbst wird zur Basis (fuer Displays/Parents nutzbar)
+                # The model itself becomes the base (usable for displays/parents)
                 merged = dict(base)
                 if "display" in model:
                     merged["display"] = model["display"]
@@ -174,7 +174,7 @@ class Importer:
                 item_def_path = f"{ns}/items/{path}.json"
             self.item_defs[item_def_path] = definition
 
-    # Mod-eigene Item-Properties der Fork-Definitionen -> Name in model_properties.yml (wie die alten Predicates)
+    # The mod's own item properties of the fork definitions -> name in model_properties.yml (like the old predicates)
     FORK_PROPERTIES = {
         "kaleidoscope_cookery:oil_pot/has_oil": "kaleidoscope_cookery:has_oil",
         "kaleidoscope_cookery:kitchen_shovel/has_oil": "kaleidoscope_cookery:has_oil",
@@ -185,7 +185,7 @@ class Importer:
     }
 
     def convert_fork_node(self, node):
-        """Mod-Conditions in Vanilla umwandeln: Bool-Properties -> custom_model_data-Index (>= 1 = wahr)."""
+        """Convert mod conditions to vanilla: bool properties -> custom_model_data index (>= 1 = true)."""
         if isinstance(node, list):
             return [self.convert_fork_node(n) for n in node]
         if not isinstance(node, dict):
@@ -202,7 +202,7 @@ class Importer:
     def apply_fork_items(self):
         for path, definition in sorted(self.fork_items.items()):
             if "kaleidoscope_cookery:model_arguments" in json.dumps(definition):
-                continue  # Modell-Vorschau (Debug-Item) braucht Mod-Code
+                continue  # the model preview (debug item) needs mod code
             self.item_defs[path] = self.convert_fork_node(definition)
         unknown = {p for d in self.item_defs.values() for p in re.findall(r'"property": "(kaleidoscope_cookery:[^"]+)"', json.dumps(d))}
         if unknown:
@@ -218,8 +218,8 @@ class Importer:
         return self.max_tint(parent if ":" in (parent or "") else f"minecraft:{parent}", depth + 1) if parent else -1
 
     def add_tints(self, node):
-        """Spieße (Grilling): Zutaten-Farben kommen im Mod vom Client (SkewerColorProvider). Hier liest jedes
-        tintindex die Farbe custom_model_data.colors[tintindex]; das Plugin schreibt die Farben in das Item."""
+        """Skewers (Grilling): in the mod the ingredient colours come from the client (SkewerColorProvider). Here every
+        tintindex reads the colour custom_model_data.colors[tintindex]; the plugin writes the colours into the item."""
         if isinstance(node, list):
             for n in node:
                 self.add_tints(n)
@@ -234,13 +234,13 @@ class Importer:
             if isinstance(value, (dict, list)):
                 self.add_tints(value)
 
-    # MultiBiteSkewerItem.AnimationProfile: Biss-Zeitpunkte in Sekunden (THREE_RANDOM zeigt THREE)
+    # MultiBiteSkewerItem.AnimationProfile: bite times in seconds (THREE_RANDOM shows THREE)
     BITE_SECONDS = {"ONE": [1.16667, 3.08333], "TWO": [0.95833, 4.0], "THREE": [0.95833, 2.33333, 3.54167],
                     "FOUR": [0.95833, 2.33333, 3.45833, 4.08333]}
 
     @staticmethod
     def skewer_profile(item_id: str) -> str:
-        """ModItems#animationProfile (wie tools/gen_data.py)"""
+        """ModItems#animationProfile (like tools/gen_data.py)"""
         name = item_id.replace("raw_", "").replace("grilled_", "")
         if name in ("fish_skewer", "caterpillar_skewer"):
             return "ONE"
@@ -251,7 +251,7 @@ class Importer:
         return "THREE"
 
     def bite_stages_to_use_duration(self, node, bites: list):
-        """skewer_bite_stage (vollendete Bisse / 4, im Mod vom Client berechnet) -> minecraft:use_duration in Ticks."""
+        """skewer_bite_stage (completed bites / 4, computed by the client in the mod) -> minecraft:use_duration in ticks."""
         if isinstance(node, list):
             return [self.bite_stages_to_use_duration(n, bites) for n in node]
         if not isinstance(node, dict):
@@ -278,13 +278,13 @@ class Importer:
             self.properties[name] = len(self.properties)
         return self.properties[name]
 
-    # Predicates, die es in 26.x als echte Item-Model-Bedingung gibt (statt custom_model_data)
+    # Predicates that exist as a real item model condition in 26.x (instead of custom_model_data)
     CONDITION_PROPERTIES = {"kaleidoscope_cookery:using": "minecraft:using_item"}
-    # Predicates mit Vanilla-Gegenstück als Zahl: Teig ziehen = Benutzungsdauer / 10 (RawDoughItem#getTexture)
+    # Predicates with a numeric vanilla counterpart: pulling dough = use duration / 10 (RawDoughItem#getTexture)
     RANGE_PROPERTIES = {"kaleidoscope_cookery:pull": {"property": "minecraft:use_duration", "scale": 0.1}}
 
     def convert_overrides(self, base_ref: str, overrides: list) -> dict:
-        """Vanilla-1.21.1-Semantik: das letzte Override, dessen Predicates alle <= Wert sind, gewinnt."""
+        """Vanilla 1.21.1 semantics: the last override whose predicates are all <= value wins."""
         names = {name for o in overrides for name in o["predicate"]}
         if len(names) == 1 and next(iter(names)) in self.CONDITION_PROPERTIES:
             name = next(iter(names))
@@ -314,7 +314,7 @@ class Importer:
             if level == len(props):
                 return {"type": "minecraft:model", "model": winner(values)}
             name = props[level]
-            # Wert unterhalb aller Schwellen (z. B. 0 bei Schwelle 0.25)
+            # Value below all thresholds (e.g. 0 with threshold 0.25)
             fallback = build(level + 1, {**values, name: float("-inf")})
             entries = [{"threshold": t, "model": build(level + 1, {**values, name: t})} for t in thresholds[name]]
             if name in self.RANGE_PROPERTIES:

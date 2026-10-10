@@ -15,9 +15,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Mod-Items basieren auf Papier (bzw. Werkzeugen). Damit sie nicht in Vanilla-Rezepten (Karten, Bücher,
- * Reparatur ...) landen, blockiert dieser Listener alle fremden Ergebnisse mit Mod-Items.
- * Eigene Rezepte (Namespace kaleidoscope) und Umbenennen im Amboss bleiben erlaubt.
+ * Mod items are based on paper (or tools). So that they do not end up in vanilla recipes (maps, books,
+ * repairing ...), this listener blocks all foreign results containing mod items.
+ * Own recipes (namespace kaleidoscope) and renaming in the anvil stay allowed.
  */
 public class ItemProtectionListener implements Listener {
 
@@ -35,13 +35,13 @@ public class ItemProtectionListener implements Listener {
             ItemStack first = anvil.getFirstItem();
             ItemStack second = anvil.getSecondItem();
             if (isTool(first)) {
-                // Werkzeuge (Küchenmesser, Pfannenwender): Bücher, Reparatur und gleiches Werkzeug erlaubt, fremde Mod-Items nicht
+                // Tools (kitchen knives, spatula): books, repairing and the same tool allowed, other mod items not
                 if (CookeryItems.isCustom(second) && !CookeryItems.typeOf(second).equals(CookeryItems.typeOf(first))) {
                     event.setResult(null);
                 }
                 return;
             }
-            // Sonst nur Umbenennen: zweiter Slot leer
+            // Otherwise only renaming: second slot empty
             if (CookeryItems.isCustom(second) || (CookeryItems.isCustom(first) && second != null && !second.isEmpty())) {
                 event.setResult(null);
             }
@@ -64,7 +64,7 @@ public class ItemProtectionListener implements Listener {
     }
 
     /**
-     * Mod-Item mit Vanilla-Werkzeug als Basis (nicht Papier).
+     * Mod item with a vanilla tool as base (not paper).
      */
     private static boolean isTool(ItemStack stack) {
         return CookeryItems.isCustom(stack) && stack.getType() != CookeryItems.BASE_MATERIAL;

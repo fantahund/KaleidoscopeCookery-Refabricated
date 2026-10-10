@@ -7,12 +7,12 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
- * Suppentopf-Rezept (stockpot / flex_stockpot im Mod).
+ * Stockpot recipe (stockpot / flex_stockpot in the mod).
  *
- * @param soupBase        Brühe (minecraft:water, minecraft:lava, minecraft:milk, minecraft:cod_bucket ...)
- * @param carrier         Gefäß zum Herausnehmen, null = keins nötig
- * @param cookingTexture  Oberfläche beim Kochen (Item-Model-Definition kaleidoscope:surface/...)
- * @param finishedTexture Oberfläche, wenn fertig
+ * @param soupBase        broth (minecraft:water, minecraft:lava, minecraft:milk, minecraft:cod_bucket ...)
+ * @param carrier         container for taking it out, null = none needed
+ * @param cookingTexture  surface while cooking (item model definition kaleidoscope:surface/...)
+ * @param finishedTexture surface when done
  */
 public record StockpotRecipe(String id, boolean flex, List<Ingredient> ingredients, Key soupBase, int time, @Nullable Ingredient carrier,
                              RecipeResult result, Key cookingTexture, Key finishedTexture, int cookingColor, int finishedColor) {

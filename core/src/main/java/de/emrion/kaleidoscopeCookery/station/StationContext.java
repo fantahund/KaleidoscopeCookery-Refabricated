@@ -3,9 +3,9 @@ package de.emrion.kaleidoscopeCookery.station;
 import org.bukkit.entity.Interaction;
 
 /**
- * Alles, was eine Station über sich selbst wissen muss.
+ * Everything a station needs to know about itself.
  *
- * @param root Interaction-Entity: Klick-Hitbox und Träger des gespeicherten Zustands
+ * @param root Interaction entity: click hitbox and holder of the stored state
  */
 public record StationContext(StationManager manager, StationType type, Interaction root, BlockKey position, Facing facing) {
 }

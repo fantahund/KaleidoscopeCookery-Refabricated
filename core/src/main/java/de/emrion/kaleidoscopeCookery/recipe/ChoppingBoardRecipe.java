@@ -5,14 +5,14 @@ import net.kyori.adventure.key.Key;
 import java.util.List;
 
 /**
- * Schneidebrett: eine Zutat, {@code cuts} Schnitte, danach die Ergebnisse.
+ * Chopping board: one ingredient, {@code cuts} cuts, then the results.
  *
- * @param model Basis der Schnittstufen-Modelle: &lt;ns&gt;:chopping_board/&lt;pfad&gt;/&lt;stufe&gt;
+ * @param model base of the cutting stage models: &lt;ns&gt;:chopping_board/&lt;path&gt;/&lt;stage&gt;
  */
 public record ChoppingBoardRecipe(String id, Ingredient ingredient, int cuts, Key model, List<RecipeResult> results) {
 
     /**
-     * Item-Model-Definition der Stufe (0 = ungeschnitten, cuts = fertig).
+     * Item model definition of the stage (0 = uncut, cuts = done).
      */
     public Key stageModel(int stage) {
         return stageModel(model, Math.clamp(stage, 0, cuts));

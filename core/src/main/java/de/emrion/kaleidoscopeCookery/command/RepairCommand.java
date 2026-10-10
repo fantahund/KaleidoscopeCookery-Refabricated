@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * /kc repair – Stationen in geladenen Chunks prüfen: fehlende Displays/Barrieren ergänzen, Verwaistes entfernen.
+ * /kc repair - check stations in loaded chunks: add missing displays/barriers, remove orphans.
  */
 public class RepairCommand extends SubCommand {
 

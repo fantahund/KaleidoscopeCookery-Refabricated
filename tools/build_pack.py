@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 """
-Baut das Server-Resourcepack: resourcepack/imported + resourcepack/custom (custom gewinnt,
-Sprachdateien und sounds.json werden schluesselweise zusammengefuehrt), prueft alle Referenzen
-und schreibt ein deterministisches Zip samt SHA1.
+Builds the server resource pack: resourcepack/imported + resourcepack/custom (custom wins,
+language files and sounds.json are merged key by key), checks all references
+and writes a deterministic zip including the SHA1.
 
-Geprueft wird:
-  * jede JSON-Datei ist gueltig
-  * Item-Model-Definitionen zeigen nur auf vorhandene Modelle
-  * Modelle: Parent-Kette und alle Texturen existieren (im Pack oder in Vanilla 26.3)
-  * sounds.json: alle Sound-Dateien existieren
-  * Atlases fuer Textur-Ordner ausserhalb von block/ und item/ werden automatisch erzeugt
+Checked are:
+  * every JSON file is valid
+  * item model definitions only point to existing models
+  * models: parent chain and all textures exist (in the pack or in vanilla 26.3)
+  * sounds.json: all sound files exist
+  * atlases for texture folders outside block/ and item/ are created automatically
 
-Vanilla-Assets kommen aus dem 26.3-Client-Jar (wird einmalig in den Cache geladen).
+Vanilla assets come from the 26.3 client jar (downloaded into the cache once).
 
-Aufruf: python3 -I tools/build_pack.py --out target/generated-resources/pack
-Addon-Pack (eigenes Plugin, z. B. KaleidoscopeGrilling): --root <Addon-Repo> --base <dieses Repo> --zip-name ...
---icon-font ...; das Basis-Pack wird nur zum Pruefen der Referenzen gelesen, nicht mit gezippt.
+Usage: python3 -I tools/build_pack.py --out target/generated-resources/pack
+Addon pack (separate plugin, e.g. KaleidoscopeGrilling): --root <addon repo> --base <this repo> --zip-name ...
+--icon-font ...; the base pack is only read to check references, it is not zipped along.
 """
 import argparse
 import hashlib
@@ -31,16 +31,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 MC_VERSION = "26.3"
-# Große Item-Bilder fürs Kochbuch (Schrift kaleidoscope:icons): Zeichen ab U+F0000, 16 Pixel hoch, oben an der Zeile
+# Large item images for the cookbook (font kaleidoscope:icons): characters from U+F0000, 16 pixels tall, at the top of the line
 ICON_FIRST_CHAR = 0xF0000
 ICON_HEIGHT = 16
 ICON_ASCENT = 7
-# Stations-Bilder im Rezept-Diagramm (32 Pixel, in der mittleren Reihe des Rasters, siehe Cookbook#diagram)
+# Station images in the recipe diagram (32 pixels, in the middle row of the grid, see Cookbook#diagram)
 DIAGRAM_ITEMS = {"minecraft:crafting_table", "minecraft:furnace", "kaleidoscope_cookery:shawarma_spit",
-                 # Grilling-Seiten (Addon-Pack)
+                 # Grilling pages (addon pack)
                  "kaleidoscope_grilling:grill", "kaleidoscope_grilling:oil_press", "kaleidoscope_grilling:empty_seasoning_bottle",
                  "minecraft:stick"}
-# Items, deren Block aus mehreren Modellen übereinander besteht: (Modell, y-Versatz in Modell-Pixeln)
+# Items whose block consists of several models stacked on top of each other: (model, y offset in model pixels)
 MULTIBLOCK_MODELS = {"kaleidoscope_cookery:shawarma_spit": [("kaleidoscope_cookery:block/shawarma_spit_lower", 0),
                                                             ("kaleidoscope_cookery:block/shawarma_spit_upper", 16)]}
 ZIP_TIME = (2026, 1, 1, 0, 0, 0)
@@ -98,7 +98,7 @@ class PackBuilder:
         self.zip_name = zip_name
         self.icon_font = icon_font
         self.files: dict[str, bytes] = {}
-        # Dateien des Basis-Packs (nur lesen: der Client hat es zusätzlich geladen)
+        # Files of the base pack (read only: the client loads it in addition)
         self.base: dict[str, bytes] = self.read_layers(base) if base else {}
         self.errors: list[str] = []
         self.warnings: list[str] = []
@@ -125,7 +125,7 @@ class PackBuilder:
                 files[rel] = data
         return files
 
-    # ---- Pruefungen ----
+    # ---- Checks ----
 
     def exists(self, path: str) -> bool:
         return path in self.files or path in self.base or self.vanilla.has(path)
@@ -161,7 +161,7 @@ class PackBuilder:
             self.errors.append(f"Parent-Schleife: {' -> '.join(chain + [path])}")
             return
         if path not in self.files:
-            return  # Vanilla-Modell
+            return  # vanilla model
         model = self.read(path)
         parent = model.get("parent")
         if parent:
@@ -191,13 +191,13 @@ class PackBuilder:
 
     def fix_mixed_atlases(self):
         """
-        Seit 26.x darf ein Item-Modell nur Texturen aus einem Atlas nutzen ("Multiple atlases used in model"), z. B.
-        Spieß = Stab (items) + weißer Beton (blocks). Block-Texturen solcher Modelle werden als Kopie unter
-        textures/item/_block/ abgelegt und im Modell umgebogen. Alle Stationen sind ItemDisplays, gilt also für alle Modelle.
+        Since 26.x an item model may only use textures from one atlas ("Multiple atlases used in model"), e.g.
+        skewer = stick (items) + white concrete (blocks). Block textures of such models are copied to
+        textures/item/_block/ and the model is redirected. All stations are ItemDisplays, so this applies to all models.
         """
         def atlas(texture):
             top = norm(texture)[1].split("/", 1)[0]
-            return {"item": "items", "block": "blocks"}.get(top)  # eigene Ordner liegen in beiden Atlanten
+            return {"item": "items", "block": "blocks"}.get(top)  # own folders are in both atlases
 
         def textures_of(path, depth=0):
             if depth > 20 or not self.exists(path):
@@ -292,7 +292,7 @@ class PackBuilder:
                     path = f"assets/{sound_ns}/sounds/{sound_path}.ogg"
                     if path not in self.files and path not in self.base:
                         if sound_ns == "minecraft":
-                            continue  # Vanilla-Sounds liegen im Asset-Index, nicht im Jar
+                            continue  # vanilla sounds are in the asset index, not in the jar
                         self.errors.append(f"{name}: Sound {sound} ({event}) fehlt")
 
     def add_atlases(self):
@@ -306,14 +306,14 @@ class PackBuilder:
             data["sources"] += [s for s in sources if json.dumps(s, sort_keys=True) not in known]
             self.files[path] = json.dumps(data).encode("utf-8")
 
-    # ---- Item-Bilder fürs Kochbuch ----
+    # ---- Item images for the cookbook ----
 
     ICON_TEXTURE_KEYS = ("layer0", "all", "side", "front", "top", "texture", "cross", "plant", "particle")
 
     def write_item_icons(self, out: Path):
         """
-        Für jedes Item (Vanilla aus dem Client-Jar und die Mod-Items) eine flache Textur bestimmen, die als Sprite
-        im Text angezeigt werden kann: item_icons.txt mit Zeilen "item=atlas|sprite".
+        Determine a flat texture for every item (vanilla from the client jar and the mod items) that can be shown
+        as a sprite in text: item_icons.txt with lines "item=atlas|sprite".
         """
         jar = zipfile.ZipFile(self.vanilla.jar_path)
         cache = {}
@@ -331,7 +331,7 @@ class PackBuilder:
             return data
 
         def first_model(node):
-            """Modell, das der Client im Inventar ohne besondere Daten zeigt (custom_model_data 0, nicht benutzt)."""
+            """Model the client shows in the inventory without special data (custom_model_data 0, not in use)."""
             if not isinstance(node, dict):
                 return None
             kind = node.get("type", "").removeprefix("minecraft:")
@@ -395,7 +395,7 @@ class PackBuilder:
             return None
 
         def load_texture(texture):
-            """Textur in Originalgröße; animierte (Streifen) nur das erste Bild."""
+            """Texture in original size; animated ones (strips) only the first frame."""
             tns, tpath = norm(texture)
             png = f"assets/{tns}/textures/{tpath}.png"
             if png in self.files or png in self.base:
@@ -423,7 +423,7 @@ class PackBuilder:
             return Image.merge("RGBA", [c.point(lambda v: int(v * factor)) for c in channels] + [a])
 
         def model_parts(reference):
-            """Texturen, Elemente (vom ersten Modell der Kette, das welche hat) und Inventar-Ansicht (display.gui)."""
+            """Textures, elements (from the first model in the chain that has any) and inventory view (display.gui)."""
             textures = {}
             elements = None
             gui = None
@@ -445,7 +445,7 @@ class PackBuilder:
         FOLIAGE = (124, 189, 107)
 
         def rotate(point, rx, ry, rz):
-            """Quaternionf.rotationXYZ: erst um z, dann y, dann x (Grad)."""
+            """Quaternionf.rotationXYZ: first around z, then y, then x (degrees)."""
             x, y, z = point
             for axis, angle in (("z", rz), ("y", ry), ("x", rx)):
                 if not angle:
@@ -474,8 +474,8 @@ class PackBuilder:
             local = rotate(local, rx, ry, rz)
             return tuple(local[i] + origin[i] for i in range(3))
 
-        # Ecken je Fläche: A = Textur-Ursprung (u, v = 0), B = Ende in u-Richtung, C = Ende in v-Richtung;
-        # Standard-UV aus den Abmessungen; Helligkeit wie Minecraft (oben hell, Seiten dunkler)
+        # Corners per face: A = texture origin (u, v = 0), B = end in u direction, C = end in v direction;
+        # default UV from the dimensions; brightness like Minecraft (top bright, sides darker)
         FACES = {
             "up": (lambda a, b: ((a[0], b[1], a[2]), (b[0], b[1], a[2]), (a[0], b[1], b[2])), lambda a, b: [a[0], a[2], b[0], b[2]], 1.0),
             "down": (lambda a, b: ((a[0], a[1], b[2]), (b[0], a[1], b[2]), (a[0], a[1], a[2])), lambda a, b: [a[0], 16 - b[2], b[0], 16 - a[2]], 0.5),
@@ -487,10 +487,10 @@ class PackBuilder:
 
         def render3d(parts):
             """
-            Modell so zeichnen, wie es im Inventar erscheint: Inventar-Ansicht (display.gui: Drehung, Größe,
-            Verschiebung), gedrehte Elemente, sichtbare Flächen von hinten nach vorne. 2 Pixel je Modell-Pixel,
-            4-fach groß gezeichnet und glatt verkleinert.
-            parts: Liste aus (Texturen, Elemente, Inventar-Ansicht, y-Versatz in Modell-Pixeln).
+            Draw the model as it appears in the inventory: inventory view (display.gui: rotation, size,
+            translation), rotated elements, visible faces from back to front. 2 pixels per model pixel,
+            drawn 4 times as large and smoothly scaled down.
+            parts: list of (textures, elements, inventory view, y offset in model pixels).
             """
             extra = max(offset for *_, offset in parts)
             supersample = 8
@@ -498,7 +498,7 @@ class PackBuilder:
             rx, ry, rz = gui.get("rotation", [0, 0, 0])
             tx, ty, tz = gui.get("translation", [0, 0, 0])
             sx_, sy_, sz_ = gui.get("scale", [1, 1, 1])
-            # Bei hohen Mehrblock-Modellen (Dönerspieß) die gemeinsame Mitte nehmen und die Fläche nach oben verlängern
+            # For tall multi-block models (shawarma spit) use the common centre and extend the area upwards
             center = (8, 8 + extra / 2, 8)
             width = 32 * supersample
             height = round((32 + extra * sy_ * 2)) * supersample if extra else width
@@ -527,7 +527,7 @@ class PackBuilder:
                             uv = raw
                         corners = [screen(element_rotation(element, c)) for c in corners_of(a, b)]
                         (ax, ay, az), (bx, by, bz), (cx, cy, cz) = corners
-                        # Rückseiten weglassen (gegen den Uhrzeigersinn auf dem Bildschirm)
+                        # Skip back faces (counter-clockwise on screen)
                         if (bx - ax) * (cy - ay) - (by - ay) * (cx - ax) <= 0:
                             continue
                         depth = (az + bz + cz) / 3
@@ -560,11 +560,11 @@ class PackBuilder:
                 out.alpha_composite(part.transform(out.size, Image.AFFINE, data, Image.NEAREST))
             if not out.getbbox():
                 return None
-            # 4-fache Auflösung (128 Pixel für 16 Modell-Pixel): auch bei großer GUI scharf
+            # 4x resolution (128 pixels for 16 model pixels): sharp even with a large GUI scale
             return out.resize((width // 2, height // 2), Image.BOX)
 
         def glyph_advance(file, height):
-            """Vorschub wie BitmapProvider: Breite bis zur letzten nicht ganz durchsichtigen Spalte, skaliert, + 1."""
+            """Advance like BitmapProvider: width up to the last not fully transparent column, scaled, + 1."""
             fns, fpath = norm(file)
             png = f"assets/{fns}/textures/{fpath}"
             data = self.files.get(png) or (jar.read(png) if png in self.vanilla.names else None)
@@ -582,7 +582,7 @@ class PackBuilder:
         def add_glyph(file, height, ascent):
             char = chr(ICON_FIRST_CHAR + len(providers))
             providers.append({"type": "bitmap", "file": file, "height": height, "ascent": ascent, "chars": [char]})
-            # Hex des Zeichens und sein Vorschub (der Client kürzt Bilder rechts auf den letzten sichtbaren Pixel)
+            # Hex of the character and its advance (the client trims images on the right to the last visible pixel)
             return f"{ord(char):X}:{glyph_advance(file, height)}"
 
         def save_icon(ns, item, image):
@@ -592,7 +592,7 @@ class PackBuilder:
             return f"{font_ns}:icon/{ns}/{item}.png"
 
         font_ns, font_path = norm(self.icon_font)
-        # Addon-Pack: nur die eigenen Items (Vanilla und Basis-Items stehen schon in der item_icons.txt des Basis-Packs)
+        # Addon pack: only its own items (vanilla and base items are already in the item_icons.txt of the base pack)
         candidates = set(self.files) if self.base else set(self.files) | self.vanilla.names
         definitions = [n for n in candidates if "/items/" in n and n.startswith("assets/") and n.endswith(".json")
                        and n.count("/") == 3]
@@ -610,7 +610,7 @@ class PackBuilder:
                 continue
             chain = []
             textures = textures_of(model, chain)
-            # Blockmodelle (nicht item/generated): 3D-Ansicht wie im Inventar
+            # Block models (not item/generated): 3D view as in the inventory
             generated = any(path in ("item/generated", "item/handheld", "builtin/generated") for _, path in chain)
             if not generated:
                 if f"{ns}:{item}" in MULTIBLOCK_MODELS:
@@ -620,15 +620,15 @@ class PackBuilder:
                 parts = [(t, e, g, o) for t, e, g, o in parts if e]
                 image = render3d(parts) if parts else None
                 if image is not None:
-                    # Slot-Bild in 64 Pixel (16 Pixel im Spiel, also 4-fach), Stations-Bild in 128 Pixel (32 im Spiel)
+                    # Slot image in 64 pixels (16 pixels in game, so 4x), station image in 128 pixels (32 in game)
                     file = save_icon(ns, item, image.resize((image.width // 2, image.height // 2), Image.BOX))
                     glyph = add_glyph(file, ICON_HEIGHT * image.height // image.width, ICON_ASCENT)
-                    # kleine 3D-Ansicht in Texthöhe (Knöpfe), statt der flachen Partikel-Textur
+                    # small 3D view at text height (buttons) instead of the flat particle texture
                     small = add_glyph(file, 8 * image.height // image.width, 7)
                     if f"{ns}:{item}" in DIAGRAM_ITEMS:
                         large = save_icon(ns, item + "_large", image)
                         shown = image.height // 4
-                        # mittig über den drei Slot-Reihen (54 Pixel)
+                        # centred over the three slot rows (54 pixels)
                         diagrams.append(f"@diagram|{ns}:{item}={add_glyph(large, shown, 7 + 18 - (54 - shown) // 2)}")
                     first = resolve(textures, textures.get("particle")) or next((resolve(textures, v) for v in textures.values() if resolve(textures, v)), None)
                     if first and atlas_of(first):
@@ -642,10 +642,10 @@ class PackBuilder:
                 if texture and atlas_of(texture):
                     tns, tpath = norm(texture)
                     png = f"assets/{tns}/textures/{tpath}.png"
-                    # Große Variante als Schriftzeichen (16 Pixel), nicht für animierte Texturen (Streifen mit mehreren Bildern)
+                    # Large variant as a font character (16 pixels), not for animated textures (strips with several frames)
                     glyph = ""
                     if png in self.files or png in self.vanilla.names:
-                        # Animierte Texturen: erstes Bild als eigene Datei (die Schrift würde sonst den ganzen Streifen zeigen)
+                        # Animated textures: first frame as its own file (the font would otherwise show the whole strip)
                         file = save_icon(ns, item, load_texture(texture)) if is_animated(texture) else f"{tns}:{tpath}.png"
                         glyph = add_glyph(file, ICON_HEIGHT, ICON_ASCENT)
                         if f"{ns}:{item}" in DIAGRAM_ITEMS:
@@ -654,7 +654,7 @@ class PackBuilder:
                     break
         self.files[f"assets/{font_ns}/font/{font_path}.json"] = json.dumps({"providers": providers}, ensure_ascii=True).encode("utf-8")
         if self.palettes:
-            # Zutaten-Farben für Spieße (Grilling): Partikel-Textur jedes Items (Vanilla, Basis, eigene) als 4x4-Raster
+            # Ingredient colours for skewers (Grilling): particle texture of every item (vanilla, base, own) as a 4x4 grid
             sys.path.insert(0, str(Path(__file__).resolve().parent))
             import skewer_palette
             all_items = [n for n in set(self.files) | set(self.base) | self.vanilla.names
@@ -672,7 +672,7 @@ class PackBuilder:
                 image = load_texture(texture) if texture else None
                 if image is None:
                     continue
-                # 16 Felder für Spieße, danach 2 Farben für Gewürzflaschen-Schichten
+                # 16 cells for skewers, then 2 colours for the seasoning bottle layers
                 colors = skewer_palette.palette(image) + skewer_palette.top_two(image)
                 palette_lines.append(f"{ns}:{item}=" + ",".join(f"{c:06X}" for c in colors))
             out.mkdir(parents=True, exist_ok=True)
@@ -682,7 +682,7 @@ class PackBuilder:
         (out / "item_icons.txt").write_text("\n".join([f"@font|{self.icon_font}"] + lines + diagrams) + "\n", encoding="utf-8")
         print(f"Item-Bilder: {len(lines)}, davon groß: {len(providers)}")
 
-    # ---- Ausgabe ----
+    # ---- Output ----
 
     def write_zip(self, out: Path) -> str:
         buffer = io.BytesIO()

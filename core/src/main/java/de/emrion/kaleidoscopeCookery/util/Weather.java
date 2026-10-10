@@ -9,11 +9,11 @@ import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.PointedDripstone;
 
 /**
- * Wetter-Abfragen, die die Bukkit-API nicht direkt bietet.
+ * Weather queries the Bukkit API does not offer directly.
  */
 public final class Weather {
 
-    /** PointedDripstoneBlock#MAX_SEARCH_LENGTH_WHEN_LOOKING_FOR_TIP_OF_FALLING_STALACTITE bzw. Suche über dem Kessel */
+    /** PointedDripstoneBlock#MAX_SEARCH_LENGTH_WHEN_LOOKING_FOR_TIP_OF_FALLING_STALACTITE or the search above the cauldron */
     private static final int DRIPSTONE_SEARCH = 11;
     private static final int DRIPSTONE_LENGTH = 11;
 
@@ -21,14 +21,14 @@ public final class Weather {
     }
 
     /**
-     * Level#canSeeSky: kein Block der Bewegung blockiert darüber.
+     * Level#canSeeSky: no block that blocks motion above it.
      */
     public static boolean canSeeSky(Block block) {
         return block.getWorld().getHighestBlockYAt(block.getX(), block.getZ(), HeightMap.MOTION_BLOCKING) < block.getY();
     }
 
     /**
-     * Level#isRainingAt: Gewitter/Regen, freier Himmel und ein Biom mit Regen (nicht Schnee, nicht Wüste/Savanne/Tafelberge).
+     * Level#isRainingAt: thunderstorm/rain, open sky and a biome with rain (not snow, not desert/savanna/badlands).
      */
     public static boolean isRainingAt(Block block) {
         if (!block.getWorld().hasStorm() || !canSeeSky(block)) {
@@ -40,7 +40,7 @@ public final class Weather {
 
     /**
      * PointedDripstoneBlock#findStalactiteTipAboveCauldron + getCauldronFillFluidType == WATER:
-     * über dem Block hängt ein Tropfstein, über dessen Wurzel Wasser (oder Schlamm außerhalb des Nethers) ist.
+     * a dripstone hangs above the block with water (or mud outside the Nether) above its root.
      */
     public static boolean hasWaterDripstone(Block block) {
         Block tip = null;

@@ -1,7 +1,7 @@
 """
-4x4-Farbraster einer Item-Textur fuer die Zutaten auf Spiessen (Kaleidoscope Grilling, SkewerColorProvider#sampleGrid):
-mittlere Haelfte der Textur, dunkle Pixel ignoriert, auf 8 Farben (Lab) reduziert, einzelne Ausreisser geglaettet.
-Das Plugin schattiert daraus je Seite und Garstufe die Tint-Farben.
+4x4 colour grid of an item texture for the ingredients on skewers (Kaleidoscope Grilling, SkewerColorProvider#sampleGrid):
+middle half of the texture, dark pixels ignored, reduced to 8 colours (Lab), single outliers smoothed.
+From this the plugin shades the tint colours per side and cooking stage.
 """
 import math
 
@@ -105,7 +105,7 @@ def clean_isolated(colors: list) -> list:
 
 
 def palette(image) -> list:
-    """16 RGB-Werte (Zeile gridZ = 0 ist unten) aus einem RGBA-PIL-Bild."""
+    """16 RGB values (row gridZ = 0 is at the bottom) from an RGBA PIL image."""
     width, height = image.size
     pixels = image.load()
     x0, x1 = width // 4, max(width // 4 + 1, width * 3 // 4)
@@ -144,7 +144,7 @@ def palette(image) -> list:
 
 
 def top_two(image) -> list:
-    """SeasoningColorProvider#sample: die zwei häufigsten Farben der Bildmitte (Schichten in der Gewürzflasche)."""
+    """SeasoningColorProvider#sample: the two most common colours in the centre of the image (layers in the seasoning bottle)."""
     width, height = image.size
     pixels = image.load()
     counts = {}
@@ -164,7 +164,7 @@ def top_two(image) -> list:
 
 
 if __name__ == "__main__":
-    # Selbsttest: einfarbiges Bild -> 16 gleiche Farben
+    # Self-test: single-colour image -> 16 identical colours
     from PIL import Image
     img = Image.new("RGBA", (16, 16), (200, 100, 50, 255))
     assert palette(img) == [200 << 16 | 100 << 8 | 50] * 16

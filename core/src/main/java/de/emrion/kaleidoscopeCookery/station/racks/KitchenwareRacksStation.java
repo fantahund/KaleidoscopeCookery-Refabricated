@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Küchengeräteregal (KitchenwareRacksBlock im Mod): hängt an der Wand und hält links und rechts je ein Werkzeug.
- * Rechtsklick mit einem Werkzeug hängt es auf, mit leerer Hand nimmt man es wieder ab.
+ * Kitchenware rack (KitchenwareRacksBlock in the mod): hangs on the wall and holds one tool on the left and one on the right.
+ * Right-clicking with a tool hangs it up, with an empty hand you take it off again.
  */
 public class KitchenwareRacksStation extends Station {
 
@@ -68,7 +68,7 @@ public class KitchenwareRacksStation extends Station {
         }
     }
 
-    // ---- Anzeige ----
+    // ---- Display ----
 
     @Override
     public void updateDisplay() {
@@ -78,7 +78,7 @@ public class KitchenwareRacksStation extends Station {
     }
 
     /**
-     * KitchenwareRacksBlockEntityRender: YN(Richtung * 90), dann seitlich versetzt, schräg aufgehängt.
+     * KitchenwareRacksBlockEntityRender: YN(direction * 90), then offset sideways, hung at an angle.
      */
     private void showTool(String name, @Nullable ItemStack stack, float x) {
         if (stack == null) {
@@ -99,15 +99,15 @@ public class KitchenwareRacksStation extends Station {
         return "Küchengeräteregal";
     }
 
-    // ---- Interaktion ----
+    // ---- Interaction ----
 
-    /** Werkzeuge aus c:tools (NeoForge), die keinen eigenen Vanilla-Tag haben */
+    /** Tools from c:tools (NeoForge) that have no vanilla tag of their own */
     private static final java.util.Set<Material> OTHER_TOOLS = java.util.EnumSet.of(Material.BOW, Material.CROSSBOW, Material.FISHING_ROD,
             Material.SHEARS, Material.SHIELD, Material.TRIDENT, Material.BRUSH, Material.MACE, Material.FLINT_AND_STEEL);
 
     /**
-     * Werkzeug im Sinne von c:tools (Schwerter, Äxte, Spitzhacken, Schaufeln, Hacken, Speere, Bogen, Angel, Schere ...).
-     * Von den eigenen Items: Küchenmesser, Sichel und Pfannenwender (im Mod in #minecraft:swords bzw. #minecraft:shovels).
+     * Tool in the sense of c:tools (swords, axes, pickaxes, shovels, hoes, spears, bow, fishing rod, shears ...).
+     * Of our own items: kitchen knives, sickle and spatula (in the mod in #minecraft:swords or #minecraft:shovels).
      */
     private static boolean isTool(ItemStack stack) {
         Key id = CookeryItems.idOf(stack);
@@ -120,14 +120,14 @@ public class KitchenwareRacksStation extends Station {
     }
 
     /**
-     * Seite wie KitchenwareRacksBlock#useItemOn: Klickpunkt in die Blickrichtung des Regals gedreht, x &gt; 0 = links.
+     * Side like KitchenwareRacksBlock#useItemOn: click point rotated into the rack's facing, x &gt; 0 = left.
      */
     private boolean clickedLeft() {
         Vector click = clickPosition();
         if (click == null) {
             return true;
         }
-        // Direction#getOpposite().toYRot(): Süden 0, Westen 90, Norden 180, Osten 270
+        // Direction#getOpposite().toYRot(): south 0, west 90, north 180, east 270
         double yRot = Math.toRadians(switch (facing()) {
             case SOUTH -> 180;
             case WEST -> 270;

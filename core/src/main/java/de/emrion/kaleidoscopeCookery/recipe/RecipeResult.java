@@ -9,7 +9,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Map;
 
 /**
- * Ergebnis eines Rezepts. In recipes.yml als ID oder { item: ID, count: n }.
+ * Result of a recipe. In recipes.yml as an id or { item: ID, count: n }.
  */
 public record RecipeResult(Key item, int count) {
 

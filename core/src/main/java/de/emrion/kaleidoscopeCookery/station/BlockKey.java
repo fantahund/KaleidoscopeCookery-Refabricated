@@ -9,7 +9,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.UUID;
 
 /**
- * Blockposition einer Station (ohne Referenz auf die Welt, damit nichts festgehalten wird).
+ * Block position of a station (without a reference to the world so nothing is kept alive).
  */
 public record BlockKey(UUID world, int x, int y, int z) {
 
@@ -39,7 +39,7 @@ public record BlockKey(UUID world, int x, int y, int z) {
     }
 
     /**
-     * Mitte der Blockunterseite.
+     * Centre of the bottom face of the block.
      */
     public Location bottomCenter(World w) {
         return new Location(w, x + 0.5, y, z + 0.5);

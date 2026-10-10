@@ -15,8 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Verzauberung "Schnelles Messer" (kaleidoscope_cookery:quick_knife, registriert in KaleidoscopeCookeryBootstrap).
- * Außerdem Regeln für die Küchenmesser selbst: kein Schwungangriff, nicht als Block platzierbar.
+ * Enchantment "Quick Knife" (kaleidoscope_cookery:quick_knife, registered in KaleidoscopeCookeryBootstrap).
+ * Also rules for the kitchen knives themselves: no sweep attack, not placeable as a block.
  */
 public class QuickKnifeListener implements Listener {
 
@@ -27,7 +27,7 @@ public class QuickKnifeListener implements Listener {
     }
 
     /**
-     * Stufe von "Schnelles Messer" auf dem Item (0 = keine).
+     * Level of "Quick Knife" on the item (0 = none).
      */
     public static int level(@Nullable ItemStack stack) {
         Enchantment enchantment = enchantment();
@@ -35,7 +35,7 @@ public class QuickKnifeListener implements Listener {
     }
 
     /**
-     * Küchenmesser = Mod-Item, dessen ID auf _kitchen_knife endet.
+     * Kitchen knife = mod item whose id ends with _kitchen_knife.
      */
     public static boolean isKnife(@Nullable ItemStack stack) {
         Key id = CookeryItems.idOf(stack);
@@ -43,7 +43,7 @@ public class QuickKnifeListener implements Listener {
     }
 
     /**
-     * Mod: "菜刀不能横扫之刃" – Küchenmesser machen keinen Schwungangriff.
+     * Mod: "菜刀不能横扫之刃" - kitchen knives do no sweep attack.
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onSweep(EntityDamageByEntityEvent event) {
@@ -54,7 +54,7 @@ public class QuickKnifeListener implements Listener {
     }
 
     /**
-     * Basis der Messer ist der Verbundblock: OPs im Kreativmodus könnten ihn sonst platzieren.
+     * The knives are based on the jigsaw block: ops in creative mode could otherwise place it.
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlace(BlockPlaceEvent event) {

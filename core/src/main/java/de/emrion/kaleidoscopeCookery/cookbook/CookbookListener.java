@@ -14,7 +14,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 /**
- * Kochbuch-Item: Rechtsklick öffnet das Kochbuch, auf eine Station direkt deren Seite.
+ * Cookbook item: right-click opens the cookbook, on a station directly that station's page.
  */
 public class CookbookListener implements Listener {
 

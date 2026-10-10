@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * /kc give &lt;item&gt; [spieler] [anzahl] – Mod-Item vergeben.
+ * /kc give &lt;item&gt; [player] [amount] - give a mod item.
  */
 public class GiveCommand extends SubCommand {
 
@@ -80,7 +80,7 @@ public class GiveCommand extends SubCommand {
     private CookeryItem find(String id) {
         CookeryItem item = plugin.getItems().get(id);
         if (item == null && !id.contains(":")) {
-            // Ohne Namespace: Cookery zuerst, dann die Addons
+            // Without namespace: Cookery first, then the addons
             item = plugin.getItems().get(Key.key("kaleidoscope_cookery", id));
             if (item == null) {
                 item = plugin.getItems().all().values().stream().filter(i -> i.id().value().equals(id)).findFirst().orElse(null);

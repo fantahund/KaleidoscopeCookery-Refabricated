@@ -26,7 +26,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
-            <!-- Resourcepack validieren, zippen und SHA1 ausgeben (tools/build_pack.py). Das Zip landet im Jar. -->
+            <!-- Validate and zip the resource pack and print its SHA1 (tools/build_pack.py). The zip ends up in the jar. -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Sichuanpfeffer-Strauch (eigene Pflanze statt des Pfefferbaums aus Grilling): 6 Wachstumsstufen (16x16, Kreuzmodell)
-und Samen-Item, als Pixel-Art im Stil der Grilling-Pflanzen (Farben aus pepper_leaves_fruiting/sichuan_pepper).
-Schreibt nach ../KaleidoscopeGrilling/resourcepack/custom: Texturen, Modelle, Item-Definitionen.
+Sichuan pepper bush (own crop instead of the pepper tree from Grilling): 6 growth stages (16x16, cross model)
+and a seed item, as pixel art in the style of the Grilling crops (colours from pepper_leaves_fruiting/sichuan_pepper).
+Writes to ../KaleidoscopeGrilling/resourcepack/custom: textures, models, item definitions.
 
-Aufruf: python3 -I tools/gen_pepper_bush.py
+Usage: python3 -I tools/gen_pepper_bush.py
 """
 import json
 import random
@@ -29,7 +29,7 @@ def put(img, x, y, color):
 
 
 def stem(img, top: int, branches: list):
-    """Hauptstamm von unten bis top, Zweige als (y, Richtung, Länge)."""
+    """Main stem from the bottom up to top, branches as (y, direction, length)."""
     for y in range(15, top - 1, -1):
         put(img, 7, y, STEM[1] if y % 3 else STEM[2])
         if y > 12:
@@ -40,7 +40,7 @@ def stem(img, top: int, branches: list):
 
 
 def leaves(img, rng, centers: list, radius: float, density: float):
-    """Unregelmäßige Blattbüschel um die Mittelpunkte (gefiederte Pfefferblätter: kleine Flecken, Lichtkante oben)."""
+    """Irregular leaf clusters around the centres (pinnate pepper leaves: small patches, highlight at the top)."""
     for cx, cy in centers:
         for y in range(16):
             for x in range(16):
@@ -51,7 +51,7 @@ def leaves(img, rng, centers: list, radius: float, density: float):
 
 
 def dots(img, rng, centers: list, palette: list, count: int, cluster: bool):
-    """Blüten bzw. Beeren: einzelne Pixel oder kleine Trauben (2x2 mit Glanzpunkt)."""
+    """Flowers or berries: single pixels or small clusters (2x2 with a highlight)."""
     spots = []
     for cx, cy in centers:
         for _ in range(count):
@@ -70,7 +70,7 @@ def dots(img, rng, centers: list, palette: list, count: int, cluster: bool):
 
 def stage(n: int) -> Image.Image:
     img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
-    rng = random.Random(1000 + min(n, 2))  # ab Stufe 2 gleicher Busch, nur Blüten/Beeren ändern sich
+    rng = random.Random(1000 + min(n, 2))  # same bush from stage 2, only flowers/berries change
     if n == 0:
         stem(img, 12, [])
         for x, y in ((6, 12), (8, 12), (5, 11), (9, 11), (7, 11)):
@@ -95,14 +95,14 @@ def stage(n: int) -> Image.Image:
 
 
 def seeds() -> Image.Image:
-    """Samen: ein paar schwarze, glänzende Pfefferkörner mit aufgeplatzten roten Hüllen."""
+    """Seeds: a few black, shiny peppercorns with burst red husks."""
     img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
     for x, y in ((5, 6), (9, 5), (7, 9), (10, 10), (4, 10)):
         put(img, x, y, (34, 30, 30))
         put(img, x + 1, y, (52, 46, 44))
         put(img, x, y + 1, (24, 20, 20))
         put(img, x + 1, y + 1, (40, 34, 34))
-        put(img, x + 1, y, (96, 90, 86))  # Glanz
+        put(img, x + 1, y, (96, 90, 86))  # highlight
         put(img, x - 1, y + 1, RIPE[1])
         put(img, x + 2, y + 1, RIPE[2])
     return img

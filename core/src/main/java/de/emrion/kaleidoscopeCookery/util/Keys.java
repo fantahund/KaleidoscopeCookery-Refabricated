@@ -3,7 +3,7 @@ package de.emrion.kaleidoscopeCookery.util;
 import org.bukkit.NamespacedKey;
 
 /**
- * PDC-Keys des Plugins (Namespace kaleidoscope).
+ * PDC keys of the plugin (namespace kaleidoscope).
  */
 public final class Keys {
 
@@ -12,19 +12,19 @@ public final class Keys {
     /** Custom-Item: ID (z. B. kaleidoscope_cookery:tomato) */
     public static final NamespacedKey ITEM = key("item");
 
-    /** Wurzel-Entity (Interaction) einer Station: Stations-Typ */
+    /** Root entity (Interaction) of a station: station type */
     public static final NamespacedKey STATION_TYPE = key("station_type");
-    /** Wurzel-Entity: Version des gespeicherten Zustands */
+    /** Root entity: version of the stored state */
     public static final NamespacedKey STATION_VERSION = key("station_version");
-    /** Wurzel-Entity: Blickrichtung beim Platzieren (0 = Süden, 1 = Westen, 2 = Norden, 3 = Osten) */
+    /** Root entity: view direction when placed (0 = south, 1 = west, 2 = north, 3 = east) */
     public static final NamespacedKey STATION_FACING = key("station_facing");
-    /** Wurzel-Entity: Zustand der Station (eigener PDC-Container je Typ) */
+    /** Root entity: state of the station (own PDC container per type) */
     public static final NamespacedKey STATION_STATE = key("station_state");
-    /** Display einer Station: UUID der Wurzel-Entity */
+    /** Display of a station: UUID of the root entity */
     public static final NamespacedKey STATION_OWNER = key("station_owner");
-    /** Display einer Station: Name des Teils (z. B. body, ingredient) */
+    /** Display of a station: name of the part (e.g. body, ingredient) */
     public static final NamespacedKey STATION_PART = key("station_part");
-    /** Sitz-Entity (Mülleimer, später Stühle) */
+    /** Seat entity (trash can, later chairs) */
     public static final NamespacedKey SEAT = key("seat");
 
     private Keys() {

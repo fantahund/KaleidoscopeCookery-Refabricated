@@ -42,13 +42,13 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Suppentopf (StockpotBlockEntity im Mod).
+ * Stockpot (StockpotBlockEntity in the mod).
  * <ol>
- *     <li>Brühe hinein (Wasser-, Lava-, Milch- oder Fischeimer), dann bis zu 9 Zutaten</li>
- *     <li>Deckel drauf: auf einer Hitzequelle kocht die Suppe (Standard 15 s)</li>
- *     <li>Deckel ab, mit Schüssel (je nach Rezept) portionsweise herausnehmen – bis zu 9 Portionen</li>
+ *     <li>Add broth (water, lava, milk or fish bucket), then up to 9 ingredients</li>
+ *     <li>Put the lid on: on a heat source the soup cooks (default 15 s)</li>
+ *     <li>Lid off, take it out serving by serving with a bowl (depending on the recipe) - up to 9 servings</li>
  * </ol>
- * Ohne Rezept wird es ein Verdächtiger Eintopf. Anbrennen kann nichts.
+ * Without a recipe it becomes a suspicious stew. Nothing can burn.
  */
 public class StockpotStation extends Station {
 
@@ -62,7 +62,7 @@ public class StockpotStation extends Station {
     private static final int MAX_TAKEOUT_COUNT = 9;
     private static final float SOUP_HEIGHT = 0.38f;
 
-    /** Brühen: Eimer -> Key und Farbe der Blasen (ModSoupBases) */
+    /** Broths: bucket -> key and colour of the bubbles (ModSoupBases) */
     private record SoupBase(Key key, Material bucket, int color, Key surface, @Nullable Material floating) {
     }
 
@@ -96,7 +96,7 @@ public class StockpotStation extends Station {
     private @Nullable ItemStack result;
     private @Nullable ItemStack lid;
     private @Nullable String recipeId;
-    /** Gefäß zum Herausnehmen; leer = keins nötig */
+    /** Container for taking it out; empty = none needed */
     private List<Key> carrier = List.of(Material.BOWL.key());
     private Key cookingTexture = StockpotRecipe.DEFAULT_COOKING_TEXTURE;
     private Key finishedTexture = StockpotRecipe.DEFAULT_FINISHED_TEXTURE;
@@ -118,7 +118,7 @@ public class StockpotStation extends Station {
         return Key.key("kaleidoscope", "surface/" + name);
     }
 
-    // ---- Zustand ----
+    // ---- State ----
 
     @Override
     protected void load(PersistentDataContainer state) {
@@ -213,7 +213,7 @@ public class StockpotStation extends Station {
         return null;
     }
 
-    /** Liegt ein fertiges Gericht zum Herausnehmen bereit (Addons: Gewürz nach dem letzten Teller löschen) */
+    /** Is a finished dish ready to be taken out (addons: clear the seasoning after the last plate) */
     public boolean hasDish() {
         return result != null;
     }
@@ -246,7 +246,7 @@ public class StockpotStation extends Station {
             world().playSound(center(), "kaleidoscope_cookery:block.stockpot", SoundCategory.BLOCKS, volume, pitch);
         }
         if (!hasLid()) {
-            // Offener Topf: Blasen in der Farbe der Suppe, es kocht nichts
+            // Open pot: bubbles in the colour of the soup, nothing cooks
             if (random.nextFloat() < 0.25f) {
                 Particle.DustOptions dust = new Particle.DustOptions(Color.fromRGB(bubbleColor()), 1);
                 world().spawnParticle(Particle.DUST, position().x() + 0.25 + random.nextFloat() * 0.5, position().y() + 0.375,
@@ -328,7 +328,7 @@ public class StockpotStation extends Station {
         finishedColor = recipe.finishedColor();
     }
 
-    // ---- Bedienung (Reihenfolge wie StockpotBlock#useItemOn) ----
+    // ---- Handling (order like StockpotBlock#useItemOn) ----
 
     @Override
     public boolean onInteract(Player player, EquipmentSlot hand) {
@@ -419,7 +419,7 @@ public class StockpotStation extends Station {
         return true;
     }
 
-    // ---- Rezept-Item (RecipeItem im Mod) ----
+    // ---- Recipe item (RecipeItem in the mod) ----
 
     public List<ItemStack> recordableInputs() {
         List<ItemStack> list = new ArrayList<>();
@@ -434,7 +434,7 @@ public class StockpotStation extends Station {
     }
 
     /**
-     * RecipeItem#getStockpotRecipeResult: Ergebnis der aktuellen Zutaten, ohne Rezept ein seltsamer Eintopf.
+     * RecipeItem#getStockpotRecipeResult: result of the current ingredients, a strange stew without a recipe.
      */
     public java.util.Map.Entry<ItemStack, Boolean> previewResult() {
         List<ItemStack> inputList = new ArrayList<>();
@@ -528,7 +528,7 @@ public class StockpotStation extends Station {
             }
             inputs[i] = null;
             give(player, stack);
-            // Lava ist heiß (Temperatur > 500 im Mod)
+            // Lava is hot (temperature > 500 in the mod)
             if (soupBase.value().equals("lava")) {
                 player.damage(1, DamageSource.builder(DamageType.IN_FIRE).build());
             }
@@ -595,7 +595,7 @@ public class StockpotStation extends Station {
         }
     }
 
-    // ---- Darstellung ----
+    // ---- Display ----
 
     @Override
     public void updateDisplay() {
@@ -645,7 +645,7 @@ public class StockpotStation extends Station {
     }
 
     /**
-     * Fertige/Koch-Texturen (kaleidoscope_cookery:stockpot/x) liegen als Modell kaleidoscope:surface/x im Pack.
+     * Finished/cooking textures (kaleidoscope_cookery:stockpot/x) are in the pack as the model kaleidoscope:surface/x.
      */
     private static Key textureSurface(Key texture) {
         String value = texture.value();
@@ -653,8 +653,8 @@ public class StockpotStation extends Station {
     }
 
     /**
-     * Wie StockpotBlockEntityRender#renderItems: Zutaten schwimmen schräg in der Suppe
-     * (Mod: leicht schaukelnd – hier feste Lage).
+     * Like StockpotBlockEntityRender#renderItems: ingredients float tilted in the soup
+     * (mod: slightly rocking - fixed position here).
      */
     private Transformation itemTransform(int slot, ItemStack stack) {
         int random = Math.abs(31 * slot + CookeryItems.typeOf(stack).asString().hashCode());

@@ -32,15 +32,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Vogelscheuche (ScarecrowEntity im Mod, hier Station mit Hitbox statt Entity):
+ * Scarecrow (ScarecrowEntity in the mod, here a station with a hitbox instead of an entity):
  * <ul>
- *     <li>steht in 8 Richtungen (45°-Schritte), schützt Ackerland in 16 Blöcken vor dem Zertrampeln</li>
- *     <li>Rechtsklick auf die Arme: Laterne in die linke Hand (leuchtet, Lichtstärke 12), Werkzeug/Waffe in die rechte;
- *     mit leerer Hand zuerst die rechte, dann die linke Hand leeren</li>
- *     <li>Rechtsklick auf den Kopf: Mob- oder Spielerkopf aufsetzen bzw. mit leerer Hand abnehmen</li>
- *     <li>zweimal schnell schlagen (wie ein Rüstungsständer) baut sie ab, im Kreativmodus einmal</li>
+ *     <li>stands in 8 directions (45° steps), protects farmland within 16 blocks from trampling</li>
+ *     <li>Right-click on the arms: lantern into the left hand (emits light level 12), tool/weapon into the right;
+ *     with an empty hand the right hand is emptied first, then the left</li>
+ *     <li>Right-click on the head: put on a mob or player head, or take it off with an empty hand</li>
+ *     <li>hitting it twice quickly (like an armour stand) breaks it, once in creative mode</li>
  * </ul>
- * Papageien auf der Schulter gibt es nicht (dafür bräuchte es ein echtes Entity).
+ * Parrots on the shoulder do not exist (that would need a real entity).
  */
 public class ScarecrowStation extends Station {
 
@@ -48,15 +48,15 @@ public class ScarecrowStation extends Station {
     public static final Key ITEM = Key.key("kaleidoscope_cookery", "scarecrow");
     private static final Key BODY = Key.key("kaleidoscope_cookery", "block/scarecrow_body");
     private static final Key HEAD = Key.key("kaleidoscope_cookery", "block/scarecrow_head");
-    /** Modell auf 1/2 verkleinert (tools/gen_entity_models.py) */
+    /** Model scaled down to 1/2 (tools/gen_entity_models.py) */
     private static final float MODEL_SCALE = 2;
-    /** ScarecrowEntity#isClickHand / #isClickHead: Höhe über dem Boden in Blöcken */
+    /** ScarecrowEntity#isClickHand / #isClickHead: height above the ground in blocks */
     private static final double HAND_MIN = 17 / 16.0;
     private static final double HAND_MAX = 27 / 17.0;
-    /** Arme in Blöcken relativ zur Blockmitte bei Blick nach Norden (rechte Hand im Osten) */
+    /** Arms in blocks relative to the block centre when facing north (right hand in the east) */
     private static final Vector3f RIGHT_HAND = new Vector3f(0.75f, (25.77f - 8) / 16, 0);
     private static final Vector3f LEFT_HAND = new Vector3f(-0.75f, (25.77f - 8) / 16, 0);
-    /** Kopf: Unterkante 27 Pixel über dem Boden, 9 Pixel groß */
+    /** Head: bottom edge 27 pixels above the ground, 9 pixels tall */
     private static final float HEAD_SCALE = 9 / 8f;
     private static final Vector3f HEAD_POSITION = new Vector3f(0, 27 / 16f + 0.5f * HEAD_SCALE - 0.5f, 0.0156f);
     private static final int LIGHT_LEVEL = 12;
@@ -78,12 +78,12 @@ public class ScarecrowStation extends Station {
     }
 
     public static StationType type() {
-        // 1 x 3 Blöcke (Entity 0,5 x 2,375): die Blöcke darüber müssen frei sein
+        // 1 x 3 blocks (entity 0.5 x 2.375): the blocks above must be free
         return new StationType(TYPE_ID, ITEM, false, 0.5f, 2.375f, false, ScarecrowStation::new, 1, 3);
     }
 
     /**
-     * ScarecrowItem#useOn: in 45°-Schritten zum Spieler gedreht.
+     * ScarecrowItem#useOn: rotated towards the player in 45° steps.
      */
     public void initYaw(float playerYaw) {
         float wrapped = (float) Math.IEEEremainder(playerYaw - 180, 360);
@@ -120,10 +120,10 @@ public class ScarecrowStation extends Station {
         }
     }
 
-    // ---- Darstellung ----
+    // ---- Display ----
 
     private Quaternionf rotation() {
-        // ScarecrowRender#setupRotations: YP(180 - yRot); die Modelle sind für yRot = 180 (Blick nach Norden) gebaut
+        // ScarecrowRender#setupRotations: YP(180 - yRot); the models are built for yRot = 180 (facing north)
         return new Quaternionf().rotationY((float) Math.toRadians(180 - yaw));
     }
 
@@ -136,7 +136,7 @@ public class ScarecrowStation extends Station {
             showPart("head", HEAD, new Transformation(new Vector3f(), rotation, new Vector3f(MODEL_SCALE), new Quaternionf()));
         } else {
             hidePart("head");
-            // Kopf-Item mit Profil (Spielerköpfe), Gesicht nach vorn
+            // Head item with profile (player heads), face to the front
             showPart("head_item", new PartLook(head.asOne(), ItemDisplay.ItemDisplayTransform.NONE,
                     new Transformation(rotation.transform(new Vector3f(HEAD_POSITION)), new Quaternionf(rotation).rotateY((float) Math.PI),
                             new Vector3f(HEAD_SCALE), new Quaternionf()), null), 0);
@@ -144,7 +144,7 @@ public class ScarecrowStation extends Station {
         if (mainHand == null) {
             hidePart("main_hand");
         } else {
-            // in der Hand: Stiel unten, Kopf oben und 20° nach außen geneigt, Vorderseite nach vorn, am Stiel gehalten
+            // In the hand: handle at the bottom, head at the top, tilted 20° outwards, front facing forward, held by the handle
             showItemPart("main_hand", mainHand, new Transformation(rotation.transform(new Vector3f(RIGHT_HAND).add(0, 0.3f, 0)),
                     new Quaternionf(rotation).rotateY((float) Math.PI).rotateZ((float) Math.toRadians(-25)), new Vector3f(0.75f),
                     new Quaternionf()), 0, null);
@@ -153,7 +153,7 @@ public class ScarecrowStation extends Station {
         if (lantern == null) {
             hidePart("off_hand");
         } else {
-            // Laterne hängt mit dem Griff an der linken Hand
+            // The lantern hangs from the left hand by its handle
             Vector3f at = rotation.transform(new Vector3f(LEFT_HAND).add(0, -0.16f, 0));
             showPart("off_hand", lantern, new Transformation(at, rotation, new Vector3f(0.75f), new Quaternionf()));
         }
@@ -161,7 +161,7 @@ public class ScarecrowStation extends Station {
     }
 
     /**
-     * Blockmodell der Laterne (LanternBlock#defaultBlockState, stehend); gewachste Kupferlaternen wie ungewachste.
+     * Block model of the lantern (LanternBlock#defaultBlockState, standing); waxed copper lanterns like unwaxed ones.
      */
     private static @Nullable Key lanternModel(@Nullable ItemStack stack) {
         if (stack == null || !Tag.ITEMS_LANTERNS.isTagged(stack.getType())) {
@@ -171,7 +171,7 @@ public class ScarecrowStation extends Station {
     }
 
     /**
-     * ScarecrowEntity#tick: mit Laterne Lichtblock (12) über dem Fuß, sonst wieder Luft.
+     * ScarecrowEntity#tick: with a lantern a light block (12) above the foot, otherwise air again.
      */
     private void updateLight() {
         Block block = lightBlock();
@@ -204,7 +204,7 @@ public class ScarecrowStation extends Station {
         }
     }
 
-    // ---- Bedienung ----
+    // ---- Handling ----
 
     @Override
     public boolean onInteract(Player player, EquipmentSlot hand) {
@@ -286,10 +286,10 @@ public class ScarecrowStation extends Station {
     }
 
     /**
-     * ScarecrowEntity#swapHand: Kreativ in einen leeren Platz eine Kopie; aus einem Stapel nur in einen leeren Platz
-     * eines davon; ein einzelnes Item tauscht mit dem bisherigen.
+     * ScarecrowEntity#swapHand: in creative a copy into an empty slot; from a stack only one into an empty slot;
+     * a single item swaps with the previous one.
      *
-     * @return das neu angelegte Item, null wenn nichts passiert
+     * @return the newly equipped item, null if nothing happens
      */
     private static @Nullable ItemStack swap(Player player, ItemStack held, @Nullable ItemStack previous) {
         if (player.getGameMode() == GameMode.CREATIVE && previous == null) {

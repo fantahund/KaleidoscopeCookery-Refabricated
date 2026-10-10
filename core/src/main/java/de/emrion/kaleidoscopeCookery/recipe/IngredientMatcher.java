@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Zuordnung von eingeworfenen Items zu Rezept-Zutaten (RecipeMatcher im Mod).
+ * Assigns the added items to recipe ingredients (RecipeMatcher in the mod).
  */
 public final class IngredientMatcher {
 
@@ -18,7 +18,7 @@ public final class IngredientMatcher {
     }
 
     /**
-     * Nicht-leere Items aus den Slots.
+     * Non-empty items from the slots.
      */
     public static List<ItemStack> present(List<ItemStack> inputs) {
         List<ItemStack> present = new ArrayList<>();
@@ -31,14 +31,14 @@ public final class IngredientMatcher {
     }
 
     /**
-     * Exakt: jede Zutat genau einmal belegt, keine Items übrig.
+     * Exact: every ingredient used exactly once, no items left over.
      */
     public static boolean exact(List<ItemStack> present, List<Ingredient> ingredients) {
         return present.size() == ingredients.size() && assign(present, ingredients, 0, new boolean[ingredients.size()]);
     }
 
     /**
-     * Flex: gleiche Items zählen einmal, danach exakt.
+     * Flex: identical items count once, then exact.
      */
     public static boolean flex(List<ItemStack> present, List<Ingredient> ingredients) {
         Map<Key, ItemStack> distinct = new LinkedHashMap<>();

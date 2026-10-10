@@ -5,7 +5,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 /**
- * Texte für Items: ohne Kursiv.
+ * Texts for items: without italics.
  */
 public final class Text {
 

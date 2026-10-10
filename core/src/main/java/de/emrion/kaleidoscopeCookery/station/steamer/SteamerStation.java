@@ -34,13 +34,13 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Dampfkorb (SteamerBlockEntity im Mod). Halbe Lage = 4 Plätze, volle Lage (zwei Körbe) = 8.
+ * Steamer (SteamerBlockEntity in the mod). Half layer = 4 slots, full layer (two baskets) = 8.
  * <ul>
- *     <li>Hitze direkt darunter gibt Stufe 4; jede volle Lage darüber eine Stufe weniger (max. 4 Lagen dämpfen)</li>
- *     <li>Gegart wird nur, wenn oben ein Deckel liegt (Schleichen + Rechtsklick mit leerer Hand)</li>
- *     <li>Ohne Hitze kühlt der Fortschritt langsam wieder ab</li>
- *     <li>Rechtsklick mit Dampfkorb: halbe Lage wird voll bzw. neue Lage oben drauf</li>
- *     <li>Rechtsklick mit leerer Hand: alles herausnehmen; ist die oberste Lage leer, nimmt man sie mit</li>
+ *     <li>Heat directly below gives level 4; every full layer above one level less (max. 4 layers steam)</li>
+ *     <li>It only cooks when a lid is on top (sneak + right-click with an empty hand)</li>
+ *     <li>Without heat the progress slowly cools down again</li>
+ *     <li>Right-click with a steamer: a half layer becomes full, or a new layer on top</li>
+ *     <li>Right-click with an empty hand: take everything out; if the top layer is empty you take it with you</li>
  * </ul>
  */
 public class SteamerStation extends Station {
@@ -58,7 +58,7 @@ public class SteamerStation extends Station {
     private boolean half = true;
     private boolean lid;
     private final ItemStack[] items = new ItemStack[SLOTS];
-    /** Garzeit je Platz; -1 = fertig */
+    /** Cooking time per slot; -1 = done */
     private final int[] cookingTime = new int[SLOTS];
     private final int[] cookingProgress = new int[SLOTS];
 
@@ -73,7 +73,7 @@ public class SteamerStation extends Station {
         return new StationType("steamer", ITEM, false, 0.9f, 1f, true, SteamerStation::new);
     }
 
-    // ---- Zustand ----
+    // ---- State ----
 
     @Override
     protected void load(PersistentDataContainer state) {
@@ -125,7 +125,7 @@ public class SteamerStation extends Station {
     }
 
     /**
-     * Hitze-Stufe wie updateLitLevel im Mod: Hitzequelle darunter = 4, darunter ein voller Dampfkorb = dessen Stufe - 1.
+     * Heat level like updateLitLevel in the mod: heat source below = 4, a full steamer below = its level - 1.
      */
     public int litLevel() {
         long now = context.manager().serverTick();
@@ -143,7 +143,7 @@ public class SteamerStation extends Station {
     }
 
     /**
-     * Darüber ein Block, dessen Unterseite trägt (dann kommt man nicht an den Inhalt).
+     * A block above whose bottom face supports it (then the contents cannot be reached).
      */
     private boolean blockedAbove() {
         Block above = blockAt(1);
@@ -231,17 +231,17 @@ public class SteamerStation extends Station {
         }
     }
 
-    // ---- Bedienung ----
+    // ---- Handling ----
 
     /**
-     * Dampfkorb in der Hand: Stapeln hat Vorrang vor dem normalen Platzieren.
+     * Steamer in hand: stacking takes priority over normal placing.
      */
     @Override
     public boolean interceptPlacement(Player player, ItemStack held) {
         if (!ITEM.equals(CookeryItems.idOf(held))) {
             return false;
         }
-        // Wie SteamerBlock#useItemOn: nach oben durch volle Lagen ohne Deckel
+        // Like SteamerBlock#useItemOn: upwards through full layers without a lid
         SteamerStation target = this;
         while (target != null && !target.lid && !target.half) {
             SteamerStation above = target.steamerAt(1);
@@ -258,7 +258,7 @@ public class SteamerStation extends Station {
             target = above;
         }
         if (target != null && target.lid && target.steamerAt(1) == null) {
-            // Auf eine Lage mit Deckel: neue Lage darüber, der Deckel darunter verschwindet (SteamerBlock#updateShape)
+            // Onto a layer with a lid: new layer above it, the lid below disappears (SteamerBlock#updateShape)
             Block block = target.blockAt(1);
             if ((block.getType().isAir() || block.isReplaceable()) && context.manager().at(block) == null) {
                 target.lid = false;
@@ -382,7 +382,7 @@ public class SteamerStation extends Station {
         }
     }
 
-    // ---- Abbauen ----
+    // ---- Breaking ----
 
     @Override
     public @Nullable ItemStack selfDrop() {
@@ -401,7 +401,7 @@ public class SteamerStation extends Station {
         return contents;
     }
 
-    // ---- Darstellung ----
+    // ---- Display ----
 
     @Override
     public void updateDisplay() {
@@ -413,7 +413,7 @@ public class SteamerStation extends Station {
                 if (items[i] == null) {
                     continue;
                 }
-                // SteamerBlockEntityRender: 2x2 je Lage, flach liegend
+                // SteamerBlockEntityRender: 2x2 per layer, lying flat
                 float x = (i % 2) * 0.3f + 0.35f - 0.5f;
                 float y = (i / 4) * 0.5f + 0.25f + (i % 4) * 0.01f - 0.5f;
                 float z = ((i / 2) % 2) * 0.3f + 0.35f - 0.5f;
@@ -433,7 +433,7 @@ public class SteamerStation extends Station {
     }
 
     /**
-     * Standfuß wie SteamerBlock#shouldHasBase: nicht auf einem Dampfkorb, sondern über Hitze oder einem nicht tragenden Block.
+     * Stand like SteamerBlock#shouldHasBase: not on a steamer, but above heat or a non-supporting block.
      */
     private boolean hasBase() {
         if (steamerAt(-1) != null) {

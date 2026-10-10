@@ -26,11 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Hingestellte Tassen (EmptyCupBlock / TeacupBlock im Mod): bis zu 4 Tassen, davon einige mit Tee einer Sorte.
+ * Placed cups (EmptyCupBlock / TeacupBlock in the mod): up to 4 cups, some of them with tea of one kind.
  * <ul>
- *     <li>Leere Tasse bzw. Tee (schleichend) darauf: eine Tasse mehr</li>
- *     <li>Teekanne mit fertigem Tee: in eine leere Tasse gießen</li>
- *     <li>Rechtsklick sonst: eine Tasse nehmen (zuerst die mit Tee)</li>
+ *     <li>Empty cup or tea (sneaking) onto it: one more cup</li>
+ *     <li>Teapot with finished tea: pour into an empty cup</li>
+ *     <li>Other right-clicks: take a cup (the ones with tea first)</li>
  * </ul>
  */
 public class CupStation extends Station {
@@ -56,7 +56,7 @@ public class CupStation extends Station {
     }
 
     /**
-     * Teetassen (Getränk mit leerer Tasse als Rest) lassen sich ebenfalls hinstellen.
+     * Tea cups (drink with an empty cup as remainder) can be placed as well.
      */
     public static boolean isTeacup(@Nullable CookeryItem item) {
         return item != null && item.food() != null && item.food().drink() && EMPTY_CUP.equals(item.food().remainder());
@@ -92,7 +92,7 @@ public class CupStation extends Station {
     }
 
     /**
-     * Tassen und Kanne auf die Tassen: hinzufügen bzw. eingießen statt eine neue Station darauf zu setzen.
+     * Cups and pot onto the cups: add or pour instead of placing a new station on top.
      */
     @Override
     public boolean interceptPlacement(Player player, ItemStack held) {
@@ -142,7 +142,7 @@ public class CupStation extends Station {
             changed();
             return true;
         }
-        // Eine Tasse nehmen
+        // Take a cup
         ItemStack taken = teas > 0 && tea != null ? items().create(tea, 1) : items().create(EMPTY_CUP, 1);
         if (taken == null) {
             return false;

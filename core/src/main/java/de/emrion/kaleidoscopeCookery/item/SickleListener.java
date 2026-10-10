@@ -34,8 +34,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Sichel (SickleItem im Mod): Rechtsklick auf einen Block erntet reife Pflanzen und entfernt Gras, Blumen und
- * Büsche in 5x5 (mit "Schwung" 7x7 bis 11x11), jeweils in der Klickhöhe und einen Block darüber.
+ * Sickle (SickleItem in the mod): right-clicking a block harvests ripe crops and removes grass, flowers and
+ * bushes in 5x5 (7x7 to 11x11 with "Sweeping"), each at the clicked height and one block above.
  */
 public class SickleListener implements Listener {
 
@@ -43,11 +43,11 @@ public class SickleListener implements Listener {
     public static final Key SWEEP = Key.key("kaleidoscope_cookery", "sweep");
     private static final int COOLDOWN_TICKS = 10;
 
-    /** Vanilla-Pflanzen mit Altersstufen (CropBlock): reif ernten, Stufe 0 bleibt stehen */
+    /** Vanilla crops with age stages (CropBlock): harvest when ripe, stage 0 stays */
     private static final Set<Material> CROPS = EnumSet.of(Material.WHEAT, Material.CARROTS, Material.POTATOES, Material.BEETROOTS, Material.TORCHFLOWER_CROP);
     /** tags/block/sickle_harvest_blacklist.json */
     private static final Set<Material> BLACKLIST = EnumSet.of(Material.MELON_STEM, Material.PUMPKIN_STEM, Material.ATTACHED_MELON_STEM, Material.ATTACHED_PUMPKIN_STEM);
-    /** BushBlock in 1.21.1 (Gras, Farne, Blumen, Setzlinge, Pilze, Beeren ...) und die neuen Büsche aus 26.x */
+    /** BushBlock in 1.21.1 (grass, ferns, flowers, saplings, mushrooms, berries ...) and the new bushes from 26.x */
     private static final Set<Material> BUSHES = EnumSet.of(Material.SHORT_GRASS, Material.TALL_GRASS, Material.FERN, Material.LARGE_FERN,
             Material.DEAD_BUSH, Material.SWEET_BERRY_BUSH, Material.NETHER_WART, Material.RED_MUSHROOM, Material.BROWN_MUSHROOM,
             Material.CRIMSON_FUNGUS, Material.WARPED_FUNGUS, Material.CRIMSON_ROOTS, Material.WARPED_ROOTS, Material.NETHER_SPROUTS,
@@ -75,7 +75,7 @@ public class SickleListener implements Listener {
                 || !isSickle(event.getItem())) {
             return;
         }
-        // Wie im Mod zuerst der Block: Kisten, Öfen, Türen ... öffnen sich normal (außer beim Schleichen)
+        // As in the mod the block comes first: chests, furnaces, doors ... open normally (except when sneaking)
         if (event.getClickedBlock().getType().isInteractable() && !event.getPlayer().isSneaking()) {
             return;
         }
@@ -84,14 +84,14 @@ public class SickleListener implements Listener {
     }
 
     /**
-     * Klick auf eine Pflanzen-Station (Interaction) – vor dem StationListener, sonst würde nur die eine Pflanze geerntet.
+     * Click on a crop station (Interaction) - before the StationListener, otherwise only that one crop would be harvested.
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onUseStation(PlayerInteractEntityEvent event) {
         if (event.getHand() != EquipmentSlot.HAND || !isSickle(event.getPlayer().getInventory().getItemInMainHand())) {
             return;
         }
-        // Nur Pflanzen: andere Stationen (Regal, Mülleimer ...) bedienen sich normal
+        // Crops only: other stations (rack, trash can ...) are used normally
         if (!(stations.byEntity(event.getRightClicked()) instanceof CropStation station)) {
             return;
         }
@@ -158,20 +158,20 @@ public class SickleListener implements Listener {
             return;
         }
         if (BUSHES.contains(type) || Tag.FLOWERS.isTagged(type) || Tag.SAPLINGS.isTagged(type)) {
-            // Wie gameMode.destroyBlock: normales Abbauen durch den Spieler (Events, Drops)
+            // Like gameMode.destroyBlock: normal breaking by the player (events, drops)
             player.breakBlock(block);
         }
     }
 
     /**
-     * Schutz-Plugins fragen (im Mod: level.mayInteract).
+     * Ask protection plugins (in the mod: level.mayInteract).
      */
     private static boolean mayBreak(Player player, Block block) {
         return BreakPermissionCheck.mayBreak(player, block);
     }
 
     /**
-     * Basis der Sichel ist der Konstruktionsblock: OPs im Kreativmodus könnten ihn sonst platzieren.
+     * The sickle is based on the structure block: ops in creative mode could otherwise place it.
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlace(BlockPlaceEvent event) {

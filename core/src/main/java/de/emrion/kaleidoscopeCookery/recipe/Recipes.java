@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Alle Rezepte aus recipes.yml. Unveränderlich – /kc reload erzeugt eine neue Instanz.
+ * All recipes from recipes.yml. Immutable - /kc reload creates a new instance.
  */
 public class Recipes {
 
@@ -57,7 +57,7 @@ public class Recipes {
         Map<String, List<String>> tags = new LinkedHashMap<>();
         ConfigurationSection tagSection = config.getConfigurationSection("tags");
         if (tagSection != null) {
-            // Tag-Namen enthalten ":" und "/", deshalb nicht über Pfade auflösen
+            // Tag names contain ":" and "/", so do not resolve them via paths
             for (Map.Entry<String, Object> entry : tagSection.getValues(false).entrySet()) {
                 List<String> values = new ArrayList<>();
                 if (entry.getValue() instanceof List<?> list) {
@@ -199,7 +199,7 @@ public class Recipes {
     }
 
     /**
-     * Unterabschnitte, deren Namen ":" enthalten (Rezept-IDs).
+     * Subsections whose names contain ":" (recipe ids).
      */
     private static Map<String, ConfigurationSection> sections(ConfigurationSection config, String path) {
         Map<String, ConfigurationSection> result = new LinkedHashMap<>();
@@ -249,7 +249,7 @@ public class Recipes {
     }
 
     /**
-     * Erst exakte, dann Flex-Rezepte (wie StockpotBlockEntity#setRecipe).
+     * Exact recipes first, then flex recipes (like StockpotBlockEntity#setRecipe).
      */
     public @Nullable StockpotRecipe findStockpot(List<ItemStack> inputs, Key soupBase) {
         for (boolean flex : new boolean[]{false, true}) {
@@ -327,7 +327,7 @@ public class Recipes {
     }
 
     /**
-     * Erst exakte Wok-Rezepte, dann Flex-Rezepte (wie PotBlockEntity#startCooking).
+     * Exact wok recipes first, then flex recipes (like PotBlockEntity#startCooking).
      */
     public @Nullable PotRecipe findPot(List<ItemStack> inputs) {
         for (boolean flex : new boolean[]{false, true}) {

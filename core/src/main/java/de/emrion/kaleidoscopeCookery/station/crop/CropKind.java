@@ -9,44 +9,44 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Pflanzenart. Cookery: BaseCropBlock, ChiliCropBlock, LettuceCropBlock, RiceCropBlock, TeaTreeBlock; Addons (Grilling)
- * melden weitere mit {@link #register} an, bevor die Stationstypen registriert werden.
+ * Crop kind. Cookery: BaseCropBlock, ChiliCropBlock, LettuceCropBlock, RiceCropBlock, TeaTreeBlock; Addons (Grilling)
+ * register more with {@link #register} before the station types are registered.
  *
- * @param name        Name (Stationstyp crop_&lt;name&gt;)
- * @param seeds       Items, mit denen man die Pflanze setzt
- * @param result      Ernte (Rechtsklick bzw. Abbauen in der letzten Stufe)
- * @param lootSeed    Samen in der Beute
- * @param maxAge      letzte Stufe
- * @param harvestAge  Stufe nach dem Ernten per Rechtsklick; -1 = keine Rechtsklick-Ernte
- * @param soil        Boden
- * @param seedTrials  Würfe für zusätzliche Samen in der reifen Beute (binomial_with_bonus_count, p = 4/7)
- * @param matureExtra feste Zahl zusätzlicher Samen in der reifen Beute (Süßkartoffel: set_count 2)
- * @param models      Modell je Stufe: "%d" = Stufe, "%s" = Teil (Reis) bzw. Variante
- * @param variant     zweites Aussehen (Fischminze auf Seelensand), sonst null
- * @param harvestMax  Rechtsklick-Ernte: 1 bis so viele Stück
+ * @param name        name (station type crop_&lt;name&gt;)
+ * @param seeds       items that plant the crop
+ * @param result      harvest (right-click or breaking in the last stage)
+ * @param lootSeed    seed in the loot
+ * @param maxAge      last stage
+ * @param harvestAge  stage after harvesting via right-click; -1 = no right-click harvest
+ * @param soil        soil
+ * @param seedTrials  rolls for extra seeds in the mature loot (binomial_with_bonus_count, p = 4/7)
+ * @param matureExtra fixed number of extra seeds in the mature loot (sweet potato: set_count 2)
+ * @param models      model per stage: "%d" = stage, "%s" = part (rice) or variant
+ * @param variant     second look (houttuynia on soul sand), otherwise null
+ * @param harvestMax  right-click harvest: 1 up to this many items
  */
 public record CropKind(String name, List<Key> seeds, Key result, Key lootSeed, int maxAge, int harvestAge, Soil soil,
                        int seedTrials, int matureExtra, String models, @Nullable Variant variant, int harvestMax) {
 
     public enum Soil {
         FARMLAND, DIRT, WATER,
-        /** Ackerboden oder Seelensand (Fischminze aus Grilling) */
+        /** Farmland or soul sand (houttuynia from Grilling) */
         FARMLAND_OR_SOUL_SAND
     }
 
     /**
-     * Zweites Aussehen ab einer Stufe, z. B. rote Fischminze.
+     * Second look from a certain stage, e.g. red houttuynia.
      *
-     * @param chance    Zufall beim Pflanzen
-     * @param soil      auf diesem Boden immer
-     * @param fromAge   erst ab dieser Stufe sichtbar
-     * @param suffix    Anhang an den Modellnamen
+     * @param chance    chance when planting
+     * @param soil      always on this soil
+     * @param fromAge   only visible from this stage
+     * @param suffix    suffix appended to the model name
      */
     public record Variant(double chance, Material soil, int fromAge, String suffix) {
     }
 
     /**
-     * BlockTags.DIRT in 1.21.1 (in 26.x enthält der Tag nur noch Erde, Grobe Erde und Wurzelerde).
+     * BlockTags.DIRT in 1.21.1 (in 26.x the tag only contains dirt, coarse dirt and rooted dirt).
      */
     public static final java.util.Set<Material> DIRT_121 = java.util.EnumSet.of(Material.DIRT, Material.GRASS_BLOCK,
             Material.PODZOL, Material.COARSE_DIRT, Material.MYCELIUM, Material.ROOTED_DIRT,
@@ -71,7 +71,7 @@ public record CropKind(String name, List<Key> seeds, Key result, Key lootSeed, i
     }
 
     /**
-     * Weitere Pflanzenart (Addon). Danach den Stationstyp {@link CropStation#type(CropKind)} registrieren.
+     * Another crop kind (addon). Register the station type {@link CropStation#type(CropKind)} afterwards.
      */
     public static void register(CropKind kind) {
         if (KINDS.stream().noneMatch(k -> k.name.equals(kind.name))) {
@@ -92,7 +92,7 @@ public record CropKind(String name, List<Key> seeds, Key result, Key lootSeed, i
     }
 
     /**
-     * Item-Model-Definition der Stufe (bei Reis mit Teil down/middle/up, sonst ggf. Varianten-Anhang).
+     * Item model definition of the stage (for rice with part down/middle/up, otherwise possibly the variant suffix).
      */
     public Key model(int age, @Nullable String part) {
         return Key.key(models.formatted(age, part == null ? "" : (part.startsWith("_") ? part : "_" + part)));

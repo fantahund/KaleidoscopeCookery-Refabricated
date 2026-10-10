@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * /kc pack – Resourcepack erneut laden.
+ * /kc pack - load the resource pack again.
  */
 public class PackCommand extends PlayerSubCommand {
 

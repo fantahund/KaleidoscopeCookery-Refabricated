@@ -29,8 +29,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Kreativ-Menü (/kc menu): alle Items in Tabs wie die Kreativ-Tabs der Mods (generated/creative_tabs.yml).
- * Oben die Tabs, in der Mitte 36 Items, unten Blättern. Linksklick gibt 1 Stück, Shift-Klick einen Stapel.
+ * Creative menu (/kc menu): all items in tabs like the mods' creative tabs (generated/creative_tabs.yml).
+ * Tabs at the top, 36 items in the middle, paging at the bottom. Left click gives 1, shift-click a stack.
  */
 public class CreativeMenuWindow extends AbstractWindow {
 
@@ -41,7 +41,7 @@ public class CreativeMenuWindow extends AbstractWindow {
     private static final int PAGE_SLOT = 49;
     private static final int NEXT_SLOT = 53;
 
-    /** Tab mit Symbol und Items; Items, die kein Tab nennt, kommen in den ersten Tab ihres Namespaces bzw. "food" */
+    /** Tab with icon and items; items no tab lists go into the first tab of their namespace or "food" */
     private record Tab(String name, Key icon, List<Key> items) {
     }
 
@@ -59,7 +59,7 @@ public class CreativeMenuWindow extends AbstractWindow {
     private static List<Tab> loadTabs(KaleidoscopeCookery plugin) {
         Map<String, Tab> tabs = new LinkedHashMap<>();
         Set<Key> listed = new LinkedHashSet<>();
-        // Tabs von Cookery, dann von den Addons (jedes bringt seine generated/creative_tabs.yml mit)
+        // Tabs of Cookery, then of the addons (each ships its own generated/creative_tabs.yml)
         List<org.bukkit.plugin.Plugin> sources = new ArrayList<>(List.of(plugin));
         sources.addAll(plugin.getAddons());
         for (org.bukkit.plugin.Plugin source : sources) {
@@ -80,7 +80,7 @@ public class CreativeMenuWindow extends AbstractWindow {
                 List<Key> items = new ArrayList<>();
                 for (String id : section.getStringList(name + ".items")) {
                     Key key = Key.key(id);
-                    // Nur Items, die es gibt (z. B. kein Grilling-Tab ohne das Grilling-Plugin)
+                    // Only items that exist (e.g. no Grilling tab without the Grilling plugin)
                     if (plugin.getItems().get(key) != null && listed.add(key)) {
                         items.add(key);
                     }
@@ -88,12 +88,12 @@ public class CreativeMenuWindow extends AbstractWindow {
                 tabs.put(name, new Tab(name, Key.key(section.getString(name + ".icon", "minecraft:barrier")), items));
             }
         }
-        // Gerichte, Teller und Tassen füllt der Mod dynamisch in seine Tabs – hier hinten anhängen
+        // The mod fills dishes, plates and cups into its tabs dynamically - append them at the end here
         for (Key key : plugin.getItems().all().keySet()) {
             if (listed.contains(key)) {
                 continue;
             }
-            // In "food", sonst in den ersten Tab mit Items desselben Namespaces (Addon-Items in den Addon-Tab)
+            // Into "food", otherwise into the first tab with items of the same namespace (addon items into the addon tab)
             Tab target = tabs.values().stream()
                     .filter(tab -> tab.items().stream().anyMatch(item -> item.namespace().equals(key.namespace())))
                     .min(java.util.Comparator.comparing(tab -> !tab.name().equals("food")))

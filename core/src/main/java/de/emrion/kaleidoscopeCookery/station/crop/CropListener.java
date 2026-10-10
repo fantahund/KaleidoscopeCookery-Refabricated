@@ -33,13 +33,13 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Pflanzen setzen, Ackerland unter Pflanzen erhalten und Samen aus Gras mit Strohhut.
+ * Planting crops, keeping farmland under crops and seeds from grass with a straw hat.
  */
 public class CropListener implements Listener {
 
     private static final List<Key> STRAW_HATS = List.of(Key.key("kaleidoscope_cookery", "straw_hat"), Key.key("kaleidoscope_cookery", "straw_hat_flower"));
 
-    /** loot_table straw_hat_seed_drop: Samen mit ihrer Chance */
+    /** loot_table straw_hat_seed_drop: seeds with their chance */
     private record SeedChance(Key item, double chance) {
     }
 
@@ -62,7 +62,7 @@ public class CropListener implements Listener {
         this.stations = stations;
     }
 
-    // ---- Setzen ----
+    // ---- Planting ----
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlant(PlayerInteractEvent event) {
@@ -115,7 +115,7 @@ public class CropListener implements Listener {
         return switch (kind.soil()) {
             case FARMLAND -> target.getType().isAir() && below.getType() == Material.FARMLAND;
             case DIRT -> target.getType().isAir() && CropKind.DIRT_121.contains(below.getType());
-            // RiceCropBlock#getStateForPlacement: im Wasser auf Ackerland, darüber zwei Blöcke Luft
+            // RiceCropBlock#getStateForPlacement: in water on farmland, two blocks of air above
             case WATER -> CropStation.isWaterSource(target) && below.getType() == Material.FARMLAND
                     && target.getY() < target.getWorld().getMaxHeight() - 2
                     && target.getRelative(0, 1, 0).getType().isAir() && target.getRelative(0, 2, 0).getType().isAir()
@@ -124,13 +124,13 @@ public class CropListener implements Listener {
         };
     }
 
-    // ---- Ackerland ----
+    // ---- Farmland ----
 
     private static final java.util.Set<Material> TILLABLE = java.util.EnumSet.of(Material.DIRT, Material.GRASS_BLOCK, Material.DIRT_PATH, Material.COARSE_DIRT);
 
     /**
-     * Reisfelder: Vanilla hackt nur Erde mit Luft darüber – hier geht es auch unter einer Wasserquelle
-     * (grobe Erde wird wie bei Vanilla zu Erde).
+     * Rice paddies: vanilla only tills dirt with air above it - here it also works below a water source
+     * (coarse dirt turns into dirt like in vanilla).
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = false)
     public void onTillUnderWater(PlayerInteractEvent event) {
@@ -164,7 +164,7 @@ public class CropListener implements Listener {
     }
 
     /**
-     * Vanilla hält Ackerland nur unter echten Pflanzen feucht genug – unter unseren Pflanzen darf es nicht zu Erde werden.
+     * Vanilla only keeps farmland moist enough below real crops - below our crops it must not turn into dirt.
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onFarmlandDry(BlockFadeEvent event) {
@@ -173,7 +173,7 @@ public class CropListener implements Listener {
         }
     }
 
-    // ---- Samen aus Gras mit Strohhut ----
+    // ---- Seeds from grass with a straw hat ----
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onGrassBreak(BlockBreakEvent event) {
@@ -185,7 +185,7 @@ public class CropListener implements Listener {
         if (!STRAW_HATS.contains(CookeryItems.idOf(helmet))) {
             return;
         }
-        // Ein Pool mit einem Wurf: unter den bestandenen Einträgen wird einer gewählt
+        // One pool with one roll: one of the passing entries is chosen
         ThreadLocalRandom random = ThreadLocalRandom.current();
         List<Key> passed = new ArrayList<>();
         for (SeedChance seed : GRASS_SEEDS) {

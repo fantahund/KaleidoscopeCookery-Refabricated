@@ -1,7 +1,7 @@
 package de.emrion.kaleidoscopeCookery.recipe;
 
 /**
- * Bambustablett: Trocknen unter freiem Himmel ohne Regen, Befeuchten im Regen oder unter tropfendem Tropfstein.
+ * Bamboo tray: drying under the open sky without rain, wetting in the rain or under dripping dripstone.
  */
 public record BambooTrayRecipe(String id, Type type, Ingredient ingredient, int time, RecipeResult result) {
 

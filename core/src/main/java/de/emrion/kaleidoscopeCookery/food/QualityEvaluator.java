@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Qualitätsbewertung der "Flex"-Rezepte, 1:1 nach QualityEvaluator im Mod: Pro Rezept und Weltseed gibt es ein
- * verstecktes Mengenverhältnis der Zutaten. Je näher die eingeworfenen Mengen daran liegen (Kosinus-Ähnlichkeit),
- * desto besser das Gericht.
+ * Quality rating of the "flex" recipes, 1:1 following QualityEvaluator in the mod: per recipe and world seed there is a
+ * hidden ratio of the ingredient amounts. The closer the added amounts are to it (cosine similarity),
+ * the better the dish.
  */
 public final class QualityEvaluator {
 
@@ -21,9 +21,9 @@ public final class QualityEvaluator {
     }
 
     /**
-     * @param inputs      alle Slots der Station (auch leere), wie im Mod
-     * @param ingredients Zutaten des Rezepts in der Reihenfolge aus recipes.yml
-     * @param recipeId    Rezept-ID wie im Mod (z. B. kaleidoscope_cookery:flex_pot/braised_beef)
+     * @param inputs      all slots of the station (also empty ones), as in the mod
+     * @param ingredients ingredients of the recipe in the order from recipes.yml
+     * @param recipeId    recipe id as in the mod (e.g. kaleidoscope_cookery:flex_pot/braised_beef)
      */
     public static Quality evaluate(List<ItemStack> inputs, List<Ingredient> ingredients, String recipeId, long worldSeed) {
         if (inputs.isEmpty() || ingredients.isEmpty()) {
@@ -95,7 +95,7 @@ public final class QualityEvaluator {
     }
 
     /**
-     * worldSeed * 31 + ResourceLocation#hashCode() wie im Mod.
+     * worldSeed * 31 + ResourceLocation#hashCode() as in the mod.
      */
     private static long recipeSeed(String recipeId, long worldSeed) {
         int colon = recipeId.indexOf(':');

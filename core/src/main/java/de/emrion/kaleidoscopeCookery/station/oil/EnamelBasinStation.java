@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Fetttopf (EnamelBasinBlock): bis zu 32 Öl, Deckel per Rechtsklick mit leerer Hand.
- * Öl hinein; der Pfannenwender nimmt ein Öl auf bzw. gibt es zurück. Mit einem Stock klopfen macht nur Lärm.
+ * Enamel basin (EnamelBasinBlock): up to 32 oil, lid via right-click with an empty hand.
+ * Oil goes in; the spatula takes one oil or returns it. Knocking with a stick only makes noise.
  */
 public class EnamelBasinStation extends Station {
 

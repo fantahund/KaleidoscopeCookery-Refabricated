@@ -1,11 +1,11 @@
 package de.emrion.kaleidoscopeCookery.command;
 
 /**
- * Alle Rechte des Plugins. kaleidoscope.admin enthält alle (siehe paper-plugin.yml).
+ * All permissions of the plugin. kaleidoscope.admin includes all of them (see paper-plugin.yml).
  */
 public final class Permissions {
 
-    /** Stationen benutzen und platzieren */
+    /** Use and place stations */
     public static final String USE = "kaleidoscope.use";
     public static final String ADMIN = "kaleidoscope.admin";
     public static final String GIVE = "kaleidoscope.admin.give";

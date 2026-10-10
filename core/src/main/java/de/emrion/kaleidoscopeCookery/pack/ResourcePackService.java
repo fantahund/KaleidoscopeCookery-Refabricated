@@ -27,19 +27,19 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
 /**
- * Das Server-Resourcepack: liegt im Plugin-Jar (beim Bauen erzeugt, siehe tools/build_pack.py),
- * wird ins Plugin-Verzeichnis entpackt und entweder über einen kleinen eingebauten Webserver
- * oder über eine externe URL an die Spieler geschickt. Addons (eigene Plugins wie KaleidoscopeGrilling)
- * bringen ein eigenes Pack mit, das zusammen mit diesem geschickt wird.
+ * The server resource pack: lives in the plugin jar (created during the build, see tools/build_pack.py),
+ * is extracted into the plugin folder and sent to the players either via a small built-in web server
+ * or via an external URL. Addons (separate plugins such as KaleidoscopeGrilling)
+ * ship their own pack, which is sent together with this one.
  */
 public class ResourcePackService implements Listener {
 
-    /** Ein Pack: Datei im Plugin-Verzeichnis, SHA1 aus dem Jar und optional eine externe URL */
+    /** A pack: file in the plugin folder, SHA1 from the jar and optionally an external URL */
     private record Pack(UUID id, Path path, String sha1, String externalUrl) {
     }
 
     private final Plugin plugin;
-    /** Cookery zuerst, danach die Addons (spätere Packs liegen beim Client oben) */
+    /** Cookery first, then the addons (send() reverses the order so the addons end up on top) */
     private final java.util.List<Pack> packs = new java.util.concurrent.CopyOnWriteArrayList<>();
     private ResourcePackSettings settings;
     private HttpServer server;
@@ -49,10 +49,10 @@ public class ResourcePackService implements Listener {
     }
 
     /**
-     * Pack des Plugins (&lt;Name&gt;-Pack.zip) aus dessen Jar entpacken. Muss vor {@link Lang#load} laufen, die
-     * Sprachdateien kommen aus dem Pack.
+     * Extract a plugin's pack (&lt;Name&gt;-Pack.zip) from its jar. Must run before {@link Lang#load}, the
+     * language files come from the pack.
      *
-     * @param externalUrl externe Download-URL dieses Packs; leer = eingebauter Webserver
+     * @param externalUrl external download URL of this pack; empty = built-in web server
      */
     public Path extract(Plugin owner, String externalUrl) throws IOException {
         String file = owner.getName() + "-Pack.zip";
@@ -79,7 +79,7 @@ public class ResourcePackService implements Listener {
         startServerIfNeeded();
     }
 
-    /** Eingebauter Webserver nur, wenn ein Pack keine externe URL hat */
+    /** Built-in web server only if a pack has no external URL */
     private void startServerIfNeeded() {
         if (settings == null || !settings.enabled() || server != null
                 || packs.stream().noneMatch(pack -> pack == packs.getFirst() ? settings.externalUrl().isBlank() : pack.externalUrl().isBlank())) {
@@ -105,7 +105,7 @@ public class ResourcePackService implements Listener {
     }
 
     /**
-     * Neue Einstellungen nach /kc reload übernehmen (Webserver-Adresse/-Port erst nach Neustart).
+     * Apply new settings after /kc reload (web server address/port only after a restart).
      */
     public void updateSettings(ResourcePackSettings settings) {
         ResourcePackSettings old = this.settings;
@@ -142,13 +142,13 @@ public class ResourcePackService implements Listener {
         if (settings == null || !settings.enabled() || packs.isEmpty()) {
             return;
         }
-        // Cookery-Pack mit der URL aus der eigenen config.yml (bei /kc reload änderbar)
+        // Cookery pack with the URL from its own config.yml (changeable via /kc reload)
         java.util.List<ResourcePackInfo> infos = new java.util.ArrayList<>();
         for (Pack pack : packs) {
             String url = pack == packs.getFirst() && !settings.externalUrl().isBlank() ? settings.externalUrl() : url(pack);
             infos.add(ResourcePackInfo.resourcePackInfo(pack.id(), URI.create(url), pack.sha1()));
         }
-        // Der zuerst geschickte Pack liegt oben: Addons zuerst, damit ihre Dateien (z. B. Ölkanne mit Ölsorten) gewinnen
+        // The pack sent first ends up on top: addons first so their files (e.g. oil pot with oil types) win
         java.util.Collections.reverse(infos);
         player.sendResourcePacks(ResourcePackRequest.resourcePackRequest()
                 .packs(infos)
@@ -158,7 +158,7 @@ public class ResourcePackService implements Listener {
                 .build());
     }
 
-    /** SHA1 des Cookery-Packs */
+    /** SHA1 of the Cookery pack */
     public String getSha1() {
         return packs.isEmpty() ? null : packs.getFirst().sha1();
     }

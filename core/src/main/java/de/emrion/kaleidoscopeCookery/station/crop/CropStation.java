@@ -38,12 +38,12 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Eine Pflanze (Display + Hitbox, kein Block). Wachstum wie bei Vanilla-Pflanzen über zufällige Ticks
- * (gamerule randomTickSpeed) mit der Wachstumsformel von CropBlock; Reis und Teestrauch nach ihren Mod-Klassen.
+ * A crop (display + hitbox, no block). Grows like vanilla crops via random ticks
+ * (gamerule randomTickSpeed) with CropBlock's growth formula; rice and tea bush following their mod classes.
  * <ul>
- *     <li>Rechtsklick in der letzten Stufe: Ernte (nicht bei Salat und Reis), Pflanze fällt auf eine frühere Stufe zurück</li>
- *     <li>Knochenmehl: Wachstum (Pflanzen 2–5 Stufen, Reis 1–2, Tee 1)</li>
- *     <li>Linksklick: abbauen mit Beute wie in den Loot-Tabellen des Mods</li>
+ *     <li>Right-click in the last stage: harvest (not for lettuce and rice), the crop falls back to an earlier stage</li>
+ *     <li>Bone meal: growth (crops 2-5 stages, rice 1-2, tea 1)</li>
+ *     <li>Left click: break with loot as in the mod's loot tables</li>
  * </ul>
  */
 public class CropStation extends Station {
@@ -52,12 +52,12 @@ public class CropStation extends Station {
     private static final NamespacedKey VARIANT = Keys.key("variant");
     private static final Set<EntityType> RICE_BOOSTERS = Set.of(EntityType.COD, EntityType.SALMON, EntityType.TROPICAL_FISH, EntityType.PUFFERFISH,
             EntityType.TADPOLE, EntityType.AXOLOTL);
-    /** Bonus-Samen: binomial_with_bonus_count extra 3, p = 4/7 (wie Vanilla-Weizen) */
+    /** Bonus seeds: binomial_with_bonus_count extra 3, p = 4/7 (like vanilla wheat) */
     private static final double SEED_PROBABILITY = 0.5714286;
 
     private final CropKind kind;
     private int age;
-    /** zweites Aussehen (CropKind#variant), beim Pflanzen ausgewürfelt */
+    /** Second look (CropKind#variant), rolled when planting */
     private boolean variant;
 
     public CropStation(StationContext context, CropKind kind) {
@@ -66,12 +66,12 @@ public class CropStation extends Station {
     }
 
     public static StationType type(CropKind kind) {
-        // Platzhalter-Item: gesetzt werden Pflanzen über CropListener (Samen auf Ackerland/Erde/ins Wasser)
+        // Placeholder item: crops are planted via the CropListener (seeds on farmland/dirt/into water)
         return new StationType(kind.typeId(), Key.key("kaleidoscope", kind.typeId()), false, 1f, 0.2f, true,
                 context -> new CropStation(context, kind));
     }
 
-    /** Felder haben Hunderte Pflanzen: nur bis 48 Blöcke rendern (view_range 0,75 × 64, bei 100 % Entity-Distanz) */
+    /** Fields have hundreds of crops: render only up to 48 blocks (view_range 0.75 × 64, at 100% entity distance) */
     @Override
     protected float viewRange() {
         return 0.75f;
@@ -86,7 +86,7 @@ public class CropStation extends Station {
     }
 
     /**
-     * Stufe und Aussehen von außen setzen (z. B. Fischminze in Netherfestungen, Grilling).
+     * Set stage and look from outside (e.g. houttuynia in Nether fortresses, Grilling).
      */
     public void setGrowth(int newAge, boolean newVariant) {
         variant = newVariant;
@@ -122,14 +122,14 @@ public class CropStation extends Station {
         return List.of(position());
     }
 
-    // ---- Bedingungen ----
+    // ---- Conditions ----
 
     private Block block(int dy) {
         return world().getBlockAt(position().x(), position().y() + dy, position().z());
     }
 
     /**
-     * Rohe Helligkeit wie getRawBrightness(pos, 0): Himmelslicht ohne Tageszeit, Blocklicht.
+     * Raw brightness like getRawBrightness(pos, 0): sky light without time of day, block light.
      */
     private static int rawLight(Block block) {
         return Math.max(block.getLightFromSky(), block.getLightFromBlocks());
@@ -140,7 +140,7 @@ public class CropStation extends Station {
     }
 
     /**
-     * Darf die Pflanze hier stehen (Boden, Licht, bei Reis Wasser)?
+     * May the crop stand here (soil, light, water for rice)?
      */
     @Override
     public boolean canSurvive() {
@@ -158,9 +158,9 @@ public class CropStation extends Station {
         return block.getType() == Material.WATER && block.getBlockData() instanceof Levelled levelled && levelled.getLevel() == 0;
     }
 
-    // ---- Wachstum ----
+    // ---- Growth ----
 
-    /** Kein Tick jeden Tick: der nächste Zufalls-Tick wird vorab ausgewürfelt und geplant (scheduleNext) */
+    /** No tick every tick: the next random tick is rolled in advance and scheduled (scheduleNext) */
     @Override
     public boolean isTicking() {
         return false;
@@ -174,8 +174,8 @@ public class CropStation extends Station {
     }
 
     /**
-     * Nächsten Zufalls-Tick planen: Vanilla gibt jedem Block pro Tick mit p = randomTickSpeed/4096 einen; die Wartezeit
-     * bis zum nächsten ist geometrisch verteilt (jede Pflanze würfelt für sich, im Schnitt 4096/Speed Ticks).
+     * Schedule the next random tick: vanilla gives every block one per tick with p = randomTickSpeed/4096; the waiting time
+     * until the next one is geometrically distributed (each crop rolls for itself, on average 4096/speed ticks).
      */
     private void scheduleNext() {
         if (scheduled || (isMature() && kind != CropKind.RICE)) {
@@ -184,7 +184,7 @@ public class CropStation extends Station {
         int speed = world().getGameRuleValue(GameRules.RANDOM_TICK_SPEED);
         long delay;
         if (speed <= 0) {
-            delay = 200; // Zufalls-Ticks aus: später wieder nachsehen
+            delay = 200; // random ticks disabled: check again later
         } else {
             double p = Math.min(1.0, speed / 4096.0);
             double u = ThreadLocalRandom.current().nextDouble();
@@ -198,7 +198,7 @@ public class CropStation extends Station {
     public void scheduledTick(long serverTick) {
         scheduled = false;
         int speed = world().getGameRuleValue(GameRules.RANDOM_TICK_SPEED);
-        // Wie Vanilla: Zufalls-Ticks nur in Chunks mit Entity-Ticking (Simulationsdistanz eines Spielers)
+        // Like vanilla: random ticks only in chunks with entity ticking (a player's simulation distance)
         org.bukkit.Chunk chunk = world().getChunkAt(position().x() >> 4, position().z() >> 4);
         if (speed > 0 && chunk.getLoadLevel() == org.bukkit.Chunk.LoadLevel.ENTITY_TICKING) {
             randomTick();
@@ -227,7 +227,7 @@ public class CropStation extends Station {
                             random.nextFloat() * 0.2f + 0.2f, random.nextFloat() * 0.1f + 0.9f);
                 }
                 if (rawLight(block(0)) >= 9 && !isMature()) {
-                    // Reis wächst halb so schnell, Fische im 3x3-Feld beschleunigen
+                    // Rice grows half as fast, fish in the 3x3 area speed it up
                     float speed = growthSpeed() / 2;
                     BoundingBox area = BoundingBox.of(block(0)).expand(1, 0, 1);
                     int fish = world().getNearbyEntities(area, e -> e instanceof LivingEntity living && !living.isDead() && RICE_BOOSTERS.contains(e.getType())).size();
@@ -245,7 +245,7 @@ public class CropStation extends Station {
     }
 
     /**
-     * CropBlock#getGrowthSpeed: feuchtes Ackerland drumherum beschleunigt, gleiche Pflanzen in beiden Richtungen bremsen.
+     * CropBlock#getGrowthSpeed: moist farmland around speeds it up, identical crops in both directions slow it down.
      */
     private float growthSpeed() {
         float speed = 1;
@@ -280,7 +280,7 @@ public class CropStation extends Station {
     }
 
     /**
-     * TeaTreeBlock#isPlantedInRow: Nachbar nur in einer Achse.
+     * TeaTreeBlock#isPlantedInRow: neighbour in one axis only.
      */
     private boolean isPlantedInRow() {
         boolean x = sameCrop(-1, 0) || sameCrop(1, 0);
@@ -292,10 +292,10 @@ public class CropStation extends Station {
         age = Math.min(kind.maxAge(), newAge);
         markDirty();
         updateDisplay();
-        scheduleNext(); // nach der Ernte wächst sie wieder
+        scheduleNext(); // it grows again after the harvest
     }
 
-    // ---- Bedienung ----
+    // ---- Handling ----
 
     @Override
     public boolean onInteract(Player player, EquipmentSlot hand) {
@@ -308,7 +308,7 @@ public class CropStation extends Station {
         }
         Key drop = kind.result();
         if (kind == CropKind.CHILI && ThreadLocalRandom.current().nextInt(5) == 0) {
-            drop = Key.key("kaleidoscope_cookery", "green_chili"); // 20 % grüne Chili
+            drop = Key.key("kaleidoscope_cookery", "green_chili"); // 20% green chili
         }
         ItemStack stack = items().create(drop, kind.harvestMax() > 1 ? ThreadLocalRandom.current().nextInt(1, kind.harvestMax() + 1) : 1);
         if (stack != null) {
@@ -320,9 +320,9 @@ public class CropStation extends Station {
     }
 
     /**
-     * Ernte mit der Sichel (SickleItem#harvest): reife Pflanze abbauen und neu anfangen.
+     * Harvest with the sickle (SickleItem#harvest): break a ripe crop and start over.
      *
-     * @return true, wenn geerntet wurde
+     * @return true if it was harvested
      */
     public boolean sickleHarvest() {
         if (!isMature()) {
@@ -353,7 +353,7 @@ public class CropStation extends Station {
     }
 
     /**
-     * Pflanzen gehen mit einem normalen Linksklick kaputt (instabreak).
+     * Crops break with a normal left click (instabreak).
      */
     @Override
     public boolean breaksOnAttack() {
@@ -371,7 +371,7 @@ public class CropStation extends Station {
     }
 
     /**
-     * Beute wie in den Loot-Tabellen (blocks/tomato_crop.json usw.).
+     * Loot as in the loot tables (blocks/tomato_crop.json etc.).
      */
     @Override
     public List<ItemStack> contents() {
@@ -395,7 +395,7 @@ public class CropStation extends Station {
         }
         add(drops, kind.lootSeed(), seeds);
         if (kind == CropKind.CHILI && random.nextDouble() < 0.2) {
-            add(drops, Key.key("kaleidoscope_cookery", "green_chili"), 1); // blocks/chili_crop.json: 20 % grüne Chili zusätzlich
+            add(drops, Key.key("kaleidoscope_cookery", "green_chili"), 1); // blocks/chili_crop.json: 20% extra green chili
         }
         if (kind == CropKind.LETTUCE && random.nextDouble() < 0.1) {
             add(drops, Key.key("kaleidoscope_cookery", "caterpillar"), 1);
@@ -417,7 +417,7 @@ public class CropStation extends Station {
         return player.getInventory().getItemInMainHand().getEnchantmentLevel(Enchantment.FORTUNE);
     }
 
-    // ---- Darstellung ----
+    // ---- Display ----
 
     @Override
     public void updateDisplay() {
@@ -448,7 +448,7 @@ public class CropStation extends Station {
     }
 
     /**
-     * Zufälliger Versatz wie OffsetType.XZ (Block#getOffset, maximal 0,25 Blöcke).
+     * Random offset like OffsetType.XZ (Block#getOffset, at most 0.25 blocks).
      */
     private Vector3f randomOffset() {
         long seed = (long) (position().x() * 3129871) ^ (long) position().z() * 116129781L;

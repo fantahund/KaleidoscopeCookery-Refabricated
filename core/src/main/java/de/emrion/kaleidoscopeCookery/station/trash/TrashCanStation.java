@@ -31,19 +31,19 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Mülleimer (TrashCanBlock/TrashCanBlockEntity im Mod).
+ * Trash can (TrashCanBlock/TrashCanBlockEntity in the mod).
  * <ul>
- *     <li>Rechtsklick mit einem Item wirft den ganzen Stapel hinein; sind alle 3 Plätze voll,
- *     fällt das älteste Item endgültig weg</li>
- *     <li>Schleichen + Rechtsklick mit leerer Hand holt das zuletzt Weggeworfene zurück</li>
- *     <li>Mit Redstone-Signal verschwinden Items, die oben auf dem Deckel liegen und schon im Eimer sind</li>
- *     <li>Wer aus mehr als einem Block Höhe hineinfällt, versteckt sich darin – Monster verlieren ihn aus den Augen</li>
+ *     <li>Right-clicking with an item throws the whole stack in; if all 3 slots are full,
+ *     the oldest item is gone for good</li>
+ *     <li>Sneak + right-click with an empty hand brings back the last thrown-away item</li>
+ *     <li>With a redstone signal, items lying on the lid that are already in the can disappear</li>
+ *     <li>Whoever falls in from more than one block high hides inside - monsters lose sight of them</li>
  * </ul>
  */
 public class TrashCanStation extends Station {
 
     public static final Key ITEM = Key.key("kaleidoscope_cookery", "trash_can");
-    /** Teile wie im TrashCanModel: Name, Modell, Drehpunkt in Welt-Pixeln (Ausrichtung Norden, tools/gen_entity_models.py) */
+    /** Parts as in the TrashCanModel: name, model, pivot in world pixels (facing north, tools/gen_entity_models.py) */
     private record Part(String name, Key model, Vector3f pivot) {
     }
 
@@ -54,12 +54,12 @@ public class TrashCanStation extends Station {
             new Part("bone3", Key.key("kaleidoscope_cookery", "block/trash_can_pupils"), new Vector3f(8, 7, 7.9f)));
     private static final int SLOTS = 3;
     private static final NamespacedKey STORAGE = Keys.key("storage");
-    /** Sitzhöhe: im Mod 0,875 (der Client versteckt den Spieler); hier unsichtbar im Eimer, die Augen knapp über dem Rand */
+    /** Seat height: 0.875 in the mod (the client hides the player); here invisible in the can, the eyes just above the rim */
     private static final double SEAT_HEIGHT = 0.875 - 0.9 + 0.25;
 
     private final @Nullable ItemStack[] storage = new ItemStack[SLOTS];
     private boolean powered;
-    /** Laufende Animationen mit Start-Tick (Spielzeit) */
+    /** Running animations with start tick (game time) */
     private final java.util.EnumMap<TrashCanAnimation, Long> animations = new java.util.EnumMap<>(TrashCanAnimation.class);
 
     public TrashCanStation(StationContext context) {
@@ -95,7 +95,7 @@ public class TrashCanStation extends Station {
     }
 
     /**
-     * Alle Teile in der aktuellen Animations-Stellung anzeigen (TrashCanBlockEntityRender + KeyframeAnimations).
+     * Show all parts in the current animation pose (TrashCanBlockEntityRender + KeyframeAnimations).
      */
     private void updateParts(int interpolation) {
         long now = world().getGameTime();
@@ -106,7 +106,7 @@ public class TrashCanStation extends Station {
             for (var entry : animations.entrySet()) {
                 entry.getKey().apply(part.name(), (now - entry.getValue()) / 20f, rotation, position);
             }
-            // posVec dreht y um, ZN(180) des Renderers dreht x und y: Modell -> Welt
+            // posVec flips y, the renderer's ZN(180) flips x and y: model -> world
             Vector3f offset = new Vector3f(-position.x, position.y, position.z);
             if (part.name().equals("eye")) {
                 eyeOffset.set(offset);
@@ -147,7 +147,7 @@ public class TrashCanStation extends Station {
         return contents;
     }
 
-    // ---- Interaktion ----
+    // ---- Interaction ----
 
     @Override
     public boolean onInteract(Player player, EquipmentSlot hand) {
@@ -164,8 +164,8 @@ public class TrashCanStation extends Station {
     }
 
     /**
-     * TrashCanBlockEntity#putItem: erst auf gleiche Stapel bzw. freie Plätze; passt nichts, rückt alles auf und das älteste fällt weg.
-     * Der Stapel wird immer ganz verbraucht (auch im Kreativmodus, wie im Mod).
+     * TrashCanBlockEntity#putItem: first onto matching stacks or free slots; if nothing fits, everything moves up and the oldest drops out.
+     * The stack is always used up completely (also in creative mode, as in the mod).
      */
     private void put(ItemStack stack) {
         int before = stack.getAmount();
@@ -197,7 +197,7 @@ public class TrashCanStation extends Station {
     }
 
     /**
-     * TrashCanBlockEntity#withdrawItem: das zuletzt Weggeworfene kommt in die Hand.
+     * TrashCanBlockEntity#withdrawItem: the last thrown-away item goes into the hand.
      */
     private void withdraw(Player player) {
         for (int i = SLOTS - 1; i >= 0; i--) {
@@ -218,10 +218,10 @@ public class TrashCanStation extends Station {
         world().playSound(center(), sound, SoundCategory.BLOCKS, 1, pitch);
     }
 
-    // ---- Hineinfallen ----
+    // ---- Falling in ----
 
     /**
-     * TrashCanBlock#fallOn: Spieler versteckt sich im Eimer, Monster in 32 Blöcken vergessen ihn.
+     * TrashCanBlock#fallOn: the player hides in the can, monsters within 32 blocks forget them.
      */
     public void onFallOn(Player player, Seats seats) {
         Location seat = seatLocation();
@@ -244,7 +244,7 @@ public class TrashCanStation extends Station {
         }
     }
 
-    // ---- Tick: Items oben auf dem Deckel einsaugen ----
+    // ---- Tick: suck in items lying on the lid ----
 
     @Override
     public boolean isTicking() {
@@ -262,7 +262,7 @@ public class TrashCanStation extends Station {
         if (!powered) {
             return;
         }
-        // SUCK_ZONE (oberster Pixel); die Barriere ist einen Block hoch, Items liegen also auf y + 1
+        // SUCK_ZONE (topmost pixel); the barrier is one block tall, so items lie at y + 1
         BoundingBox zone = new BoundingBox(position().x(), position().y() + 0.9375, position().z(),
                 position().x() + 1, position().y() + 1.25, position().z() + 1);
         for (Entity entity : world().getNearbyEntities(zone, e -> e instanceof Item)) {
@@ -275,8 +275,8 @@ public class TrashCanStation extends Station {
     }
 
     /**
-     * TrashCanBlockEntity#clientTick: sitzt jemand drin, schaut alle 61 Ticks das Auge heraus (zufällig Blinzeln oder Umschauen);
-     * ohne Insassen verschwindet es wieder. Laufende Animationen werden jeden Tick weitergestellt.
+     * TrashCanBlockEntity#clientTick: if someone is inside, the eye peeks out every 61 ticks (randomly blinking or looking around);
+     * without an occupant it disappears again. Running animations are advanced every tick.
      */
     private void tickAnimations() {
         long now = world().getGameTime();
@@ -294,14 +294,14 @@ public class TrashCanStation extends Station {
         if (animations.isEmpty()) {
             return;
         }
-        // Einmalige Animationen enden nach ihrer Länge (die Spieler-Animationen bleiben in der Endstellung)
+        // One-off animations end after their length (the player animations stay in their end pose)
         boolean ended = animations.entrySet().removeIf(entry -> entry.getKey() != TrashCanAnimation.PLAYER1 && entry.getKey() != TrashCanAnimation.PLAYER2
                 && (now - entry.getValue()) / 20f > entry.getKey().length() + 0.1f);
         updateParts(ended ? 0 : 1);
     }
 
     /**
-     * Abgebaut: Insassen aussteigen lassen (Seats macht ihn beim Absteigen wieder sichtbar).
+     * Broken: let the occupants get out (Seats makes them visible again when dismounting).
      */
     @Override
     protected void onRemoved() {
@@ -321,7 +321,7 @@ public class TrashCanStation extends Station {
     }
 
     /**
-     * TrashCanBlockEntity#hasItem: nur Items, die schon im Eimer sind; passt noch etwas dazu, wird es aufgefüllt.
+     * TrashCanBlockEntity#hasItem: only items that are already in the can; if more fits, it is topped up.
      */
     private boolean absorb(ItemStack stack) {
         for (ItemStack item : storage) {

@@ -7,61 +7,61 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
- * Ein Item aus den Mods (Definition aus items.yml).
+ * An item from the mods (definition from items.yml).
  *
  * @param id       z. B. kaleidoscope_cookery:tomato
- * @param base     Basis-Material (Papier; Pfannenwender: Eisenschaufel; Küchenmesser: Verbundblock)
- * @param prototype Vanilla-Item, dessen Komponenten (Schaden, Haltbarkeit ...) übernommen werden, sonst null
- * @param model    Item-Model-Definition im Resourcepack (assets/&lt;ns&gt;/items/&lt;pfad&gt;.json)
- * @param nameKey  Übersetzungs-Key des Namens
- * @param maxStack Stapelgröße
- * @param maxDamage Haltbarkeit, 0 = Standard des Basis-Items
- * @param tooltipKey Beschreibung aus der Mod-Sprachdatei, sonst null
- * @param food     Nahrungswerte, null wenn nicht essbar
- * @param plate    Gericht, das man als Teller hinstellen und bissweise essen kann, sonst null
- * @param sneakToPlace nur beim Schleichen platzieren (Teetassen, Teekanne – sonst trinken bzw. benutzen)
- * @param wearable Kleidung, sonst null
- * @param repair   Reparatur-Material im Amboss statt dem des Prototyps, sonst null
- * @param attributes Angriffs-Attribute des Prototyps behalten (Sichel: nein)
- * @param useAnimation Gedrückt halten mit dieser Animation (Teig: bow), sonst null
- * @param maximLines Zeilen des Spruchs (tooltip.*.maxim.lineN), 0 = keiner
+ * @param base     base material (paper; spatula: iron shovel; kitchen knives: jigsaw block)
+ * @param prototype vanilla item whose components (damage, durability ...) are copied, otherwise null
+ * @param model    item model definition in the resource pack (assets/&lt;ns&gt;/items/&lt;path&gt;.json)
+ * @param nameKey  translation key of the name
+ * @param maxStack stack size
+ * @param maxDamage durability, 0 = default of the base item
+ * @param tooltipKey description from the mod's language file, otherwise null
+ * @param food     food values, null if not edible
+ * @param plate    dish that can be placed as a plate and eaten bite by bite, otherwise null
+ * @param sneakToPlace only place while sneaking (tea cups, skewer plate - otherwise drink or eat)
+ * @param wearable clothing, otherwise null
+ * @param repair   repair material in the anvil instead of the prototype's, otherwise null
+ * @param attributes keep the prototype's attack attributes (sickle: no)
+ * @param useAnimation hold with this animation (dough: bow), otherwise null
+ * @param maximLines lines of the maxim (tooltip.*.maxim.lineN), 0 = none
  */
 public record CookeryItem(Key id, Material base, @Nullable Material prototype, Key model, String nameKey, @Nullable String tooltipKey, int maxStack, int maxDamage, @Nullable Food food,
                           @Nullable Plate plate, boolean sneakToPlace, @Nullable Wearable wearable, @Nullable Material repair, boolean attributes,
                           @Nullable String useAnimation, int maximLines) {
 
     /**
-     * Kleidung (Strohhut, Bauernkleidung).
+     * Clothing (straw hat, farmer clothes).
      *
-     * @param asset Equipment-Asset für die Rüstungsschicht; null = Itemmodell auf dem Kopf (Strohhut)
+     * @param asset equipment asset for the armour layer; null = item model on the head (straw hat)
      */
     public record Wearable(org.bukkit.inventory.EquipmentSlot slot, @Nullable Key asset, int armor, boolean unbreakable) {
     }
 
     /**
-     * Teller-Gericht (FoodBiteBlock im Mod).
+     * Plated dish (FoodBiteBlock in the mod).
      *
-     * @param food   Nährwert pro Biss
-     * @param loot   bleibt nach dem letzten Biss übrig (Schüssel, Knochen ...)
-     * @param wide   1x2-Gericht (zweite Hälfte links daneben)
-     * @param models Modelle je Teil ("main" bzw. "left"/"right") und Biss-Stufe
+     * @param food   nutrition per bite
+     * @param loot   remains after the last bite (bowl, bone ...)
+     * @param wide   1x2 dish (second half to the left)
+     * @param models models per part ("main" or "left"/"right") and bite stage
      */
     public record Plate(int maxBites, Food food, List<Key> loot, boolean wide, boolean large, java.util.Map<String, List<Key>> models) {
     }
 
     /**
-     * Nahrungswerte wie im Mod.
+     * Food values as in the mod.
      *
-     * @param remainder Item, das nach dem Essen zurückbleibt (z. B. Schüssel), sonst null
-     * @param drink     Getränk (Trink-Animation; ohne Nährwert keine food-Komponente)
-     * @param sound     Geräusch beim Essen statt des normalen (z. B. Spieße aus Grilling), sonst null
+     * @param remainder item that remains after eating (e.g. bowl), otherwise null
+     * @param drink     drink (drinking animation; without nutrition no food component)
+     * @param sound     sound when eating instead of the normal one (e.g. skewers from Grilling), otherwise null
      */
     public record Food(int nutrition, float saturation, boolean alwaysEdible, float eatSeconds, @Nullable Key remainder, List<FoodEffect> effects,
                        boolean drink, @Nullable Key sound) {
     }
 
     /**
-     * Effekt beim Essen. Effekte aus den Mods (Namespace kaleidoscope_*) setzt das Plugin selbst um.
+     * Effect when eating. The plugin implements effects from the mods (namespace kaleidoscope_*) itself.
      */
     public record FoodEffect(Key effect, int duration, int amplifier, float probability) {
     }

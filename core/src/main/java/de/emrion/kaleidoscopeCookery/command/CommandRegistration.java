@@ -7,8 +7,8 @@ import de.iani.cubesideutils.bukkit.commands.CommandUtil;
 import java.util.List;
 
 /**
- * Registriert /kaleidoscope (Alias /kc). Paper-Plugins haben keine commands in der plugin.yml,
- * deshalb wird der Router über CommandUtil (CubesideUtils) in die CommandMap eingetragen.
+ * Registers /kaleidoscope (alias /kc). Paper plugins have no commands in the plugin.yml,
+ * so the router is added to the CommandMap via CommandUtil (CubesideUtils).
  */
 public record CommandRegistration(KaleidoscopeCookery plugin) {
 

@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
 /**
- * Nur zum Fragen der Schutz-Plugins, ob ein Spieler hier abbauen darf – es wird danach nichts wirklich abgebaut.
- * Eigene Listener ignorieren dieses Event.
+ * Only for asking protection plugins whether a player may break here - nothing is actually broken afterwards.
+ * Our own listeners ignore this event.
  */
 public class BreakPermissionCheck extends BlockBreakEvent {
 

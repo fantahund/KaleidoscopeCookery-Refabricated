@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * /kc list – alle geladenen Stationen.
+ * /kc list - all loaded stations.
  */
 public class ListCommand extends SubCommand {
 

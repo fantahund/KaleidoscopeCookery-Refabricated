@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 /**
- * MillstoneEntityEvent: ein eingespanntes Tier, das Schaden nimmt, wird gelöst.
+ * MillstoneEntityEvent: a harnessed animal that takes damage is released.
  */
 public class MillstoneListener implements Listener {
 

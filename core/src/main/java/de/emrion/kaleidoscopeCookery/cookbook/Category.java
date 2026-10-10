@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * Seiten des Kochbuchs: eine je Station. Addons melden eigene mit {@link #register} an (z. B. Grill aus Grilling).
+ * Pages of the cookbook: one per station. Addons register their own with {@link #register} (e.g. the grill from Grilling).
  */
 public final class Category {
 
@@ -47,12 +47,12 @@ public final class Category {
     private final @Nullable Key stationItem;
 
     /**
-     * @param nameKey     Übersetzungs-Schlüssel des Namens
-     * @param bigImage    Schriftzeichen des großen Bildes (Schrift kaleidoscope:cookbook), 0 = keins
-     * @param guide       Anleitungs-Texte aus den Ponder-Szenen des Mods: Szene -> Anzahl Zeilen
-     * @param icon        kleines Bild für Knöpfe
-     * @param diagram     Bild der Station im Rezept-Diagramm (32 Pixel), null wenn keins
-     * @param stationItem Item der Station (Rechtsklick mit dem Kochbuch öffnet diese Seite), sonst null
+     * @param nameKey     translation key of the name
+     * @param bigImage    character of the large image (font kaleidoscope:cookbook), 0 = none
+     * @param guide       guide texts from the mod's Ponder scenes: scene -> number of lines
+     * @param icon        small image for buttons
+     * @param diagram     image of the station in the recipe diagram (32 pixels), null if none
+     * @param stationItem item of the station (right-clicking it with the cookbook opens this page), otherwise null
      */
     private Category(String id, String nameKey, int bigImage, Map<String, Integer> guide, Supplier<Component> icon,
                      Supplier<@Nullable Component> diagram, @Nullable Key stationItem) {
@@ -71,7 +71,7 @@ public final class Category {
         return this;
     }
 
-    /** Cookery-Station mit Bildern aus tools/gen_cookbook_icons.py */
+    /** Cookery station with images from tools/gen_cookbook_icons.py */
     private static Category builtin(String id, String nameKey, int bigImage, Map<String, Integer> guide) {
         int index = VALUES.size();
         return new Category(id, nameKey, bigImage, guide, () -> ItemIcons.gui(Key.key("kaleidoscope", "cookbook/" + id)),
@@ -81,9 +81,9 @@ public final class Category {
     }
 
     /**
-     * Seite eines Addons. Bilder kommen aus dessen Pack (Kochbuch-Bilder der Items, siehe ItemIcons).
+     * Page of an addon. The images come from the addon's pack (cookbook images of the items, see ItemIcons).
      *
-     * @param stationItem Item der Station; ihr Bild dient als Knopf und im Diagramm
+     * @param stationItem item of the station; its image is used for the button and in the diagram
      */
     public static Category register(String id, String nameKey, Key stationItem) {
         for (Category category : VALUES) {
@@ -121,28 +121,28 @@ public final class Category {
     }
 
     /**
-     * Kleines Bild für Knöpfe.
+     * Small image for buttons.
      */
     public Component icon() {
         return icon.get();
     }
 
     /**
-     * Bild der Station im Rezept-Diagramm (32 Pixel, in der mittleren Reihe), null wenn es keins gibt.
+     * Image of the station in the recipe diagram (32 pixels, in the middle row), null if there is none.
      */
     public @Nullable Component diagramImage() {
         return diagram.get();
     }
 
     /**
-     * Großes Bild als Schriftzeichen, null wenn es keins gibt.
+     * Large image as a font character, null if there is none.
      */
     public @Nullable Component bigImage() {
         return bigImage == 0 ? null : Component.text(Character.toString(bigImage)).font(FONT).shadowColor(net.kyori.adventure.text.format.ShadowColor.none());
     }
 
     /**
-     * Ponder-Texte: Überschrift und Zeilen je Szene (in der Reihenfolge des Mods).
+     * Ponder texts: heading and lines per scene (in the mod's order).
      */
     public List<Component> guide() {
         List<Component> lines = new java.util.ArrayList<>();

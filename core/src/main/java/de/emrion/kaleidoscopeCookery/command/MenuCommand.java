@@ -9,7 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
 /**
- * /kc menu – Kreativ-Menü zum Item-Holen öffnen.
+ * /kc menu - open the creative menu to get items.
  */
 public class MenuCommand extends PlayerSubCommand {
 

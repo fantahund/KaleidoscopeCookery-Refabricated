@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Erzeugt generated/creative_tabs.yml: Kategorien und Reihenfolge des Kreativ-Menüs (/kc menu) nach den Kreativ-Tabs
-der Mods (ModCreativeTabs) – für Cookery in core/src/main/resources, für Grilling im Repo KaleidoscopeGrilling daneben.
+Creates generated/creative_tabs.yml: categories and order of the creative menu (/kc menu) following the creative tabs
+of the mods (ModCreativeTabs) - for Cookery in core/src/main/resources, for Grilling in the KaleidoscopeGrilling repo next to it.
 
-Aufruf: python3 -I tools/gen_creative_tabs.py [--cache ~/.cache/kaleidoscope-pack]
-Items, die das Plugin nicht kennt, filtert das Plugin selbst heraus; Items ohne Tab landen dort unter "Sonstiges".
+Usage: python3 -I tools/gen_creative_tabs.py [--cache ~/.cache/kaleidoscope-pack]
+The plugin filters out items it does not know itself; items without a tab end up under "Misc" there.
 """
 import argparse
 import re
@@ -17,12 +17,12 @@ GRILLING_OUT = ROOT.parent / "KaleidoscopeGrilling" / "src" / "main" / "resource
 COOKERY_JAVA = "refab/src/main/java/com/github/ysbbbbbb/kaleidoscopecookery/init"  # Fabric-Fork
 GRILLING_JAVA = "grilling/neoforge-1.21.1/src/main/java/cn/breezeth/kaleidoscope_grilling/registry"
 
-# Erstes Möbel-Item im Cookery-Haupttab: ab hier eigener Tab "Möbel"
+# First furniture item in the Cookery main tab: from here on an own "Furniture" tab
 FIRST_FURNITURE = "cook_stool_oak"
 
 
 def accepted(block: str, ids: dict) -> list[str]:
-    """Feldnamen aus output.accept(ModItems.X.get()) in Registry-IDs übersetzen (RICE_SEED -> rice)."""
+    """Translate field names from output.accept(ModItems.X.get()) into registry ids (RICE_SEED -> rice)."""
     return [ids.get(m, m.lower()) for m in re.findall(r"output\.accept\(ModItems\.([A-Z0-9_]+)(?:\.get\(\))?\)", block)]
 
 
@@ -47,8 +47,8 @@ def main():
     kitchen = ["kaleidoscope:cookbook"] + ["kaleidoscope_cookery:" + i for i in main_items[:split]]
     furniture = ["kaleidoscope_cookery:" + i for i in main_items[split:]]
 
-    # Essen: feste Einträge, danach alle übrigen Cookery-Items in Registrier-Reihenfolge
-    # (die Mod-Registries für Gerichte, Teller und Tassen füllt der Mod dynamisch)
+    # Food: fixed entries, then all remaining Cookery items in registration order
+    # (the mod fills its registries for dishes, plates and cups dynamically)
     food = ["kaleidoscope_cookery:" + i for i in accepted(food_block, ids)]
     taken = set(kitchen) | set(furniture) | set(food)
     for item in registered((cache / COOKERY_JAVA / "ModItems.java").read_text(encoding="utf-8")):

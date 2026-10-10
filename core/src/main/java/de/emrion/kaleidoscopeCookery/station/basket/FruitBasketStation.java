@@ -31,11 +31,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Obstkorb (FruitBasketBlock/FruitBasketBlockEntity im Mod): 8 Plätze, die Items liegen sichtbar im Korb.
+ * Fruit basket (FruitBasketBlock/FruitBasketBlockEntity in the mod): 8 slots, the items lie visibly in the basket.
  * <ul>
- *     <li>Rechtsklick mit einem Item legt es hinein (wird mit gleichen Stapeln zusammengelegt)</li>
- *     <li>Schleichen + Rechtsklick nimmt den ersten Stapel heraus</li>
- *     <li>Abgebaut behält der Korb seinen Inhalt (wie eine Shulkerkiste)</li>
+ *     <li>Right-clicking with an item puts it in (merged with matching stacks)</li>
+ *     <li>Sneak + right-click takes the first stack out</li>
+ *     <li>When broken the basket keeps its contents (like a shulker box)</li>
  * </ul>
  */
 public class FruitBasketStation extends Station {
@@ -43,7 +43,7 @@ public class FruitBasketStation extends Station {
     public static final Key ITEM = Key.key("kaleidoscope_cookery", "fruit_basket");
     private static final Key MODEL = Key.key("kaleidoscope_cookery", "block/fruit_basket");
     private static final int SLOTS = 8;
-    /** Inhalt im Korb-Item (FRUIT_BASKET_ITEMS im Mod) */
+    /** Contents in the basket item (FRUIT_BASKET_ITEMS in the mod) */
     public static final NamespacedKey ITEM_CONTENTS = Keys.key("basket_items");
     private static final NamespacedKey ITEMS = Keys.key("items");
 
@@ -57,7 +57,7 @@ public class FruitBasketStation extends Station {
         return new StationType("fruit_basket", ITEM, false, 0.875f, 0.5f, true, FruitBasketStation::new);
     }
 
-    // ---- Zustand ----
+    // ---- State ----
 
     @Override
     protected void load(PersistentDataContainer state) {
@@ -85,14 +85,14 @@ public class FruitBasketStation extends Station {
     }
 
     /**
-     * Inhalt aus dem Korb-Item übernehmen (FruitBasketBlock#setPlacedBy).
+     * Take over the contents from the basket item (FruitBasketBlock#setPlacedBy).
      */
     public void initFrom(ItemStack basket) {
         read(basket.getPersistentDataContainer().getOrDefault(ITEM_CONTENTS, PersistentDataType.LIST.byteArrays(), List.of()));
     }
 
     /**
-     * Korb mit Inhalt; die Liste der Items steht unter der Beschreibung.
+     * Basket with contents; the list of items is shown below the description.
      */
     @Override
     @SuppressWarnings("UnstableApiUsage")
@@ -126,7 +126,7 @@ public class FruitBasketStation extends Station {
     }
 
     /**
-     * Der Inhalt bleibt im Korb; im Kreativmodus fällt der volle Korb trotzdem heraus (playerWillDestroy im Mod).
+     * The contents stay in the basket; in creative mode the full basket drops anyway (playerWillDestroy in the mod).
      */
     @Override
     public List<ItemStack> contents(@Nullable Player breaker) {
@@ -137,10 +137,10 @@ public class FruitBasketStation extends Station {
         return List.of();
     }
 
-    // ---- Anzeige ----
+    // ---- Display ----
 
     /**
-     * FruitBasketBlockEntityRender: zwei Reihen à vier Plätze, leere Plätze rücken auf.
+     * FruitBasketBlockEntityRender: two rows of four slots, empty slots move up.
      */
     @Override
     public void updateDisplay() {
@@ -173,7 +173,7 @@ public class FruitBasketStation extends Station {
         return "Obstkorb (" + count + "/" + SLOTS + " Stapel)";
     }
 
-    // ---- Interaktion ----
+    // ---- Interaction ----
 
     @Override
     public boolean onInteract(Player player, EquipmentSlot hand) {
@@ -200,14 +200,14 @@ public class FruitBasketStation extends Station {
     }
 
     /**
-     * Item#canFitInsideContainerItems: keine Shulkerkisten und keine Obstkörbe.
+     * Item#canFitInsideContainerItems: no shulker boxes and no fruit baskets.
      */
     private static boolean canFit(ItemStack stack) {
         return !Tag.SHULKER_BOXES.isTagged(stack.getType()) && !ITEM.equals(CookeryItems.idOf(stack));
     }
 
     /**
-     * ItemHandlerHelper#insertItemStacked: erst auf gleiche Stapel, dann in freie Plätze.
+     * ItemHandlerHelper#insertItemStacked: first onto matching stacks, then into free slots.
      */
     private void putOn(ItemStack stack) {
         if (!canFit(stack)) {

@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * /kc info – Zustand der angeschauten Station und Anzahl geladener Stationen.
+ * /kc info - state of the station being looked at and number of loaded stations.
  */
 public class InfoCommand extends PlayerSubCommand {
 

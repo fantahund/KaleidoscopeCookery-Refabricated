@@ -22,32 +22,32 @@ import org.jspecify.annotations.Nullable;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Hingestellte Ölkanne (OilPotBlock): speichert bis zu 256 Öl.
- * Rechtsklick mit Öl füllt nach, mit leerer Hand nimmt man bis zu 64 Öl heraus.
- * Abgebaut behält die Kanne ihren Inhalt.
+ * Placed oil pot (OilPotBlock): stores up to 256 oil.
+ * Right-click with oil refills it, with an empty hand you take up to 64 oil out.
+ * When broken the pot keeps its contents.
  */
 public class OilPotStation extends Station {
 
     private static final NamespacedKey OIL = Keys.key("oil");
     private static final NamespacedKey VARIANT = Keys.key("oil_variant");
     private int oil;
-    /** Ölsorte eines Addons ("" = Fett aus Cookery) */
+    /** Oil type of an addon ("" = fat from Cookery) */
     private String variant = "";
 
     /**
-     * Ölsorten eines Addons (Grilling: Rapsöl, Chiliöl …) in der hingestellten Kanne.
+     * An addon's oil types (Grilling: canola oil, chili oil ...) in the placed pot.
      */
     public interface Variants {
-        /** Sorte des Kannen-Items ("" = Fett) */
+        /** Type of the pot item ("" = fat) */
         String of(ItemStack pot);
 
-        /** Sorte auf das Kannen-Item schreiben (beim Abbauen) */
+        /** Write the type onto the pot item (when breaking) */
         void apply(ItemStack pot, String variant);
 
-        /** Modelle der hingestellten Kanne mit dieser Sorte; das zweite (falls da) leuchtet */
+        /** Models of the placed pot with this type; the second one (if present) glows */
         java.util.List<Key> models(String variant);
 
-        /** Rechtsklick mit einem Item, das Cookery nicht kennt (z. B. Öleimer); true = erledigt */
+        /** Right-click with an item Cookery does not know (e.g. oil bucket); true = handled */
         boolean interact(OilPotStation pot, Player player, ItemStack held);
     }
 
@@ -65,7 +65,7 @@ public class OilPotStation extends Station {
         return variant;
     }
 
-    /** Inhalt setzen (Addons); leer wird die Kanne wieder zur Fett-Kanne */
+    /** Set the contents (addons); when empty the pot becomes a fat pot again */
     public void setContent(int oil, String variant) {
         this.oil = Math.max(0, oil);
         this.variant = this.oil == 0 ? "" : variant;
@@ -106,7 +106,7 @@ public class OilPotStation extends Station {
             return true;
         }
         if (!variant.isEmpty()) {
-            return false; // Ölsorten (Addon) lassen sich nicht als Fett herausnehmen oder mit Fett mischen
+            return false; // oil types (addon) cannot be taken out as fat or mixed with fat
         }
         if (held.isEmpty()) {
             if (oil <= 0) {

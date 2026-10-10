@@ -38,12 +38,12 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Alle Items der Mods. Sie basieren auf {@link #BASE_MATERIAL}, Aussehen über die item_model-Komponente,
- * Name über einen Übersetzungs-Key aus dem Resourcepack, Erkennung über den PDC-Tag {@link Keys#ITEM}.
+ * All items of the mods. They are based on {@link #BASE_MATERIAL}, look via the item_model component,
+ * name via a translation key from the resource pack, recognition via the PDC tag {@link Keys#ITEM}.
  */
 public class CookeryItems {
 
-    /** Basis-Material: nicht platzierbar, ohne eigene Rechtsklick-Funktion */
+    /** Base material: not placeable, without its own right-click function */
     public static final Material BASE_MATERIAL = Material.PAPER;
 
     private final Map<Key, CookeryItem> items;
@@ -90,7 +90,7 @@ public class CookeryItems {
     }
 
     /**
-     * Diese Items plus die eines Addons (gleiche IDs werden vom Addon überschrieben).
+     * These items plus those of an addon (the addon overrides identical ids).
      */
     public CookeryItems merge(CookeryItems other) {
         Map<Key, CookeryItem> merged = new LinkedHashMap<>(items);
@@ -181,7 +181,7 @@ public class CookeryItems {
     }
 
     /**
-     * ID eines Custom-Items, null bei Vanilla-Items.
+     * Id of a custom item, null for vanilla items.
      */
     public static @Nullable Key idOf(@Nullable ItemStack stack) {
         if (stack == null || stack.isEmpty()) {
@@ -192,7 +192,7 @@ public class CookeryItems {
     }
 
     /**
-     * ID eines beliebigen Items: Custom-Items mit ihrer ID, Vanilla-Items als minecraft:&lt;name&gt;.
+     * Id of any item: custom items with their id, vanilla items as minecraft:&lt;name&gt;.
      */
     public static Key typeOf(ItemStack stack) {
         Key id = idOf(stack);
@@ -204,7 +204,7 @@ public class CookeryItems {
     }
 
     /**
-     * Item anhand der ID erzeugen: Mod-Items und Vanilla-Items (minecraft:...).
+     * Create an item by id: mod items and vanilla items (minecraft:...).
      */
     public @Nullable ItemStack create(Key id, int amount) {
         CookeryItem item = items.get(id);
@@ -220,7 +220,7 @@ public class CookeryItems {
         return null;
     }
 
-    /** Brennstoffe wie im Mod (cookingFuel): Öl wie Kohle, Ölblock wie Kohleblock */
+    /** Fuels as in the mod (cookingFuel): oil like coal, oil block like a coal block */
     private static final Map<Key, Material> COOKING_FUEL = Map.of(
             Key.key("kaleidoscope_cookery", "oil"), Material.COAL,
             Key.key("kaleidoscope_cookery", "oil_block"), Material.COAL_BLOCK);
@@ -231,11 +231,11 @@ public class CookeryItems {
         ItemStack stack = ItemStack.of(item.base(), 1);
         Material fuel = COOKING_FUEL.get(item.id());
         if (fuel != null) {
-            // cooking_fuel hat noch keinen Typ in DataComponentTypes: vom Vanilla-Brennstoff übernehmen
+            // cooking_fuel has no type in DataComponentTypes yet: copy it from the vanilla fuel
             stack.copyDataFrom(ItemStack.of(fuel), type -> type.key().equals(COOKING_FUEL_COMPONENT));
         }
         if (item.prototype() != null) {
-            // Alle Eigenschaften des Vanilla-Items übernehmen (Schaden, Tempo, Haltbarkeit, Reparatur, Abbau ...)
+            // Copy all properties of the vanilla item (damage, speed, durability, repair, mining ...)
             stack.copyDataFrom(ItemStack.of(item.prototype()), type -> true);
         }
         stack.setData(DataComponentTypes.ITEM_MODEL, item.model());
@@ -246,7 +246,7 @@ public class CookeryItems {
             stack.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, io.papermc.paper.datacomponent.item.ItemAttributeModifiers.itemAttributes().build());
         }
         if (item.useAnimation() != null && item.food() == null) {
-            // Lange "Benutzung" ohne Wirkung: der Client zeigt die Animation, das Plugin wertet das Loslassen aus
+            // Long "use" without effect: the client shows the animation, the plugin evaluates the release
             stack.setData(DataComponentTypes.CONSUMABLE, io.papermc.paper.datacomponent.item.Consumable.consumable()
                     .consumeSeconds(3600)
                     .animation(io.papermc.paper.datacomponent.item.consumable.ItemUseAnimation.valueOf(item.useAnimation().toUpperCase(java.util.Locale.ROOT)))
@@ -265,7 +265,7 @@ public class CookeryItems {
             stack.setData(DataComponentTypes.LORE, ItemLore.lore(lore));
         }
         if (item.base() == BASE_MATERIAL) {
-            // Werkzeuge behalten Stapelgröße 1 und ihre Haltbarkeit
+            // Tools keep stack size 1 and their durability
             stack.setData(DataComponentTypes.MAX_STACK_SIZE, item.maxStack());
         }
         if (item.food() != null) {
@@ -280,12 +280,12 @@ public class CookeryItems {
     }
 
     /**
-     * Nahrungswerte setzen, skaliert mit ratio (Qualität). Mod-Effekte setzt das Plugin beim Essen selbst um.
+     * Set the food values, scaled by ratio (quality). The plugin applies mod effects itself when eating.
      */
     @SuppressWarnings("UnstableApiUsage")
     public void applyFood(ItemStack stack, CookeryItem.Food food, double ratio) {
         if (food.drink() && food.nutrition() == 0) {
-            // Getränk ohne Nährwert: trinkbar auch mit vollem Hunger, keine food-Komponente
+            // Drink without nutrition: drinkable even with full hunger, no food component
             stack.unsetData(DataComponentTypes.FOOD);
         } else {
             stack.setData(DataComponentTypes.FOOD, FoodProperties.food()
@@ -335,10 +335,10 @@ public class CookeryItems {
     }
 
     /**
-     * Beschreibungszeile aus der Mod-Sprachdatei.
+     * Description line from the mod's language file.
      */
     /**
-     * Beschreibung (grau) und Spruch (dunkelgrau, kursiv; *.maxim.lineN) wie in den appendHoverText der Mods.
+     * Description (grey) and maxim (dark grey, italic; *.maxim.lineN) as in the mods' appendHoverText.
      */
     public static List<Component> tooltipLines(CookeryItem item) {
         List<Component> lines = new java.util.ArrayList<>();

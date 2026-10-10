@@ -12,8 +12,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 
 /**
- * Hingestellter Milchtee im Tontopf (ClayPotMilkTeaBlock): reine Deko, Rechtsklick nimmt ihn wieder auf.
- * Getrunken wird das Item (entfernt schädliche Effekte, siehe FoodService).
+ * Placed clay pot milk tea (ClayPotMilkTeaBlock): pure decoration, right-click picks it up again.
+ * The item is what you drink (removes harmful effects, see FoodService).
  */
 public class MilkTeaStation extends Station {
 

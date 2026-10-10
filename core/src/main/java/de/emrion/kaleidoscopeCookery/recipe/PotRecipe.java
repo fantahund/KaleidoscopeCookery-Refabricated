@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Wok-Rezept (pot / flex_pot im Mod).
+ * Wok recipe (pot / flex_pot in the mod).
  * <ul>
- *     <li>normal: die Zutaten müssen genau so (gleiche Anzahl) im Wok liegen</li>
- *     <li>per-item: 1–9 gleiche Zutaten, das Ergebnis gibt es so oft (fasst die Vanilla-"1x–9x"-Rezepte zusammen)</li>
- *     <li>flex: jede Zutat muss mindestens einmal dabei sein, sonst nichts; die Mengen bestimmen die Qualität</li>
+ *     <li>normal: the ingredients must be in the wok exactly like this (same amount)</li>
+ *     <li>per-item: 1-9 identical ingredients, the result comes that often (merges the vanilla "1x-9x" recipes)</li>
+ *     <li>flex: every ingredient must be there at least once, nothing else; the amounts determine the quality</li>
  * </ul>
  *
- * @param carrier Gefäß zum Herausnehmen (z. B. Schüssel), null = mit dem Pfannenwender
+ * @param carrier container for taking it out (e.g. bowl), null = with the spatula
  */
 public record PotRecipe(String id, boolean flex, List<Ingredient> ingredients, boolean perItem, int time, int stirFryCount,
                         @Nullable Ingredient carrier, RecipeResult result) {
@@ -26,7 +26,7 @@ public record PotRecipe(String id, boolean flex, List<Ingredient> ingredients, b
     public static final int SLOTS = 9;
 
     /**
-     * @return Anzahl der Ergebnisse (bei per-item die Zahl der Zutaten), 0 wenn das Rezept nicht passt
+     * @return number of results (for per-item the number of ingredients), 0 if the recipe does not match
      */
     public int match(List<ItemStack> inputs) {
         List<ItemStack> present = new ArrayList<>();
@@ -48,7 +48,7 @@ public record PotRecipe(String id, boolean flex, List<Ingredient> ingredients, b
             return result.count() * present.size();
         }
         if (flex) {
-            // Gleiche Items zählen einmal (Mod: nach Item zusammengefasst)
+            // Identical items count once (mod: grouped by item)
             Map<Key, ItemStack> distinct = new LinkedHashMap<>();
             for (ItemStack input : present) {
                 distinct.putIfAbsent(CookeryItems.typeOf(input), input);
@@ -62,7 +62,7 @@ public record PotRecipe(String id, boolean flex, List<Ingredient> ingredients, b
     }
 
     /**
-     * Jeder Zutat genau ein Item zuordnen (wie RecipeMatcher im Mod).
+     * Assign exactly one item to every ingredient (like RecipeMatcher in the mod).
      */
     private boolean assign(List<ItemStack> inputs, int index, boolean[] used) {
         if (index == inputs.size()) {

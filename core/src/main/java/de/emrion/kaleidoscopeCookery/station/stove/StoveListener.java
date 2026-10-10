@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 /**
- * Brennende Projektile (z. B. Pfeile mit Flamme) zünden den Herd an (StoveBlock#onProjectileHit).
+ * Burning projectiles (e.g. arrows with Flame) light the stove (StoveBlock#onProjectileHit).
  */
 public class StoveListener implements Listener {
 

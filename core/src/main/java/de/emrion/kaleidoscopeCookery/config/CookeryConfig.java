@@ -20,13 +20,13 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * Geladene und geprüfte config.yml. Unveränderlich – /kc reload erzeugt eine neue Instanz.
+ * Loaded and validated config.yml. Immutable - /kc reload creates a new instance.
  */
 public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, OilDrops oilDrops, Food food, List<String> disabledRecipes,
                             boolean dispensers) {
 
     /**
-     * Rezept abgeschaltet (disabled-recipes: genaue ID oder Präfix mit "*" am Ende, z. B. "kaleidoscope_cookery:millstone/*")?
+     * Is the recipe disabled (disabled-recipes: exact id or prefix with a trailing "*", e.g. "kaleidoscope_cookery:millstone/*")?
      */
     public boolean isRecipeDisabled(String id) {
         for (String pattern : disabledRecipes) {
@@ -41,12 +41,12 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
     }
 
     /**
-     * Schneidewerkzeuge (Küchenmesser) mit ihren Schnitten pro Hieb.
+     * Cutting tools (kitchen knives) with their cuts per hit.
      */
     public record Cutting(Map<Key, Integer> tools, double durabilityChance, int cooldownTicks) {
 
         /**
-         * @return Schnitte pro Hieb, 0 wenn das Item nicht schneiden kann
+         * @return cuts per hit, 0 if the item cannot cut
          */
         public int cuts(@Nullable ItemStack tool) {
             if (tool == null || tool.isEmpty()) {
@@ -64,7 +64,7 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
     }
 
     /**
-     * @param vanillaPercents Prozent je Material, sonst vanillaDefaultPercent
+     * @param vanillaPercents percent per material, otherwise vanillaDefaultPercent
      */
     public record Food(boolean vanillaNerfEnabled, int vanillaDefaultPercent, Map<Material, Integer> vanillaPercents) {
 
@@ -85,7 +85,7 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
         Map<Key, Integer> tools = new HashMap<>();
         ConfigurationSection toolSection = config.getConfigurationSection("cutting.tools");
         if (toolSection != null) {
-            // Item-IDs enthalten ":" – Werte direkt lesen statt über Pfade
+            // Item ids contain ":" - read the values directly instead of via paths
             for (Map.Entry<String, Object> entry : toolSection.getValues(false).entrySet()) {
                 if (!Key.parseable(entry.getKey()) || !(entry.getValue() instanceof Number number)) {
                     logger.warning("cutting.tools: ungültiger Eintrag " + entry.getKey() + " wird ignoriert");

@@ -6,7 +6,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Locale;
 
 /**
- * Qualität eines Gerichts (Quality im Mod): ab welcher Bewertung sie gilt und wie stark sie Nährwert und Effektdauer skaliert.
+ * Quality of a dish (Quality in the mod): from which rating it applies and how much it scales nutrition and effect duration.
  */
 public enum Quality {
     SUPERB(0.95, 1.2, NamedTextColor.GOLD),
@@ -41,7 +41,7 @@ public enum Quality {
     }
 
     /**
-     * Übersetzungs-Key aus der Mod-Sprachdatei.
+     * Translation key from the mod's language file.
      */
     public String translationKey() {
         return "tooltip.kaleidoscope_cookery.cuisine_quality." + id();

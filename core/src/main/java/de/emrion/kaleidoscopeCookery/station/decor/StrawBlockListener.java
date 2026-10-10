@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 /**
- * Fallschaden auf Strohballen entfällt (StrawBlocks#fallOn ruft nicht super.fallOn auf).
+ * No fall damage on straw blocks (StrawBlocks#fallOn does not call super.fallOn).
  */
 public class StrawBlockListener implements Listener {
 

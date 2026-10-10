@@ -21,8 +21,8 @@ import org.joml.Vector3f;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Strohballen (StrawBlocks im Mod): Säulenblock in drei Achsen. Fallschaden darauf entfällt ganz; ab 3 Blöcken
- * Fallhöhe kann der Ballen dabei zerfallen (Chance Fallhöhe / 30) und gibt 5 Reisrispen und 4 Reis.
+ * Straw block (StrawBlocks in the mod): pillar block in three axes. No fall damage at all on it; from a fall height of
+ * 3 blocks the block can fall apart (chance fall height / 30) and gives 5 rice panicles and 4 rice.
  */
 public class StrawBlockStation extends Station {
 
@@ -51,7 +51,7 @@ public class StrawBlockStation extends Station {
     }
 
     /**
-     * RotatedPillarBlock#getStateForPlacement: Achse der angeklickten Fläche.
+     * RotatedPillarBlock#getStateForPlacement: axis of the clicked face.
      */
     public void initAxis(BlockFace face) {
         axis = switch (face) {

@@ -1,7 +1,7 @@
 package de.emrion.kaleidoscopeCookery.recipe;
 
 /**
- * Dampfkorb: eine Zutat wird nach {@code time} Ticks Dampf zum Ergebnis (Mod-Standard 60 s).
+ * Steamer: one ingredient turns into the result after {@code time} ticks of steam (mod default 60 s).
  */
 public record SteamerRecipe(String id, Ingredient ingredient, int time, RecipeResult result) {
 

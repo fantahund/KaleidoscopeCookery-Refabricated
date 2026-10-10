@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Item-Properties aus den Mod-Modellen (z. B. kaleidoscope_cookery:has_oil). Das Resourcepack wählt das Modell über
- * custom_model_data.floats an einem festen Index (generated/model_properties.yml, erzeugt von tools/import_assets.py).
+ * Item properties from the mod models (e.g. kaleidoscope_cookery:has_oil). The resource pack picks the model via
+ * custom_model_data.floats at a fixed index (generated/model_properties.yml, created by tools/import_assets.py).
  */
 @SuppressWarnings("UnstableApiUsage")
 public final class ModelProperties {
@@ -32,7 +32,7 @@ public final class ModelProperties {
     }
 
     /**
-     * Properties eines Addons dazunehmen (eigene Namen, Indizes passend zu dessen Pack).
+     * Add an addon's properties (own names, indices matching its pack).
      */
     public static void add(Plugin plugin) {
         try (Reader reader = new InputStreamReader(plugin.getResource("generated/model_properties.yml"), StandardCharsets.UTF_8)) {
@@ -48,7 +48,7 @@ public final class ModelProperties {
     }
 
     /**
-     * Property setzen (0 = Standardmodell).
+     * Set a property (0 = default model).
      */
     public static void set(ItemStack stack, String property, float value) {
         Integer index = INDICES.get(property);
@@ -69,7 +69,7 @@ public final class ModelProperties {
     }
 
     /**
-     * Tint-Farben setzen (custom_model_data.colors, Index = tintindex im Modell), Floats bleiben.
+     * Set tint colours (custom_model_data.colors, index = tintindex in the model), floats stay.
      */
     public static void setColors(ItemStack stack, List<org.bukkit.Color> colors) {
         CustomModelData current = stack.getData(DataComponentTypes.CUSTOM_MODEL_DATA);

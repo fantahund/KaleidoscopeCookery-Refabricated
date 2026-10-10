@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Stations-Bilder fürs Kochbuch aus den JEI-Hintergründen des Mods (textures/gui/jei/*.png) ausschneiden.
+Cut the station images for the cookbook out of the mod's JEI backgrounds (textures/gui/jei/*.png).
 
-Ausgabe:
+Output:
 - resourcepack/custom/assets/kaleidoscope/textures/gui/sprites/cookbook/<station>.png
-  -> Sprite "kaleidoscope:cookbook/<station>" im Atlas minecraft:gui (kleine Bilder im Text und auf Knöpfen)
+  -> sprite "kaleidoscope:cookbook/<station>" in the atlas minecraft:gui (small images in text and on buttons)
 - resourcepack/custom/assets/kaleidoscope/font/cookbook.json
-  -> große Bilder als Schriftzeichen U+E200 ... (Überschrift der Stations-Seiten),
-     Slot-Kästchen U+E210 und Abstände U+E211/U+E212 fürs Werkbank-Raster
+  -> large images as font characters U+E200 ... (heading of the station pages),
+     slot box U+E210 and spaces U+E211/U+E212 for the crafting grid
 """
 import json
 from pathlib import Path
@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parent.parent
 JEI = Path.home() / ".cache" / "kaleidoscope-pack" / "cookery" / "src" / "main" / "resources" / "assets" / "kaleidoscope_cookery" / "textures" / "gui" / "jei"
 OUT = ROOT / "resourcepack" / "custom" / "assets" / "kaleidoscope"
 
-# Bereich des Stations-Bildes im JEI-Hintergrund (x1, y1, x2, y2 inklusive), per Zusammenhangs-Analyse ermittelt
+# Area of the station image in the JEI background (x1, y1, x2, y2 inclusive), found via connected component analysis
 CROPS = {
     "pot": ("pot", (77, 23, 120, 77)),
     "stockpot": ("stockpot", (77, 15, 119, 77)),
@@ -28,11 +28,11 @@ CROPS = {
     "millstone": ("millstone", (21, 12, 104, 85)),
     "bamboo_tray": ("bamboo_tray", (14, 15, 85, 55)),
 }
-# Erstes Schriftzeichen der großen Bilder; Reihenfolge = CROPS. Ascent 7: das Bild beginnt oben an der Zeile
-# und reicht nach unten (Dialoge schneiden alles über der ersten Zeile ab), darunter Leerzeilen freihalten
+# First font character of the large images; order = CROPS. Ascent 7: the image starts at the top of the line
+# and extends downwards (dialogs cut off everything above the first line), keep empty lines free below it
 FIRST_CHAR = 0xE200
 BIG_HEIGHT = 32
-# Werkbank-Raster (siehe Cookbook#craftingGrid): Slot, 18 zurück, 1 Abstand, 4 Abstand, Pfeil, leerer Pfeil, leerer Slot
+# Crafting grid (see Cookbook#craftingGrid): slot, 18 back, 1 space, 4 space, arrow, empty arrow, empty slot
 SLOT_CHAR = 0xE210
 BACK_CHAR = 0xE211
 GAP_CHAR = 0xE212
@@ -41,12 +41,12 @@ ARROW_CHAR = 0xE214
 BLANK_ARROW_CHAR = 0xE215
 BLANK_SLOT_CHAR = 0xE216
 BLANK_DIAGRAM_CHAR = 0xE217
-# Stations-Bilder im Rezept-Diagramm (Reihenfolge = CROPS)
+# Station images in the recipe diagram (order = CROPS)
 DIAGRAM_CHAR = 0xE220
-# Ziffern 0-9 für Mengen im Slot und 6/12/18 Pixel zurück
+# Digits 0-9 for amounts in the slot and 6/12/18 pixels back
 DIGIT_CHAR = 0xE240
 DIGIT_BACK_CHAR = 0xE250
-# Abstände +n / -n Pixel
+# Spaces +n / -n pixels
 PAD_CHAR = 0xE300
 PAD_NEG_CHAR = 0xE340
 
@@ -62,16 +62,16 @@ def main():
         size = max(part.size)
         square = Image.new("RGBA", (size, size), (0, 0, 0, 0))
         square.paste(part, ((size - part.width) // 2, (size - part.height) // 2))
-        # Fast unsichtbarer Pixel unten rechts: der Client kürzt Schrift-Bilder sonst auf die sichtbare Breite
+        # Almost invisible pixel at the bottom right: otherwise the client trims font images to the visible width
         square.putpixel((size - 1, size - 1), (0, 0, 0, 1))
         square.save(sprites / f"{name}.png")
         providers.append({"type": "bitmap", "file": f"kaleidoscope:gui/sprites/cookbook/{name}.png",
                           "height": BIG_HEIGHT, "ascent": 7, "chars": [chr(FIRST_CHAR + index)]})
-        # Im Rezept-Diagramm: in der mittleren Reihe des Rasters, mittig über drei Slot-Reihen
+        # In the recipe diagram: in the middle row of the grid, centred over three slot rows
         providers.append({"type": "bitmap", "file": f"kaleidoscope:gui/sprites/cookbook/{name}.png",
                           "height": BIG_HEIGHT, "ascent": 14, "chars": [chr(DIAGRAM_CHAR + index)]})
         print(f"{name}: {square.size[0]} px, Zeichen U+{FIRST_CHAR + index:04X}")
-    # Werkbank-Raster: Slot (18x18 wie im Inventar), Pfeil, Abstände (siehe Cookbook#craftingGrid)
+    # Crafting grid: slot (18x18 like in the inventory), arrow, spaces (see Cookbook#craftingGrid)
     slot = Image.new("RGBA", (18, 18), (139, 139, 139, 255))
     for i in range(18):
         slot.putpixel((i, 0), (55, 55, 55, 255))
@@ -96,8 +96,8 @@ def main():
     providers.append({"type": "space", "advances": {chr(BACK_CHAR): -18, chr(GAP_CHAR): 1, chr(SPACE_CHAR): 4,
                                                     chr(BLANK_ARROW_CHAR): 17, chr(BLANK_SLOT_CHAR): 19,
                                                     chr(BLANK_DIAGRAM_CHAR): 33}})
-    # Mengen in den Slots wie im Inventar: Ziffern aus der Vanilla-Schrift (minecraft:font/ascii.png, nicht kopiert),
-    # unten rechts im Slot; dazu Rückwärts-Abstände für 1 bis 3 Ziffern (je 6 Pixel)
+    # Amounts in the slots like in the inventory: digits from the vanilla font (minecraft:font/ascii.png, not copied),
+    # at the bottom right of the slot; plus backward spaces for 1 to 3 digits (6 pixels each)
     grid = []
     for row in range(16):
         line = ""
@@ -107,7 +107,7 @@ def main():
         grid.append(line)
     providers.append({"type": "bitmap", "file": "minecraft:font/ascii.png", "height": 8, "ascent": -2, "chars": grid})
     providers.append({"type": "space", "advances": {chr(DIGIT_BACK_CHAR + i): -6 * (i + 1) for i in range(3)}})
-    # Ausgleich für Bilder mit anderer Breite: +n und -n Pixel (n = 0..63)
+    # Compensation for images with a different width: +n and -n pixels (n = 0..63)
     providers.append({"type": "space", "advances": {**{chr(PAD_CHAR + n): n for n in range(64)},
                                                     **{chr(PAD_NEG_CHAR + n): -n for n in range(64)}}})
     (OUT / "font").mkdir(parents=True, exist_ok=True)

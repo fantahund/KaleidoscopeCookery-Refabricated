@@ -42,15 +42,15 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Mühlstein (MillstoneBlock/MillstoneBlockEntity im Mod). Im Mod belegt er 3x3 Blöcke, der Stein selbst ist aber nur
- * 2 Blöcke breit – hier belegt er deshalb 2x2, die Mitte liegt auf der Kante zwischen den vier Blöcken.
+ * Millstone (MillstoneBlock/MillstoneBlockEntity in the mod). In the mod it occupies 3x3 blocks, but the stone itself is only
+ * 2 blocks wide - so here it occupies 2x2, its centre lies on the edge between the four blocks.
  * <ul>
- *     <li>Ein Tier (mind. 1 Block hoch, kein Spieler, nicht geritten), das auf den Mühlstein tritt, wird eingespannt
- *     und läuft im Kreis (Radius 2) – eine Runde dauert je nach Tier 80 bis 500 Ticks</li>
- *     <li>Rechtsklick mit einer Zutat legt bis zu 8 Stück ein; das Tier legt auch Items aus seinem Inventar
- *     und von oben auf den Mühlstein geworfene Items ein</li>
- *     <li>Nach einer Runde fallen die Ergebnisse an der Vorderseite heraus</li>
- *     <li>Das Tier wird gelöst, wenn es stirbt, Schaden nimmt, fällt, im Block steckt oder 5 Blöcke entfernt ist</li>
+ *     <li>An animal (at least 1 block tall, not a player, not ridden) that steps onto the millstone is harnessed
+ *     and walks in a circle (radius 2) - one round takes 80 to 500 ticks depending on the animal</li>
+ *     <li>Right-clicking with an ingredient adds up to 8 items; the animal also adds items from its inventory
+ *     and items thrown onto the millstone from above</li>
+ *     <li>After one round the results drop out at the front</li>
+ *     <li>The animal is released when it dies, takes damage, falls, is stuck in a block or is 5 blocks away</li>
  * </ul>
  */
 public class MillstoneStation extends Station {
@@ -61,19 +61,19 @@ public class MillstoneStation extends Station {
     private static final Key MODEL_BASE = Key.key("kaleidoscope_cookery", "block/millstone_base");
     private static final Key MODEL_WHEEL = Key.key("kaleidoscope_cookery", "block/millstone_wheel");
     private static final Key MODEL_ROLL = Key.key("kaleidoscope_cookery", "block/millstone_roll");
-    /** Die Modelle sind für Blockmodelle auf 1/4 verkleinert (tools/gen_millstone_model.py) */
+    /** The models are scaled down to 1/4 for block models (tools/gen_entity_models.py) */
     private static final float MODEL_SCALE = 4;
-    /** Walzenmitte relativ zur Blockmitte bei Drehung 0 */
+    /** Centre of the roller relative to the block centre at rotation 0 */
     private static final Vector3f ROLL_CENTER = new Vector3f(0, 13 / 16f, -0.5f);
-    /** Mitte des Mühlsteins relativ zur Mitte des Stationsblocks (2x2: Blockkante) */
+    /** Centre of the millstone relative to the centre of the station block (2x2: block edge) */
     private static final Vector3f MODEL_OFFSET = new Vector3f(0.5f, 0, 0.5f);
-    /** Ausgabe: knapp vor dem Ausguss (der Stein reicht 1 Block weit, der Ausguss 1,1) */
+    /** Output: just in front of the spout (the stone reaches 1 block, the spout 1.1) */
     private static final double OUTPUT_DISTANCE = 1.45;
     private static final NamespacedKey LAYOUT = Keys.key("layout");
     private static final int WHEEL_UPDATE_TICKS = 2;
     private static final double MAX_DISTANCE_SQUARED = 5 * 5;
 
-    /** datamap/millstone_bindable_data.json: Ticks pro Umdrehung */
+    /** datamap/millstone_bindable_data.json: ticks per revolution */
     private static final Map<EntityType, Integer> ROT_SPEED = Map.ofEntries(
             Map.entry(EntityType.WARDEN, 80), Map.entry(EntityType.WITHER, 80), Map.entry(EntityType.RAVAGER, 80),
             Map.entry(EntityType.MULE, 120), Map.entry(EntityType.DONKEY, 120),
@@ -98,7 +98,7 @@ public class MillstoneStation extends Station {
     private final List<ItemStack> outputs = new ArrayList<>();
 
     private @Nullable LivingEntity bound;
-    /** Alte 3x3-Mühlsteine: überzählige Barrieren beim ersten Tick entfernen */
+    /** Old 3x3 millstones: remove surplus barriers on the first tick */
     private boolean oldLayout;
 
     public MillstoneStation(StationContext context) {
@@ -109,7 +109,7 @@ public class MillstoneStation extends Station {
         return new StationType("millstone", ITEM, true, 1f, 1f, false, MillstoneStation::new, 2, 1);
     }
 
-    // ---- Zustand ----
+    // ---- State ----
 
     @Override
     protected void load(PersistentDataContainer state) {
@@ -162,26 +162,26 @@ public class MillstoneStation extends Station {
     }
 
     /**
-     * Drehwinkel in Grad (MillstoneBlockEntity#getRotation).
+     * Rotation angle in degrees (MillstoneBlockEntity#getRotation).
      */
     private float rotation() {
         float degPerTick = 360f / Math.max(rotSpeedTick, 1);
         return Math.abs(cacheRot + world().getGameTime() * degPerTick) % 360;
     }
 
-    // ---- Anzeige ----
+    // ---- Display ----
 
     @Override
     public void updateDisplay() {
         showPart("base", MODEL_BASE, new Transformation(new Vector3f(MODEL_OFFSET), facing().blockRotation(), new Vector3f(MODEL_SCALE), new Quaternionf()));
-        // Klicks auf die ganze 2x2-Fläche (die Wurzel-Hitbox sitzt nur auf dem Stationsblock)
+        // Clicks on the whole 2x2 area (the root hitbox only sits on the station block)
         showHitbox("area", new org.bukkit.util.Vector(MODEL_OFFSET.x, 0, MODEL_OFFSET.z), 2.02f, 1.02f);
         updateWheel(0);
         updateItems();
     }
 
     /**
-     * Rad und Deichsel zeigen zum eingespannten Tier; die Walze rollt dabei um ihre eigene Achse.
+     * Wheel and shaft point towards the harnessed animal; the roller rolls around its own axis at the same time.
      */
     private void updateWheel(int interpolation) {
         float rot = hasEntity() ? rotation() : cacheRot;
@@ -193,7 +193,7 @@ public class MillstoneStation extends Station {
     }
 
     /**
-     * Zutaten bzw. Ergebnisse liegen im Kreis auf dem Stein (MillstoneBlockEntityRender#renderItems).
+     * Ingredients or results lie in a circle on the stone (MillstoneBlockEntityRender#renderItems).
      */
     private void updateItems() {
         ItemStack shown = !outputs.isEmpty() ? outputs.getFirst() : input;
@@ -230,7 +230,7 @@ public class MillstoneStation extends Station {
                 .append(Component.text(" · ", NamedTextColor.DARK_GRAY)).append(state).build();
     }
 
-    // ---- Interaktion ----
+    // ---- Interaction ----
 
     @Override
     public boolean onInteract(Player player, EquipmentSlot hand) {
@@ -241,7 +241,7 @@ public class MillstoneStation extends Station {
     }
 
     /**
-     * MillstoneBlockEntity#onPutItem: nimmt bis zu 8 Stück vom Stapel (auch im Kreativmodus, wie im Mod).
+     * MillstoneBlockEntity#onPutItem: takes up to 8 items from the stack (also in creative mode, as in the mod).
      */
     public boolean putItem(ItemStack stack) {
         if (stack.isEmpty() || !outputs.isEmpty() || input != null) {
@@ -269,16 +269,16 @@ public class MillstoneStation extends Station {
         return contents;
     }
 
-    // ---- Tier ----
+    // ---- Animal ----
 
     /**
-     * MillstoneBlockEntity#canBindEntity: mindestens 1 Block hoch, kein Spieler, reitet nicht und wird nicht geritten.
+     * MillstoneBlockEntity#canBindEntity: at least 1 block tall, not a player, not riding and not ridden.
      */
     public static boolean canBind(LivingEntity entity) {
         if (entity instanceof Player || entity.getHeight() < 1 || entity.isInsideVehicle()) {
             return false;
         }
-        // Gesattelte Reittiere, die gerade gesteuert werden
+        // Saddled mounts that are currently being steered
         return !(entity instanceof AbstractHorse || entity.getType() == EntityType.PIG || entity.getType() == EntityType.STRIDER)
                 || entity.getPassengers().isEmpty() || !(entity.getPassengers().getFirst() instanceof Player);
     }
@@ -289,7 +289,7 @@ public class MillstoneStation extends Station {
         }
         entityId = entity.getUniqueId();
         bound = entity;
-        // Winkel so korrigieren wie im Mod (vermeidet Sprünge in der Animation)
+        // Correct the angle like the mod does (avoids jumps in the animation)
         float rot = rotation();
         cacheRot = fixRot(cacheRot - (rot - cacheRot));
         rotSpeedTick = ROT_SPEED.getOrDefault(entity.getType(), DEFAULT_ROT_SPEED);
@@ -298,7 +298,7 @@ public class MillstoneStation extends Station {
     }
 
     /**
-     * Tier lösen (z. B. bei Schaden), das Rad bleibt im aktuellen Winkel stehen.
+     * Release the animal (e.g. on damage), the wheel stays at its current angle.
      */
     public void unbind() {
         float rot = rotation();
@@ -310,7 +310,7 @@ public class MillstoneStation extends Station {
     }
 
     /**
-     * Mitte unten des Mühlsteins (Blockkante zwischen den vier Blöcken).
+     * Bottom centre of the millstone (block edge between the four blocks).
      */
     private Location bottomCenter() {
         return position().bottomCenter(world()).add(MODEL_OFFSET.x, 0, MODEL_OFFSET.z);
@@ -322,7 +322,7 @@ public class MillstoneStation extends Station {
     }
 
     /**
-     * Überzählige Barrieren eines alten 3x3-Mühlsteins entfernen.
+     * Remove surplus barriers of an old 3x3 millstone.
      */
     private void migrateLayout() {
         oldLayout = false;
@@ -340,7 +340,7 @@ public class MillstoneStation extends Station {
     }
 
     /**
-     * MillstoneBlock#stepOn: lebende Wesen, die auf dem Mühlstein stehen.
+     * MillstoneBlock#stepOn: living entities standing on the millstone.
      */
     private void checkStepOn() {
         BoundingBox top = new BoundingBox(position().x(), position().y() + 0.9, position().z(),
@@ -374,7 +374,7 @@ public class MillstoneStation extends Station {
             return;
         }
 
-        // Ergebnisse vorne auswerfen
+        // Eject the results at the front
         if (gameTime % 20 == 9 && !outputs.isEmpty()) {
             Location drop = outputLocation();
             for (ItemStack output : outputs) {
@@ -389,7 +389,7 @@ public class MillstoneStation extends Station {
         float rot = rotation();
         Location center = bottomCenter();
         if (bound == null) {
-            // Nach dem Laden: Tier wiederfinden
+            // After loading: find the animal again
             if (world().getEntity(entityId) instanceof LivingEntity living && !living.isDead() && living.getHeight() >= 1
                     && living.getLocation().distanceSquared(center) < MAX_DISTANCE_SQUARED && canBind(living)) {
                 bound = living;
@@ -407,7 +407,7 @@ public class MillstoneStation extends Station {
             return;
         }
 
-        // Im Kreis führen
+        // Lead it in a circle
         double radians = Math.toRadians(rot);
         Location target = center.clone().add(2 * Math.sin(radians), 0, 2 * Math.cos(radians));
         target.setYaw(-rot - 90);
@@ -445,7 +445,7 @@ public class MillstoneStation extends Station {
     }
 
     /**
-     * Das Tier legt Items aus seinem Inventar ein, sonst Items, die oben auf dem Mühlstein liegen.
+     * The animal adds items from its inventory, otherwise items lying on top of the millstone.
      */
     private void pullItems(LivingEntity entity) {
         if (entity instanceof InventoryHolder holder) {
@@ -494,7 +494,7 @@ public class MillstoneStation extends Station {
     }
 
     /**
-     * Eine Runde fertig: jedes eingelegte Stück ergibt die Ausgaben mit ihrer Chance.
+     * One round done: every added item yields the outputs with their chance.
      */
     private void grind() {
         ItemStack ground = input;
@@ -522,7 +522,7 @@ public class MillstoneStation extends Station {
     }
 
     /**
-     * Wie ItemHandlerHelper#insertItemStacked mit 4 Plätzen; was nicht passt, fällt gleich vorne heraus.
+     * Like ItemHandlerHelper#insertItemStacked with 4 slots; whatever does not fit drops out at the front right away.
      */
     private void addOutput(ItemStack stack) {
         for (ItemStack output : outputs) {

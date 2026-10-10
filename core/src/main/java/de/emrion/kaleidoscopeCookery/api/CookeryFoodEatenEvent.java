@@ -7,8 +7,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Ein Mod-Gericht wurde gegessen – aus der Hand, bissweise vom Teller oder aus dem Lunchbeutel.
- * Nährwerte und Effekte sind dann schon verrechnet.
+ * A mod dish was eaten - from the hand, bite by bite from a plate or from the lunch bag.
+ * Nutrition and effects have already been applied.
  */
 public class CookeryFoodEatenEvent extends Event {
 
@@ -25,9 +25,9 @@ public class CookeryFoodEatenEvent extends Event {
     private final Source source;
 
     /**
-     * @param food   gegessenes Item (bei Tellern das Gericht, als Kopie)
-     * @param values Nährwerte laut items.yml
-     * @param ratio  Faktor durch die Qualität (bzw. Bissgröße)
+     * @param food   eaten item (for plates the dish, as a copy)
+     * @param values nutrition according to items.yml
+     * @param ratio  factor from the quality (or bite size)
      */
     public CookeryFoodEatenEvent(Player player, ItemStack food, CookeryItem.Food values, double ratio, Source source) {
         this.player = player;

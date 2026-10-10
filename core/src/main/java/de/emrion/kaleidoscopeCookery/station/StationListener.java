@@ -57,18 +57,18 @@ import java.util.UUID;
 import java.util.List;
 
 /**
- * Klicks auf Stationen, Platzieren über das Stations-Item und Schutz des Stations-Blocks.
+ * Clicks on stations, placing via the station item and protection of the station block.
  * <ul>
- *     <li>Rechtsklick: {@link Station#onInteract}</li>
- *     <li>Linksklick: {@link Station#onAttack}</li>
- *     <li>Schleichen + Linksklick: Station abbauen</li>
+ *     <li>Right-click: {@link Station#onInteract}</li>
+ *     <li>Left click: {@link Station#onAttack}</li>
+ *     <li>Sneak + left click: break the station</li>
  * </ul>
  */
 public class StationListener implements Listener {
 
     private final KaleidoscopeCookery plugin;
     private final StationManager stations;
-    /** Gerade läuft ein selbst ausgelöstes Event zur Rechte-Prüfung */
+    /** A self-triggered event for permission checks is currently running */
     private boolean checking;
     private final Map<UUID, Long> lastHandledTick = new HashMap<>();
 
@@ -77,7 +77,7 @@ public class StationListener implements Listener {
         this.stations = stations;
     }
 
-    // ---- Klicks auf die Hitbox ----
+    // ---- Clicks on the hitbox ----
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInteractEntity(PlayerInteractEntityEvent event) {
@@ -93,7 +93,7 @@ public class StationListener implements Listener {
         if (event.getHand() != EquipmentSlot.HAND || !player.hasPermission(Permissions.USE)) {
             return;
         }
-        // Sicherheitshalber pro Tick nur einmal handeln (falls doch einmal zwei Klick-Events kommen)
+        // To be safe, act only once per tick (in case two click events do arrive)
         long tick = stations.serverTick();
         Long last = lastHandledTick.put(player.getUniqueId(), tick);
         if (last != null && last == tick) {
@@ -101,7 +101,7 @@ public class StationListener implements Listener {
         }
         ItemStack held = player.getInventory().getItemInMainHand();
         boolean stationItem = stations.typeByItem(CookeryItems.idOf(held)) != null;
-        // Stations-Items (Wok auf Herd ...) zuerst platzieren, Gerichte nur, wenn die Station nichts damit anfängt
+        // Place station items (wok on stove ...) first, dishes only if the station does nothing with them
         if (stationItem && station.interceptPlacement(player, held)) {
             player.swingMainHand();
             return;
@@ -126,7 +126,7 @@ public class StationListener implements Listener {
     }
 
     /**
-     * Klickposition relativ zur Blockmitte unten der Station.
+     * Click position relative to the bottom centre of the station block.
      */
     private static @Nullable Vector clickPosition(Station station, PlayerInteractEntityEvent event) {
         if (!(event instanceof PlayerInteractAtEntityEvent at) || at.getClickedPosition() == null) {
@@ -137,10 +137,10 @@ public class StationListener implements Listener {
     }
 
     /**
-     * Platzieren mit Klick auf eine Hitbox: Seite aus der Klickposition bestimmen.
+     * Placing by clicking a hitbox: determine the face from the click position.
      */
     private boolean placeOnStation(Player player, ItemStack held, PlayerInteractEntityEvent event) {
-        // Paper 26.3 meldet Rechtsklicks auf Entities immer mit Klickposition
+        // Paper 26.3 always reports right-clicks on entities with a click position
         if (!(event instanceof PlayerInteractAtEntityEvent at) || !(event.getRightClicked() instanceof Interaction hitbox)) {
             return false;
         }
@@ -187,7 +187,7 @@ public class StationListener implements Listener {
     }
 
     /**
-     * Schutz-Plugins (WorldGuard ...) fragen: darf der Spieler die Station benutzen?
+     * Ask protection plugins (WorldGuard ...): may the player use the station?
      */
     private boolean canUse(Player player, Entity root) {
         checking = true;
@@ -199,7 +199,7 @@ public class StationListener implements Listener {
     }
 
     /**
-     * Schutz-Plugins fragen: darf der Spieler hier abbauen?
+     * Ask protection plugins: may the player break here?
      */
     private boolean canBreak(Player player, Station station) {
         Block block = station.position().block();
@@ -214,10 +214,10 @@ public class StationListener implements Listener {
         }
     }
 
-    // ---- Platzieren ----
+    // ---- Placing ----
 
     /**
-     * Wie bei Blöcken in Vanilla: ein Klick auf Kiste, Ofen, Tür ... benutzt den Block, nur schleichend wird gesetzt.
+     * Like blocks in vanilla: clicking a chest, furnace, door ... uses the block, it is only placed while sneaking.
      */
     public static boolean opensOnClick(PlayerInteractEvent event) {
         Block clicked = event.getClickedBlock();
@@ -235,7 +235,7 @@ public class StationListener implements Listener {
         }
         CookeryItem placed = plugin.getItems().get(CookeryItems.typeOf(item));
         if (placed != null && placed.sneakToPlace() && !event.getPlayer().isSneaking()) {
-            return; // Tee trinken, Teekanne benutzen
+            return; // drink tea, use the teapot
         }
         if (opensOnClick(event)) {
             return;
@@ -248,7 +248,7 @@ public class StationListener implements Listener {
     }
 
     /**
-     * Stations-Typ, den dieses Item platziert (Stations-Item oder Teller-Gericht), sonst null.
+     * Station type this item places (station item or plated dish), otherwise null.
      */
     private @Nullable StationType placeableType(@Nullable ItemStack item) {
         Key itemId = CookeryItems.idOf(item);
@@ -265,7 +265,7 @@ public class StationListener implements Listener {
     }
 
     /**
-     * Station aus dem Item an clicked + face setzen (wie ein Block).
+     * Place the station from the item at clicked + face (like a block).
      */
     private boolean tryPlace(Player player, EquipmentSlot hand, ItemStack item, Block clicked, BlockFace face) {
         StationType type = placeableType(item);
@@ -313,7 +313,7 @@ public class StationListener implements Listener {
         boolean allowed;
         try {
             if (type.width() > 1 || type.height() > 1) {
-                // Mehrblock-Station: Schutz-Plugins prüfen alle belegten Blöcke
+                // Multi-block station: protection plugins check all occupied blocks
                 List<BlockState> states = new ArrayList<>();
                 states.add(replaced);
                 for (BlockKey block : type.footprint(BlockKey.of(target))) {
@@ -335,7 +335,7 @@ public class StationListener implements Listener {
         }
         Station placed = stations.place(type, target, facing, station -> initPlaced(station, item.asOne(), itemId, face, player));
         if (!placed.canSurvive()) {
-            // z. B. Chili-Kette ohne Halt darüber
+            // e.g. a chili ristra without support above
             stations.remove(placed);
             return false;
         }
@@ -348,7 +348,7 @@ public class StationListener implements Listener {
     }
 
     /**
-     * Daten des Items auf die frisch gesetzte Station übernehmen.
+     * Copy the data of the item onto the freshly placed station.
      */
     private static void initPlaced(Station station, ItemStack placedFrom, @Nullable Key placedId, BlockFace face, @Nullable Player placer) {
         if (station instanceof PlateStation plate) {
@@ -372,9 +372,9 @@ public class StationListener implements Listener {
         }
     }
 
-    // ---- Vogelscheuche (ScarecrowFarmlandTrampleEvent) ----
+    // ---- Scarecrow (ScarecrowFarmlandTrampleEvent) ----
 
-    /** Ackerland in 16 Blöcken um eine Vogelscheuche wird nicht zertrampelt */
+    /** Farmland within 16 blocks of a scarecrow is not trampled */
     private static final int SCARECROW_RANGE = 16;
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -396,15 +396,15 @@ public class StationListener implements Listener {
                 && stations.anyNear(BlockKey.of(block), SCARECROW_RANGE, de.emrion.kaleidoscopeCookery.station.scarecrow.ScarecrowStation.TYPE_ID);
     }
 
-    // ---- Spender (block/dispenser im Mod) ----
+    // ---- Dispensers (block/dispenser in the mod) ----
 
-    /** ChoppingBoardDispenseBehavior: diese Zutaten (und roher Teig) legt ein Spender aufs Schneidebrett */
+    /** ChoppingBoardDispenseBehavior: a dispenser puts these ingredients (and raw dough) on the chopping board */
     private static final java.util.Set<Material> DISPENSER_INGREDIENTS = java.util.EnumSet.of(Material.TROPICAL_FISH, Material.COD,
             Material.COOKED_COD, Material.SALMON, Material.COOKED_SALMON, Material.MUTTON, Material.COOKED_MUTTON, Material.BEEF,
             Material.COOKED_BEEF, Material.PORKCHOP, Material.COOKED_PORKCHOP, Material.CHICKEN, Material.COOKED_CHICKEN,
             Material.RABBIT, Material.COOKED_RABBIT);
     private static final Key RAW_DOUGH = Key.key("kaleidoscope_cookery", "raw_dough");
-    /** OilPot-, BambooTray- und TeapotDispenseBehavior: diese Items setzt ein Spender vor sich hin */
+    /** OilPot-, BambooTray- and TeapotDispenseBehavior: a dispenser places these items in front of it */
     private static final java.util.Set<Key> DISPENSER_PLACED = java.util.Set.of(de.emrion.kaleidoscopeCookery.station.oil.OilItems.OIL_POT,
             Key.key("kaleidoscope_cookery", "bamboo_tray"), Key.key("kaleidoscope_cookery", "teapot"));
 
@@ -435,7 +435,7 @@ public class StationListener implements Listener {
         StationType type = placeableType(item);
         boolean done = type != null && canPlaceAt(type, front);
         if (done) {
-            // Ausrichtung wie DirectionalPlaceContext: zum Spender hin, nach oben/unten zeigend nach Norden
+            // Orientation like DirectionalPlaceContext: towards the dispenser, north when pointing up/down
             Facing placeFacing = facing.getModY() != 0 ? Facing.NORTH : Facing.towards(yawOf(facing));
             Station placed = stations.place(type, front, placeFacing, station -> initPlaced(station, item.asOne(), id, BlockFace.UP, null));
             if (!placed.canSurvive()) {
@@ -458,8 +458,8 @@ public class StationListener implements Listener {
     }
 
     /**
-     * Gelungen: im nächsten Tick ein Item aus dem Spender nehmen bzw. das Messer abnutzen (nach dem abgebrochenen
-     * Auswurf). Fehlgeschlagen: Klick-Geräusch wie OptionalDispenseItemBehavior.
+     * Success: take one item from the dispenser or damage the knife in the next tick (after the cancelled
+     * dispense). Failure: click sound like OptionalDispenseItemBehavior.
      */
     private void afterDispense(Block dispenser, ItemStack used, boolean done, boolean knife) {
         if (!done) {
@@ -507,12 +507,12 @@ public class StationListener implements Listener {
         Block below = block.getRelative(BlockFace.DOWN);
         Station base = stations.at(below);
         if (base != null && (base.context().type().barrier() || STACK_BASES.contains(base.context().type().id()))) {
-            return true; // Dampfgarer auf Dampfgarer, Wok oder Suppentopf (ohne Barriere)
+            return true; // steamer on steamer, wok or stockpot (no barrier)
         }
         return below.getType().isSolid() && below.getType() != Material.BARRIER;
     }
 
-    // ---- Schutz des Stations-Blocks ----
+    // ---- Protection of the station block ----
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
@@ -535,7 +535,7 @@ public class StationListener implements Listener {
             return;
         }
         if (station instanceof CropStation crop && crop.kind() != CropKind.RICE) {
-            // Wasser spült Pflanzen weg (wie bei Vanilla-Pflanzen)
+            // Water washes crops away (like vanilla crops)
             stations.breakStation(station, null);
             return;
         }
@@ -549,7 +549,7 @@ public class StationListener implements Listener {
         }
         Station station = stations.at(event.getBlock());
         if (station != null) {
-            // Barriere im Kreativmodus: wie Abbauen der Station
+            // Barrier in creative mode: same as breaking the station
             event.setCancelled(true);
             stations.breakStation(station, event.getPlayer());
             return;
@@ -617,7 +617,7 @@ public class StationListener implements Listener {
     }
 
     /**
-     * Der Block unter einer Station hat sich geändert: im nächsten Tick prüfen, ob sie noch steht.
+     * The block below a station changed: check in the next tick whether it still stands.
      */
     private void checkSupportLater(Block changed) {
         Block above = changed.getRelative(BlockFace.UP);

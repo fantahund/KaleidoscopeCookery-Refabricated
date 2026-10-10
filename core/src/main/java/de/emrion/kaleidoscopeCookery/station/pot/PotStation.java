@@ -44,14 +44,14 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Wok (PotBlockEntity im Mod).
+ * Wok (PotBlockEntity in the mod).
  * <ol>
- *     <li>Hitze darunter (brennender Herd, Lagerfeuer, Feuer ...), dann Öl hinein: 60 s Zeit für bis zu 9 Zutaten</li>
- *     <li>Mit dem Pfannenwender rühren startet das Kochen; jedes weitere Rühren zählt die nötigen Rührvorgänge herunter</li>
- *     <li>Nach der Kochzeit: nicht genug gerührt = Verdächtiges Pfannengericht, sonst das Gericht (Flex-Rezepte mit Qualität)</li>
- *     <li>40 s zum Herausnehmen (mit Gefäß bzw. Schleichen + Pfannenwender), dann 20 s Anbrennen, dann Holzkohle</li>
+ *     <li>Heat below (burning stove, campfire, fire ...), then add oil: 60 s for up to 9 ingredients</li>
+ *     <li>Stirring with the spatula starts cooking; every further stir counts down the required stirs</li>
+ *     <li>After the cooking time: not stirred enough = suspicious stir-fry, otherwise the dish (flex recipes with quality)</li>
+ *     <li>40 s to take it out (with a container or sneak + spatula), then 20 s of burning, then charcoal</li>
  * </ol>
- * Mit der Hand in den heißen Wok greifen kostet ein halbes Herz.
+ * Reaching into the hot wok with your hand costs half a heart.
  */
 public class PotStation extends Station {
 
@@ -94,7 +94,7 @@ public class PotStation extends Station {
     private List<Key> carrier = List.of();
     private long seed = System.currentTimeMillis();
 
-    // nur zur Laufzeit
+    // runtime only
     private int hopTicks;
     private float[] hopHeights = new float[PotRecipe.SLOTS];
     private boolean heatCache;
@@ -108,7 +108,7 @@ public class PotStation extends Station {
         return new StationType("pot", ITEM, false, 1f, 1f, false, PotStation::new);
     }
 
-    // ---- Zustand ----
+    // ---- State ----
 
     @Override
     protected void load(PersistentDataContainer state) {
@@ -172,9 +172,9 @@ public class PotStation extends Station {
         return count;
     }
 
-    // ---- Hitze ----
+    // ---- Heat ----
 
-    /** Liegt ein fertiges Gericht zum Herausnehmen bereit (Addons: Gewürz nach dem letzten Teller löschen) */
+    /** Is a finished dish ready to be taken out (addons: clear the seasoning after the last plate) */
     public boolean hasDish() {
         return result != null;
     }
@@ -190,7 +190,7 @@ public class PotStation extends Station {
     }
 
     /**
-     * Blockmodell mit Standfuß, wenn der Wok nicht auf einem vollen Block (z. B. Herd) steht.
+     * Block model with a stand when the wok is not on a full block (e.g. stove).
      */
     private boolean hasBase() {
         Block below = world().getBlockAt(position().x(), position().y() - 1, position().z());
@@ -291,7 +291,7 @@ public class PotStation extends Station {
                     position().z() + 0.5 + offset(random, 3), particleCount, 0, 0, 0, 0.05);
         }
         if (currentTick % 25 == 0) {
-            updateDisplay(); // Zutaten werden dunkler
+            updateDisplay(); // ingredients get darker
         }
         if (currentTick == 0) {
             reset();
@@ -311,16 +311,16 @@ public class PotStation extends Station {
         return random.nextDouble() / divisor * (random.nextBoolean() ? 1 : -1);
     }
 
-    // ---- Bedienung ----
+    // ---- Handling ----
 
     @Override
     public boolean onInteract(Player player, EquipmentSlot hand) {
         ItemStack held = player.getInventory().getItemInMainHand();
-        // Zutat zurücknehmen
+        // Take an ingredient back
         if ((held.isEmpty() || isIngredientContainer(held)) && removeIngredient(player)) {
             return true;
         }
-        // Gericht herausnehmen
+        // Take the dish out
         if (takeOutProduct(player, held)) {
             return true;
         }
@@ -348,7 +348,7 @@ public class PotStation extends Station {
     }
 
     private boolean placeOil(Player player, ItemStack held) {
-        // Öl, Pfannenwender mit Öl oder Ölkanne (PotBlockEntity#onPlaceOil)
+        // Oil, spatula with oil or oil pot (PotBlockEntity#onPlaceOil)
         if (!OilItems.takeOne(held, player.getGameMode() == GameMode.CREATIVE)) {
             return false;
         }
@@ -407,7 +407,7 @@ public class PotStation extends Station {
                 return;
             }
         }
-        // Kein Rezept: verdächtiges Pfannengericht
+        // No recipe: suspicious stir-fry
         result = items().create(SUSPICIOUS_STIR_FRY, 1);
         carrier = List.of(Material.BOWL.key());
         currentTick = SUSPICIOUS_TIME;
@@ -417,10 +417,10 @@ public class PotStation extends Station {
         updateDisplay();
     }
 
-    // ---- Rezept-Item (RecipeItem im Mod) ----
+    // ---- Recipe item (RecipeItem in the mod) ----
 
     /**
-     * Zutaten zum Aufzeichnen (nur solange man Zutaten einlegt), sonst leer.
+     * Ingredients to record (only while ingredients are being added), otherwise empty.
      */
     public List<ItemStack> recordableInputs() {
         List<ItemStack> list = new ArrayList<>();
@@ -435,9 +435,9 @@ public class PotStation extends Station {
     }
 
     /**
-     * Was aus den aktuellen Zutaten würde (RecipeItem#getPotRecipeResult), mit Qualität bei Flex-Rezepten.
+     * What the current ingredients would become (RecipeItem#getPotRecipeResult), with quality for flex recipes.
      *
-     * @return Ergebnis und ob es ein Flex-Rezept ist
+     * @return result and whether it is a flex recipe
      */
     public java.util.Map.Entry<ItemStack, Boolean> previewResult() {
         List<ItemStack> inputList = inputList();
@@ -454,7 +454,7 @@ public class PotStation extends Station {
     }
 
     /**
-     * Leerer, geölter Wok, in den man ein aufgezeichnetes Rezept einlegen kann.
+     * Empty, oiled wok into which a recorded recipe can be added.
      */
     public boolean canReceiveRecipe() {
         return status == PUT_INGREDIENT && hasOil && isEmpty();
@@ -586,7 +586,7 @@ public class PotStation extends Station {
 
     private void finishTakeOut(Player player, ItemStack product) {
         if (status == FINISHED) {
-            // Addons können das Gericht anpassen
+            // Addons can adjust the dish
             new de.emrion.kaleidoscopeCookery.api.DishServedEvent(player, this, product).callEvent();
         }
         give(player, product);
@@ -610,7 +610,7 @@ public class PotStation extends Station {
     }
 
     /**
-     * ingredient_blocklist im Mod: Werkzeuge, Rüstung, Shulkerkisten, Bündel, Eimer, Schüssel, Flasche.
+     * ingredient_blocklist in the mod: tools, armour, shulker boxes, bundles, buckets, bowl, bottle.
      */
     private static boolean isBlocked(ItemStack stack) {
         Material type = stack.getType();
@@ -645,7 +645,7 @@ public class PotStation extends Station {
         context.manager().updateTicking(this);
     }
 
-    // ---- Darstellung ----
+    // ---- Display ----
 
     @Override
     public void updateDisplay() {
@@ -675,10 +675,10 @@ public class PotStation extends Station {
     }
 
     /**
-     * Wie PotBlockEntityRender: Zutaten flach im Wok, gestapelt und gedreht; beim Rühren springen sie hoch und drehen sich.
+     * Like PotBlockEntityRender: ingredients flat in the wok, stacked and rotated; when stirring they jump up and spin.
      */
     private Transformation itemTransform(int index, int spin, boolean hopping) {
-        // 0.025 im mit 0.5 skalierten Renderer-Raum = 0.0125 Blöcke pro Zutat
+        // 0.025 in the renderer space scaled by 0.5 = 0.0125 blocks per ingredient
         float y = -0.4f + index * 0.0125f;
         Quaternionf rotation = new Quaternionf()
                 .rotateY((float) Math.toRadians(-facing().dataValue() * 90))
@@ -714,7 +714,7 @@ public class PotStation extends Station {
         return "Wok (Status " + status + ", " + inputCount() + " Zutaten, Rest " + currentTick + " Ticks, Rühren " + stirFryCount + ")";
     }
 
-    // ---- Statusanzeige ----
+    // ---- Status display ----
 
     @Override
     public @Nullable Component hud(Player viewer) {

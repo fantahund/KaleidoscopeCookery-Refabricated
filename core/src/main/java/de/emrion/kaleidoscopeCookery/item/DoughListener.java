@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Teig: Mehl im Wasser wird zu Teig (FlourItem#onEntityItemUpdate), Teig 1,5 s gedrückt halten wird zu Nudeln (RawDoughItem).
+ * Dough: flour in water becomes dough (FlourItem#onEntityItemUpdate), holding dough for 1.5 s turns it into noodles (RawDoughItem).
  */
 public class DoughListener implements Listener {
 
@@ -30,7 +30,7 @@ public class DoughListener implements Listener {
     private static final Sound TRANSFORM = Sound.sound(Key.key("kaleidoscope_cookery", "item.dough_transform"), Sound.Source.PLAYER, 1, 1);
 
     private final de.emrion.kaleidoscopeCookery.KaleidoscopeCookery plugin;
-    /** Mehl, das als Item in der Welt liegt */
+    /** Flour lying in the world as an item */
     private final Set<Item> flour = new HashSet<>();
 
     public DoughListener(de.emrion.kaleidoscopeCookery.KaleidoscopeCookery plugin) {
@@ -38,7 +38,7 @@ public class DoughListener implements Listener {
         plugin.getServer().getScheduler().runTaskTimer(plugin, this::checkFlour, 10, 10);
     }
 
-    // ---- Mehl im Wasser ----
+    // ---- Flour in water ----
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onItemSpawn(ItemSpawnEvent event) {
@@ -72,7 +72,7 @@ public class DoughListener implements Listener {
         });
     }
 
-    // ---- Teig ziehen ----
+    // ---- Pulling dough ----
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onStopUsing(PlayerStopUsingItemEvent event) {

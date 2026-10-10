@@ -30,12 +30,12 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Schneidebrett (ChoppingBoardBlockEntity im Mod).
+ * Chopping board (ChoppingBoardBlockEntity in the mod).
  * <ul>
- *     <li>Rechtsklick mit Zutat: auflegen (1 Stück)</li>
- *     <li>Linksklick mit Küchenmesser: schneiden, Modell wechselt je Schnitt</li>
- *     <li>Fertig geschnitten: Klick lässt die Ergebnisse fallen</li>
- *     <li>Schleichen + Rechtsklick, solange noch nicht geschnitten: Zutat zurücknehmen</li>
+ *     <li>Right-click with an ingredient: put it on (1 item)</li>
+ *     <li>Left click with a kitchen knife: cut, the model changes with every cut</li>
+ *     <li>Fully cut: a click drops the results</li>
+ *     <li>Sneak + right-click while not cut yet: take the ingredient back</li>
  * </ul>
  */
 public class ChoppingBoardStation extends Station {
@@ -67,7 +67,7 @@ public class ChoppingBoardStation extends Station {
         return new StationType("chopping_board", ITEM, false, 0.9f, 0.2f, true, ChoppingBoardStation::new);
     }
 
-    // ---- Zustand ----
+    // ---- State ----
 
     @Override
     protected void load(PersistentDataContainer state) {
@@ -113,7 +113,7 @@ public class ChoppingBoardStation extends Station {
         return isOccupied() && cuts >= maxCuts;
     }
 
-    // ---- Darstellung ----
+    // ---- Display ----
 
     @Override
     public void updateDisplay() {
@@ -142,11 +142,11 @@ public class ChoppingBoardStation extends Station {
         if (isDone()) {
             return results;
         }
-        // Angefangen: wie im Mod geht die Zutat verloren, sobald geschnitten wurde – beim Abbauen geben wir sie zurück
+        // Started: as in the mod the ingredient is lost once it was cut - we return it when broken
         return input != null ? List.of(input) : List.of();
     }
 
-    // ---- Bedienung ----
+    // ---- Handling ----
 
     @Override
     public boolean onInteract(Player player, EquipmentSlot hand) {
@@ -191,7 +191,7 @@ public class ChoppingBoardStation extends Station {
         }
         CookeryConfig.Cutting cutting = plugin().getCookeryConfig().cutting();
         ItemStack tool = player.getInventory().getItemInMainHand();
-        // Mod: 1 << Stufe von "Schnelles Messer" (max. II) Schnitte pro Hieb
+        // Mod: 1 << level of "Quick Knife" (max. II) cuts per hit
         int perHit = cutting.cuts(tool) * (1 << Math.clamp(QuickKnifeListener.level(tool), 0, 2));
         if (perHit <= 0) {
             context.manager().actionBar(player, Lang.get("chopping_board.need_tool").color(NamedTextColor.GOLD));
@@ -214,7 +214,7 @@ public class ChoppingBoardStation extends Station {
     }
 
     /**
-     * ChoppingBoardDispenseBehavior: Zutat aus dem Spender auflegen (onPutItem ohne Spieler).
+     * ChoppingBoardDispenseBehavior: put an ingredient from the dispenser on the board (onPutItem without a player).
      */
     public boolean putFromDispenser(ItemStack item) {
         ChoppingBoardRecipe recipe = isOccupied() ? null : plugin().getRecipes().findChoppingBoard(item);
@@ -227,7 +227,7 @@ public class ChoppingBoardStation extends Station {
     }
 
     /**
-     * ChoppingBoardDispenseBehavior: Messer aus dem Spender schneidet einmal (onCutItem), fertige Ergebnisse springen heraus.
+     * ChoppingBoardDispenseBehavior: a knife from the dispenser cuts once (onCutItem), finished results pop out.
      */
     public boolean cutFromDispenser(ItemStack knife) {
         if (!isOccupied()) {
@@ -258,7 +258,7 @@ public class ChoppingBoardStation extends Station {
             }
         }
         if (results.isEmpty()) {
-            // Ergebnis-Item unbekannt (recipes.yml): Zutat einfach zurückgeben lassen
+            // Result item unknown (recipes.yml): simply return the ingredient
             results.add(item.clone());
         }
         markDirty();
@@ -295,7 +295,7 @@ public class ChoppingBoardStation extends Station {
     }
 
     /**
-     * Wie popResource im Mod: ohne Schwung an der Brettmitte.
+     * Like popResource in the mod: without momentum at the centre of the board.
      */
     private void drop(ItemStack stack) {
         Location location = new Location(world(), position().x() + 0.5, position().y() + 0.25, position().z() + 0.5);

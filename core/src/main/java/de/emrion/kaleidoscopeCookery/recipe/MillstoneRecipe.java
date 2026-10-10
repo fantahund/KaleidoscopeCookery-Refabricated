@@ -3,7 +3,7 @@ package de.emrion.kaleidoscopeCookery.recipe;
 import java.util.List;
 
 /**
- * Mühlstein: pro eingelegtem Item wird jede Ausgabe mit ihrer Chance erzeugt (MillstoneBlockEntity#tick).
+ * Millstone: for each inserted item every output is produced with its chance (MillstoneBlockEntity#tick).
  */
 public record MillstoneRecipe(String id, Ingredient ingredient, List<Output> results) {
 

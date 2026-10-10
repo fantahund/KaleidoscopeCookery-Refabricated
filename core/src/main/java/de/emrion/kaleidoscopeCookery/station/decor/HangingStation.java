@@ -32,11 +32,11 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Chili-Kette und Pilzkette (ChiliRistraBlock/StrungMushroomsBlock im Mod): hängen unter einem festen Block oder aneinander.
+ * Chili ristra and strung mushrooms (ChiliRistraBlock/StrungMushroomsBlock in the mod): hang below a solid block or from each other.
  * <ul>
- *     <li>Rechtsklick mit leerer Hand oder der Frucht: 3 Stück ernten, beim zweiten Mal ist die Kette weg</li>
- *     <li>Abbauen gibt 6 Früchte (abgeerntet 3)</li>
- *     <li>Chili-Kette: Untote darin nehmen Schaden</li>
+ *     <li>Right-click with an empty hand or the fruit: harvest 3, the second time the ristra is gone</li>
+ *     <li>Breaking gives 6 fruits (3 if harvested)</li>
+ *     <li>Chili ristra: undead inside it take damage</li>
  * </ul>
  */
 public class HangingStation extends Station {
@@ -102,7 +102,7 @@ public class HangingStation extends Station {
     }
 
     /**
-     * canSurvive: darüber die gleiche Kette oder ein Block mit fester Unterseite.
+     * canSurvive: the same ristra above or a block with a solid bottom face.
      */
     @Override
     public boolean canSurvive() {
@@ -148,7 +148,7 @@ public class HangingStation extends Station {
     }
 
     /**
-     * Loot-Tabelle: nur Früchte (6, abgeerntet 3), nicht die Kette selbst.
+     * Loot table: only fruits (6, 3 if harvested), not the ristra itself.
      */
     @Override
     public @Nullable ItemStack selfDrop() {
@@ -186,7 +186,7 @@ public class HangingStation extends Station {
             }
         }
         if (kind.hurtsUndead) {
-            // entityInside: Untote in der Kette nehmen 2 Schaden (Schadens-Cooldown 10 Ticks)
+            // entityInside: undead in the ristra take 2 damage (damage cooldown 10 ticks)
             BoundingBox box = BoundingBox.of(world().getBlockAt(position().x(), position().y(), position().z()));
             for (Entity entity : world().getNearbyEntities(box, e -> e instanceof Mob && Tag.ENTITY_TYPES_UNDEAD.isTagged(e.getType()))) {
                 ((LivingEntity) entity).damage(2, DamageSource.builder(DamageType.MAGIC).build());

@@ -15,9 +15,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Zutat eines Rezepts: eine Menge erlaubter Item-IDs (Mod-Items oder minecraft:...).
- * In recipes.yml als ID, "#tag" oder Liste von Alternativen. Tags aus dem Abschnitt "tags",
- * Vanilla-Tags (#minecraft:planks ...) kommen vom Server.
+ * Ingredient of a recipe: a set of allowed item ids (mod items or minecraft:...).
+ * In recipes.yml as an id, "#tag" or a list of alternatives. Tags from the "tags" section,
+ * vanilla tags (#minecraft:planks ...) come from the server.
  */
 public record Ingredient(Set<Key> items) {
 
@@ -26,14 +26,14 @@ public record Ingredient(Set<Key> items) {
     }
 
     /**
-     * Erstes erlaubtes Item (für Anzeigen).
+     * First allowed item (for display).
      */
     public Key first() {
         return items.iterator().next();
     }
 
     /**
-     * @throws IllegalArgumentException bei unbekannten Tags oder leeren Zutaten
+     * @throws IllegalArgumentException for unknown tags or empty ingredients
      */
     public static Ingredient parse(Object value, Map<String, List<String>> tags) {
         Set<Key> items = new LinkedHashSet<>();

@@ -27,12 +27,12 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Eine Station in der Welt: Interaction-Entity (Klicks, Zustand im PDC) + ItemDisplays als Teile
- * (Modell, Zutaten, Flüssigkeit ...) + optional ein Barriere-Block.
+ * A station in the world: Interaction entity (clicks, state in the PDC) + ItemDisplays as parts
+ * (model, ingredients, liquid ...) + optionally a barrier block.
  * <p>
- * Unterklassen halten ihren Zustand in Feldern, laden/speichern ihn über {@link #load}/{@link #save}
- * und bauen die Darstellung in {@link #updateDisplay()} über {@link #showPart}/{@link #hidePart} auf.
- * Displays werden nur angefasst, wenn sich Modell oder Transformation wirklich ändern.
+ * Subclasses keep their state in fields, load/save it via {@link #load}/{@link #save}
+ * and build the visuals in {@link #updateDisplay()} via {@link #showPart}/{@link #hidePart}.
+ * Displays are only touched when the model or transformation really changes.
  */
 public abstract class Station {
 
@@ -48,52 +48,52 @@ public abstract class Station {
         this.context = context;
     }
 
-    // ---- Lebenszyklus (von Unterklassen umzusetzen) ----
+    // ---- Life cycle (to be implemented by subclasses) ----
 
     /**
-     * Zustand aus dem PDC lesen (leerer Container bei einer neuen Station).
+     * Read the state from the PDC (empty container for a new station).
      */
     protected abstract void load(PersistentDataContainer state);
 
     /**
-     * Zustand in den (leeren) PDC schreiben.
+     * Write the state into the (empty) PDC.
      */
     protected abstract void save(PersistentDataContainer state);
 
     /**
-     * Alle Teile passend zum Zustand anzeigen.
+     * Show all parts matching the state.
      */
     public abstract void updateDisplay();
 
     /**
-     * Rechtsklick (Haupthand).
+     * Right-click (main hand).
      *
-     * @return true, wenn etwas passiert ist
+     * @return true if something happened
      */
     public boolean onInteract(Player player, EquipmentSlot hand) {
         return false;
     }
 
     /**
-     * Rechtsklick mit einem Stations-Item auf diese Station, bevor normal platziert wird (z. B. Dampfkörbe stapeln).
+     * Right-click on this station with a station item, before it is placed normally (e.g. stacking steamers).
      *
-     * @return true, wenn die Station das Item selbst verarbeitet hat
+     * @return true if the station handled the item itself
      */
     public boolean interceptPlacement(Player player, ItemStack held) {
         return false;
     }
 
     /**
-     * Linksklick ohne Schleichen (Schleichen + Linksklick baut ab).
+     * Left click without sneaking (sneaking + left click breaks).
      *
-     * @return true, wenn etwas passiert ist
+     * @return true if something happened
      */
     public boolean onAttack(Player player) {
         return false;
     }
 
     /**
-     * Wird jeden Tick aufgerufen, solange {@link #isTicking()} true ist und der Chunk geladen ist.
+     * Called every tick as long as {@link #isTicking()} is true and the chunk is loaded.
      */
     public void tick(long serverTick) {
     }
@@ -103,74 +103,74 @@ public abstract class Station {
     }
 
     /**
-     * Geplanter Einzel-Tick (StationManager#schedule).
+     * Scheduled single tick (StationManager#schedule).
      */
     public void scheduledTick(long serverTick) {
     }
 
     /**
-     * Station wurde geladen bzw. gesetzt und ist registriert (z. B. ersten geplanten Tick anlegen).
+     * The station was loaded or placed and is registered (e.g. schedule the first tick).
      */
     protected void onAttached() {
     }
 
     /**
-     * Item, das die Station beim Abbauen (außer im Kreativmodus) zurückgibt. null = keins.
+     * Item the station returns when broken (except in creative mode). null = none.
      */
     public @Nullable ItemStack selfDrop() {
         return items().create(context.type().item(), 1);
     }
 
     /**
-     * Darf die Station an ihrer Stelle bleiben (zusätzlich zum festen Block darunter, siehe StationType#needsSupport)?
+     * May the station stay where it is (in addition to the solid block below, see StationType#needsSupport)?
      */
     public boolean canSurvive() {
         return true;
     }
 
     /**
-     * Linksklick baut ab, ohne Schleichen (Pflanzen).
+     * Left click breaks it without sneaking (crops).
      */
     public boolean breaksOnAttack() {
         return false;
     }
 
     /**
-     * Beute beim Abbauen durch einen Spieler (z. B. mit Glück).
+     * Loot when broken by a player (e.g. with Fortune).
      */
     public List<ItemStack> contents(@Nullable Player breaker) {
         return contents();
     }
 
     /**
-     * Inhalt, der beim Abbauen fallen gelassen wird (ohne das Stations-Item selbst).
+     * Contents dropped when broken (without the station item itself).
      */
     public List<ItemStack> contents() {
         return List.of();
     }
 
     /**
-     * Statuszeile, die ein Spieler in der Actionbar sieht, solange er die Station anschaut. null = keine.
+     * Status line a player sees in the action bar while looking at the station. null = none.
      */
     public net.kyori.adventure.text.@Nullable Component hud(Player viewer) {
         return null;
     }
 
     /**
-     * Alle Blöcke, die die Station belegt (Standard: nur ihr eigener).
+     * All blocks the station occupies (default: only its own).
      */
     public List<BlockKey> occupied() {
         return context.type().footprint(position());
     }
 
     /**
-     * Zeile für /kc info und Hologramme.
+     * Line for /kc info and holograms.
      */
     public String describe() {
         return context.type().id();
     }
 
-    // ---- Hilfen für Unterklassen ----
+    // ---- Helpers for subclasses ----
 
     public StationContext context() {
         return context;
@@ -201,14 +201,14 @@ public abstract class Station {
     }
 
     /**
-     * Mittelpunkt des Blocks.
+     * Centre of the block.
      */
     public Location center() {
         return new Location(world(), position().x() + 0.5, position().y() + 0.5, position().z() + 0.5);
     }
 
     /**
-     * Zustand geändert: wird spätestens nach einer Sekunde, beim Entladen und beim Speichern der Welt geschrieben.
+     * State changed: written at the latest after one second, on unload and when the world is saved.
      */
     protected void markDirty() {
         dirty = true;
@@ -219,18 +219,18 @@ public abstract class Station {
     }
 
     /**
-     * Aussehen eines Teils: welches Item (bzw. Modell), wie dargestellt, wie hell.
+     * Look of a part: which item (or model), how it is displayed, how bright.
      *
-     * @param brightness null = Licht der Umgebung
+     * @param brightness null = ambient light
      */
     public record PartLook(ItemStack stack, ItemDisplay.ItemDisplayTransform displayTransform, Transformation transformation,
                               Display.@Nullable Brightness brightness) {
     }
 
     /**
-     * Teil anzeigen bzw. aktualisieren. Displays werden nur geändert, wenn sich etwas unterscheidet.
+     * Show or update a part. Displays are only changed if something differs.
      *
-     * @param interpolationTicks 0 = sofort, sonst flüssiger Übergang der Transformation
+     * @param interpolationTicks 0 = immediately, otherwise a smooth transition of the transformation
      */
     protected void showPart(String name, PartLook look, int interpolationTicks) {
         look = corrected(look);
@@ -259,8 +259,8 @@ public abstract class Station {
     }
 
     /**
-     * Der Renderer von ItemDisplays dreht das Modell um 180° um die Y-Achse. Die Mod-Renderer tun das nicht –
-     * deshalb hier über die rechte Rotation (wirkt direkt aufs Modell) wieder zurückdrehen.
+     * The ItemDisplay renderer rotates the model by 180° around the Y axis. The mods' renderers do not -
+     * so rotate it back here via the right rotation (applies directly to the model).
      */
     private static final Quaternionf RENDERER_CORRECTION = new Quaternionf().rotationY((float) Math.PI);
 
@@ -271,7 +271,7 @@ public abstract class Station {
     }
 
     /**
-     * Modell aus dem Resourcepack anzeigen (Blockmodelle, Schnittstufen ...).
+     * Show a model from the resource pack (block models, cutting stages ...).
      */
     protected void showPart(String name, Key model, Transformation transformation, int interpolationTicks) {
         showPart(name, new PartLook(modelStack(model), ItemDisplay.ItemDisplayTransform.NONE, transformation, null), interpolationTicks);
@@ -282,7 +282,7 @@ public abstract class Station {
     }
 
     /**
-     * Echtes Item anzeigen (Zutaten), wie ein Item im Rahmen (FIXED).
+     * Show a real item (ingredients), like an item in a frame (FIXED).
      */
     protected void showItemPart(String name, ItemStack stack, Transformation transformation, int interpolationTicks, Display.@Nullable Brightness brightness) {
         showPart(name, new PartLook(displayStack(stack), ItemDisplay.ItemDisplayTransform.FIXED, transformation, brightness), interpolationTicks);
@@ -297,7 +297,7 @@ public abstract class Station {
     }
 
     /**
-     * Alle Teile entfernen, deren Name mit prefix beginnt (z. B. "input_").
+     * Remove all parts whose name starts with prefix (e.g. "input_").
      */
     protected void hidePartsStartingWith(String prefix, int keep) {
         for (String name : List.copyOf(parts.keySet())) {
@@ -323,9 +323,9 @@ public abstract class Station {
     }
 
     /**
-     * Zusätzliche Klick-Hitbox (z. B. zweite Hälfte eines 1x2-Gerichts). Klicks darauf gehen an diese Station.
+     * Additional click hitbox (e.g. the second half of a 1x2 dish). Clicks on it go to this station.
      *
-     * @param offset Mitte der Unterseite relativ zur Blockmitte unten der Station
+     * @param offset centre of the bottom face relative to the bottom centre of the station block
      */
     protected void showHitbox(String name, Vector offset, float width, float height) {
         Interaction hitbox = hitboxes.get(name);
@@ -339,7 +339,7 @@ public abstract class Station {
         }
         String owner = root().getUniqueId().toString();
         hitbox = world().spawn(location, Interaction.class, interaction -> {
-            interaction.setVisibleByDefault(false); // nur Spielern in Reichweite gezeigt (StationManager#updateVisibility)
+            interaction.setVisibleByDefault(false); // only shown to players in range (StationManager#updateVisibility)
             interaction.setInteractionWidth(width);
             interaction.setInteractionHeight(height);
             interaction.setResponsive(true);
@@ -361,14 +361,14 @@ public abstract class Station {
     }
 
     /**
-     * Blockmodell wie im Blockstate ausgerichtet.
+     * Block model oriented as in the blockstate.
      */
     protected Transformation blockTransform(float offsetY) {
         return new Transformation(new Vector3f(0, offsetY, 0), facing().blockRotation(), new Vector3f(1, 1, 1), new Quaternionf());
     }
 
     /**
-     * Modell wie in den Block-Entity-Renderern der Mods ausgerichtet.
+     * Model oriented as in the mods' block entity renderers.
      */
     protected Transformation rendererTransform(float offsetY) {
         return new Transformation(new Vector3f(0, offsetY, 0), facing().rendererRotation(), new Vector3f(1, 1, 1), new Quaternionf());
@@ -391,20 +391,20 @@ public abstract class Station {
     }
 
     /**
-     * Render-Distanz der Displays (view_range: Vielfaches von 64 Blöcken, mal der Entity-Distanz des Clients).
-     * Pflanzen stehen zu Hunderten auf Feldern und nutzen weniger.
+     * Render distance of the displays (view_range: multiple of 64 blocks, times the client's entity distance).
+     * Crops stand on fields by the hundreds and use less.
      */
     protected float viewRange() {
         return 1.0f;
     }
 
-    /** Höchstens bis zur Simulationsdistanz der Welt (dort wachsen Pflanzen und arbeiten Stationen) */
+    /** At most up to the simulation distance of the world (crops grow and stations work there) */
     private float effectiveViewRange() {
         return Math.min(viewRange(), world().getSimulationDistance() * 16f / 64f);
     }
 
     /**
-     * Klick-Entities dieser Station (Wurzel und zusätzliche Hitboxen).
+     * Click entities of this station (root and additional hitboxes).
      */
     public List<Interaction> interactions() {
         List<Interaction> result = new java.util.ArrayList<>(hitboxes.size() + 1);
@@ -414,7 +414,7 @@ public abstract class Station {
     }
 
     /**
-     * Größe der Displays fürs Culling (große Modelle wie der Mühlstein brauchen mehr).
+     * Size of the displays for culling (large models like the millstone need more).
      */
     protected float displaySize() {
         return 1.5f + context.type().width() - 1 + context.type().height() - 1;
@@ -428,7 +428,7 @@ public abstract class Station {
     }
 
     /**
-     * Item für ein Display: nur Aussehen (Modell, Glitzern), ohne Namen/PDC – spart Daten beim Senden.
+     * Item for a display: only the look (model, glint), without name/PDC - saves data when sending.
      */
     @SuppressWarnings("UnstableApiUsage")
     public static ItemStack displayStack(ItemStack stack) {
@@ -441,13 +441,13 @@ public abstract class Station {
     }
 
     /**
-     * Klickposition des aktuellen Rechtsklicks relativ zur Blockmitte unten der Station (nur während onInteract), sonst null.
+     * Click position of the current right-click relative to the bottom centre of the station block (only during onInteract), otherwise null.
      */
     protected @Nullable Vector clickPosition() {
         return clickPosition;
     }
 
-    // ---- intern (StationManager) ----
+    // ---- internal (StationManager) ----
 
     void setClickPosition(@Nullable Vector clickPosition) {
         this.clickPosition = clickPosition;
@@ -496,10 +496,10 @@ public abstract class Station {
     }
 
     /**
-     * Alle Entities entfernen (Abbauen).
+     * Remove all entities (breaking).
      */
     /**
-     * Wird beim Entfernen der Station aufgerufen (Abbauen, /kc repair ...), bevor die Entities verschwinden.
+     * Called when the station is removed (breaking, /kc repair ...), before the entities disappear.
      */
     protected void onRemoved() {
     }

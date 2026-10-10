@@ -45,8 +45,8 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 /**
- * Verwaltet alle geladenen Stationen: Laden/Entladen mit den Chunks, ein zentraler Tick-Task,
- * Platzieren, Abbauen und Reparatur.
+ * Manages all loaded stations: loading/unloading with the chunks, one central tick task,
+ * placing, breaking and repair.
  */
 public class StationManager implements Listener {
 
@@ -61,10 +61,10 @@ public class StationManager implements Listener {
     private final Map<Key, StationType> typesByItem = new HashMap<>();
     private final Map<UUID, Station> byRoot = new HashMap<>();
     private final Map<BlockKey, Station> byBlock = new HashMap<>();
-    /** Zusätzliche Hitboxen (Interaction mit STATION_OWNER) -> Station */
+    /** Additional hitboxes (Interaction with STATION_OWNER) -> station */
     private final Map<UUID, Station> byHitbox = new HashMap<>();
     private final Set<Station> ticking = new LinkedHashSet<>();
-    /** Geplante Einzel-Ticks: Server-Tick -> Stationen (z. B. der nächste Zufalls-Tick einer Pflanze) */
+    /** Scheduled single ticks: server tick -> stations (e.g. the next random tick of a crop) */
     private final Map<Long, List<Station>> scheduled = new HashMap<>();
     private final Map<UUID, Long> hudPausedUntil = new HashMap<>();
     private BukkitTask task;
@@ -82,12 +82,12 @@ public class StationManager implements Listener {
         types.put(type.id(), type);
         typesByItem.put(type.item(), type);
         if (task != null) {
-            attachLoaded(); // Typ eines Addons: dessen Stationen in schon geladenen Chunks übernehmen
+            attachLoaded(); // an addon's type: adopt its stations in chunks that are already loaded
         }
     }
 
     /**
-     * Weiteres Item, das denselben Stations-Typ setzt (z. B. volle und leere Gewürzflasche).
+     * Another item that places the same station type (e.g. full and empty seasoning bottle).
      */
     public void registerItem(Key item, StationType type) {
         typesByItem.put(item, type);
@@ -141,7 +141,7 @@ public class StationManager implements Listener {
         if (due != null) {
             for (Station station : due) {
                 if (station.isRemoved() || byRoot.get(station.root().getUniqueId()) != station) {
-                    continue; // abgebaut oder Chunk entladen (beim Laden wird neu geplant)
+                    continue; // broken or chunk unloaded (rescheduled on load)
                 }
                 try {
                     station.scheduledTick(serverTick);
@@ -172,15 +172,15 @@ public class StationManager implements Listener {
         }
     }
 
-    // ---- Sichtbarkeit der Klick-Entities ----
+    // ---- Visibility of the click entities ----
 
-    /** Interaction-Entities bekommt nur, wer so nah ist (Klick-Reichweite im Survival 3, Kreativ 5 Blöcke) */
+    /** Only players this close get the Interaction entities (click reach is 3 blocks in survival, 5 in creative) */
     private static final double SHOW_DISTANCE = 8;
     private static final double HIDE_DISTANCE = 10;
     private static final int VISIBILITY_INTERVAL = 5;
-    /** Spieler -> Interaction-Entities, die er gerade sieht */
+    /** Player -> Interaction entities they currently see */
     private final Map<UUID, java.util.Set<UUID>> visible = new HashMap<>();
-    /** Stationen je Chunk, damit jeder Spieler nur die Stationen um sich prüft (nicht alle auf dem Server) */
+    /** Stations per chunk, so each player only checks the stations around them (not all on the server) */
     private final Map<ChunkKey, java.util.List<Station>> byChunk = new HashMap<>();
 
     private record ChunkKey(UUID world, int x, int z) {
@@ -190,8 +190,8 @@ public class StationManager implements Listener {
     }
 
     /**
-     * Gibt es eine Station dieses Typs, deren Block höchstens radius Blöcke (je Achse) von block entfernt ist?
-     * Sucht nur in den Chunks der Umgebung (Index byChunk).
+     * Is there a station of this type whose block is at most radius blocks (per axis) away from block?
+     * Only searches the chunks around it (index byChunk).
      */
     public boolean anyNear(BlockKey block, int radius, String typeId) {
         for (int cx = (block.x() - radius) >> 4; cx <= (block.x() + radius) >> 4; cx++) {
@@ -209,8 +209,8 @@ public class StationManager implements Listener {
     }
 
     /**
-     * Klick-Entities sind standardmäßig unsichtbar (sonst schickt der Server Hunderte Felder-Pflanzen an jeden
-     * Client in 96 Blöcken). Gezeigt werden sie nur Spielern in der Nähe.
+     * Click entities are invisible by default (otherwise the server sends hundreds of field crops to every
+     * client within 96 blocks). They are only shown to players nearby.
      */
     private void updateVisibility() {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
@@ -259,7 +259,7 @@ public class StationManager implements Listener {
     }
 
     /**
-     * Neue Station bzw. Hitbox sofort den Spielern in der Nähe zeigen (nicht erst beim nächsten Durchlauf).
+     * Show a new station or hitbox to nearby players right away (not only on the next pass).
      */
     public void revealNear(Station station) {
         for (Player player : station.world().getPlayers()) {
@@ -275,7 +275,7 @@ public class StationManager implements Listener {
     }
 
     /**
-     * Statusanzeige: Wer eine Station anschaut (max. 5 Blöcke), sieht ihren Status in der Actionbar.
+     * Status display: whoever looks at a station (max. 5 blocks) sees its status in the action bar.
      */
     private void updateHud() {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
@@ -296,7 +296,7 @@ public class StationManager implements Listener {
             if (block != null && block.getHitPosition().distanceSquared(player.getEyeLocation().toVector())
                     < hit.getHitPosition().distanceSquared(player.getEyeLocation().toVector()) - 0.05
                     && at(block.getHitBlock()) == null) {
-                continue; // Block davor
+                continue; // block in front
             }
             Station station = byEntity(hit.getHitEntity());
             Component hud = station == null ? null : station.hud(player);
@@ -311,7 +311,7 @@ public class StationManager implements Listener {
     }
 
     /**
-     * Nachricht einer Station in der Actionbar: Statusanzeige 2 s lang nicht darüberschreiben.
+     * A station's message in the action bar: do not overwrite it with the status display for 2 s.
      */
     public void actionBar(Player player, Component message) {
         player.sendActionBar(message);
@@ -319,10 +319,10 @@ public class StationManager implements Listener {
     }
 
     /**
-     * Station tickt (oder nicht mehr), z. B. nach einer Zustandsänderung.
+     * The station ticks (or no longer does), e.g. after a state change.
      */
     /**
-     * Einmaligen Tick in delay Ticks planen ({@link Station#scheduledTick}).
+     * Schedule a single tick in delay ticks ({@link Station#scheduledTick}).
      */
     public void schedule(Station station, long delay) {
         scheduled.computeIfAbsent(serverTick + Math.max(1, delay), k -> new ArrayList<>()).add(station);
@@ -342,7 +342,7 @@ public class StationManager implements Listener {
         }
     }
 
-    // ---- Laden / Entladen ----
+    // ---- Loading / unloading ----
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntitiesLoad(EntitiesLoadEvent event) {
@@ -370,7 +370,7 @@ public class StationManager implements Listener {
     }
 
     /**
-     * Stationen unter den Entities eines Chunks finden, ihre Displays zuordnen und verwaiste Displays entfernen.
+     * Find stations among a chunk's entities, assign their displays and remove orphaned displays.
      */
     private void attach(List<Entity> entities) {
         Map<String, List<Entity>> displaysByOwner = new HashMap<>();
@@ -391,7 +391,7 @@ public class StationManager implements Listener {
             Station station = create(root);
             List<Entity> displays = displaysByOwner.remove(root.getUniqueId().toString());
             if (station == null) {
-                continue; // unbekannter Typ: Entities stehen lassen
+                continue; // unknown type: leave the entities alone
             }
             if (displays != null) {
                 for (Entity part : displays) {
@@ -411,7 +411,7 @@ public class StationManager implements Listener {
                 plugin.getLogger().log(Level.SEVERE, "Station bei " + station.position() + " konnte nicht angezeigt werden", e);
             }
         }
-        // Displays ohne Station im selben Chunk sind verwaist (Teile liegen immer im Block der Station)
+        // Displays without a station in the same chunk are orphaned (parts are always in the block of the station)
         for (List<Entity> orphans : displaysByOwner.values()) {
             for (Entity orphan : orphans) {
                 UUID owner = UUID.fromString(orphan.getPersistentDataContainer().get(Keys.STATION_OWNER, PersistentDataType.STRING));
@@ -423,7 +423,7 @@ public class StationManager implements Listener {
     }
 
     /**
-     * Bei Barriere-Stationen muss die Hitbox den ganzen Block etwas überragen, sonst treffen Klicks die Barriere.
+     * For barrier stations the hitbox must slightly exceed the whole block, otherwise clicks hit the barrier.
      */
     private static float hitboxWidth(StationType type) {
         return type.barrier() ? Math.max(type.interactionWidth(), 1f) + 0.02f : type.interactionWidth();
@@ -435,7 +435,7 @@ public class StationManager implements Listener {
 
     private @Nullable Station create(Interaction root) {
         if (root.isVisibleByDefault()) {
-            root.setVisibleByDefault(false); // ältere Stationen: Klick-Entity nur noch in der Nähe zeigen
+            root.setVisibleByDefault(false); // older stations: show the click entity only nearby
         }
         PersistentDataContainer pdc = root.getPersistentDataContainer();
         String typeId = pdc.get(Keys.STATION_TYPE, PersistentDataType.STRING);
@@ -445,13 +445,13 @@ public class StationManager implements Listener {
             return null;
         }
         Facing facing = Facing.byDataValue(pdc.getOrDefault(Keys.STATION_FACING, PersistentDataType.INTEGER, Facing.NORTH.dataValue()));
-        // Hitbox an die aktuelle Größe des Typs anpassen (ältere Stationen)
+        // Adjust the hitbox to the type's current size (older stations)
         if (root.getInteractionWidth() != hitboxWidth(type) || root.getInteractionHeight() != hitboxHeight(type)) {
             root.setInteractionWidth(hitboxWidth(type));
             root.setInteractionHeight(hitboxHeight(type));
         }
         BlockKey position = BlockKey.of(root.getLocation().add(0, 0.05, 0));
-        // Typ hat keine Barriere mehr (Wok, Suppentopf, Dampfgarer): alte Barriere entfernen
+        // The type has no barrier any more (wok, stockpot, steamer): remove the old barrier
         Block old = type.barrier() ? null : position.block();
         if (old != null && old.getType() == Material.BARRIER) {
             old.setType(Material.AIR, false);
@@ -506,7 +506,7 @@ public class StationManager implements Listener {
     }
 
     /**
-     * Belegte Blöcke einer Station haben sich geändert (z. B. 1x2-Gericht platziert).
+     * The occupied blocks of a station changed (e.g. a 1x2 dish was placed).
      */
     public void updateOccupied(Station station, List<BlockKey> before) {
         for (BlockKey block : before) {
@@ -517,7 +517,7 @@ public class StationManager implements Listener {
         }
     }
 
-    // ---- Abfragen ----
+    // ---- Queries ----
 
     public @Nullable Station at(BlockKey position) {
         return byBlock.get(position);
@@ -532,7 +532,7 @@ public class StationManager implements Listener {
     }
 
     /**
-     * Station zu einer Wurzel-Entity oder einer zusätzlichen Hitbox.
+     * Station for a root entity or an additional hitbox.
      */
     public @Nullable Station byEntity(Entity entity) {
         Station station = byRoot.get(entity.getUniqueId());
@@ -540,8 +540,8 @@ public class StationManager implements Listener {
     }
 
     /**
-     * Hitzequelle für Wok/Suppentopf wie hasHeatSource im Mod: brennender Herd, Blöcke mit LIT=true
-     * (Lagerfeuer, Ofen ...) oder Feuer, Seelenfeuer, Lava, Magma.
+     * Heat source for wok/stockpot like hasHeatSource in the mod: burning stove, blocks with LIT=true
+     * (campfire, furnace ...) or fire, soul fire, lava, magma.
      */
     public boolean isHeatSource(Block block) {
         Station station = at(block);
@@ -558,10 +558,10 @@ public class StationManager implements Listener {
         return Collections.unmodifiableCollection(byRoot.values());
     }
 
-    // ---- Platzieren / Abbauen ----
+    // ---- Placing / breaking ----
 
     /**
-     * Station erzeugen. Prüfungen (Platz, Rechte) macht der Aufrufer.
+     * Create a station. The caller does the checks (space, permissions).
      */
     public Station place(StationType type, Block block, Facing facing) {
         return place(type, block, facing, station -> {
@@ -569,7 +569,7 @@ public class StationManager implements Listener {
     }
 
     /**
-     * @param init wird vor dem ersten Speichern/Anzeigen aufgerufen (z. B. welches Gericht auf dem Teller liegt)
+     * @param init called before the first save/display (e.g. which dish is on the plate)
      */
     public Station place(StationType type, Block block, Facing facing, java.util.function.Consumer<Station> init) {
         if (type.barrier()) {
@@ -582,7 +582,7 @@ public class StationManager implements Listener {
         float finalWidth = hitboxWidth(type);
         float finalHeight = hitboxHeight(type);
         Interaction root = block.getWorld().spawn(location, Interaction.class, interaction -> {
-            interaction.setVisibleByDefault(false); // nur Spielern in Reichweite gezeigt (updateVisibility)
+            interaction.setVisibleByDefault(false); // only shown to players in range (updateVisibility)
             interaction.setInteractionWidth(finalWidth);
             interaction.setInteractionHeight(finalHeight);
             interaction.setResponsive(true);
@@ -614,7 +614,7 @@ public class StationManager implements Listener {
     }
 
     /**
-     * Station abbauen: Inhalt und (außer im Kreativmodus) das Stations-Item fallen lassen.
+     * Break a station: drop its contents and (except in creative mode) the station item.
      */
     public void breakStation(Station station, @Nullable Player player) {
         if (station.isRemoved()) {
@@ -633,7 +633,7 @@ public class StationManager implements Listener {
             }
         }
         remove(station);
-        // Station darüber ohne Halt (z. B. Dampfgarer auf Wok, Suppentopf oder Dampfgarer) fällt mit ab
+        // A station above without support (e.g. steamer on wok, stockpot or steamer) drops as well
         Block below = station.position().block();
         Station above = below == null ? null : at(below.getRelative(org.bukkit.block.BlockFace.UP));
         if (above != null && above.context().type().needsSupport() && (!below.getType().isSolid() || below.getType() == Material.BARRIER)) {
@@ -644,7 +644,7 @@ public class StationManager implements Listener {
     }
 
     /**
-     * Station ohne Drops entfernen.
+     * Remove a station without drops.
      */
     public void remove(Station station) {
         detach(station);
@@ -659,13 +659,13 @@ public class StationManager implements Listener {
         }
     }
 
-    // ---- Reparatur ----
+    // ---- Repair ----
 
     /**
-     * Prüft alle geladenen Stationen: fehlende Displays neu erzeugen, fehlende Barrieren setzen,
-     * Stationen ohne Platz entfernen, verwaiste Displays/Interactions löschen.
+     * Checks all loaded stations: recreate missing displays, set missing barriers,
+     * remove stations without space, delete orphaned displays/interactions.
      *
-     * @return Anzahl der Korrekturen
+     * @return number of corrections
      */
     public int repair() {
         int fixes = 0;
@@ -675,7 +675,7 @@ public class StationManager implements Listener {
                 continue;
             }
             if (!station.root().isValid()) {
-                // Interaction wurde entfernt (z. B. /kill): Teile und Barriere mit aufräumen
+                // The Interaction was removed (e.g. /kill): clean up the parts and barrier too
                 remove(station);
                 fixes++;
                 continue;
@@ -730,7 +730,7 @@ public class StationManager implements Listener {
                 }
                 if (interaction.getPersistentDataContainer().has(Keys.STATION_TYPE, PersistentDataType.STRING) && !byRoot.containsKey(interaction.getUniqueId())
                         && types.containsKey(interaction.getPersistentDataContainer().get(Keys.STATION_TYPE, PersistentDataType.STRING))) {
-                    // Doppelte Station im selben Block
+                    // Duplicate station in the same block
                     interaction.remove();
                     fixes++;
                 }

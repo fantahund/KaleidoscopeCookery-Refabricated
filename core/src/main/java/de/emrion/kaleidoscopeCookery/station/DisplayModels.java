@@ -5,7 +5,7 @@ import net.kyori.adventure.key.Key;
 import java.util.Map;
 
 /**
- * Zutaten, die in Töpfen mit einem anderen Modell gezeigt werden (item_render_replacer.json im Mod).
+ * Ingredients shown with a different model in pots (item_render_replacer.json in the mod).
  */
 public final class DisplayModels {
 

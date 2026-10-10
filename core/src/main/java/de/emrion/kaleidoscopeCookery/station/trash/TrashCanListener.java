@@ -15,8 +15,8 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * TrashCanBlock#fallOn: landet ein Spieler nach mehr als einem Block Fall auf dem Mülleimer, steigt er hinein.
- * Die Fallhöhe wird beim Landen zurückgesetzt, deshalb merken wir sie uns aus der vorherigen Bewegung.
+ * TrashCanBlock#fallOn: if a player lands on the trash can after falling more than one block, they climb in.
+ * The fall distance is reset on landing, so we remember it from the previous movement.
  */
 public class TrashCanListener implements Listener {
 
@@ -44,7 +44,7 @@ public class TrashCanListener implements Listener {
         }
         double y = event.getTo().getY();
         Block below = event.getTo().clone().subtract(0, 0.05, 0).getBlock();
-        // Füße auf der Oberseite des Eimers
+        // Feet on the top of the can
         if (y - below.getY() > 1.05 || !(stations.at(below) instanceof TrashCanStation trashCan)) {
             return;
         }

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * /kc place &lt;typ&gt; &lt;x&gt; &lt;y&gt; &lt;z&gt; [welt] [ausrichtung] – Station ohne Item setzen (Bau, Tests).
+ * /kc place &lt;type&gt; &lt;x&gt; &lt;y&gt; &lt;z&gt; [world] [facing] - place a station without an item (building, tests).
  */
 public class PlaceCommand extends SubCommand {
 

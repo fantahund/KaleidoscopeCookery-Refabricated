@@ -32,10 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Vanilla-Essen abschwächen: Jedes Vanilla-Essen bekommt die food-Komponente mit den eingestellten Prozenten –
- * überall, wo es entsteht oder auftaucht (Drops, Werkbank, Ofen, Loot, Handel, Inventare). Weil alle Stapel dieselben
- * Werte bekommen, stapeln sie weiter normal, und Mods wie AppleSkin zeigen die echten Werte an.
- * Ändert sich die Konfiguration, werden die Werte beim nächsten Kontakt angepasst; 100 % = Vanilla-Komponente.
+ * Nerf vanilla food: every vanilla food gets the food component with the configured percentages -
+ * wherever it is created or shows up (drops, crafting table, furnace, loot, trading, inventories). Because all stacks get the same
+ * values they keep stacking normally, and mods like AppleSkin show the real values.
+ * If the configuration changes, the values are adjusted on the next contact; 100% = vanilla component.
  */
 @SuppressWarnings("UnstableApiUsage")
 public class VanillaFoodAdjuster implements Listener {
@@ -67,7 +67,7 @@ public class VanillaFoodAdjuster implements Listener {
     }
 
     /**
-     * Werte, die Vanilla diesem Item-Typ gibt (ohne Anpassungen am Stapel), null bei Nicht-Essen.
+     * Values vanilla gives this item type (without adjustments on the stack), null for non-food.
      */
     public static @Nullable FoodProperties vanillaFood(Material material) {
         ItemType type = material.asItemType();
@@ -75,9 +75,9 @@ public class VanillaFoodAdjuster implements Listener {
     }
 
     /**
-     * food-Komponente des Stapels auf den eingestellten Wert bringen.
+     * Bring the stack's food component to the configured value.
      *
-     * @return true, wenn der Stapel geändert wurde
+     * @return true if the stack was changed
      */
     public boolean adjust(@Nullable ItemStack stack) {
         if (stack == null || stack.isEmpty() || CookeryItems.isCustom(stack)) {
@@ -119,7 +119,7 @@ public class VanillaFoodAdjuster implements Listener {
         }
     }
 
-    // ---- Wo Essen entsteht oder auftaucht ----
+    // ---- Where food is created or shows up ----
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemSpawn(ItemSpawnEvent event) {

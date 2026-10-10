@@ -14,9 +14,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Öl von Schweinen &amp; Co., wenn sie mit einem Schneidewerkzeug getötet werden
- * (Mod: Loot-Tabellen kaleidoscope_cookery:pig usw. mit Küchenmesser-Bedingung), und Eselfleisch von Eseln
- * (Fabric-Fork: minecraft:entities/donkey, 2 Würfe je 1–2 mit Küchenmesser).
+ * Oil from pigs &amp; co. when they are killed with a cutting tool
+ * (mod: loot tables kaleidoscope_cookery:pig etc. with a kitchen knife condition), and donkey meat from donkeys
+ * (Fabric fork: minecraft:entities/donkey, 2 rolls of 1-2 each with a kitchen knife).
  */
 public class OilDropListener implements Listener {
 
@@ -55,7 +55,7 @@ public class OilDropListener implements Listener {
             return;
         }
         int count = random.nextInt(drops.min(), drops.max() + 1);
-        // enchanted_count_increase: pro Stufe Plünderung 0..1 zusätzlich
+        // enchanted_count_increase: 0..1 extra per level of Looting
         int looting = tool.getEnchantmentLevel(Enchantment.LOOTING);
         count += Math.round(looting * random.nextFloat());
         if (count <= 0) {

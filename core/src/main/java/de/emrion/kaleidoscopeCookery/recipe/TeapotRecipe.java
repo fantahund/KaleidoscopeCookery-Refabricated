@@ -3,7 +3,7 @@ package de.emrion.kaleidoscopeCookery.recipe;
 import net.kyori.adventure.key.Key;
 
 /**
- * Teekanne: Teebasis (Flüssigkeit) + Zutat, nach {@code time} Ticks Tee.
+ * Teapot: tea base (liquid) + ingredient, tea after {@code time} ticks.
  *
  * @param fluid minecraft:water, minecraft:milk ...
  */

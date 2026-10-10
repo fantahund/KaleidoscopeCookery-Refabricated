@@ -64,18 +64,18 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Die Effekte aus Kaleidoscope Cookery, nachgebaut wie im Mod (VigorEffect, WarmthEffect, SatiatedShieldEvent ...).
- * Aktive Effekte stehen in der Seitenleiste mit den Original-Icons. Eigene Effekte im Inventar anzeigen geht nicht:
- * Effekte sind eine feste Registry im Client. Beim Verlassen werden sie im Spieler-PDC gespeichert.
+ * The effects from Kaleidoscope Cookery, rebuilt as in the mod (VigorEffect, WarmthEffect, SatiatedShieldEvent ...).
+ * Active effects are listed in the sidebar with the original icons. Showing custom effects in the inventory is not possible:
+ * effects are a fixed registry in the client. They are stored in the player PDC on quit.
  */
 public class EffectManager implements Listener {
 
     private static final NamespacedKey SAVED = Keys.key("effects");
     private static final int TICK_INTERVAL = 5;
-    /** Gesättigtes Schild: Mindest-Hunger und Erschöpfung pro abgefangenem Schaden (Mod-Standardwerte) */
+    /** Satiated shield: minimum hunger and exhaustion per absorbed damage (mod defaults) */
     private static final int SHIELD_MIN_FOOD_LEVEL = 4;
     private static final float SHIELD_EXHAUSTION_PER_DAMAGE = 2f;
-    /** Projektil-Ausweichen kostet so viel Effektdauer (Ticks) */
+    /** Projectile dodge costs this much effect duration (ticks) */
     private static final int DODGE_COST = 200;
     private static final Set<Material> TUNDRA_BLOCKS = Set.of(Material.SNOW, Material.SNOW_BLOCK, Material.POWDER_SNOW,
             Material.PACKED_ICE, Material.ICE, Material.FROSTED_ICE, Material.BLUE_ICE);
@@ -87,14 +87,14 @@ public class EffectManager implements Listener {
     private final KaleidoscopeCookery plugin;
     private final Map<UUID, EnumMap<CookeryEffect, Active>> active = new HashMap<>();
     private final Map<UUID, Sidebar> sidebars = new HashMap<>();
-    /** Effekte von Addons (z. B. Grilling): Anzeige wie die Cookery-Effekte, Wirkung setzt das Addon selbst um */
+    /** Effects of addons (e.g. Grilling): displayed like the Cookery effects, the addon implements their behaviour itself */
     private final Map<net.kyori.adventure.key.Key, AddonEffect> addonEffects = new java.util.LinkedHashMap<>();
     private final Map<UUID, Map<net.kyori.adventure.key.Key, Active>> addonActive = new HashMap<>();
 
     /**
-     * Effekt eines Addons.
+     * Effect of an addon.
      *
-     * @param icon Icon (Zeichen in einer Schrift des Addon-Packs)
+     * @param icon icon (character in a font of the addon's pack)
      */
     public record AddonEffect(net.kyori.adventure.key.Key key, net.kyori.adventure.text.format.TextColor color, Component icon) {
         public String translationKey() {
@@ -140,7 +140,7 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * Effekt eines Addons geben (höhere Stufe bzw. längere Dauer gewinnt).
+     * Give an addon's effect (the higher level or longer duration wins).
      */
     public void apply(Player player, net.kyori.adventure.key.Key key, int durationTicks, int amplifier) {
         CookeryEffect cookery = CookeryEffect.byKey(key);
@@ -180,7 +180,7 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * Effekt geben. Wie bei Vanilla gewinnt die höhere Stufe bzw. bei gleicher Stufe die längere Dauer.
+     * Give an effect. As in vanilla the higher level wins, or with the same level the longer duration.
      */
     public void apply(Player player, CookeryEffect effect, int durationTicks, int amplifier) {
         if (durationTicks <= 0) {
@@ -267,7 +267,7 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * WarmthEffect: in 5x3x5 um den Spieler eine Hitzequelle -> 1 Herz pro Sekunde, im Nether manchmal ein halbes.
+     * WarmthEffect: a heat source within 5x3x5 around the player -> 1 heart per second, sometimes half a heart in the Nether.
      */
     private void warmth(Player player) {
         double max = player.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getValue();
@@ -293,7 +293,7 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * SulfurEffect: Phantome in der Nähe verlieren den Spieler als Ziel.
+     * SulfurEffect: nearby phantoms lose the player as their target.
      */
     private void sulfur(Player player) {
         for (Phantom phantom : player.getWorld().getNearbyEntitiesByType(Phantom.class, player.getLocation(), 8, 16, 8)) {
@@ -304,7 +304,7 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * Senf: Creeper im Umkreis von 6 Blöcken fliehen (AvoidEntityGoal im Mod).
+     * Mustard: creepers within 6 blocks flee (AvoidEntityGoal in the mod).
      */
     private void mustard(Player player) {
         Location location = player.getLocation();
@@ -322,7 +322,7 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * Tundraläufer: schneller auf Schnee und Eis (Mod: Block-Geschwindigkeitsfaktor).
+     * Tundra strider: faster on snow and ice (mod: block speed factor).
      */
     private void tundraStrider(Player player) {
         Block below = player.getLocation().subtract(0, 0.2, 0).getBlock();
@@ -331,11 +331,11 @@ public class EffectManager implements Listener {
         }
     }
 
-    // ---- Anzeige ----
+    // ---- Display ----
 
     /**
-     * Seitenleiste (Scoreboard) mit den aktiven Effekten: ohne Überschrift, ohne Zahlen, eine Zeile pro Effekt.
-     * Solange Effekte aktiv sind, bekommt der Spieler ein eigenes Scoreboard; danach wieder das vorherige.
+     * Sidebar (scoreboard) with the active effects: no title, no numbers, one line per effect.
+     * While effects are active the player gets an own scoreboard; afterwards the previous one again.
      */
     private void updateBar(Player player) {
         EnumMap<CookeryEffect, Active> effects = active.get(player.getUniqueId());
@@ -383,7 +383,7 @@ public class EffectManager implements Listener {
                     .append(name)
                     .append(Component.text(" " + formatTicks(remaining), NamedTextColor.GRAY))
                     .build();
-            // Unsichtbare, eindeutige Einträge; Reihenfolge über den (versteckten) Score
+            // Invisible, unique entries; order via the (hidden) score
             Score score = sidebar.objective().getScore("\u00a7" + Integer.toHexString(line));
             score.setScore(rows.size() - line);
             score.customName(text);
@@ -418,7 +418,7 @@ public class EffectManager implements Listener {
         };
     }
 
-    // ---- Speichern ----
+    // ---- Saving ----
 
     private void save(Player player) {
         EnumMap<CookeryEffect, Active> effects = active.getOrDefault(player.getUniqueId(), new EnumMap<>(CookeryEffect.class));
@@ -431,7 +431,7 @@ public class EffectManager implements Listener {
         for (Map.Entry<CookeryEffect, Active> entry : effects.entrySet()) {
             entries.add(entry.getKey().id() + ":" + (entry.getValue().end() - tick) + ":" + entry.getValue().amplifier());
         }
-        // Addon-Effekte mit vollem Schlüssel (ns/pfad, ":" trennt die Felder)
+        // Addon effects with their full key (ns/path, ":" separates the fields)
         for (Map.Entry<net.kyori.adventure.key.Key, Active> entry : addon.entrySet()) {
             entries.add(entry.getKey().namespace() + "/" + entry.getKey().value() + ":" + (entry.getValue().end() - tick) + ":" + entry.getValue().amplifier());
         }
@@ -482,17 +482,17 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * Wie Vanilla-Effekte enden die Effekte mit dem Tod.
+     * Like vanilla effects, the effects end on death.
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onDeath(PlayerDeathEvent event) {
         clear(event.getPlayer());
     }
 
-    // ---- Effekt-Verhalten über Events ----
+    // ---- Effect behaviour via events ----
 
     /**
-     * Elan: Sprinten kostet keinen Hunger.
+     * Vigor: sprinting costs no hunger.
      */
     @EventHandler(ignoreCancelled = true)
     public void onExhaustion(EntityExhaustionEvent event) {
@@ -502,7 +502,7 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * Blähungen: Schleichen löst einen Sprung nach oben aus.
+     * Flatulence: sneaking triggers a jump upwards.
      */
     @EventHandler(ignoreCancelled = true)
     public void onSneak(PlayerToggleSneakEvent event) {
@@ -516,8 +516,8 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * Sättigungsschild: Hunger fängt Schaden ab (Mod-Standard: 100 % bis 64 Schaden, 2 Erschöpfung pro Schadenspunkt,
-     * nur ab 4 Hunger und nicht mit Hunger-Effekt).
+     * Satiated shield: hunger absorbs damage (mod default: 100% up to 64 damage, 2 exhaustion per damage point,
+     * only from 4 hunger and not with the Hunger effect).
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onDamage(EntityDamageEvent event) {
@@ -538,7 +538,7 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * Behinderung: Treffer verlangsamen das Ziel (Langsamkeit II, 5 s).
+     * Hinder: hits slow the target (Slowness II, 5 s).
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onHit(EntityDamageByEntityEvent event) {
@@ -549,7 +549,7 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * Projektil-Ausweichen: Projektile verfehlen, der Spieler teleportiert sich zufällig weg (kostet 10 s Effektdauer).
+     * Projectile dodge: projectiles miss, the player teleports away randomly (costs 10 s of effect duration).
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onProjectileHit(ProjectileHitEvent event) {
@@ -583,7 +583,7 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * Vitalität: Getötete erwachsene Tiere hinterlassen ein Jungtier; Zombies einen Baby-Zombie (5 %: ein Dorfbewohner-Kind).
+     * Vitality: killed adult animals leave a baby; zombies a baby zombie (5%: a villager child).
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onKill(EntityDeathEvent event) {
@@ -613,7 +613,7 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * Sofort-Schmelzen: Erze lassen bis zu (Stufe + 1) Drops geschmolzen fallen.
+     * Instant smelting: ores drop up to (level + 1) smelted drops.
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockDrops(BlockDropItemEvent event) {
@@ -663,7 +663,7 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * Konservierung: schädliche Effekte von gegessenem Essen werden entfernt.
+     * Preservation: harmful effects of eaten food are removed.
      */
     public void preserve(Player player, List<PotionEffectType> applied) {
         if (!has(player, CookeryEffect.PRESERVATION)) {

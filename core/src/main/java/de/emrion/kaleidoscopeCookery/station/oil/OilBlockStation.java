@@ -10,8 +10,8 @@ import org.bukkit.persistence.PersistentDataContainer;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Ölblock (OilBlock): Dekoblock aus 9 Öl. Im Mod rutschig und eine ewige Feuerquelle – beides geht mit einer
- * Barriere nicht, hier nur Optik und die Wachs-Partikel.
+ * Oil block (OilBlock): decoration block made from 9 oil. In the mod it is slippery and an eternal fire source - neither
+ * works with a barrier, so here it is only looks and the wax particles.
  */
 public class OilBlockStation extends Station {
 

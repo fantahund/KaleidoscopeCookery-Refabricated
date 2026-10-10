@@ -29,20 +29,20 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Teekanne (TeapotBlockEntity im Mod).
+ * Teapot (TeapotBlockEntity in the mod).
  * <ol>
- *     <li>Teebasis hinein (Wasser- oder Milcheimer; die leere Kanne kann auch direkt aus Wasser schöpfen)</li>
- *     <li>Zutat (Teebeutel, Blumen ...) hinein, auf einer Hitzequelle ziehen lassen</li>
- *     <li>Fertig: Kanne aufnehmen (Rechtsklick mit leerer Hand) und auf hingestellte leere Tassen gießen</li>
+ *     <li>Add tea base (water or milk bucket; the empty pot can also scoop directly from water)</li>
+ *     <li>Add an ingredient (tea bag, flowers ...), let it steep on a heat source</li>
+ *     <li>Done: pick up the pot (right-click with an empty hand) and pour into placed empty cups</li>
  * </ol>
- * Die Kanne als Item trägt ihren Zustand (Teebasis bzw. fertigen Tee) im PDC.
+ * The pot as an item carries its state (tea base or finished tea) in the PDC.
  */
 public class TeapotStation extends Station {
 
     public static final Key ITEM = Key.key("kaleidoscope_cookery", "teapot");
-    /** Das Blockmodell ist im Mod leer (Kanne per Code gezeichnet) – das 3D-Item-Modell zeigt dieselbe Kanne */
+    /** The block model is empty in the mod (pot drawn by code) - the 3D item model shows the same pot */
     private static final Key MODEL = Key.key("kaleidoscope_cookery", "teapot_3d");
-    /** TeapotRecipe#OUTPUT_COUNT: jede Kanne ergibt 12 Tassen */
+    /** TeapotRecipe#OUTPUT_COUNT: every pot yields 12 cups */
     private static final int OUTPUT_COUNT = 12;
     private static final Key MYSTERY_TEA = Key.key("kaleidoscope_cookery", "mystery_tea");
 
@@ -51,7 +51,7 @@ public class TeapotStation extends Station {
     public static final int FINISHED = 2;
     private static final int INGREDIENT_TIME = 200;
 
-    /** Zustand im Kannen-Item (Mod: block_entity_data) */
+    /** State in the pot item (mod: block_entity_data) */
     public static final NamespacedKey ITEM_FLUID = Keys.key("teapot_fluid");
     public static final NamespacedKey ITEM_STATUS = Keys.key("teapot_status");
     public static final NamespacedKey ITEM_RESULT = Keys.key("teapot_result");
@@ -77,7 +77,7 @@ public class TeapotStation extends Station {
     }
 
     /**
-     * Zustand aus dem platzierten Kannen-Item übernehmen.
+     * Take over the state from the placed pot item.
      */
     public void initFrom(ItemStack item) {
         PersistentDataContainerView pdc = item.getPersistentDataContainer();
@@ -133,7 +133,7 @@ public class TeapotStation extends Station {
 
     @Override
     public void tick(long serverTick) {
-        // Mod: alle 23 Ticks (versetzt je Position) 23 Ticks Fortschritt
+        // Mod: every 23 ticks (staggered per position) 23 ticks of progress
         long offset = serverTick + position().hashCode();
         if (status == PUT_INGREDIENT) {
             if (Math.floorMod(offset, 23) != 0 || fluid == null || !hasHeatSource()) {
@@ -201,7 +201,7 @@ public class TeapotStation extends Station {
                 position().z() + 0.5 + (random.nextFloat() - 0.5) / 3, 1, 0, 0.03, 0, 0.01);
     }
 
-    // ---- Bedienung (TeapotBlock#useItemOn) ----
+    // ---- Handling (TeapotBlock#useItemOn) ----
 
     @Override
     public boolean onInteract(Player player, EquipmentSlot hand) {
@@ -223,7 +223,7 @@ public class TeapotStation extends Station {
     }
 
     /**
-     * Teebasis eines Eimers (Mod: alles mit Fluid-Capability, mind. 1000 mB).
+     * Tea base of a bucket (mod: anything with a fluid capability, at least 1000 mB).
      */
     public static @Nullable Key fluidOf(ItemStack stack) {
         if (CookeryItems.isCustom(stack)) {
@@ -351,10 +351,10 @@ public class TeapotStation extends Station {
         }
     }
 
-    // ---- Abbauen / Item ----
+    // ---- Breaking / item ----
 
     /**
-     * Kanne mit Zustand (TeapotBlockEntity#getDrops): Teebasis bzw. fertiger Tee bleiben erhalten, während des Ziehens nicht.
+     * Pot with state (TeapotBlockEntity#getDrops): tea base or finished tea are kept, not while steeping.
      */
     @Override
     public @Nullable ItemStack selfDrop() {
@@ -383,7 +383,7 @@ public class TeapotStation extends Station {
         return contents;
     }
 
-    // ---- Darstellung ----
+    // ---- Display ----
 
     @Override
     public void updateDisplay() {

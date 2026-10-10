@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Werkbank-, Ofen-, Schmiede- und Steinsäge-Rezepte der Mods (Abschnitt "vanilla" in recipes.yml).
+ * Crafting, furnace, smithing and stonecutter recipes of the mods (section "vanilla" in recipes.yml).
  *
- * @param key         Werkbank (geformt): Symbol -> Zutat
- * @param ingredients Werkbank (formlos), sonst genau eine Zutat (Ofen, Steinsäge) bzw. Vorlage/Basis/Zusatz (Schmiede)
+ * @param key         crafting table (shaped): symbol -> ingredient
+ * @param ingredients crafting table (shapeless), otherwise exactly one ingredient (furnace, stonecutter) or template/base/addition (smithing)
  */
 public record VanillaRecipe(String id, Type type, List<String> pattern, Map<Character, Ingredient> key, List<Ingredient> ingredients,
                             int time, float experience, RecipeResult result) {

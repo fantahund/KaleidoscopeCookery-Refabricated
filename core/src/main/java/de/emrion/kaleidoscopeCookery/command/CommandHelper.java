@@ -18,7 +18,7 @@ public final class CommandHelper {
         List<String> result = new ArrayList<>();
         for (String option : options) {
             String candidate = option.toLowerCase(Locale.ROOT);
-            // Item-IDs auch ohne Namespace vervollständigen
+            // Complete item ids also without a namespace
             if (candidate.startsWith(lower) || candidate.substring(candidate.indexOf(':') + 1).startsWith(lower)) {
                 result.add(option);
             }
@@ -35,7 +35,7 @@ public final class CommandHelper {
     }
 
     /**
-     * Positive Zahl oder null.
+     * Positive number or null.
      */
     public static Integer parsePositive(String input) {
         try {

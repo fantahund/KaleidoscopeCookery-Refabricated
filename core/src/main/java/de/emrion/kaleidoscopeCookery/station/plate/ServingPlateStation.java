@@ -21,18 +21,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Servierteller und Obstplatten (PlateBlock/PlateRegistry im Mod) sowie stapelbares Essen (StackableFoodBlock: Bambusrohr-Reis).
+ * Serving plates and fruit platters (PlateBlock/PlateRegistry in the mod) as well as stackable food (StackableFoodBlock: bamboo tube rice).
  * <ul>
- *     <li>Teller: voll platziert; Rechtsklick gibt eine Portion, mit der passenden Speise legt man eine zurück;
- *     der leere Teller wird beim nächsten Klick zur Schüssel</li>
- *     <li>Stapel: Rechtsklick mit dem Essen stapelt (bis 4), mit leerer Hand nimmt man eins</li>
+ *     <li>Plates: placed full; right-click gives one serving, with the matching food you put one back;
+ *     the empty plate becomes a bowl on the next click</li>
+ *     <li>Stacks: right-click with the food stacks it (up to 4), with an empty hand you take one</li>
  * </ul>
  */
 public class ServingPlateStation extends Station {
 
     /**
-     * @param stackable StackableFoodBlock statt PlateBlock (Anzahl 1..max, das Essen selbst ist das Item)
-     * @param height    Höhe der Klick-Hitbox: Oberkante des vollen Modells
+     * @param stackable StackableFoodBlock instead of PlateBlock (amount 1..max, the food itself is the item)
+     * @param height    height of the click hitbox: top edge of the full model
      */
     public record Kind(String name, int max, List<Key> servings, boolean stackable, float height) {
 
@@ -57,7 +57,7 @@ public class ServingPlateStation extends Station {
         return Key.key("minecraft", value);
     }
 
-    /** PlateRegistry#init und ModBlocks.BAMBOO_TUBE_RICE */
+    /** PlateRegistry#init and ModBlocks.BAMBOO_TUBE_RICE */
     public static final List<Kind> KINDS = List.of(
             new Kind("shengjian_mantou_plate", 5, List.of(cookery("shengjian_mantou")), false, 0.65f),
             new Kind("baozi_plate", 5, List.of(cookery("baozi")), false, 0.65f),
@@ -112,10 +112,10 @@ public class ServingPlateStation extends Station {
         updateDisplay();
     }
 
-    // ---- Stapeln ----
+    // ---- Stacking ----
 
     /**
-     * StackableFoodBlock: mit dem gleichen Essen stapeln (statt daneben zu platzieren).
+     * StackableFoodBlock: stack with the same food (instead of placing it next to it).
      */
     @Override
     public boolean interceptPlacement(Player player, ItemStack held) {
@@ -130,7 +130,7 @@ public class ServingPlateStation extends Station {
         return true;
     }
 
-    // ---- Bedienen ----
+    // ---- Handling ----
 
     @Override
     public boolean onInteract(Player player, EquipmentSlot hand) {
@@ -168,7 +168,7 @@ public class ServingPlateStation extends Station {
             world().playSound(center(), Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 1, 1);
             setCount(count - 1);
         } else {
-            // Leerer Teller: geht kaputt und lässt die Schüssel fallen
+            // Empty plate: breaks and drops the bowl
             context.manager().breakStation(this, player.getGameMode() == GameMode.CREATIVE ? player : null);
         }
         return true;
@@ -180,7 +180,7 @@ public class ServingPlateStation extends Station {
     }
 
     /**
-     * Mit leerer Hand ins Inventar, sonst oben aus dem Teller heraus (popResourceFromFace).
+     * With an empty hand into the inventory, otherwise out of the top of the plate (popResourceFromFace).
      */
     private void give(Player player, Key item, boolean toPlayer) {
         ItemStack stack = items().create(item, 1);
@@ -196,10 +196,10 @@ public class ServingPlateStation extends Station {
         }
     }
 
-    // ---- Abbauen ----
+    // ---- Breaking ----
 
     /**
-     * Teller: Schüssel (Loot-Tabelle); Stapel: nichts extra, die Speisen kommen aus contents().
+     * Plate: bowl (loot table); stack: nothing extra, the food comes from contents().
      */
     @Override
     public @Nullable ItemStack selfDrop() {

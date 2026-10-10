@@ -30,15 +30,15 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 /**
- * Kochbuch als Dialog-Fenster: Übersicht mit Suche, Seiten je Station, Rezeptseiten mit "Wie mache ich das?"
- * und "Wofür brauche ich das?" (wie JEI). Alle Texte sind übersetzbar (kaleidoscope.cookbook.*).
+ * Cookbook as a dialog window: overview with search, one page per station, recipe pages with "How do I make this?"
+ * and "What is this used for?" (like JEI). All texts are translatable (kaleidoscope.cookbook.*).
  */
 @SuppressWarnings("UnstableApiUsage")
 public class Cookbook {
 
     private static final int PER_PAGE = 24;
     private static final int COLUMNS = 2;
-    /** Breit genug für lange Gerichtsnamen mit Bild */
+    /** Wide enough for long dish names with an image */
     private static final int BUTTON_WIDTH = 240;
     private static final ClickCallback.Options CALLBACK = ClickCallback.Options.builder().uses(ClickCallback.UNLIMITED_USES).build();
 
@@ -55,7 +55,7 @@ public class Cookbook {
     }
 
     /**
-     * Einträge, neu aufgebaut nach /kc reload.
+     * Entries, rebuilt after /kc reload.
      */
     private int cachedSources = -1;
 
@@ -73,7 +73,7 @@ public class Cookbook {
         return entries().all().size();
     }
 
-    // ---- Öffnen ----
+    // ---- Opening ----
 
     public void open(Player player) {
         player.showDialog(mainPage());
@@ -84,7 +84,7 @@ public class Cookbook {
     }
 
     /**
-     * Rezepte, die ein Item herstellen; gibt es keine, die Verwendung.
+     * Recipes that produce an item; if there are none, its uses.
      */
     public void openFor(Player player, Key item) {
         List<CookbookEntry> producing = entries().all().stream().filter(entry -> entry.produces(item)).toList();
@@ -99,7 +99,7 @@ public class Cookbook {
         player.showDialog(searchPage(player, query));
     }
 
-    // ---- Seiten ----
+    // ---- Pages ----
 
     private Dialog mainPage() {
         List<DialogBody> body = List.of(DialogBody.plainMessage(Lang.get("cookbook.intro").color(NamedTextColor.GRAY), 300));
@@ -127,7 +127,7 @@ public class Cookbook {
         List<DialogBody> body = new ArrayList<>();
         Component image = category.bigImage();
         if (image != null) {
-            // Das Bild reicht von der ersten Zeile nach unten (32 Pixel ≈ 4 Zeilen): Platz freihalten
+            // The image reaches down from the first line (32 pixels ~ 4 lines): keep the space free
             body.add(DialogBody.plainMessage(image.append(Component.text("\n\n\n"))));
         }
         List<Component> guide = category.guide();
@@ -145,7 +145,7 @@ public class Cookbook {
     }
 
     /**
-     * Überschriften stehen in category.guide() vor jeder Szene.
+     * Headings are in category.guide() before each scene.
      */
     private static boolean isHeader(Category category, int index) {
         int position = 0;
@@ -164,7 +164,7 @@ public class Cookbook {
 
     private Dialog listDialog(Component title, List<DialogBody> body, List<CookbookEntry> list, int page, Supplier<Dialog> back,
                               java.util.function.IntFunction<Dialog> pageOf) {
-        // Gleiches Gericht an derselben Station (z. B. Milchtee für 1 bis 9 Portionen) als ein Eintrag mit Varianten
+        // The same dish at the same station (e.g. milk tea for 1 to 9 servings) as one entry with variants
         java.util.Map<String, List<CookbookEntry>> grouped = new java.util.LinkedHashMap<>();
         for (CookbookEntry entry : list) {
             grouped.computeIfAbsent(entry.category() + "|" + entry.main().item().asString(), key -> new ArrayList<>()).add(entry);
@@ -180,7 +180,7 @@ public class Cookbook {
             Component label = ItemIcons.withIcon(result, name(entry.main().item()));
             Component tooltip = group.size() > 1 ? entry.category().title().append(Component.text(" · ")).append(Lang.get("cookbook.variants", group.size()))
                     : entry.category().title();
-            // Alle Rezepte für dieses Item (auch an anderen Stationen) zum Blättern, die dieser Station zuerst
+            // All recipes for this item (also at other stations) to page through, those of this station first
             buttons.add(button(label, tooltip, (response, audience) -> show(audience, entryPage(allRecipesFor(group), 0, self))));
         }
         if (list.isEmpty()) {
@@ -201,7 +201,7 @@ public class Cookbook {
     }
 
     /**
-     * Rezeptseite; bei mehreren Varianten (gleiches Ergebnis, andere Zutaten-Menge) mit Umschalter.
+     * Recipe page; with several variants (same result, different ingredient amounts) with a switcher.
      */
     private Dialog entryPage(List<CookbookEntry> variants, int index, Supplier<Dialog> back) {
         int variant = Math.clamp(index, 0, variants.size() - 1);
@@ -213,7 +213,7 @@ public class Cookbook {
         if (amounts != null) {
             body.add(DialogBody.plainMessage(amounts, 300));
         }
-        // Hinweise
+        // Hints
         Component info = entry.category().title().color(NamedTextColor.WHITE);
         for (Component line : entry.info()) {
             info = info.append(Component.newline()).append(Component.text("• ", NamedTextColor.DARK_GRAY)).append(line.colorIfAbsent(NamedTextColor.GRAY));
@@ -263,7 +263,7 @@ public class Cookbook {
     private static final Component BLANK_SLOT = glyph(0xE216);
 
     private static Component glyph(int codepoint) {
-        // Ohne Text-Schatten, sonst wirken Bilder verschmiert
+        // Without text shadow, otherwise images look smeared
         return Component.text(Character.toString(codepoint)).font(FONT).color(NamedTextColor.WHITE).shadowColor(net.kyori.adventure.text.format.ShadowColor.none());
     }
 
@@ -271,12 +271,12 @@ public class Cookbook {
     private static final int MAX_INPUT_SLOTS = 9;
 
     /**
-     * Rezept als Bild wie in JEI: links die Zutaten (bei der Werkbank das 3x3-Feld), Pfeil, Bild der Station, Pfeil,
-     * rechts das Ergebnis. Drei Reihen à 18 Pixel (zwischen den Reihen eine Leerzeile, weil eine Textzeile nur 9 Pixel
-     * hoch ist); jede Reihe ist gleich breit, weil der Dialog jede Zeile einzeln zentriert. Maus über einem Slot zeigt den Tooltip.
+     * Recipe as an image like in JEI: the ingredients on the left (the 3x3 grid for the crafting table), arrow, station image, arrow,
+     * the result on the right. Three rows of 18 pixels (an empty line between the rows, because a text line is only 9 pixels
+     * high); every row has the same width because the dialog centres each line separately. Hovering a slot shows the tooltip.
      */
     private static Component diagram(CookbookEntry entry) {
-        // Zutaten-Raster
+        // Ingredient grid
         List<@Nullable ItemStack> cells = new ArrayList<>();
         int columns;
         if (entry.grid() != null) {
@@ -285,7 +285,7 @@ public class Cookbook {
             }
             columns = 3;
         } else {
-            // Eine Zutat = ein Slot, die Menge steht wie im Inventar unten rechts
+            // One ingredient = one slot, the amount is shown at the bottom right like in the inventory
             for (CookbookEntry.Input input : entry.inputs()) {
                 if (cells.size() < MAX_INPUT_SLOTS) {
                     cells.add(stack(input.ingredient().items().iterator().next(), input.amount()));
@@ -326,7 +326,7 @@ public class Cookbook {
     }
 
     /**
-     * Mengen, die das Bild nicht zeigt: mehr als ein Ergebnis-Stück, Chancen, mehr Zutaten als Slots.
+     * Amounts the image does not show: more than one result item, chances, more ingredients than slots.
      */
     private static @Nullable Component amounts(CookbookEntry entry) {
         List<Component> parts = new ArrayList<>();
@@ -347,7 +347,7 @@ public class Cookbook {
     }
 
     /**
-     * Ein Slot (Vorschub 19), darin das Item-Bild (16 Pixel, 1 Pixel Rand rundum) und ab 2 Stück die Menge unten rechts.
+     * One slot (advance 19) containing the item image (16 pixels, 1 pixel border all around) and from 2 items the amount at the bottom right.
      */
     private static Component slot(@Nullable ItemStack stack) {
         Component icon = ItemIcons.big(stack);
@@ -362,14 +362,14 @@ public class Cookbook {
             for (char digit : digits.toCharArray()) {
                 glyphs.appendCodePoint(0xE240 + digit - '0');
             }
-            // 6 Pixel je Ziffer zurück, dann die Ziffern: sie enden am rechten Rand des Bildes
+            // 6 pixels back per digit, then the digits: they end at the right edge of the image
             cell.append(glyph(0xE250 + digits.length() - 1)).append(Component.text(glyphs.toString()).font(FONT).color(NamedTextColor.WHITE));
         }
         return cell.append(GAP).build();
     }
 
     /**
-     * Die Gruppe zuerst, danach alle anderen Rezepte mit demselben Ergebnis.
+     * The group first, then all other recipes with the same result.
      */
     private List<CookbookEntry> allRecipesFor(List<CookbookEntry> group) {
         List<CookbookEntry> all = new ArrayList<>(group);
@@ -387,7 +387,7 @@ public class Cookbook {
     }
 
     /**
-     * Suche in der Sprache des Spielers nach Ergebnissen und Zutaten (Name oder ID).
+     * Search results and ingredients in the player's language (name or id).
      */
     private Dialog searchPage(Player player, String query) {
         String needle = query.toLowerCase(Locale.ROOT).trim();
@@ -409,7 +409,7 @@ public class Cookbook {
         return item.value().replace('_', ' ').contains(needle) || Lang.plain(name(item), locale).toLowerCase(locale).contains(needle);
     }
 
-    // ---- Hilfen ----
+    // ---- Helpers ----
 
     private static void show(net.kyori.adventure.audience.Audience audience, Dialog dialog) {
         audience.showDialog(dialog);
@@ -424,12 +424,12 @@ public class Cookbook {
     }
 
     /**
-     * Knöpfe in festen Paaren (2 Spalten): oben ein Umschalter-Paar (andere Rezepte), dann "Zurück | Übersicht", dann der
-     * Inhalt und unten "◀ | ▶" zum Blättern. Fehlende Plätze füllt ein leerer Knopf, damit nichts verrutscht.
+     * Buttons in fixed pairs (2 columns): a switcher pair at the top (other recipes), then "Back | Overview", then the
+     * content and "◀ | ▶" at the bottom for paging. Missing places are filled with an empty button so nothing shifts.
      *
-     * @param toggle  Paar oben (z. B. Varianten), leer = keins
-     * @param paging  vorherige/nächste Seite, null-Einträge = Platzhalter; leer = kein Blättern
-     * @param self    diese Seite (für die Platzhalter-Knöpfe)
+     * @param toggle  pair at the top (e.g. variants), empty = none
+     * @param paging  previous/next page, null entries = placeholders; empty = no paging
+     * @param self    this page (for the placeholder buttons)
      */
     private static Dialog dialog(Component title, List<DialogBody> body, List<DialogInput> inputs, List<ActionButton> toggle,
                                  List<ActionButton> content, List<@Nullable ActionButton> paging, @Nullable Supplier<Dialog> back,
@@ -448,10 +448,10 @@ public class Cookbook {
                 all.add(button != null ? button : blank(self));
             }
         }
-        // Escape schließt im Client sofort; der Knopf "Schließen" schließt über den Server
+        // Escape closes immediately in the client; the "Close" button closes via the server
         ActionButton exit = button(Lang.get("cookbook.close"), null, (response, audience) -> audience.closeDialog());
-        // Nach einem Klick unverändert offen bleiben, bis die nächste Seite kommt: kein Warte-Bildschirm,
-        // und der Mauszeiger springt nicht in die Mitte
+        // Stay open unchanged after a click until the next page arrives: no waiting screen,
+        // and the mouse cursor does not jump to the centre
         return Dialog.create(builder -> builder.empty()
                 .base(DialogBase.builder(title).canCloseWithEscape(true).pause(false).afterAction(DialogBase.DialogAfterAction.NONE)
                         .body(body).inputs(inputs).build())
@@ -459,7 +459,7 @@ public class Cookbook {
     }
 
     /**
-     * Leerer Platzhalter-Knopf; ein Klick zeigt dieselbe Seite wieder.
+     * Empty placeholder button; clicking it shows the same page again.
      */
     private static ActionButton blank(@Nullable Supplier<Dialog> self) {
         return button(Component.empty(), null, (response, audience) -> {
@@ -472,7 +472,7 @@ public class Cookbook {
     }
 
     /**
-     * Name eines Items (Mod-Items über ihren Übersetzungs-Schlüssel, Vanilla über den Client).
+     * Name of an item (mod items via their translation key, vanilla via the client).
      */
     public static Component name(Key item) {
         ItemStack stack = stack(item, 1);
@@ -480,7 +480,7 @@ public class Cookbook {
     }
 
     public static ItemStack stack(Key item, int amount) {
-        // Mengen über der Stapelgröße (z. B. 12 Teeblätter) nur für die Anzeige
+        // Amounts above the stack size (e.g. 12 tea leaves) only for display
         if (amount > 1) {
             ItemStack one = stack(item, 1);
             if (one.getMaxStackSize() < amount) {
@@ -503,7 +503,7 @@ public class Cookbook {
     }
 
     /**
-     * Station zu einem Stations-Item (Rechtsklick mit dem Kochbuch).
+     * Station for a station item (right-click with the cookbook).
      */
     public static @Nullable Category categoryOf(@Nullable Key stationItem) {
         if (stationItem == null) {
