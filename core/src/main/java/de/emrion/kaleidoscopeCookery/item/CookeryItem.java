@@ -46,7 +46,7 @@ public record CookeryItem(Key id, Material base, @Nullable Material prototype, K
      * @param wide   1x2-Gericht (zweite Hälfte links daneben)
      * @param models Modelle je Teil ("main" bzw. "left"/"right") und Biss-Stufe
      */
-    public record Plate(int maxBites, Food food, List<Key> loot, boolean wide, java.util.Map<String, List<Key>> models) {
+    public record Plate(int maxBites, Food food, List<Key> loot, boolean wide, boolean large, java.util.Map<String, List<Key>> models) {
     }
 
     /**

@@ -280,6 +280,15 @@ public class StationListener implements Listener {
                 return false;
             }
         }
+        if (dish != null && dish.plate() != null && dish.plate().large()) {
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    if ((dx != 0 || dz != 0) && !canPlaceAt(type, target.getRelative(dx, 0, dz))) {
+                        return false;
+                    }
+                }
+            }
+        }
         BlockState replaced = target.getState();
         if (type.barrier()) {
             BoundingBox box = BoundingBox.of(target).expand(-type.minOffset(), 0, -type.minOffset(), type.maxOffset(), type.height() - 1, type.maxOffset());

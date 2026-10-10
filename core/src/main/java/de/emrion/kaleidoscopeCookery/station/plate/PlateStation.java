@@ -29,7 +29,8 @@ import java.util.List;
 /**
  * Hingestelltes Gericht (FoodBiteBlock im Mod): Rechtsklick isst einen Biss, nach dem letzten Biss bleibt
  * Geschirr übrig (Schüssel, Knochen ...). Unangetastet abgebaut gibt es das Gericht zurück.
- * 1x2-Gerichte belegen zusätzlich den Block links daneben (vom Gericht aus gesehen).
+ * 1x2-Gerichte belegen zusätzlich den Block links daneben (vom Gericht aus gesehen), 3x3-Gerichte
+ * (FoodBiteThreeByThreeBlock, Aufschnitt-Schinken) die acht Blöcke rundherum.
  */
 public class PlateStation extends Station {
 
@@ -107,6 +108,15 @@ public class PlateStation extends Station {
             BlockFace side = secondBlock(facing());
             return List.of(position(), position().relative(side.getModX(), 0, side.getModZ()));
         }
+        if (plate != null && plate.large()) {
+            List<BlockKey> blocks = new ArrayList<>(9);
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    blocks.add(position().relative(dx, 0, dz));
+                }
+            }
+            return blocks;
+        }
         return List.of(position());
     }
 
@@ -126,6 +136,16 @@ public class PlateStation extends Station {
             showHitbox("left", new Vector(side.getModX(), 0, side.getModZ()), 0.8f, 0.4f);
         } else {
             showStage("main", plate, blockTransform(0));
+            if (plate.large()) {
+                // ganze Platte anklickbar: flache Hitboxen auf den acht Nachbarblöcken
+                for (int dx = -1; dx <= 1; dx++) {
+                    for (int dz = -1; dz <= 1; dz++) {
+                        if (dx != 0 || dz != 0) {
+                            showHitbox("plate_" + (dx + 1) + "_" + (dz + 1), new Vector(dx, 0, dz), 1f, 0.25f);
+                        }
+                    }
+                }
+            }
         }
     }
 

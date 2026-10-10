@@ -248,6 +248,11 @@ def parse_food_bites(foods: dict) -> dict:
                 models.setdefault(part, {})[int(props["bites"])] = variant["model"]
             entry["models"] = {part: [stages[i] for i in sorted(stages)] for part, stages in models.items()}
         bites[f"kaleidoscope_cookery:{name}"] = entry
+    # FoodBiteThreeByThreeBlock (nicht im FoodBiteRegistry): 3x3 Blöcke, 8 Bisse, Modelle aus tools/gen_entity_models.py
+    bites["kaleidoscope_cookery:cold_cut_ham_slices"] = {
+        "max-bites": 8, "food": food_of(foods, consumables, "COLD_CUT_HAM_SLICES_BLOCK", "COLD_CUT_HAM_SLICES_BLOCK"),
+        "item-food": None, "loot": ["minecraft:bowl"], "size": "3x3",
+        "models": {"main": [f"kaleidoscope_cookery:block/food/cold_cut_ham_slices/cold_cut_ham_slices_{i}" for i in range(9)]}}
     return bites
 
 
@@ -501,7 +506,9 @@ def collect_items(foods: dict, bites: dict) -> dict:
                 entry["sneak-place"] = True
             if full_id in bites:
                 bite = dict(bites[full_id])
-                entry["food"] = bite.pop("item-food")
+                if bite["item-food"] is not None:
+                    entry["food"] = bite["item-food"]
+                bite.pop("item-food")
                 entry["plate"] = bite
             items[full_id] = entry
     # Eigene Items des Plugins (nicht aus den Mods)

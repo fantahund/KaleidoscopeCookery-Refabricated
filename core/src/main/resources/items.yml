@@ -496,6 +496,26 @@ items:
     model: "kaleidoscope_cookery:cold_cut_ham_slices"
     name: block.kaleidoscope_cookery.cold_cut_ham_slices
     tooltip: tooltip.kaleidoscope_cookery.cold_cut_ham_slices
+    plate:
+      max-bites: 8
+      food:
+        nutrition: 4
+        saturation: 6.4
+        always-edible: true
+      loot:
+        - "minecraft:bowl"
+      size: "3x3"
+      models:
+        main:
+          - "kaleidoscope_cookery:block/food/cold_cut_ham_slices/cold_cut_ham_slices_0"
+          - "kaleidoscope_cookery:block/food/cold_cut_ham_slices/cold_cut_ham_slices_1"
+          - "kaleidoscope_cookery:block/food/cold_cut_ham_slices/cold_cut_ham_slices_2"
+          - "kaleidoscope_cookery:block/food/cold_cut_ham_slices/cold_cut_ham_slices_3"
+          - "kaleidoscope_cookery:block/food/cold_cut_ham_slices/cold_cut_ham_slices_4"
+          - "kaleidoscope_cookery:block/food/cold_cut_ham_slices/cold_cut_ham_slices_5"
+          - "kaleidoscope_cookery:block/food/cold_cut_ham_slices/cold_cut_ham_slices_6"
+          - "kaleidoscope_cookery:block/food/cold_cut_ham_slices/cold_cut_ham_slices_7"
+          - "kaleidoscope_cookery:block/food/cold_cut_ham_slices/cold_cut_ham_slices_8"
   "kaleidoscope_cookery:cold_roasted_meat":
     model: "kaleidoscope_cookery:cold_roasted_meat"
     name: block.kaleidoscope_cookery.cold_roasted_meat

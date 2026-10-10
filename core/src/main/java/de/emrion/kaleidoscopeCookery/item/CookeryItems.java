@@ -145,6 +145,7 @@ public class CookeryItems {
             }
         }
         return new CookeryItem.Plate(Math.max(1, section.getInt("max-bites", 3)), food, List.copyOf(loot), "1x2".equals(section.getString("size")),
+                "3x3".equals(section.getString("size")),
                 Collections.unmodifiableMap(models));
     }
 

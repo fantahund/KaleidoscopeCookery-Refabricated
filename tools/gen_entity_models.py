@@ -4,6 +4,8 @@ Baut Java-Entity-Modelle des Mods (createBodyLayer) als Item-Modelle nach:
 - Mühlstein (MillstoneModel): Sockel (fest), Rad mit Deichsel (dreht sich um die Blockmitte)
   und Walze (rollt zusätzlich um ihre eigene Achse)
 - Mülleimer (TrashCanModel): Körper, Deckel, Auge und Pupillen einzeln für die Animationen
+- Aufschnitt-Schinken (ColdCutHamSlicesModel, 3x3 Blöcke): je Bissstufe 0–8 ein Modell aus dem Blockbench-Itemmodell
+  des Mods (cold_cut_ham_slices_block), Biss k verschwindet ab bites >= 9 - k wie in updateBites
 
 Koordinaten: Die Mod-Renderer legen die Modelle mit translate(0.5, 1.5, 0.5) und ZN(180) in den Block
 (Ausrichtung Norden). Ein Modellpunkt (x, y, z) in Pixeln liegt damit bei (8 - x, 24 - y, 8 + z)
@@ -181,6 +183,24 @@ def main():
         print(f"{name}: {len(elements)} Elemente")
     for part, pivot in pivots.items():
         print(f"Drehpunkt {part} (Welt-Pixel, Norden): {to_world(pivot)}")
+
+    ham_stages()
+
+
+def ham_stages():
+    source = ROOT / "resourcepack" / "imported" / "assets" / "kaleidoscope_cookery" / "models" / "item" / "cold_cut_ham_slices_block.json"
+    model = json.loads(source.read_text(encoding="utf-8"))
+    for bites in range(9):
+        hidden = {f"bite{k}" for k in range(1, 9) if bites >= 9 - k}
+        stage = {"texture_size": model["texture_size"], "textures": model["textures"],
+                 "elements": [e for e in model["elements"] if e.get("name") not in hidden]}
+        name = f"food/cold_cut_ham_slices/cold_cut_ham_slices_{bites}"
+        (OUT / "models" / "block" / name).parent.mkdir(parents=True, exist_ok=True)
+        (OUT / "models" / "block" / f"{name}.json").write_text(json.dumps(stage, indent=2) + "\n", encoding="utf-8")
+        (OUT / "items" / "block" / name).parent.mkdir(parents=True, exist_ok=True)
+        (OUT / "items" / "block" / f"{name}.json").write_text(json.dumps(
+            {"model": {"type": "minecraft:model", "model": f"kaleidoscope_cookery:block/{name}"}}, indent=2) + "\n", encoding="utf-8")
+    print("Aufschnitt-Schinken: 9 Bissstufen")
 
 
 if __name__ == "__main__":
