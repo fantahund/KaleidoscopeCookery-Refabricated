@@ -66,7 +66,10 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
     /**
      * @param vanillaPercents percent per material, otherwise vanillaDefaultPercent
      */
-    public record Food(boolean vanillaNerfEnabled, int vanillaDefaultPercent, Map<Material, Integer> vanillaPercents) {
+    /**
+     * @param dishPercents mod dishes with adjusted food values (food.dishes): item id -> percent of the mod value
+     */
+    public record Food(boolean vanillaNerfEnabled, int vanillaDefaultPercent, Map<Material, Integer> vanillaPercents, Map<Key, Integer> dishPercents) {
 
         public int vanillaPercent(Material material) {
             return vanillaPercents.getOrDefault(material, vanillaDefaultPercent);
@@ -120,8 +123,20 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
                 percents.put(material, Math.max(0, percentSection.getInt(name)));
             }
         }
+        // Item ids contain ":" - read the values directly instead of via paths
+        Map<Key, Integer> dishes = new java.util.LinkedHashMap<>();
+        ConfigurationSection dishSection = config.getConfigurationSection("food.dishes");
+        if (dishSection != null) {
+            for (Map.Entry<String, Object> entry : dishSection.getValues(false).entrySet()) {
+                if (!Key.parseable(entry.getKey()) || !(entry.getValue() instanceof Number number)) {
+                    logger.warning("food.dishes: invalid entry " + entry.getKey() + " is ignored");
+                    continue;
+                }
+                dishes.put(Key.key(entry.getKey()), Math.max(0, number.intValue()));
+            }
+        }
         Food food = new Food(config.getBoolean("food.vanilla.enabled", true), Math.max(0, config.getInt("food.vanilla.default-percent", 50)),
-                Collections.unmodifiableMap(percents));
+                Collections.unmodifiableMap(percents), Collections.unmodifiableMap(dishes));
         return new CookeryConfig(pack, cutting, oilDrops, food, List.copyOf(config.getStringList("disabled-recipes")),
                 config.getBoolean("dispensers", false));
     }

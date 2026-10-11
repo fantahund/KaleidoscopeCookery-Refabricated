@@ -89,6 +89,13 @@ class Data:
             if isinstance(values, dict):
                 self.recipes.setdefault(section, {}).update(values)
         self.config = yaml_load(ROOT / "core/src/main/resources/config.yml")
+        # food.dishes: adjusted food values like CookeryItems#withFoodPercents (nutrition rounded half up)
+        for item, percent in ((self.config.get("food") or {}).get("dishes") or {}).items():
+            value = self.items.get(item)
+            for food in (value.get("food"), (value.get("plate") or {}).get("food")) if value else ():
+                if food:
+                    food["nutrition"] = int(food.get("nutrition", 0) * percent / 100 + 0.5)
+                    food["saturation"] = round(food.get("saturation", 0) * percent / 100, 2)
         self.disabled = self.config.get("disabled-recipes", [])
         self.skewers = yaml_load(GRILLING / "src/main/resources/generated/skewers.yml")
         self.tabs = {}

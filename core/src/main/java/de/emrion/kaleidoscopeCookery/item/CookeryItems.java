@@ -92,6 +92,18 @@ public class CookeryItems {
     /**
      * These items plus those of an addon (the addon overrides identical ids).
      */
+    /**
+     * These items with adjusted food values (config food.dishes: item id -> percent).
+     */
+    public CookeryItems withFoodPercents(Map<Key, Integer> percents) {
+        if (percents.isEmpty()) {
+            return this;
+        }
+        Map<Key, CookeryItem> adjusted = new LinkedHashMap<>(items);
+        percents.forEach((id, percent) -> adjusted.computeIfPresent(id, (key, item) -> item.withFoodPercent(percent)));
+        return new CookeryItems(adjusted);
+    }
+
     public CookeryItems merge(CookeryItems other) {
         Map<Key, CookeryItem> merged = new LinkedHashMap<>(items);
         merged.putAll(other.items);

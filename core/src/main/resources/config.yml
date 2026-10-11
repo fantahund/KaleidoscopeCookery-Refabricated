@@ -59,6 +59,16 @@ food:
       DRIED_KELP: 70
       CAKE: 60
 
+  # Mod-Gerichte mit angepassten Nährwerten: Prozent von Hunger und Sättigung des Mods (100 = wie im Mod).
+  # Bereits vorhandene Items behalten ihre alten Werte, neu gekochte bekommen die angepassten.
+  dishes:
+    # 35 % schwächer: sehr einfach herzustellen für eine volle Hungerleiste
+    kaleidoscope_cookery:candied_potato: 65
+    kaleidoscope_cookery:brown_mushroom_pot_soup: 65
+    kaleidoscope_cookery:red_mushroom_pot_soup: 65
+    kaleidoscope_cookery:crimson_fungus_pot_soup: 65
+    kaleidoscope_cookery:warped_fungus_pot_soup: 65
+
 # Spender bedienen Stationen wie im Mod: Ölkanne, Bambustablett und Teekanne hinstellen, Zutaten aufs Schneidebrett
 # legen und mit Küchenmessern schneiden. false = Spender verhalten sich wie in Vanilla.
 dispensers: false

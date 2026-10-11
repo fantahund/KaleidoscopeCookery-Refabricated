@@ -58,6 +58,8 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     private CookeryConfig cookeryConfig;
     private ResourcePackService resourcePack;
     private CookeryItems items;
+    /** Items as loaded from items.yml (core and addons), before food.dishes is applied */
+    private CookeryItems baseItems;
     private Recipes recipes;
     /** Registered addons (registerAddon) whose recipes are added when loading */
     private final java.util.List<org.bukkit.plugin.Plugin> addons = new java.util.ArrayList<>();
@@ -85,7 +87,8 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         }
 
         cookeryConfig = CookeryConfig.load(getConfig(), getLogger());
-        items = CookeryItems.loadBundled(this);
+        baseItems = CookeryItems.loadBundled(this);
+        items = baseItems.withFoodPercents(cookeryConfig.food().dishPercents());
         ModelProperties.load(this);
         recipes = loadRecipes();
         vanillaRecipes = new VanillaRecipes(this);
@@ -280,7 +283,8 @@ public final class KaleidoscopeCookery extends JavaPlugin {
             ModelProperties.add(addon);
         }
         if (addon.getResource("items.yml") != null) {
-            items = items.merge(CookeryItems.loadBundled(addon));
+            baseItems = baseItems.merge(CookeryItems.loadBundled(addon));
+            items = baseItems.withFoodPercents(cookeryConfig.food().dishPercents());
         }
         if (addon.getResource("recipes.yml") != null) {
             updateRecipeFile(addon);
@@ -296,6 +300,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     public void reloadAll() {
         reloadConfig();
         cookeryConfig = CookeryConfig.load(getConfig(), getLogger());
+        items = baseItems.withFoodPercents(cookeryConfig.food().dishPercents());
         resourcePack.updateSettings(cookeryConfig.resourcePack());
         recipes = loadRecipes();
         vanillaRecipes.register(recipes);

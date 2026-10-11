@@ -58,6 +58,21 @@ public record CookeryItem(Key id, Material base, @Nullable Material prototype, K
      */
     public record Food(int nutrition, float saturation, boolean alwaysEdible, float eatSeconds, @Nullable Key remainder, List<FoodEffect> effects,
                        boolean drink, @Nullable Key sound) {
+
+        /** Nutrition and saturation scaled to percent (config food.dishes) */
+        public Food scaled(int percent) {
+            return new Food(Math.round(nutrition * percent / 100f), saturation * percent / 100f, alwaysEdible, eatSeconds, remainder, effects, drink, sound);
+        }
+    }
+
+    /**
+     * Copy with food values (also per bite of a plate) scaled to percent.
+     */
+    public CookeryItem withFoodPercent(int percent) {
+        Plate scaledPlate = plate == null ? null
+                : new Plate(plate.maxBites(), plate.food().scaled(percent), plate.loot(), plate.wide(), plate.large(), plate.models());
+        return new CookeryItem(id, base, prototype, model, nameKey, tooltipKey, maxStack, maxDamage, food == null ? null : food.scaled(percent),
+                scaledPlate, sneakToPlace, wearable, repair, attributes, useAnimation, maximLines);
     }
 
     /**
