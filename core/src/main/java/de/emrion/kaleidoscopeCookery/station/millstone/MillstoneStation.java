@@ -150,7 +150,8 @@ public class MillstoneStation extends Station {
         if (Float.isNaN(value) || Float.isInfinite(value)) {
             return 0;
         }
-        return Math.abs(value) % 360;
+        float rot = value % 360f;
+        return rot < 0 ? rot + 360f : rot;
     }
 
     public boolean hasEntity() {
@@ -163,10 +164,13 @@ public class MillstoneStation extends Station {
 
     /**
      * Rotation angle in degrees (MillstoneBlockEntity#getRotation).
+     * Modulo on ticks first to avoid precision loss on long-running worlds.
      */
     private float rotation() {
-        float degPerTick = 360f / Math.max(rotSpeedTick, 1);
-        return Math.abs(cacheRot + world().getGameTime() * degPerTick) % 360;
+        long speed = Math.max((long) rotSpeedTick, 1);
+        double degPerTick = 360.0 / speed;
+        double current = cacheRot + (world().getGameTime() % speed) * degPerTick;
+        return fixRot((float) current);
     }
 
     // ---- Display ----
@@ -287,12 +291,13 @@ public class MillstoneStation extends Station {
         if (!canBind(entity) || entity.isDead()) {
             return;
         }
+        float currentRot = hasEntity() ? rotation() : cacheRot;
         entityId = entity.getUniqueId();
         bound = entity;
-        // Correct the angle like the mod does (avoids jumps in the animation)
-        float rot = rotation();
-        cacheRot = fixRot(cacheRot - (rot - cacheRot));
         rotSpeedTick = ROT_SPEED.getOrDefault(entity.getType(), DEFAULT_ROT_SPEED);
+        long newSpeed = Math.max((long) rotSpeedTick, 1);
+        double newDegPerTick = 360.0 / newSpeed;
+        cacheRot = fixRot((float) (currentRot - (world().getGameTime() % newSpeed) * newDegPerTick));
         markDirty();
         updateWheel(0);
     }
