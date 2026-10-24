@@ -157,6 +157,9 @@ public class VanillaRecipes implements Listener {
         if (result == null && !inputs.isEmpty()) {
             result = resetRecipe(inputs);
         }
+        if (result == null && !inputs.isEmpty()) {
+            result = byIds(event.getInventory().getMatrix());
+        }
         for (CraftingResolver resolver : resolvers) {
             if (result != null) {
                 break;
@@ -164,6 +167,89 @@ public class VanillaRecipes implements Listener {
             result = resolver.resolve(inputs);
         }
         event.getInventory().setResult(result);
+    }
+
+    /**
+     * Own recipe for these mod items by their ids only. The registered recipes compare exactly (ExactChoice), so items
+     * with other data than a freshly made one (made before a value change, refreshed description ...) match nothing and
+     * land on the placeholder: match the own shaped/shapeless recipes again by item id (Ingredient#test).
+     */
+    private @Nullable ItemStack byIds(ItemStack[] matrix) {
+        if (recipes == null) {
+            return null;
+        }
+        int width = (int) Math.round(Math.sqrt(matrix.length));
+        for (VanillaRecipe recipe : recipes.vanilla()) {
+            boolean match = switch (recipe.type()) {
+                case CRAFTING_SHAPELESS -> matchesShapeless(recipe.ingredients(), matrix);
+                case CRAFTING_SHAPED -> matchesShaped(recipe, matrix, width, false) || matchesShaped(recipe, matrix, width, true);
+                default -> false;
+            };
+            if (match) {
+                return recipe.result().create(items());
+            }
+        }
+        return null;
+    }
+
+    private static boolean matchesShapeless(List<Ingredient> ingredients, ItemStack[] matrix) {
+        List<ItemStack> inputs = new ArrayList<>();
+        for (ItemStack stack : matrix) {
+            if (stack != null && !stack.isEmpty()) {
+                inputs.add(stack);
+            }
+        }
+        return inputs.size() == ingredients.size() && assign(ingredients, inputs, 0, new boolean[ingredients.size()]);
+    }
+
+    /** Every input to its own ingredient (backtracking, at most 9) */
+    private static boolean assign(List<Ingredient> ingredients, List<ItemStack> inputs, int index, boolean[] used) {
+        if (index == inputs.size()) {
+            return true;
+        }
+        for (int i = 0; i < ingredients.size(); i++) {
+            if (!used[i] && ingredients.get(i).test(inputs.get(index))) {
+                used[i] = true;
+                if (assign(ingredients, inputs, index + 1, used)) {
+                    return true;
+                }
+                used[i] = false;
+            }
+        }
+        return false;
+    }
+
+    /** Pattern against the occupied part of the grid (like vanilla: shifted anywhere, optionally mirrored) */
+    private static boolean matchesShaped(VanillaRecipe recipe, ItemStack[] matrix, int width, boolean mirrored) {
+        int minX = width, minY = width, maxX = -1, maxY = -1;
+        for (int i = 0; i < matrix.length; i++) {
+            if (matrix[i] != null && !matrix[i].isEmpty()) {
+                minX = Math.min(minX, i % width);
+                maxX = Math.max(maxX, i % width);
+                minY = Math.min(minY, i / width);
+                maxY = Math.max(maxY, i / width);
+            }
+        }
+        List<String> pattern = recipe.pattern();
+        int rows = pattern.size();
+        int cols = pattern.stream().mapToInt(String::length).max().orElse(0);
+        if (maxX < 0 || maxX - minX + 1 != cols || maxY - minY + 1 != rows) {
+            return false;
+        }
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < cols; x++) {
+                String row = pattern.get(y);
+                int px = mirrored ? cols - 1 - x : x;
+                char symbol = px < row.length() ? row.charAt(px) : ' ';
+                ItemStack stack = matrix[(minY + y) * width + minX + x];
+                boolean empty = stack == null || stack.isEmpty();
+                Ingredient ingredient = recipe.key().get(symbol);
+                if (ingredient == null ? !empty : empty || !ingredient.test(stack)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
