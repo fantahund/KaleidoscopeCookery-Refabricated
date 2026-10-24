@@ -471,79 +471,76 @@ def stockpot_surface_models():
 
 
 
-WS_LEATHER = [(78, 44, 22), (108, 64, 32), (140, 88, 46), (170, 114, 64), (200, 146, 90), (226, 180, 124)]
-WS_OUTLINE = (44, 24, 12)
-WS_SEAM = (238, 214, 160)
-WS_RED, WS_WS_RED_D = (184, 40, 34), (116, 22, 20)
-WS_HORN, WS_WS_HORN_H = (44, 36, 30), (98, 86, 72)
-WS_CORD, WS_WS_CORD_D = (214, 190, 132), (146, 118, 70)
+WS_LEATHER = [(70, 38, 18), (100, 58, 28), (132, 82, 42), (162, 108, 60), (192, 140, 86), (220, 174, 118)]
+WS_OUTLINE = (42, 22, 10)
+WS_RED, WS_WS_RED_D = (186, 40, 32), (120, 24, 18)
+WS_HORN, WS_WS_HORN_H = (40, 32, 26), (110, 96, 78)
+WS_CORD, WS_WS_CORD_D = (218, 194, 136), (150, 122, 72)
+
+
+def ws_bezier(p0, p1, p2, t):
+    return tuple((1 - t) ** 2 * p0[i] + 2 * (1 - t) * t * p1[i] + t * t * p2[i] for i in range(2))
 
 
 def wineskin_sprite(full: bool):
-    """A bota bag (Spanish wineskin): pear-shaped leather pouch with a round belly and a short neck, red stitched rim,
-    horn spout with a red collar and a carrying strap; shaded with light from the top left. The empty one is slimmer
-    with a crease.
-
-    Looks like the classic goatskin bota (pear shape, spout at the narrow tip)."""
+    """A bota bag (Spanish wineskin): oval leather belly lying at the bottom, one end rising into a pointed neck (a duck
+    without beak and legs) with a red collar and a horn spout, red stitched lower rim. Shaded from a height field (distance
+    to the edge), light from the top left. The empty one is flatter with a crease."""
     from PIL import Image
-    bottom = (6.9, 10.4)
-    neck = (10.0, 3.9)
-    R = 5.1 if full else 4.7
-    ax, ay = neck[0] - bottom[0], neck[1] - bottom[1]
-    length = math.hypot(ax, ay)
-    ux, uy = ax / length, ay / length
-
-    def radius(t):
-        # pear: full round belly, quickly narrowing to a slim neck
-        rn = 0.9
-        return rn + (R - rn) * max(0.0, 1 - min(1.0, t) ** 1.7) ** (0.55 if full else 0.75)
-
-    light = (-0.6, -0.55, 0.58)
-    ln = math.sqrt(sum(c * c for c in light)); light = tuple(c / ln for c in light)
-    px, depth = {}, {}
+    cx, cy, a, b = 6.6, 10.4, (6.0 if full else 5.8), (4.6 if full else 3.9)
+    neck = [(10.2, 8.6), (13.4, 6.8), (12.8, 2.6)]   # bezier: from the belly up to the tip
+    mask = set()
     for y in range(16):
         for x in range(16):
-            dx, dy = x + 0.5 - bottom[0], y + 0.5 - bottom[1]
-            t = (dx * ux + dy * uy) / length          # 0 = belly centre, 1 = neck
-            side = dx * -uy + dy * ux                  # distance from the axis
-            rr = radius(max(0.0, t)) if t >= 0 else math.sqrt(max(0.0, R * R - (t * length) ** 2))
-            if t > 1.0 or rr <= 0 or abs(side) > rr:
+            px, py = x + 0.5, y + 0.5
+            if ((px - cx) / a) ** 2 + ((py - cy) / b) ** 2 <= 1:
+                mask.add((x, y))
                 continue
-            s = side / rr
-            along = 0 if t >= 0 else t * length / R
-            z = math.sqrt(max(0.0, 1 - s * s - along * along))
-            nx = s * -uy + along * ux; ny = s * ux + along * uy
-            n = (nx, ny, z * (1.2 if full else 0.75)); nl = math.sqrt(sum(c * c for c in n)) or 1
-            i = max(0.0, sum(n[k] / nl * light[k] for k in range(3)))
-            px[(x, y)] = WS_LEATHER[min(len(WS_LEATHER) - 1, int(i * 0.9 * len(WS_LEATHER)))]
-            depth[(x, y)] = t
+            for k in range(41):
+                t = k / 40
+                nx, ny = ws_bezier(*neck, t)
+                r = 2.6 - 1.85 * t
+                if (px - nx) ** 2 + (py - ny) ** 2 <= r * r:
+                    mask.add((x, y))
+                    break
+    # height field from the distance to the edge, normals by finite differences, light from the top left
+    dist = {q: 0 for q in mask if any((q[0] + dx, q[1] + dy) not in mask for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))}
+    todo = list(dist)
+    while todo:
+        nxt = []
+        for q in todo:
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                n = (q[0] + dx, q[1] + dy)
+                if n in mask and n not in dist:
+                    dist[n] = dist[q] + 1
+                    nxt.append(n)
+        todo = nxt
+    h = {q: math.sqrt(d + 0.6) * (1.25 if full else 0.9) for q, d in dist.items()}
+    light = (-0.62, -0.6, 0.5)
+    ln = math.sqrt(sum(c * c for c in light)); light = tuple(c / ln for c in light)
+    pixels = {}
+    for (x, y) in mask:
+        gx = h.get((x + 1, y), 0) - h.get((x - 1, y), 0)
+        gy = h.get((x, y + 1), 0) - h.get((x, y - 1), 0)
+        n = (-gx, -gy, 1.4); nl = math.sqrt(sum(c * c for c in n))
+        i = max(0.0, sum(n[k] / nl * light[k] for k in range(3)))
+        pixels[(x, y)] = WS_LEATHER[min(5, max(0, int((i - 0.12) * 7.5)))]
     if not full:
-        # slack skin: a crease across the belly
-        for x, y in [(5, 9), (6, 10), (7, 10), (8, 11)]:
-            if (x, y) in px:
-                px[(x, y)] = WS_LEATHER[1]
-    inside = set(px)
-    edge = {q for q in inside if any((q[0] + a, q[1] + b) not in inside for a, b in ((1, 0), (-1, 0), (0, 1), (0, -1)))}
-    # stitched seam one pixel inside the outline, all around the belly
-    seam = {q for q in inside - edge if any((q[0] + a, q[1] + b) in edge for a, b in ((1, 0), (-1, 0), (0, 1), (0, -1)))
-            and depth[q] < 0.72}
-    for q in seam:
-        if (q[0] + q[1]) % 2 == 0:
-            px[q] = WS_RED
-    for q in edge:
-        px[q] = WS_OUTLINE
-    # red collar, horn spout with a light tip
-    for q, c in {(10, 3): WS_WS_RED_D, (11, 3): WS_RED, (10, 2): WS_RED, (11, 2): WS_WS_RED_D,
-                 (11, 1): WS_HORN, (12, 1): WS_WS_HORN_H, (12, 2): WS_HORN}.items():
-        px[q] = c
-    # carrying cord: from the collar out to the left and down along the belly
-    # carrying strap: tied at the collar, running up out of the picture
-    cord = [(9, 2), (8, 1), (7, 0)]
-    for k, q in enumerate(cord):
-        if q not in inside:
-            px[q] = WS_CORD if k % 2 == 0 else WS_WS_CORD_D
+        for q in [(4, 10), (5, 11), (6, 11), (7, 12)]:
+            if q in mask:
+                pixels[q] = WS_LEATHER[1]
+    # red stitched seam just inside the lower rim of the belly
+    for q, d in dist.items():
+        if d == 1 and q[1] >= 10 and (q[0] + q[1]) % 2 == 0:
+            pixels[q] = WS_RED
+    for q, d in dist.items():
+        if d == 0:
+            pixels[q] = WS_OUTLINE
+    # red collar and horn spout at the tip
+    for q, c in {(12, 3): WS_RED, (13, 3): WS_WS_RED_D, (12, 2): WS_WS_RED_D, (13, 2): WS_RED, (12, 1): WS_HORN, (13, 1): WS_HORN, (13, 0): WS_WS_HORN_H}.items():
+        pixels[q] = c
     img = Image.new("RGBA", (16, 16))
-    for (x, y), c in px.items():
+    for (x, y), c in pixels.items():
         if 0 <= x < 16 and 0 <= y < 16:
             img.putpixel((x, y), c + (255,))
     return img
