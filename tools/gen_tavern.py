@@ -362,6 +362,29 @@ def fluid_models():
         model_item(f"block/{name}", [{"type": "minecraft:constant", "value": tint}] if tint is not None else None)
 
 
+def young_vine_models():
+    """A young vine (stages 0-2) inside a connected trellis: the bare trellis of that shape plus only the leaf planes of
+    the single trellis stage, in one model (two overlapping displays flicker, and the stage's own post would lie flat
+    on the trellis beams)."""
+    imported = TAVERN / "resourcepack" / "imported" / "assets" / NS / "models" / "block" / "plant"
+    shapes = ("east_west", "north_south", "cross_east_west", "cross_north_south", "cross_up_down", "six_direction")
+    for kind in ("grapevine_trellis", "ice_grapevine_trellis", "gold_grapevine_trellis"):
+        for stage in range(3):
+            leaves = [e for e in read(imported / kind / f"single_stage{stage}.json")["elements"] if "rotation" in e and e["rotation"].get("angle")]
+            for shape in shapes:
+                trellis = read(imported / "trellis" / f"{shape}.json")
+                elements = []
+                for e in trellis["elements"]:
+                    elements.append({**e, "faces": {f: {**v, "texture": "#trellis"} for f, v in e["faces"].items()}})
+                for e in leaves:
+                    elements.append({**e, "faces": {f: {**v, "texture": "#vine"} for f, v in e["faces"].items()}})
+                name = f"block/plant/{kind}/{shape}_stage{stage}"
+                model = {"textures": {"trellis": k("block/plant/trellis"), "vine": k(f"block/plant/{kind}"),
+                                      "particle": k("block/plant/trellis")}, "elements": elements}
+                write_json(OUT / "models" / f"{name}.json", model)
+                model_item(name)
+
+
 def washing_models():
     """Own assets for washing up: sink (vanilla textures), dish sponge and the dirty glass (smudged glassware)."""
     from PIL import Image, ImageDraw
@@ -628,6 +651,7 @@ def main():
     write_tabs(entries)
     barrel_models()
     washing_models()
+    young_vine_models()
     fluid_models()
     effect_font()
     write_texts()
