@@ -280,6 +280,24 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         return Recipes.load(config, getLogger());
     }
 
+    /** Addon checks whether a player may use a kitchen tool (e.g. the smithing level for forged knives) */
+    private final java.util.List<java.util.function.BiPredicate<org.bukkit.entity.Player, org.bukkit.inventory.ItemStack>> toolGates =
+            new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    /** The gate tells the player why it said no */
+    public void addToolGate(java.util.function.BiPredicate<org.bukkit.entity.Player, org.bukkit.inventory.ItemStack> gate) {
+        toolGates.add(gate);
+    }
+
+    public boolean mayUseTool(org.bukkit.entity.Player player, org.bukkit.inventory.ItemStack tool) {
+        for (var gate : toolGates) {
+            if (!gate.test(player, tool)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Register a cooking addon (such as KaleidoscopeGrilling) whose recipes also belong in the Cooking Cookbook.
      */

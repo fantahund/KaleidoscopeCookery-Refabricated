@@ -193,6 +193,9 @@ public class ChoppingBoardStation extends Station {
         }
         CookeryConfig.Cutting cutting = plugin().getCookeryConfig().cutting();
         ItemStack tool = player.getInventory().getItemInMainHand();
+        if (!plugin().mayUseTool(player, tool)) {
+            return true;
+        }
         // Mod: 1 << level of "Quick Knife" (max. II) cuts per hit
         int perHit = cutting.cuts(tool) * (1 << Math.clamp(QuickKnifeListener.level(tool), 0, 2));
         if (perHit <= 0) {
