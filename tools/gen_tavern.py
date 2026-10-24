@@ -165,7 +165,7 @@ def items(barrel, cocktails):
             food={"nutrition": 0, "saturation": 0.0, "always-edible": True, "drink": True, "remainder": k("dirty_glassware")})
     # Washing up (own addition): drunk cocktails leave a dirty glass, washed in the sink with a sponge
     add("dirty_glassware", tooltip=f"tooltip.{NS}.dirty_glassware", **{"max-stack": 16})
-    add("dish_sponge", tooltip=f"tooltip.{NS}.dish_sponge", **{"max-stack": 1, "max-damage": 64})
+    add("dish_sponge", tooltip=f"tooltip.{NS}.dish_sponge", **{"max-stack": 1, "max-damage": 384})
     add("sink", tooltip=f"tooltip.{NS}.sink")
     # Stations, racks and cabinets
     for station in ("pressing_tub", "barrel", "tap", "bar_cabinet", "glass_bar_cabinet", "cellar_cabinet",
