@@ -420,13 +420,52 @@ public class EffectManager implements Listener {
 
     // ---- Saving ----
 
+    /** Core store if it has a database (synced through the network), otherwise the player PDC of this server */
+    private de.emrion.kaleidoscopeCore.data.@org.jspecify.annotations.Nullable PlayerDataStore store() {
+        de.emrion.kaleidoscopeCore.KaleidoscopeCore core = de.emrion.kaleidoscopeCore.KaleidoscopeCore.getInstance();
+        de.emrion.kaleidoscopeCore.data.PlayerDataStore store = core == null ? null : core.getPlayerData();
+        return store != null && store.isEnabled() ? store : null;
+    }
+
     private void save(Player player) {
+        String saved = serialize(player);
+        de.emrion.kaleidoscopeCore.data.PlayerDataStore store = store();
+        if (store != null) {
+            store.set(player, SAVED, saved);
+            player.getPersistentDataContainer().remove(SAVED);
+        } else if (saved.isEmpty()) {
+            player.getPersistentDataContainer().remove(SAVED);
+        } else {
+            player.getPersistentDataContainer().set(SAVED, PersistentDataType.STRING, saved);
+        }
+    }
+
+    private void load(Player player) {
+        de.emrion.kaleidoscopeCore.data.PlayerDataStore store = store();
+        String saved = store == null ? null : store.get(player, SAVED);
+        if (saved == null) {
+            // Without the store, or effects saved locally before the network sync existed (taken over once)
+            saved = player.getPersistentDataContainer().get(SAVED, PersistentDataType.STRING);
+            if (store != null) {
+                player.getPersistentDataContainer().remove(SAVED);
+            }
+        }
+        deserialize(player, saved);
+    }
+
+    /** The old server saved the effects after the player had already joined here: replace them */
+    @EventHandler
+    public void onSynced(de.emrion.kaleidoscopeCore.data.PlayerDataChangeEvent event) {
+        if (event.getKey().equals(SAVED)) {
+            clear(event.getPlayer());
+            deserialize(event.getPlayer(), event.getValue());
+        }
+    }
+
+    /** "id:ticksLeft:amplifier;..." - addon effects as "namespace/path:..." */
+    private String serialize(Player player) {
         EnumMap<CookeryEffect, Active> effects = active.getOrDefault(player.getUniqueId(), new EnumMap<>(CookeryEffect.class));
         Map<net.kyori.adventure.key.Key, Active> addon = addonActive.getOrDefault(player.getUniqueId(), Map.of());
-        if (effects.isEmpty() && addon.isEmpty()) {
-            player.getPersistentDataContainer().remove(SAVED);
-            return;
-        }
         List<String> entries = new ArrayList<>();
         for (Map.Entry<CookeryEffect, Active> entry : effects.entrySet()) {
             entries.add(entry.getKey().id() + ":" + (entry.getValue().end() - tick) + ":" + entry.getValue().amplifier());
@@ -435,11 +474,10 @@ public class EffectManager implements Listener {
         for (Map.Entry<net.kyori.adventure.key.Key, Active> entry : addon.entrySet()) {
             entries.add(entry.getKey().namespace() + "/" + entry.getKey().value() + ":" + (entry.getValue().end() - tick) + ":" + entry.getValue().amplifier());
         }
-        player.getPersistentDataContainer().set(SAVED, PersistentDataType.STRING, String.join(";", entries));
+        return String.join(";", entries);
     }
 
-    private void load(Player player) {
-        String saved = player.getPersistentDataContainer().get(SAVED, PersistentDataType.STRING);
+    private void deserialize(Player player, @org.jspecify.annotations.Nullable String saved) {
         if (saved == null || saved.isEmpty()) {
             return;
         }
