@@ -268,6 +268,10 @@ public class CookeryItems {
         stack.setData(DataComponentTypes.ITEM_MODEL, item.model());
         if (item.maxDamage() > 0) {
             stack.setData(DataComponentTypes.MAX_DAMAGE, item.maxDamage());
+            if (!stack.hasData(DataComponentTypes.DAMAGE)) {
+                // Without a damage value the client neither wears the item down nor shows the durability bar
+                stack.setData(DataComponentTypes.DAMAGE, 0);
+            }
         }
         if (!item.attributes()) {
             stack.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, io.papermc.paper.datacomponent.item.ItemAttributeModifiers.itemAttributes().build());
