@@ -50,6 +50,9 @@ public class ItemProtectionListener implements Listener {
         if (event instanceof PrepareSmithingEvent smithing && VanillaRecipes.isOwn(smithing.getInventory().getRecipe())) {
             return;
         }
+        if (inventory instanceof org.bukkit.inventory.GrindstoneInventory grindstone && grindstoneAllowed(grindstone)) {
+            return; // disenchanting a kitchen knife or sickle (or two of the same kind) like any vanilla tool
+        }
         if (containsCustom(inventory.getContents())) {
             event.setResult(null);
         }
@@ -86,6 +89,22 @@ public class ItemProtectionListener implements Listener {
                 && (CookeryItems.isCustom(merchant.getItem(0)) || CookeryItems.isCustom(merchant.getItem(1)))) {
             event.setCancelled(true);
         }
+    }
+
+    /** Only mod tools in the grindstone, and two of them only of the same kind */
+    private static boolean grindstoneAllowed(org.bukkit.inventory.GrindstoneInventory grindstone) {
+        ItemStack upper = grindstone.getUpperItem();
+        ItemStack lower = grindstone.getLowerItem();
+        boolean upperEmpty = upper == null || upper.isEmpty();
+        boolean lowerEmpty = lower == null || lower.isEmpty();
+        if (!upperEmpty && CookeryItems.isCustom(upper) && !isTool(upper) || !lowerEmpty && CookeryItems.isCustom(lower) && !isTool(lower)) {
+            return false;
+        }
+        if (upperEmpty || lowerEmpty) {
+            return true;
+        }
+        return CookeryItems.isCustom(upper) == CookeryItems.isCustom(lower)
+                && (!CookeryItems.isCustom(upper) || CookeryItems.typeOf(upper).equals(CookeryItems.typeOf(lower)));
     }
 
     private static boolean containsCustom(ItemStack[] items) {

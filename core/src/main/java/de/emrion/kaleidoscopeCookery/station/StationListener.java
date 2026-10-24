@@ -302,17 +302,23 @@ public class StationListener implements Listener {
                 return false;
             }
         }
+        // Blocks a wide or large plate covers besides the target: protection plugins check them too
+        List<Block> plateBlocks = new ArrayList<>();
         if (dish != null && dish.plate() != null && dish.plate().wide()) {
             BlockFace side = PlateStation.secondBlock(facing);
             if (!canPlaceAt(type, target.getRelative(side))) {
                 return false;
             }
+            plateBlocks.add(target.getRelative(side));
         }
         if (dish != null && dish.plate() != null && dish.plate().large()) {
             for (int dx = -1; dx <= 1; dx++) {
                 for (int dz = -1; dz <= 1; dz++) {
                     if ((dx != 0 || dz != 0) && !canPlaceAt(type, target.getRelative(dx, 0, dz))) {
                         return false;
+                    }
+                    if (dx != 0 || dz != 0) {
+                        plateBlocks.add(target.getRelative(dx, 0, dz));
                     }
                 }
             }
@@ -329,8 +335,8 @@ public class StationListener implements Listener {
         checking = true;
         boolean allowed;
         try {
-            if (footprint.size() > 1) {
-                // Multi-block station: protection plugins check all occupied blocks
+            if (footprint.size() > 1 || !plateBlocks.isEmpty()) {
+                // Multi-block station or wide/large plate: protection plugins check all occupied blocks
                 List<BlockState> states = new ArrayList<>();
                 states.add(replaced);
                 for (BlockKey block : footprint) {
@@ -338,6 +344,9 @@ public class StationListener implements Listener {
                     if (part != null && !part.equals(target)) {
                         states.add(part.getState());
                     }
+                }
+                for (Block part : plateBlocks) {
+                    states.add(part.getState());
                 }
                 allowed = new BlockMultiPlaceEvent(states, clicked, item, player, true, hand).callEvent();
             } else {
@@ -654,5 +663,6 @@ public class StationListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         lastHandledTick.remove(event.getPlayer().getUniqueId());
         lastPlacedTick.remove(event.getPlayer().getUniqueId());
+        stations.forget(event.getPlayer());
     }
 }

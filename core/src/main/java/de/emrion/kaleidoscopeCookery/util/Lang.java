@@ -52,6 +52,11 @@ public final class Lang {
      * Add the language files of another pack (addon); keys that are already known stay.
      */
     public static void add(ZipFile pack, Logger logger) throws IOException {
+        if (store == null) {
+            // Cookery's own pack could not be loaded: the addon's texts become the base instead of failing
+            load(pack, logger);
+            return;
+        }
         int count = 0;
         for (ZipEntry entry : java.util.Collections.list(pack.entries())) {
             Matcher name = LANG_FILE.matcher(entry.getName());

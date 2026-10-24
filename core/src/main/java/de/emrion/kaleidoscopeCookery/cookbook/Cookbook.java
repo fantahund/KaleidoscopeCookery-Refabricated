@@ -40,7 +40,9 @@ public class Cookbook {
     private static final int COLUMNS = 2;
     /** Wide enough for long dish names with an image */
     private static final int BUTTON_WIDTH = 240;
-    private static final ClickCallback.Options CALLBACK = ClickCallback.Options.builder().uses(ClickCallback.UNLIMITED_USES).build();
+    /** Buttons of an open page; 10 minutes instead of the default 12 hours, every page view registers new ones */
+    private static final ClickCallback.Options CALLBACK = ClickCallback.Options.builder().uses(ClickCallback.UNLIMITED_USES)
+            .lifetime(java.time.Duration.ofMinutes(10)).build();
 
     private final KaleidoscopeCookery plugin;
     private @Nullable Recipes cachedFor;

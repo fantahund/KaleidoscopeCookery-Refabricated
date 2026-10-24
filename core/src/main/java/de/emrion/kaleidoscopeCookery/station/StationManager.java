@@ -68,6 +68,11 @@ public class StationManager implements Listener {
     /** Scheduled single ticks: server tick -> stations (e.g. the next random tick of a crop) */
     private final Map<Long, List<Station>> scheduled = new HashMap<>();
     private final Map<UUID, Long> hudPausedUntil = new HashMap<>();
+
+    /** A player left: drop the per-player state */
+    public void forget(Player player) {
+        hudPausedUntil.remove(player.getUniqueId());
+    }
     private BukkitTask task;
     private long serverTick;
 
@@ -694,6 +699,18 @@ public class StationManager implements Listener {
      *
      * @return number of corrections
      */
+    /** The root of this owner id is a station whose type is not registered (its addon is missing) */
+    private boolean ofUnloadedType(World world, String owner) {
+        Entity root;
+        try {
+            root = world.getEntity(UUID.fromString(owner));
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+        String type = root == null ? null : root.getPersistentDataContainer().get(Keys.STATION_TYPE, PersistentDataType.STRING);
+        return type != null && !types.containsKey(type);
+    }
+
     public int repair() {
         int fixes = 0;
         for (Station station : new ArrayList<>(byRoot.values())) {
@@ -740,6 +757,9 @@ public class StationManager implements Listener {
                     continue;
                 }
                 Station station = byRoot.get(UUID.fromString(owner));
+                if (station == null && ofUnloadedType(world, owner)) {
+                    continue; // station of an addon that is not loaded: attach() leaves it alone, so does repair
+                }
                 if (station == null || !display.equals(station.parts().get(display.getPersistentDataContainer().get(Keys.STATION_PART, PersistentDataType.STRING)))) {
                     display.remove();
                     fixes++;
@@ -749,6 +769,9 @@ public class StationManager implements Listener {
                 String hitboxOwner = interaction.getPersistentDataContainer().get(Keys.STATION_OWNER, PersistentDataType.STRING);
                 if (hitboxOwner != null) {
                     Station owner = byRoot.get(UUID.fromString(hitboxOwner));
+                    if (owner == null && ofUnloadedType(world, hitboxOwner)) {
+                        continue;
+                    }
                     if (owner == null || !interaction.equals(owner.hitboxes().get(interaction.getPersistentDataContainer().get(Keys.STATION_PART, PersistentDataType.STRING)))) {
                         interaction.remove();
                         fixes++;
