@@ -137,6 +137,7 @@ tabs:
       - "kaleidoscope_cookery:clay_pot_milk_tea"
       - "kaleidoscope_cookery:empty_cup"
       - "kaleidoscope_cookery:model_display"
+      - "kaleidoscope_cookery:fruit_compote"
   furniture:
     icon: "kaleidoscope_cookery:chair_oak"
     items:

@@ -244,7 +244,9 @@
     "kaleidoscope_cookery.ponder.tag.kitchen_blocks": "Küchen-Grundlagen",
     "kaleidoscope_cookery.ponder.tag.kitchen_blocks.description": "Beginne den Weg zum Meisterkoch!",
     "item.kaleidoscope_cookery.stone_kitchen_knife": "Steinmesser",
-    "tooltip.kaleidoscope_cookery.stone_kitchen_knife": "Einfaches Küchenmesser. Vorlage für die Gussform der Messerklinge in der Schmiede."
+    "tooltip.kaleidoscope_cookery.stone_kitchen_knife": "Einfaches Küchenmesser. Vorlage für die Gussform der Messerklinge in der Schmiede.",
+    "item.kaleidoscope_cookery.fruit_compote": "Früchtekompott",
+    "tooltip.kaleidoscope_cookery.fruit_compote": "Suppentopf: Traubensaft-Brühe mit Äpfeln und Süßbeeren"
   },
   "kaleidoscope_grilling": {
     "hud.kaleidoscope_grilling.pot.state.need_heat": "Wartet auf Hitzequelle",

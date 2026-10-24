@@ -525,6 +525,9 @@ def collect_items(foods: dict, bites: dict) -> dict:
         if full_id in BASE_MATERIALS:
             entry["base"] = BASE_MATERIALS[full_id]
             entry["prototype"] = PROTOTYPES[full_id]
+        if full_id in OWN_FOODS:
+            entry["max-stack"] = 16
+            entry["food"] = OWN_FOODS[full_id]
         items.setdefault(full_id, entry)
     return dict(sorted(items.items()))
 
@@ -571,12 +574,20 @@ def resolve_tag(name: str, tags: dict, seen=None) -> list:
     return list(dict.fromkeys(result))
 
 
+# Food of the own dishes (hunger and saturation by level in config cooking-skill.dishes)
+OWN_FOODS = {
+    "kaleidoscope_cookery:fruit_compote": {
+        "nutrition": 7, "saturation": 7.0, "always-edible": True, "remainder": "minecraft:bowl",
+        "effects": [{"effect": "minecraft:regeneration", "duration": 200}, {"effect": "kaleidoscope_cookery:vigor", "duration": 1200}]},
+}
 # Vanilla items renamed in 26.x
 RENAMED_ITEMS = {"minecraft:chain": "minecraft:iron_chain"}
 # Items without their own name in the language file (item id -> language key)
 EXTRA_ITEMS = {"kaleidoscope_cookery:recipe_item": "block.kaleidoscope_cookery.recipe_block",
                # Own addition: simple stone knife, template for the knife blade mold of KaleidoscopeSmithing
                "kaleidoscope_cookery:stone_kitchen_knife": "item.kaleidoscope_cookery.stone_kitchen_knife",
+               # Own stockpot dish on a grape juice broth of KaleidoscopeTavern (recipe in Tavern)
+               "kaleidoscope_cookery:fruit_compote": "item.kaleidoscope_cookery.fruit_compote",
                # Seeds of the pepper bush (tools/gen_pepper_bush.py) instead of the pepper tree
                "kaleidoscope_grilling:sichuan_pepper_seeds": "item.kaleidoscope_grilling.sichuan_pepper_seeds"}
 
@@ -1014,6 +1025,38 @@ def split_recipes(core: dict, full: dict) -> dict:
     return addon
 
 
+def write_dish_assets():
+    """Own stockpot dish on a KaleidoscopeTavern broth (recipe in Tavern): fruit compote (Cookery's borscht bowl with grape and berry colours)."""
+    from PIL import Image
+    src = imported("kaleidoscope_cookery") / "textures" / "item"
+    out = custom("kaleidoscope_cookery") / "textures" / "item"
+    out.mkdir(parents=True, exist_ok=True)
+
+    def lum(c):
+        return 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]
+
+    compote = Image.open(src / "borscht.png").convert("RGBA")
+    for y in range(16):
+        for x in range(16):
+            r, g, b, a = compote.getpixel((x, y))
+            if not a:
+                continue
+            if r > 1.6 * max(g, 1):  # red soup -> grape purple
+                l = lum((r, g, b)) / 120
+                compote.putpixel((x, y), (int(110 * l + 30), int(30 * l + 10), int(120 * l + 40), a))
+            elif g > r:  # dill -> sweet berries
+                compote.putpixel((x, y), (200, 36, 48, a) if (x + y) % 2 else (150, 20, 34, a))
+    compote.save(out / "fruit_compote.png")
+
+    for item in ("fruit_compote",):
+        for path, data in ((custom("kaleidoscope_cookery") / "models" / "item" / f"{item}.json",
+                            {"parent": "minecraft:item/generated", "textures": {"layer0": f"kaleidoscope_cookery:item/{item}"}}),
+                           (custom("kaleidoscope_cookery") / "items" / f"{item}.json",
+                            {"model": {"type": "minecraft:model", "model": f"kaleidoscope_cookery:item/{item}"}})):
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+
 def write_stone_knife_assets():
     """Texture (Cookery iron knife with a stone blade), handheld model and item definition of the stone knife."""
     import smithing_sprites
@@ -1058,6 +1101,7 @@ def main():
         "key": {"#": "#minecraft:stone_tool_materials", "S": "minecraft:stick"},
         "result": "kaleidoscope_cookery:stone_kitchen_knife"}
     write_stone_knife_assets()
+    write_dish_assets()
     (RESOURCES / "recipes.yml").write_text(recipe_header + to_yaml(recipes) + "\n", encoding="utf-8")
     grilling_header = ("# Rezepte aus Kaleidoscope Grilling (tools/gen_data.py): neue Rezepte und Aenderungen an Cookery-Rezepten.\n"
                        "# Wird nach plugins/KaleidoscopeGrilling/recipes.yml kopiert; KaleidoscopeCookery mischt sie in seine Rezepte\n"

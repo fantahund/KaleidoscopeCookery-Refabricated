@@ -1262,6 +1262,21 @@ items:
     name: block.kaleidoscope_cookery.fruit_basket
     tooltip: tooltip.kaleidoscope_cookery.fruit_basket
     max-stack: 1
+  "kaleidoscope_cookery:fruit_compote":
+    model: "kaleidoscope_cookery:fruit_compote"
+    name: item.kaleidoscope_cookery.fruit_compote
+    tooltip: tooltip.kaleidoscope_cookery.fruit_compote
+    max-stack: 16
+    food:
+      nutrition: 7
+      saturation: 7.0
+      always-edible: true
+      remainder: "minecraft:bowl"
+      effects:
+        - effect: "minecraft:regeneration"
+          duration: 200
+        - effect: "kaleidoscope_cookery:vigor"
+          duration: 1200
   "kaleidoscope_cookery:fruit_platter":
     model: "kaleidoscope_cookery:fruit_platter"
     name: block.kaleidoscope_cookery.fruit_platter

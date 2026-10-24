@@ -257,7 +257,7 @@ cooking-skill:
     "kaleidoscope_cookery:braised_beef": {level: 11, nutrition: 7, saturation: 7.0}
     "kaleidoscope_cookery:braised_beef_with_potatoes": {level: 11, nutrition: 6, saturation: 6.0}
     "kaleidoscope_cookery:candied_potato": {level: 11, nutrition: 8, saturation: 8.0}
-    "kaleidoscope_tavern:fruit_compote": {level: 11, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:fruit_compote": {level: 11, nutrition: 7, saturation: 7.0}
     "kaleidoscope_tavern:mulled_wine": {level: 31, nutrition: 10, saturation: 14.0}
     "kaleidoscope_cookery:chicken_and_mushroom_stew": {level: 11, nutrition: 6, saturation: 6.0}
     "kaleidoscope_cookery:clay_pot_milk_tea": {level: 11}

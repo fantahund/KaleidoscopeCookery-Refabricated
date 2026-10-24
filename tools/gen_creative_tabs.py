@@ -59,6 +59,9 @@ def main():
             food.append(key)
             taken.add(key)
 
+    # Own dish on a KaleidoscopeTavern broth
+    food.append("kaleidoscope_cookery:fruit_compote")
+
     grilling_first = ["grill", "oil_press", "big_vat", "advanced_rack", "skewer_recipe_book", "empty_seasoning_bottle",
                       "special_seasoning", "canola_oil_bucket", "secret_chili_oil_bucket", "premium_chili_oil_bucket"]
     grilling_items = registered((cache / GRILLING_JAVA / "ModItems.java").read_text(encoding="utf-8"))
