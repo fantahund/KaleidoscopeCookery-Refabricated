@@ -235,7 +235,8 @@ def board_models():
         if cut >= 2:
             size = 1 + cut / SCRAPE_CUTS * 1.5
             faces = {f: {"uv": [5, 5, 11, 11], "texture": "#tallow"} for f in ("up", "north", "south", "east", "west")}
-            elements.append({"from": [13.5, 0, 9], "to": [13.5 + size, size * 0.6, 9 + size], "faces": faces})
+            # on the side away from the board's handle
+            elements.append({"from": [2.5 - size, 0, 9], "to": [2.5, size * 0.6, 9 + size], "faces": faces})
         write_json(OUT / "models" / "chopping_board" / "raw_hide" / f"{cut}.json", {
             "textures": {"hide": k(f"chopping_board/raw_hide_{cut}"), "tallow": k("item/tallow"),
                          "particle": k(f"chopping_board/raw_hide_{cut}")},
@@ -304,6 +305,8 @@ TEXTS = {
     f"{NS}.frame.too_low": ("Fine leather needs tanning level %s", "Feines Leder braucht Gerb-Stufe %s"),
     f"{NS}.frame.better": ("Well done - the leather turned out better!", "Gut gemacht - das Leder ist besser geworden!"),
     f"{NS}.frame.busy": ("The hide is tanning - wait until it is done", "Die Haut gerbt gerade - warte, bis sie fertig ist"),
+    f"{NS}.saddle.crude": ("Riding speed -10%", "Reittempo -10 %"),
+    f"{NS}.saddle.fine": ("Riding speed +10%", "Reittempo +10 %"),
     f"{NS}.sink.soap": ("Soap: %s glasses", "Seife: %s Gläser"),
 }
 

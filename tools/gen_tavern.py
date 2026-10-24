@@ -47,6 +47,8 @@ OWN_ITEMS = {
     "dish_sponge": ("Dish Sponge", "Spülschwamm"),
     "sink": ("Sink", "Spülbecken"),
     "mulled_wine": ("Mulled Wine", "Glühwein"),
+    "wineskin": ("Wineskin", "Weinschlauch"),
+    "full_wineskin": ("Wineskin", "Weinschlauch"),
 }
 
 # Broths for Cookery's stockpot (registered by the plugin): item -> surface texture
@@ -180,6 +182,10 @@ def items(barrel, cocktails):
     add("dirty_glassware", tooltip=f"tooltip.{NS}.dirty_glassware", **{"max-stack": 16})
     add("dish_sponge", tooltip=f"tooltip.{NS}.dish_sponge", **{"max-stack": 1, "max-damage": 384})
     add("sink", tooltip=f"tooltip.{NS}.sink")
+    # Wineskin (own addition): 4 portions of one drink; filled by the plugin (Wineskins), a sip leaves the rest
+    add("wineskin", tooltip=f"tooltip.{NS}.wineskin", **{"max-stack": 16})
+    add("full_wineskin", **{"max-stack": 1},
+        food={"nutrition": 0, "saturation": 0.0, "always-edible": True, "drink": True})
     # Mulled wine: stockpot drink on a wine broth (own addition, values by level in Cookery's cooking-skill.dishes)
     add("mulled_wine", tooltip=f"tooltip.{NS}.mulled_wine", **{"max-stack": 16},
         food={"nutrition": 10, "saturation": 14.0, "always-edible": True, "drink": True, "remainder": "kaleidoscope_cookery:empty_cup",
@@ -271,6 +277,16 @@ def write_recipes():
         '      C: "minecraft:cauldron"',
         '      P: "#minecraft:planks"',
         f"    result: {yaml_str(k('sink'))}",
+        f"  {yaml_str(k('wineskin'))}:",
+        "    type: crafting_shaped",
+        "    pattern:",
+        '      - " S "',
+        '      - "L L"',
+        '      - " L "',
+        "    key:",
+        '      S: "minecraft:string"',
+        '      L: "minecraft:leather"',
+        f"    result: {yaml_str(k('wineskin'))}",
         f"  {yaml_str(k('dish_sponge'))}:",
         "    type: crafting_shapeless",
         "    ingredients:",
@@ -328,7 +344,7 @@ def write_recipes():
         '    carrier: "kaleidoscope_cookery:empty_cup"',
         f"    result: {yaml_str(k('mulled_wine'))}",
     ]
-    lines.append("data-version: 5")
+    lines.append("data-version: 6")
     (RES / "recipes.yml").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -450,6 +466,35 @@ def stockpot_surface_models():
             "elements": [{"from": [3, 0, 3], "to": [13, 0, 13], "shade": False, "faces": {"up": face}}],
         })
         model_item(name)
+
+
+def wineskin_textures():
+    """Wineskin: a leather bag with a wooden stopper and a cord; the full one bulges with highlights."""
+    import smithing_sprites
+    art = ["................",
+           ".......SS.......",
+           ".......Ss.......",
+           "......OccO......",
+           ".....OLLLLO.....",
+           "....OLLBBBBO....",
+           "...OLBBBBBBDO...",
+           "...OLBB{0}BBBDO...",
+           "..OLBBBBBBBBDO..",
+           "..OLB{1}BBBBBBDO..",
+           "..OBBBBB{0}BBBDO..",
+           "..OBBBBBBBBDDO..",
+           "...OBB{1}BBBDDO...",
+           "....ODDDDDDO....",
+           ".....OOOOOO.....",
+           "................"]
+    palette = {"O": (52, 30, 18), "L": (150, 96, 56), "B": (118, 72, 40), "D": (86, 50, 28), "S": (176, 132, 80),
+               "s": (128, 92, 52), "c": (214, 200, 170), "H": (186, 132, 84), "W": (96, 56, 30)}
+    for item, (a, b) in (("wineskin", ("W", "W")), ("full_wineskin", ("H", "H"))):
+        img = smithing_sprites.draw([row.replace("{0}", a).replace("{1}", b) for row in art], palette)
+        (OUT / "textures" / "item").mkdir(parents=True, exist_ok=True)
+        img.save(OUT / "textures" / "item" / f"{item}.png")
+        write_json(OUT / "models" / "item" / f"{item}.json", {"parent": "minecraft:item/generated", "textures": {"layer0": k(f"item/{item}")}})
+        write_json(OUT / "items" / f"{item}.json", {"model": {"type": "minecraft:model", "model": k(f"item/{item}")}})
 
 
 def mulled_wine_texture():
@@ -734,6 +779,11 @@ TEXTS = {
                                    "Trauben brauchen Erde, Eis/Schnee oder Netherrack/Magma unter dem Rankgitter"),
     f"{NS}.rack.empty_bottle_only": ("Only empty glasses can be hung up here!", "Hier können nur leere Gläser aufgehängt werden!"),
     f"tooltip.{NS}.mulled_wine": ("Stockpot: wine with sugar and glow berries, served in a cup", "Suppentopf: Wein mit Zucker und Leuchtbeeren, im Becher serviert"),
+    f"tooltip.{NS}.wineskin": ("Drink in the off hand + right-click: pour it in (4 portions). Or fill it at a barrel's tap",
+                                "Getränk in die Nebenhand + Rechtsklick: hineingießen (4 Portionen). Oder am Zapfhahn eines Fasses füllen"),
+    f"{NS}.wineskin.content": ("%s: %s/%s sips", "%s: %s/%s Schlucke"),
+    f"{NS}.wineskin.full": ("The wineskin is full", "Der Weinschlauch ist voll"),
+    f"{NS}.wineskin.mismatch": ("Only the same drink of the same brew level fits in", "Nur dasselbe Getränk in derselben Brau-Stufe passt hinein"),
     f"{NS}.pairing.perfect": ("Perfect pairing! Effects last 25% longer", "Perfekte Kombination! Effekte halten 25 % länger"),
     f"{NS}.pairing.goes_with": ("Goes well with: %s", "Passt zu: %s"),
     f"tooltip.{NS}.signature_effects": ("Mixed from your own drinks", "Aus deinen eigenen Getränken gemixt"),
@@ -768,6 +818,7 @@ def main():
     fluid_models()
     stockpot_surface_models()
     mulled_wine_texture()
+    wineskin_textures()
     effect_font()
     write_texts()
     print(f"Tavern: {len(entries)} Items, {len(barrel)} Fass-, {len(pressing)} Kelter-, {len(shaker)} Shaker-Rezepte, "

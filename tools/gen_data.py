@@ -1060,26 +1060,25 @@ def write_dish_assets():
 
 
 def write_salt_assets():
-    """Salt: a small burlap sack tied with twine, white salt heaped in the opening."""
+    """Salt: a small heap of coarse salt crystals (white cubes with bluish-grey shadows, sparkling highlights)."""
     import smithing_sprites
     art = ["................",
-           "......sSSs......",
-           ".....sSSSSs.....",
-           "......OTTO......",
-           ".......TT.......",
-           "......OBBO......",
-           "....OOBLBBOO....",
-           "...OBLLBBBbBO...",
-           "..OBLBBBBBbbBO..",
-           "..OBLBBbBBBbBO..",
-           "..OBBBBBBBBbbO..",
-           "..OBBbBBBBBbbO..",
-           "..OBBBBBbBBbbO..",
-           "...OBBBBBBbbO...",
-           "....OOOOOOOO....",
+           "................",
+           "................",
+           "................",
+           ".......OO.......",
+           "......OHWO......",
+           ".....OWWgsO.....",
+           "....OHWgOHWO....",
+           "...OWWsOWWWgO...",
+           "..OHWgOHWWsWgO..",
+           "..OWsWWWgOHWWO..",
+           ".OHWWgOWWsWWgsO.",
+           ".OWgsOHWWWgOWWO.",
+           "OHWWWsWWgsWWWgsO",
+           ".OOOOOOOOOOOOOO.",
            "................"]
-    palette = {"O": (78, 56, 34), "B": (186, 156, 112), "b": (150, 122, 84), "L": (214, 190, 146),
-               "T": (120, 84, 46), "S": (250, 250, 252), "s": (206, 210, 218)}
+    palette = {"O": (122, 132, 148), "W": (238, 242, 248), "H": (255, 255, 255), "g": (196, 204, 218), "s": (158, 170, 190)}
     img = smithing_sprites.draw(art, palette)
     out = custom("kaleidoscope_cookery")
     (out / "textures" / "item").mkdir(parents=True, exist_ok=True)
