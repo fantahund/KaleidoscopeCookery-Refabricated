@@ -313,7 +313,7 @@ public class SteamerStation extends Station {
             return false;
         }
         SteamerRecipe recipe = plugin().getRecipes().findSteamer(food);
-        if (recipe == null) {
+        if (recipe == null || !de.emrion.kaleidoscopeCookery.skill.CookingSkill.mayCook(player, recipe.result().item())) {
             return false;
         }
         boolean added = false;
@@ -347,6 +347,9 @@ public class SteamerStation extends Station {
                 continue;
             }
             allEmpty = false;
+            if (cookingTime[i] == -1) {
+                de.emrion.kaleidoscopeCookery.skill.CookingSkill.award(player, "steamer", items[i].getAmount());
+            }
             give(player, items[i]);
             items[i] = null;
             cookingTime[i] = 0;

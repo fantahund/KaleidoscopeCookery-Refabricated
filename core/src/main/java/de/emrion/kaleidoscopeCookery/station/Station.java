@@ -43,6 +43,8 @@ public abstract class Station {
     private boolean dirty;
     private boolean removed;
     private @Nullable Vector clickPosition;
+    /** Player who last used the station (e.g. the cook when a wok starts cooking on its own) */
+    private java.util.@Nullable UUID lastActor;
 
     protected Station(StationContext context) {
         this.context = context;
@@ -160,7 +162,7 @@ public abstract class Station {
      * All blocks the station occupies (default: only its own).
      */
     public List<BlockKey> occupied() {
-        return context.type().footprint(position());
+        return context.type().footprint(position(), facing());
     }
 
     /**
@@ -441,13 +443,22 @@ public abstract class Station {
     }
 
     /**
-     * Click position of the current right-click relative to the bottom centre of the station block (only during onInteract), otherwise null.
+     * Click position of the current right-click relative to the bottom centre of the station block (only during onInteract and interceptPlacement), otherwise null.
      */
     protected @Nullable Vector clickPosition() {
         return clickPosition;
     }
 
     // ---- internal (StationManager) ----
+
+    /** The player who last clicked this station, if still online */
+    public @Nullable Player lastActor() {
+        return lastActor == null ? null : org.bukkit.Bukkit.getPlayer(lastActor);
+    }
+
+    void setLastActor(Player player) {
+        lastActor = player.getUniqueId();
+    }
 
     void setClickPosition(@Nullable Vector clickPosition) {
         this.clickPosition = clickPosition;

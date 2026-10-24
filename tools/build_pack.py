@@ -39,7 +39,10 @@ ICON_ASCENT = 7
 DIAGRAM_ITEMS = {"minecraft:crafting_table", "minecraft:furnace", "kaleidoscope_cookery:shawarma_spit",
                  # Grilling pages (addon pack)
                  "kaleidoscope_grilling:grill", "kaleidoscope_grilling:oil_press", "kaleidoscope_grilling:empty_seasoning_bottle",
-                 "minecraft:stick"}
+                 "minecraft:stick",
+                 # Smithing pages (addon pack)
+                 "kaleidoscope_smithing:forge_crucible", "kaleidoscope_smithing:smithing_anvil",
+                 "kaleidoscope_smithing:quenching_basin", "kaleidoscope_smithing:smithing_table_station"}
 # Items whose block consists of several models stacked on top of each other: (model, y offset in model pixels)
 MULTIBLOCK_MODELS = {"kaleidoscope_cookery:shawarma_spit": [("kaleidoscope_cookery:block/shawarma_spit_lower", 0),
                                                             ("kaleidoscope_cookery:block/shawarma_spit_upper", 16)]}
@@ -405,7 +408,8 @@ class PackBuilder:
             else:
                 return None
             image = Image.open(io.BytesIO(data)).convert("RGBA")
-            if image.height > image.width and image.height % image.width == 0:
+            animated = any(png + ".mcmeta" in names for names in (self.files, self.base, self.vanilla.names))
+            if animated and image.height > image.width and image.height % image.width == 0:
                 image = image.crop((0, 0, image.width, image.width))
             return image
 
@@ -537,12 +541,15 @@ class PackBuilder:
                 image = load_texture(texture)
                 if image is None:
                     continue
-                scale = image.width / 16
+                # UVs are 0-16 across the whole texture on both axes, also for non-square textures (64x32 ...)
+                scale_u, scale_v = image.width / 16, image.height / 16
                 u1, v1, u2, v2 = uv
-                box = (min(u1, u2) * scale, min(v1, v2) * scale, max(u1, u2) * scale, max(v1, v2) * scale)
+                box = (min(u1, u2) * scale_u, min(v1, v2) * scale_v, max(u1, u2) * scale_u, max(v1, v2) * scale_v)
                 if box[2] - box[0] < 0.5 or box[3] - box[1] < 0.5:
                     continue
                 part = image.crop(tuple(round(v) for v in box))
+                if part.width == 0 or part.height == 0:
+                    continue  # sub-pixel UV that rounds to nothing
                 if u2 < u1:
                     part = part.transpose(Image.FLIP_LEFT_RIGHT)
                 if v2 < v1:
@@ -602,7 +609,7 @@ class PackBuilder:
         for name in sorted(definitions):
             ns = name.split("/")[1]
             item = name.split("/")[3][:-5]
-            if ns not in ("minecraft", "kaleidoscope", "kaleidoscope_cookery", "kaleidoscope_grilling"):
+            if ns not in ("minecraft", "kaleidoscope", "kaleidoscope_cookery", "kaleidoscope_grilling", "kaleidoscope_smithing", "kaleidoscope_tavern"):
                 continue
             definition = read(name)
             model = first_model(definition.get("model")) if definition else None

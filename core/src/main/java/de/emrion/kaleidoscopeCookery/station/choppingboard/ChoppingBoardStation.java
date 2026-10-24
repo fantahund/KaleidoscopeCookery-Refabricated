@@ -153,6 +153,7 @@ public class ChoppingBoardStation extends Station {
         ItemStack held = player.getInventory().getItem(hand);
         if (isOccupied()) {
             if (isDone()) {
+                de.emrion.kaleidoscopeCookery.skill.CookingSkill.award(player, "chopping-board", 1);
                 popResults();
                 return true;
             }
@@ -186,6 +187,7 @@ public class ChoppingBoardStation extends Station {
             return false;
         }
         if (isDone()) {
+            de.emrion.kaleidoscopeCookery.skill.CookingSkill.award(player, "chopping-board", 1);
             popResults();
             return true;
         }

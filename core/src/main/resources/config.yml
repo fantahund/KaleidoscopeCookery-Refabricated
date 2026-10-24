@@ -1,18 +1,6 @@
 # KaleidoscopeCookery – Hauptkonfiguration
-# Nach Änderungen: /kc reload (Webserver-Einstellungen erst nach einem Neustart)
-
-resource-pack:
-  # Pack beim Betreten an die Spieler schicken
-  enabled: true
-  # Spieler müssen das Pack annehmen (sonst werden sie gekickt)
-  required: true
-  # Externe Download-URL. Leer = eingebauter Mini-Webserver liefert das Pack aus dem Plugin aus.
-  external-url: ""
-  # Eingebauter Webserver: Adresse/Port, an die er sich bindet ...
-  bind-address: 0.0.0.0
-  port: 8163
-  # ... und die Adresse, unter der die Spieler ihn erreichen (für einen lokalen Testserver: 127.0.0.1)
-  public-host: 127.0.0.1
+# Nach Änderungen: /kc reload
+# Die Resourcepacks verschickt das Plugin KaleidoscopePack.
 
 # Schneidebrett: Geschnitten wird per Linksklick mit einem Küchenmesser (wie im Mod).
 # Schnitte pro Hieb je Werkzeug (Item-ID). Werkzeuge, die hier fehlen, können nicht schneiden und lösen auch keine Öl-Drops aus.
@@ -61,13 +49,8 @@ food:
 
   # Mod-Gerichte mit angepassten Nährwerten: Prozent von Hunger und Sättigung des Mods (100 = wie im Mod).
   # Bereits vorhandene Items behalten ihre alten Werte, neu gekochte bekommen die angepassten.
-  dishes:
-    # 35 % schwächer: sehr einfach herzustellen für eine volle Hungerleiste
-    kaleidoscope_cookery:candied_potato: 65
-    kaleidoscope_cookery:brown_mushroom_pot_soup: 65
-    kaleidoscope_cookery:red_mushroom_pot_soup: 65
-    kaleidoscope_cookery:crimson_fungus_pot_soup: 65
-    kaleidoscope_cookery:warped_fungus_pot_soup: 65
+  dishes: {}
+    # (die Gerichte der Kochstationen haben ihre Werte jetzt unter cooking-skill.dishes)
 
 # Spender bedienen Stationen wie im Mod: Ölkanne, Bambustablett und Teekanne hinstellen, Zutaten aufs Schneidebrett
 # legen und mit Küchenmessern schneiden. false = Spender verhalten sich wie in Vanilla.
@@ -197,3 +180,162 @@ disabled-recipes:
   - "kaleidoscope_cookery:bamboo_tray/wetting/sponge_to_wet_sponge"
   - "kaleidoscope_cookery:bamboo_tray/wetting/white_concrete_powder_to_white_concrete"
   - "kaleidoscope_cookery:bamboo_tray/wetting/yellow_concrete_powder_to_yellow_concrete"
+
+# Koch-Level (gemeinsam für Cookery und Grilling, gespeichert im KaleidoscopeCore). Gerichte werden nach ihrem Wert
+# (Hunger, Sättigung, Effekte) in 5 Stufen freigeschaltet: Koch-Stufe 1, 11, 21, 31, 41. XP von Stufe L auf L+1 = base-xp * growth^(L-1), max. Stufe 50.
+cooking-skill:
+  base-xp: 100
+  growth: 1.1
+  xp:
+    # Wok-Gericht (mal Qualität: schlecht 0.5, normal 1, sehr gut 1.5, ausgezeichnet 2)
+    pot: 12
+    # Suppentopf pro Portion (mal Qualität)
+    stockpot: 4
+    # Dampfgarer pro gegartem Stück
+    steamer: 3
+    # Schneidebrett pro fertig geschnittener Zutat
+    chopping-board: 1
+    # Dönerspieß pro gegartem Stück
+    shawarma-spit: 1
+    # Teekanne: pro eingegossener Tasse
+    teapot: 2
+    # Grilling: gegrillter Spieß, fertig aufgespießter Spieß
+    grill: 8
+    skewer: 2
+  perks:
+    # Chance pro Stufe, dass ein Gericht aus Wok/Suppentopf eine Qualitätsstufe besser wird (Stufe 50: 30 %)
+    better-quality-per-level: 0.006
+    # Chance pro Stufe auf eine Extra-Portion beim Herausnehmen (Stufe 50: 15 %)
+    extra-portion-per-level: 0.003
+    # Gerichte tragen den Rang ihres Kochs (alle 10 Stufen): pro Rang sättigen sie so viel mehr (Sternekoch: +40 %)
+    saturation-per-rank: 0.10
+  # Stufe der Effektdauer je Koch-Stufe in Prozent der Mod-Werte
+  effect-percent:
+    1: 50
+    11: 75
+    21: 100
+    31: 125
+    41: 150
+  # Gerichte: nötige Koch-Stufe sowie Hunger und Sättigung gesamt (bei Tellern über alle Bissen).
+  # Fehlende Werte bleiben wie im Mod; nicht gelistete Gerichte sind ab Stufe 1 kochbar.
+  dishes:
+    "kaleidoscope_cookery:brown_mushroom_pot_soup": {level: 1, nutrition: 4, saturation: 2.4}
+    "kaleidoscope_cookery:cooked_cow_offal": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_cookery:cooked_cut_small_meats": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_cookery:cooked_donkey_meat": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_cookery:cooked_lamb_chops": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_cookery:cooked_meatball": {level: 1, nutrition: 4, saturation: 2.4}
+    "kaleidoscope_cookery:cooked_pork_belly": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_cookery:cooked_rice": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_cookery:flower_tea": {level: 1}
+    "kaleidoscope_cookery:fondant_spider_eye": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_cookery:fried_caterpillar": {level: 1, nutrition: 4, saturation: 2.4}
+    "kaleidoscope_cookery:fried_egg": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_cookery:mantou": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_cookery:pork_bone_soup": {level: 1, nutrition: 2, saturation: 1.2}
+    "kaleidoscope_cookery:qingtuan": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_cookery:red_mushroom_pot_soup": {level: 1, nutrition: 4, saturation: 2.4}
+    "kaleidoscope_cookery:shelf_mushroom_pot_soup": {level: 1, nutrition: 4, saturation: 2.4}
+    "kaleidoscope_cookery:slime_ball_meal": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_cookery:sticky_candy": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_grilling:grilled_caterpillar_skewer": {level: 1, nutrition: 4, saturation: 2.4}
+    "kaleidoscope_grilling:grilled_chicken_skin_skewer": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_grilling:grilled_fish_skewer": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_grilling:grilled_mushroom_skewer": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_grilling:grilled_potato_slice_skewer": {level: 1, nutrition: 3, saturation: 1.8}
+    "kaleidoscope_cookery:beef_meatball_soup": {level: 11, nutrition: 4, saturation: 3.2}
+    "kaleidoscope_cookery:borscht": {level: 11, nutrition: 4, saturation: 3.2}
+    "kaleidoscope_cookery:braised_beef": {level: 11, nutrition: 5, saturation: 4.0}
+    "kaleidoscope_cookery:braised_beef_with_potatoes": {level: 11, nutrition: 4, saturation: 3.2}
+    "kaleidoscope_cookery:candied_potato": {level: 11, nutrition: 6, saturation: 4.8}
+    "kaleidoscope_cookery:chicken_and_mushroom_stew": {level: 11, nutrition: 4, saturation: 3.2}
+    "kaleidoscope_cookery:clay_pot_milk_tea": {level: 11}
+    "kaleidoscope_cookery:cold_roasted_meat": {level: 11, nutrition: 6, saturation: 4.8}
+    "kaleidoscope_cookery:egg_fried_rice": {level: 11, nutrition: 6, saturation: 4.8}
+    "kaleidoscope_cookery:lamb_and_radish_soup": {level: 11, nutrition: 4, saturation: 3.2}
+    "kaleidoscope_cookery:scramble_egg_with_tomatoes": {level: 11, nutrition: 5, saturation: 4.0}
+    "kaleidoscope_cookery:seafood_miso_soup": {level: 11, nutrition: 4, saturation: 3.2}
+    "kaleidoscope_cookery:sticky_rice_cake": {level: 11, nutrition: 5, saturation: 4.0}
+    "kaleidoscope_cookery:stir_fried_pork_with_peppers": {level: 11, nutrition: 5, saturation: 4.0}
+    "kaleidoscope_cookery:sweet_and_sour_pork": {level: 11, nutrition: 5, saturation: 4.0}
+    "kaleidoscope_cookery:tea_egg": {level: 11, nutrition: 4, saturation: 3.2}
+    "kaleidoscope_cookery:wild_mushroom_rabbit_soup": {level: 11, nutrition: 4, saturation: 3.2}
+    "kaleidoscope_grilling:grilled_beef_skewer": {level: 11, nutrition: 4, saturation: 3.2}
+    "kaleidoscope_grilling:grilled_bun_slice_skewer": {level: 11, nutrition: 4, saturation: 3.2}
+    "kaleidoscope_grilling:grilled_fried_egg_skewer": {level: 11, nutrition: 4, saturation: 3.2}
+    "kaleidoscope_grilling:grilled_gluten_skewer": {level: 11, nutrition: 5, saturation: 4.0}
+    "kaleidoscope_grilling:grilled_meat_and_bone_skewer": {level: 11, nutrition: 4, saturation: 3.2}
+    "kaleidoscope_grilling:grilled_pork_belly_skewer": {level: 11, nutrition: 4, saturation: 3.2}
+    "kaleidoscope_grilling:grilled_squid_tentacle_skewer": {level: 11, nutrition: 4, saturation: 3.2}
+    "kaleidoscope_cookery:bamboo_tube_rice": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:baozi": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:barley_tea": {level: 21}
+    "kaleidoscope_cookery:braised_beef_rice_bowl": {level: 21, nutrition: 8, saturation: 8.0}
+    "kaleidoscope_cookery:braised_fish": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:braised_fish_rice_bowl": {level: 21, nutrition: 8, saturation: 8.0}
+    "kaleidoscope_cookery:butter_tea": {level: 21}
+    "kaleidoscope_cookery:crimson_fungus_pot_soup": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:donkey_soup": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:dumpling": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:fish_flavored_shredded_pork": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:fish_flavored_shredded_pork_rice_bowl": {level: 21, nutrition: 8, saturation: 8.0}
+    "kaleidoscope_cookery:laba_congee": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:meat_pie": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:pufferfish_soup": {level: 21, nutrition: 6, saturation: 6.0}
+    "kaleidoscope_cookery:scramble_egg_with_tomatoes_rice_bowl": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:shengjian_mantou": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:spicy_chicken": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:spicy_chicken_rice_bowl": {level: 21, nutrition: 8, saturation: 8.0}
+    "kaleidoscope_cookery:stir_fried_beef_offal": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:stir_fried_beef_offal_rice_bowl": {level: 21, nutrition: 8, saturation: 8.0}
+    "kaleidoscope_cookery:stir_fried_pork_with_peppers_rice_bowl": {level: 21, nutrition: 8, saturation: 8.0}
+    "kaleidoscope_cookery:sweet_and_sour_pork_rice_bowl": {level: 21, nutrition: 8, saturation: 8.0}
+    "kaleidoscope_cookery:tomato_beef_brisket_soup": {level: 21, nutrition: 6, saturation: 6.0}
+    "kaleidoscope_cookery:warped_fungus_pot_soup": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:yakitori": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:zongzi": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_grilling:grilled_lamb_skewer": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_grilling:grilled_mid_wing_skewer": {level: 21, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_cookery:beef_noodle": {level: 31, nutrition: 11, saturation: 13.2}
+    "kaleidoscope_cookery:braised_pork_ribs": {level: 31, nutrition: 12, saturation: 14.4}
+    "kaleidoscope_cookery:chorus_fried_egg": {level: 31, nutrition: 10, saturation: 12.0}
+    "kaleidoscope_cookery:cold_style_sashimi": {level: 31, nutrition: 11, saturation: 13.2}
+    "kaleidoscope_cookery:country_style_mixed_vegetables": {level: 31, nutrition: 9, saturation: 10.8}
+    "kaleidoscope_cookery:delicious_egg_fried_rice": {level: 31, nutrition: 11, saturation: 13.2}
+    "kaleidoscope_cookery:desert_style_sashimi": {level: 31, nutrition: 11, saturation: 13.2}
+    "kaleidoscope_cookery:dough_drop_soup": {level: 31, nutrition: 10, saturation: 12.0}
+    "kaleidoscope_cookery:fearsome_thick_soup": {level: 31, nutrition: 8, saturation: 9.6}
+    "kaleidoscope_cookery:fondant_pie": {level: 31, nutrition: 10, saturation: 12.0}
+    "kaleidoscope_cookery:four_joy_meatball_soup": {level: 31, nutrition: 11, saturation: 13.2}
+    "kaleidoscope_cookery:fried_spring_roll": {level: 31, nutrition: 10, saturation: 12.0}
+    "kaleidoscope_cookery:hot_dry_noodles": {level: 31, nutrition: 11, saturation: 13.2}
+    "kaleidoscope_cookery:hui_noodle": {level: 31, nutrition: 11, saturation: 13.2}
+    "kaleidoscope_cookery:numbing_spicy_chicken": {level: 31, nutrition: 10, saturation: 12.0}
+    "kaleidoscope_cookery:oil_splashed_fish": {level: 31, nutrition: 12, saturation: 14.4}
+    "kaleidoscope_cookery:oolong": {level: 31}
+    "kaleidoscope_cookery:pan_seared_knight_steak": {level: 31, nutrition: 10, saturation: 12.0}
+    "kaleidoscope_cookery:spicy_blood_stew": {level: 31, nutrition: 10, saturation: 12.0}
+    "kaleidoscope_cookery:spicy_rabbit_head": {level: 31, nutrition: 10, saturation: 12.0}
+    "kaleidoscope_cookery:stargazy_pie": {level: 31, nutrition: 9, saturation: 10.8}
+    "kaleidoscope_cookery:stuffed_tiger_skin_pepper": {level: 31, nutrition: 12, saturation: 14.4}
+    "kaleidoscope_cookery:sweet_and_sour_ender_pearls": {level: 31, nutrition: 9, saturation: 10.8}
+    "kaleidoscope_cookery:tieguanyin": {level: 31}
+    "kaleidoscope_cookery:tundra_style_sashimi": {level: 31, nutrition: 11, saturation: 13.2}
+    "kaleidoscope_cookery:udon_noodle": {level: 31, nutrition: 11, saturation: 13.2}
+    "kaleidoscope_grilling:grilled_ender_pearl_skewer": {level: 31, nutrition: 9, saturation: 10.8}
+    "kaleidoscope_grilling:grilled_meatball_skewer": {level: 31, nutrition: 11, saturation: 13.2}
+    "kaleidoscope_grilling:grilled_slime_skewer": {level: 31, nutrition: 9, saturation: 10.8}
+    "kaleidoscope_grilling:grilled_sweet_potato_sheet_skewer": {level: 31, nutrition: 10, saturation: 12.0}
+    "kaleidoscope_cookery:biluochun": {level: 41}
+    "kaleidoscope_cookery:blaze_lamb_chop": {level: 41, nutrition: 14, saturation: 21.0}
+    "kaleidoscope_cookery:buddha_jumps_over_the_wall": {level: 41, nutrition: 17, saturation: 25.5}
+    "kaleidoscope_cookery:cold_cut_ham_slices": {level: 41, nutrition: 20, saturation: 30.0}
+    "kaleidoscope_cookery:crystal_lamb_chop": {level: 41, nutrition: 14, saturation: 21.0}
+    "kaleidoscope_cookery:dongpo_pork": {level: 41, nutrition: 18, saturation: 27.0}
+    "kaleidoscope_cookery:donkey_burger": {level: 41, nutrition: 15, saturation: 22.5}
+    "kaleidoscope_cookery:end_style_sashimi": {level: 41, nutrition: 15, saturation: 22.5}
+    "kaleidoscope_cookery:frost_lamb_chop": {level: 41, nutrition: 14, saturation: 21.0}
+    "kaleidoscope_cookery:golden_salad": {level: 41, nutrition: 15, saturation: 22.5}
+    "kaleidoscope_cookery:nether_style_sashimi": {level: 41, nutrition: 15, saturation: 22.5}
+    "kaleidoscope_cookery:sakura_fubuki": {level: 41}
+    "kaleidoscope_grilling:grilled_golden_skewer": {level: 41, nutrition: 15, saturation: 22.5}

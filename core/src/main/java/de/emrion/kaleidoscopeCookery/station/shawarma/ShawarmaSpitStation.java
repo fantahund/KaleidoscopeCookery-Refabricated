@@ -206,6 +206,7 @@ public class ShawarmaSpitStation extends Station {
         ItemStack give;
         if (cookTime[layer] <= 0 && cooked[layer] != null) {
             give = cooked[layer];
+            de.emrion.kaleidoscopeCookery.skill.CookingSkill.award(player, "shawarma-spit", give.getAmount());
         } else if (cookTime[layer] > 0 && cooking[layer] != null) {
             give = cooking[layer];
         } else {

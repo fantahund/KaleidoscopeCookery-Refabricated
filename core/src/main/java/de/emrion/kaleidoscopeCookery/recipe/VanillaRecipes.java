@@ -146,7 +146,15 @@ public class VanillaRecipes implements Listener {
             }
         }
         ItemStack result = riceBowl(inputs);
-        if (result == null) {
+        if (result != null && event.getView().getPlayer() instanceof org.bukkit.entity.Player player) {
+            // Rice bowls count as cooked dishes: the crafting table needs the same cooking level as the wok
+            net.kyori.adventure.key.Key bowl = de.emrion.kaleidoscopeCookery.item.CookeryItems.idOf(result);
+            if (bowl != null && !de.emrion.kaleidoscopeCookery.skill.CookingSkill.mayCook(player, bowl)) {
+                result = null;
+                inputs = List.of();
+            }
+        }
+        if (result == null && !inputs.isEmpty()) {
             result = resetRecipe(inputs);
         }
         for (CraftingResolver resolver : resolvers) {

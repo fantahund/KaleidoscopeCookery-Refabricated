@@ -1,7 +1,4 @@
 {
-  "kaleidoscope.pack.prompt": "The cooking stations need the server resource pack (assets from Kaleidoscope Cookery & Grilling, CC BY-NC-SA 4.0).",
-  "kaleidoscope.pack.declined": "You need the resource pack to play on this server.",
-  "kaleidoscope.pack.failed": "The resource pack could not be loaded. Please try again.",
   "kaleidoscope.chopping_board.need_tool": "Cut with a kitchen knife (left click).",
   "kaleidoscope.chopping_board.no_recipe": "This can't be cut.",
   "kaleidoscope.chopping_board.progress": "Cutting: %s/%s",
@@ -23,8 +20,6 @@
   "kaleidoscope.command.repair.done": "Checked %s stations, %s fixes.",
   "kaleidoscope.command.reload.description": "Reload configuration and recipes",
   "kaleidoscope.command.reload.done": "Reloaded: %s chopping board recipes, %s crafting/smelting recipes.",
-  "kaleidoscope.command.pack.description": "Reload the resource pack",
-  "kaleidoscope.command.pack.sent": "The resource pack is being reloaded.",
   "kaleidoscope.command.list.description": "List all loaded stations",
   "kaleidoscope.command.place.description": "Place a station without an item",
   "kaleidoscope.command.place.unknown_type": "Unknown station type %s.",
@@ -120,5 +115,16 @@
   "kaleidoscope.menu.tab.food": "Food",
   "kaleidoscope.menu.tab.furniture": "Furniture",
   "kaleidoscope.station.need_heat": "Waiting for heat source",
-  "kaleidoscope.station.need_oil": "Waiting for oil"
+  "kaleidoscope.station.need_oil": "Waiting for oil",
+  "skill.kaleidoscope_cookery.cooking": "Cooking",
+  "kaleidoscope.chef.cooked_by": "Cooked by: %s",
+  "kaleidoscope.chef.rank.0": "Kitchen Help",
+  "kaleidoscope.chef.rank.1": "Commis Chef",
+  "kaleidoscope.chef.rank.2": "Chef",
+  "kaleidoscope.chef.rank.3": "Head Chef",
+  "kaleidoscope.chef.rank.4": "Star Chef",
+  "kaleidoscope.chef.better_quality": "Your skill raised the quality!",
+  "kaleidoscope.chef.extra_portion": "Extra portion!",
+  "kaleidoscope.chef.required": "Requires cooking level %s",
+  "kaleidoscope.chef.too_low": "Failed: %s needs cooking level %s"
 }

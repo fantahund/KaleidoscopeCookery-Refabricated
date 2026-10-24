@@ -149,6 +149,10 @@ public class TeapotStation extends Station {
                 return;
             }
             TeapotRecipe recipe = plugin().getRecipes().findTeapot(input, fluid);
+            // A tea above the cook's level turns into mystery tea
+            if (recipe != null && !de.emrion.kaleidoscopeCookery.skill.CookingSkill.mayCook(lastActor(), recipe.result().item())) {
+                recipe = null;
+            }
             ItemStack created = recipe == null ? null : items().create(recipe.result().item(), OUTPUT_COUNT);
             if (created != null) {
                 result = created;

@@ -56,13 +56,14 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     private static KaleidoscopeCookery instance;
 
     private CookeryConfig cookeryConfig;
-    private ResourcePackService resourcePack;
     private CookeryItems items;
     /** Items as loaded from items.yml (core and addons), before food.dishes is applied */
     private CookeryItems baseItems;
     private Recipes recipes;
-    /** Registered addons (registerAddon) whose recipes are added when loading */
+    /** Registered addons (registerAddon) */
     private final java.util.List<org.bukkit.plugin.Plugin> addons = new java.util.ArrayList<>();
+    /** Addons whose recipes belong in the Cooking Cookbook (e.g. Grilling, NOT Smithing) */
+    private final java.util.List<org.bukkit.plugin.Plugin> cookbookAddons = new java.util.ArrayList<>();
     private VanillaRecipes vanillaRecipes;
     private StationManager stations;
     private Seats seats;
@@ -78,8 +79,7 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         saveDefaultConfig();
         updateRecipeFile(this);
 
-        resourcePack = new ResourcePackService(this);
-        try (ZipFile pack = new ZipFile(resourcePack.extract(this, "").toFile())) {
+        try (ZipFile pack = new ZipFile(ResourcePackService.extract(this).toFile())) {
             Lang.load(pack, getLogger());
             de.emrion.kaleidoscopeCookery.util.ItemIcons.load(this);
         } catch (IOException e) {
@@ -88,7 +88,8 @@ public final class KaleidoscopeCookery extends JavaPlugin {
 
         cookeryConfig = CookeryConfig.load(getConfig(), getLogger());
         baseItems = CookeryItems.loadBundled(this);
-        items = baseItems.withFoodPercents(cookeryConfig.food().dishPercents());
+        items = baseItems.withFoodPercents(cookeryConfig.food().dishPercents())
+                .withDishValues(cookeryConfig.food().dishValues(), cookeryConfig.food().effectPercentByLevel());
         ModelProperties.load(this);
         recipes = loadRecipes();
         vanillaRecipes = new VanillaRecipes(this);
@@ -130,7 +131,6 @@ public final class KaleidoscopeCookery extends JavaPlugin {
             stations.register(CropStation.type(kind));
         }
 
-        pluginManager.registerEvents(resourcePack, this);
         pluginManager.registerEvents(stations, this);
         pluginManager.registerEvents(new StationListener(this, stations), this);
         pluginManager.registerEvents(new ItemProtectionListener(), this);
@@ -161,8 +161,18 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         foodService.start();
         effects.start();
         vanillaFood.start();
-        resourcePack.start(cookeryConfig.resourcePack());
         new CommandRegistration(this).registerCommands();
+
+        de.emrion.kaleidoscopeCore.KaleidoscopeCore core = de.emrion.kaleidoscopeCore.KaleidoscopeCore.getInstance();
+        core.registerAddon(this, true);
+        de.emrion.kaleidoscopeCookery.skill.CookingSkill.init(this);
+        core.registerCookingOil(de.emrion.kaleidoscopeCookery.station.oil.OilItems.OIL, false);
+        core.setAddonRegistrar((addon, includeInCookbook) -> {
+            if (!addon.equals(this)) {
+                registerAddon(addon, includeInCookbook);
+            }
+        });
+
         getLogger().info(items.all().size() + " Items, " + recipes.choppingBoard().size() + " Schneidebrett-Rezepte geladen");
     }
 
@@ -185,9 +195,6 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         }
         if (vanillaRecipes != null) {
             vanillaRecipes.unregister();
-        }
-        if (resourcePack != null) {
-            resourcePack.stop();
         }
         Lang.unload();
         instance = null;
@@ -219,14 +226,26 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         }
     }
 
+    private Recipes loadRecipes() {
+        return loadRecipes(cookbookAddons, true);
+    }
+
+    private Recipes loadAllVanillaRecipes() {
+        return loadRecipes(addons, false);
+    }
+
     /**
-     * Recipes of the core and all addons: their sections (tags, stations) are merged into those of the core,
+     * Recipes of the core and the given addons: their sections (tags, stations) are merged into those of the core,
      * the addon overrides identical ids.
      */
-    private Recipes loadRecipes() {
+    private Recipes loadRecipes(java.util.List<org.bukkit.plugin.Plugin> includedAddons, boolean logDisabled) {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "recipes.yml"));
-        for (org.bukkit.plugin.Plugin addon : addons) {
-            YamlConfiguration extra = YamlConfiguration.loadConfiguration(new File(addon.getDataFolder(), "recipes.yml"));
+        for (org.bukkit.plugin.Plugin addon : includedAddons) {
+            File addonFile = new File(addon.getDataFolder(), "recipes.yml");
+            if (!addonFile.exists()) {
+                continue;
+            }
+            YamlConfiguration extra = YamlConfiguration.loadConfiguration(addonFile);
             for (String section : extra.getKeys(false)) {
                 org.bukkit.configuration.ConfigurationSection source = extra.getConfigurationSection(section);
                 if (source == null) {
@@ -255,24 +274,35 @@ public final class KaleidoscopeCookery extends JavaPlugin {
                 }
             }
         }
-        if (disabled > 0) {
+        if (disabled > 0 && logDisabled) {
             getLogger().info(disabled + " Rezepte abgeschaltet (disabled-recipes)");
         }
         return Recipes.load(config, getLogger());
     }
 
     /**
-     * Register an addon (separate plugin such as KaleidoscopeGrilling): its items.yml and recipes.yml are added, recipes
-     * are reloaded. Its own pack (&lt;Name&gt;-Pack.zip in the jar, URL from resource-pack.external-url of the
-     * addon's config.yml) is sent to the players as well, its language files and cookbook images are adopted.
+     * Register a cooking addon (such as KaleidoscopeGrilling) whose recipes also belong in the Cooking Cookbook.
      */
     public void registerAddon(org.bukkit.plugin.Plugin addon) {
+        registerAddon(addon, true);
+    }
+
+    /**
+     * Register an addon (separate plugin): its items.yml and recipes.yml are added, recipes
+     * are reloaded. If {@code includeInCookbook} is false (e.g. KaleidoscopeSmithing), its recipes are registered
+     * with the server for crafting/smelting, but NOT added to the Cooking Cookbook.
+     */
+    public void registerAddon(org.bukkit.plugin.Plugin addon, boolean includeInCookbook) {
         if (addons.contains(addon)) {
             return;
         }
         addons.add(addon);
+        if (includeInCookbook) {
+            cookbookAddons.add(addon);
+        }
+        de.emrion.kaleidoscopeCore.KaleidoscopeCore.getInstance().registerAddon(addon, includeInCookbook);
         if (addon.getResource(addon.getName() + "-Pack.zip") != null) {
-            try (ZipFile pack = new ZipFile(resourcePack.extract(addon, addon.getConfig().getString("resource-pack.external-url", "")).toFile())) {
+            try (ZipFile pack = new ZipFile(ResourcePackService.extract(addon).toFile())) {
                 Lang.add(pack, addon.getLogger());
             } catch (IOException e) {
                 getLogger().log(Level.SEVERE, "Resourcepack von " + addon.getName() + " konnte nicht geladen werden", e);
@@ -284,13 +314,14 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         }
         if (addon.getResource("items.yml") != null) {
             baseItems = baseItems.merge(CookeryItems.loadBundled(addon));
-            items = baseItems.withFoodPercents(cookeryConfig.food().dishPercents());
+            items = baseItems.withFoodPercents(cookeryConfig.food().dishPercents())
+                .withDishValues(cookeryConfig.food().dishValues(), cookeryConfig.food().effectPercentByLevel());
         }
         if (addon.getResource("recipes.yml") != null) {
             updateRecipeFile(addon);
         }
         recipes = loadRecipes();
-        vanillaRecipes.register(recipes);
+        vanillaRecipes.register(loadAllVanillaRecipes());
         getLogger().info("Addon " + addon.getName() + " angemeldet: " + items.all().size() + " Items");
     }
 
@@ -300,10 +331,10 @@ public final class KaleidoscopeCookery extends JavaPlugin {
     public void reloadAll() {
         reloadConfig();
         cookeryConfig = CookeryConfig.load(getConfig(), getLogger());
-        items = baseItems.withFoodPercents(cookeryConfig.food().dishPercents());
-        resourcePack.updateSettings(cookeryConfig.resourcePack());
+        items = baseItems.withFoodPercents(cookeryConfig.food().dishPercents())
+                .withDishValues(cookeryConfig.food().dishValues(), cookeryConfig.food().effectPercentByLevel());
         recipes = loadRecipes();
-        vanillaRecipes.register(recipes);
+        vanillaRecipes.register(loadAllVanillaRecipes());
     }
 
     public static KaleidoscopeCookery getInstance() {
@@ -331,9 +362,6 @@ public final class KaleidoscopeCookery extends JavaPlugin {
         return java.util.Collections.unmodifiableList(addons);
     }
 
-    public ResourcePackService getResourcePack() {
-        return resourcePack;
-    }
 
     public CookeryItems getItems() {
         return items;

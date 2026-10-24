@@ -3,11 +3,19 @@
 Paper plugin (26.3) with a server resource pack: cooking stations, dishes and crops based on the mod
 [Kaleidoscope Cookery](https://github.com/KaleidoscopeMods/KaleidoscopeCookery), following its Fabric port
 [KaleidoscopeCookery-Refabricated](https://github.com/NightEpiphany/KaleidoscopeCookery-Refabricated). Players need
-no mods, only the resource pack, which the plugin delivers itself.
+no mods, only the resource packs, which the KaleidoscopePack plugin sends.
 
-[Kaleidoscope Grilling](https://github.com/breezeth-CN/KaleidoscopeGrilling) is a separate plugin (repo `KaleidoscopeGrilling`
-next to this one) with its own pack. It registers itself via `KaleidoscopeCookery#registerAddon`: its items, recipes, pack,
-translations, cookbook images and creative menu tabs are added, and the packs are sent together.
+Cookery is the station engine of the Kaleidoscope plugins (all next to each other in one folder):
+
+| Plugin | Role |
+|---|---|
+| `KaleidoscopeCore` | Addon registry and shared registries (cooking oils) |
+| `KaleidoscopeCookery` | This plugin: stations, items, recipes, cookbook, pack build tools (`tools/`) |
+| `KaleidoscopeGrilling`, `KaleidoscopeSmithing` | Addons with their own pack, registered via `KaleidoscopeCore#registerAddon` |
+| `KaleidoscopePack` | Sends all packs (Paper plugin on a single server, Velocity plugin on a network) |
+
+Addons register via `KaleidoscopeCore#registerAddon`: their items, recipes, translations, cookbook images and creative
+menu tabs are added. Smithing registers with `includeInCookbook = false` and has its own guidebook.
 
 Stations consist of an Interaction entity (clicks, state in the PDC), ItemDisplays (models) and, for some full blocks,
 a barrier. All items are based on paper (tools such as the kitchen knife on a hidden vanilla item with the matching
@@ -26,12 +34,11 @@ components) and get their look from the `item_model` component.
 
 ## Installation
 
-1. **CubesideUtils** must be installed, **CubesideNMSUtils** is optional.
-2. Run `mvn package` (needs `python3`; downloads the 26.3 client once for checking the pack) and copy
-   `core/target/KaleidoscopeCookery-*.jar` into `plugins/`.
-3. Start the server. The plugin creates `config.yml`, `recipes.yml` and the pack zip and starts a small web server
-   (default port 8163) from which players download the pack. For a public server set `resource-pack.public-host`
-   to the reachable address, or upload the pack and use `resource-pack.external-url`.
+1. **CubesideUtils** and **KaleidoscopeCore** must be installed, **CubesideNMSUtils** is optional.
+2. Build order: `mvn install` in `KaleidoscopeCore`, then `mvn install` here (needs `python3`; downloads the 26.3 client
+   once for checking the pack), then the addons. Copy `core/target/KaleidoscopeCookery-*.jar` into `plugins/`.
+3. Upload `core/target/generated-resources/pack/KaleidoscopeCookery-Pack.zip` (and the addon packs) to a web server
+   and list the URLs in the `KaleidoscopePack` config.
 
 ## Usage
 
@@ -58,7 +65,7 @@ Main command: `/kaleidoscope`, aliases `/kc`, `/kochen`
 | `/kc info`, `/kc list` | `kaleidoscope.admin.info` |
 | `/kc repair` | `kaleidoscope.admin.repair` |
 | `/kc reload` | `kaleidoscope.admin.reload` |
-| `/kc recipes [search]`, `/kc recipe` (also `rezepte`/`rezept`), `/kc pack` | `kaleidoscope.use` |
+| `/kc recipes [search]`, `/kc recipe` (also `rezepte`/`rezept`) | `kaleidoscope.use` |
 | Placing and using stations | `kaleidoscope.use` (default: everyone) |
 
 `kaleidoscope.admin` includes all admin permissions.
@@ -72,7 +79,6 @@ Main command: `/kaleidoscope`, aliases `/kc`, `/kochen`
 | `tools/gen_entity_models.py` | Rebuild the mod's Java entity models (millstone, trash can, scarecrow, cold cut ham) as item models |
 | `tools/gen_creative_tabs.py` | Generate the creative menu tabs from the mod's creative tabs |
 | `tools/build_pack.py` | Assemble the pack, check all references, render cookbook images, zip, SHA1 (runs during `mvn package`) |
-| `tools/gen_wiki.py` | Generate the static player wiki (`wiki/`, plain HTML without API calls, copy the folder to any web server) |
 | `tools/lang/` | German translations of the mod texts |
 | `resourcepack/custom/` | Own pack files (override `imported`) |
 

@@ -300,6 +300,10 @@ public class StockpotStation extends Station {
             inputList.add(input == null ? ItemStack.empty() : input);
         }
         StockpotRecipe recipe = plugin().getRecipes().findStockpot(inputList, soupBase);
+        // A soup above the cook's level fails
+        if (recipe != null && !de.emrion.kaleidoscopeCookery.skill.CookingSkill.mayCook(lastActor(), recipe.result().item())) {
+            recipe = null;
+        }
         ItemStack created = recipe == null ? null : items().create(recipe.result().item(), recipe.result().count());
         if (recipe == null || created == null) {
             recipeId = null;

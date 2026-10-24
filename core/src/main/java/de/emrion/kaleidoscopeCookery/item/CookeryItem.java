@@ -66,6 +66,27 @@ public record CookeryItem(Key id, Material base, @Nullable Material prototype, K
     }
 
     /**
+     * Copy with new totals for a dish (all bites of a plate together) and effect durations scaled to percent.
+     * A negative total keeps the current value.
+     */
+    public CookeryItem withDishValues(int nutrition, float saturation, int effectPercent) {
+        int bites = plate != null ? plate.maxBites() : 1;
+        Food ref = plate != null ? plate.food() : food;
+        if (ref == null) {
+            return this;
+        }
+        int newNutrition = nutrition < 0 ? ref.nutrition() : Math.max(1, Math.round((float) nutrition / bites));
+        float newSaturation = saturation < 0 ? ref.saturation() : saturation / bites;
+        java.util.function.UnaryOperator<Food> adjust = f -> f == null ? null : new Food(newNutrition, newSaturation,
+                f.alwaysEdible(), f.eatSeconds(), f.remainder(),
+                f.effects().stream().map(e -> new FoodEffect(e.effect(), Math.round(e.duration() * effectPercent / 100f), e.amplifier(), e.probability())).toList(),
+                f.drink(), f.sound());
+        Plate newPlate = plate == null ? null : new Plate(plate.maxBites(), adjust.apply(plate.food()), plate.loot(), plate.wide(), plate.large(), plate.models());
+        return new CookeryItem(id, base, prototype, model, nameKey, tooltipKey, maxStack, maxDamage, adjust.apply(food), newPlate,
+                sneakToPlace, wearable, repair, attributes, useAnimation, maximLines);
+    }
+
+    /**
      * Copy with food values (also per bite of a plate) scaled to percent.
      */
     public CookeryItem withFoodPercent(int percent) {

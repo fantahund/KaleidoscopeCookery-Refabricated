@@ -2,7 +2,7 @@
 # Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert
 # und kann dort angepasst werden (/kc reload).
 # Zutaten: Item-ID, "#tag" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.
-data-version: 13
+data-version: 15
 tags:
   "c:cobblestones":
     - "minecraft:cobblestone"
@@ -24,7 +24,10 @@ tags:
     - "kaleidoscope_cookery:raw_dough"
   "c:eggs":
     - "minecraft:egg"
+    - "minecraft:blue_egg"
+    - "minecraft:brown_egg"
     - "minecraft:turtle_egg"
+    - "minecraft:sniffer_egg"
   "c:flour":
     - "kaleidoscope_cookery:flour"
   "c:foods/cooked_beef":
@@ -2132,15 +2135,15 @@ stockpot:
   "kaleidoscope_cookery:stockpot/tea_egg_count_1":
     ingredients:
       - "kaleidoscope_cookery:dried_tea_leaves"
-      - "minecraft:egg"
+      - "#c:eggs"
     finished-texture: "kaleidoscope_cookery:stockpot/default_finished_bobo"
     result: "kaleidoscope_cookery:tea_egg"
   "kaleidoscope_cookery:stockpot/tea_egg_count_2":
     ingredients:
       - "kaleidoscope_cookery:dried_tea_leaves"
       - "kaleidoscope_cookery:dried_tea_leaves"
-      - "minecraft:egg"
-      - "minecraft:egg"
+      - "#c:eggs"
+      - "#c:eggs"
     finished-texture: "kaleidoscope_cookery:stockpot/default_finished_bobo"
     result:
       item: "kaleidoscope_cookery:tea_egg"
@@ -2150,9 +2153,9 @@ stockpot:
       - "kaleidoscope_cookery:dried_tea_leaves"
       - "kaleidoscope_cookery:dried_tea_leaves"
       - "kaleidoscope_cookery:dried_tea_leaves"
-      - "minecraft:egg"
-      - "minecraft:egg"
-      - "minecraft:egg"
+      - "#c:eggs"
+      - "#c:eggs"
+      - "#c:eggs"
     finished-texture: "kaleidoscope_cookery:stockpot/default_finished_bobo"
     result:
       item: "kaleidoscope_cookery:tea_egg"
@@ -2163,10 +2166,10 @@ stockpot:
       - "kaleidoscope_cookery:dried_tea_leaves"
       - "kaleidoscope_cookery:dried_tea_leaves"
       - "kaleidoscope_cookery:dried_tea_leaves"
-      - "minecraft:egg"
-      - "minecraft:egg"
-      - "minecraft:egg"
-      - "minecraft:egg"
+      - "#c:eggs"
+      - "#c:eggs"
+      - "#c:eggs"
+      - "#c:eggs"
     finished-texture: "kaleidoscope_cookery:stockpot/default_finished_bobo"
     result:
       item: "kaleidoscope_cookery:tea_egg"

@@ -1,7 +1,4 @@
 {
-  "kaleidoscope.pack.prompt": "Für die Kochstationen brauchst du das Server-Resourcepack (Assets aus Kaleidoscope Cookery & Grilling, CC BY-NC-SA 4.0).",
-  "kaleidoscope.pack.declined": "Ohne das Resourcepack kannst du diesen Server nicht betreten.",
-  "kaleidoscope.pack.failed": "Das Resourcepack konnte nicht geladen werden. Bitte versuche es erneut.",
   "kaleidoscope.chopping_board.need_tool": "Schneide mit einem Küchenmesser (Linksklick).",
   "kaleidoscope.chopping_board.no_recipe": "Das kann man nicht schneiden.",
   "kaleidoscope.chopping_board.progress": "Schneiden: %s/%s",
@@ -23,8 +20,6 @@
   "kaleidoscope.command.repair.done": "%s Stationen geprüft, %s Korrekturen.",
   "kaleidoscope.command.reload.description": "Konfiguration und Rezepte neu laden",
   "kaleidoscope.command.reload.done": "Neu geladen: %s Schneidebrett-Rezepte, %s Werkbank-/Ofen-Rezepte.",
-  "kaleidoscope.command.pack.description": "Resourcepack erneut laden",
-  "kaleidoscope.command.pack.sent": "Das Resourcepack wird erneut geladen.",
   "kaleidoscope.command.list.description": "Alle geladenen Stationen auflisten",
   "kaleidoscope.command.place.description": "Station ohne Item setzen",
   "kaleidoscope.command.place.unknown_type": "Den Stations-Typ %s gibt es nicht.",
@@ -120,5 +115,16 @@
   "kaleidoscope.menu.tab.food": "Essen",
   "kaleidoscope.menu.tab.furniture": "Möbel",
   "kaleidoscope.station.need_heat": "Wartet auf Hitzequelle",
-  "kaleidoscope.station.need_oil": "Wartet auf Öl"
+  "kaleidoscope.station.need_oil": "Wartet auf Öl",
+  "skill.kaleidoscope_cookery.cooking": "Kochen",
+  "kaleidoscope.chef.cooked_by": "Gekocht von: %s",
+  "kaleidoscope.chef.rank.0": "Küchenhilfe",
+  "kaleidoscope.chef.rank.1": "Jungkoch",
+  "kaleidoscope.chef.rank.2": "Koch",
+  "kaleidoscope.chef.rank.3": "Küchenchef",
+  "kaleidoscope.chef.rank.4": "Sternekoch",
+  "kaleidoscope.chef.better_quality": "Dein Können hebt die Qualität!",
+  "kaleidoscope.chef.extra_portion": "Extra-Portion!",
+  "kaleidoscope.chef.required": "Benötigt Koch-Stufe %s",
+  "kaleidoscope.chef.too_low": "Missglückt: %s braucht Koch-Stufe %s"
 }

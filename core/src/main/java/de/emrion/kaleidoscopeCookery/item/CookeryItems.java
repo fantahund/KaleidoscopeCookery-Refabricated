@@ -104,6 +104,21 @@ public class CookeryItems {
         return new CookeryItems(adjusted);
     }
 
+    /**
+     * These items with the dish values of the cooking level (config cooking-skill.dishes): totals per dish and effect
+     * durations scaled by the dish's level.
+     */
+    public CookeryItems withDishValues(Map<Key, de.emrion.kaleidoscopeCookery.config.CookeryConfig.DishValues> dishes,
+                                       Map<Integer, Integer> effectPercentByLevel) {
+        if (dishes.isEmpty()) {
+            return this;
+        }
+        Map<Key, CookeryItem> adjusted = new LinkedHashMap<>(items);
+        dishes.forEach((id, values) -> adjusted.computeIfPresent(id, (key, item) -> item.withDishValues(values.nutrition(),
+                values.saturation(), effectPercentByLevel.getOrDefault(values.level(), 100))));
+        return new CookeryItems(adjusted);
+    }
+
     public CookeryItems merge(CookeryItems other) {
         Map<Key, CookeryItem> merged = new LinkedHashMap<>(items);
         merged.putAll(other.items);
@@ -284,7 +299,15 @@ public class CookeryItems {
             applyFood(stack, item.food(), 1.0);
         }
         if (item.wearable() != null) {
-            applyWearable(stack, item.wearable());
+            Equippable vanilla = item.prototype() == null ? null : stack.getData(DataComponentTypes.EQUIPPABLE);
+            if (vanilla != null && item.wearable().asset() != null) {
+                // Armor prototype: keep slot, sound and armor values, only the worn look changes ("none": the item
+                // model itself is shown, e.g. a 3D helmet on the head)
+                boolean none = item.wearable().asset().value().equals("none");
+                stack.setData(DataComponentTypes.EQUIPPABLE, vanilla.toBuilder().assetId(none ? null : item.wearable().asset()).build());
+            } else {
+                applyWearable(stack, item.wearable());
+            }
         }
         stack.editPersistentDataContainer(pdc -> pdc.set(Keys.ITEM, PersistentDataType.STRING, item.id().asString()));
         stack.setAmount(Math.min(amount, stack.getMaxStackSize()));

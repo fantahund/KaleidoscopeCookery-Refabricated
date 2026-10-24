@@ -11,6 +11,10 @@ authors: [ Tobi ]
 
 dependencies:
   server:
+    KaleidoscopeCore:
+      load: BEFORE
+      required: true
+      join-classpath: true
     CubesideUtils:
       load: BEFORE
       required: true
@@ -23,7 +27,7 @@ dependencies:
 # Der Befehl /kaleidoscope (Aliase /kc, /kochen) wird zur Laufzeit über CubesideUtils (CommandUtil) registriert.
 permissions:
   kaleidoscope.use:
-    description: Kochstationen platzieren und benutzen, /kc pack
+    description: Kochstationen platzieren und benutzen
     default: true
   kaleidoscope.admin:
     description: Alle KaleidoscopeCookery-Befehle

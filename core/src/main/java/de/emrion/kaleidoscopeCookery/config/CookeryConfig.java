@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 /**
  * Loaded and validated config.yml. Immutable - /kc reload creates a new instance.
  */
-public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, OilDrops oilDrops, Food food, List<String> disabledRecipes,
+public record CookeryConfig(Cutting cutting, OilDrops oilDrops, Food food, List<String> disabledRecipes,
                             boolean dispensers) {
 
     /**
@@ -35,9 +35,6 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
             }
         }
         return false;
-    }
-
-    public record ResourcePackSettings(boolean enabled, boolean required, String externalUrl, String bindAddress, int port, String publicHost) {
     }
 
     /**
@@ -60,6 +57,12 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
         }
     }
 
+    /**
+     * Cooking level of a dish and its food totals (all bites of a plate together; -1 = keep the mod value).
+     */
+    public record DishValues(int level, int nutrition, float saturation) {
+    }
+
     public record OilDrops(boolean enabled, int min, int max, Set<EntityType> entities) {
     }
 
@@ -69,7 +72,8 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
     /**
      * @param dishPercents mod dishes with adjusted food values (food.dishes): item id -> percent of the mod value
      */
-    public record Food(boolean vanillaNerfEnabled, int vanillaDefaultPercent, Map<Material, Integer> vanillaPercents, Map<Key, Integer> dishPercents) {
+    public record Food(boolean vanillaNerfEnabled, int vanillaDefaultPercent, Map<Material, Integer> vanillaPercents, Map<Key, Integer> dishPercents,
+                       Map<Key, DishValues> dishValues, Map<Integer, Integer> effectPercentByLevel) {
 
         public int vanillaPercent(Material material) {
             return vanillaPercents.getOrDefault(material, vanillaDefaultPercent);
@@ -77,14 +81,6 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
     }
 
     public static CookeryConfig load(FileConfiguration config, Logger logger) {
-        ResourcePackSettings pack = new ResourcePackSettings(
-                config.getBoolean("resource-pack.enabled", true),
-                config.getBoolean("resource-pack.required", true),
-                config.getString("resource-pack.external-url", ""),
-                config.getString("resource-pack.bind-address", "0.0.0.0"),
-                config.getInt("resource-pack.port", 8163),
-                config.getString("resource-pack.public-host", "127.0.0.1"));
-
         Map<Key, Integer> tools = new HashMap<>();
         ConfigurationSection toolSection = config.getConfigurationSection("cutting.tools");
         if (toolSection != null) {
@@ -135,9 +131,34 @@ public record CookeryConfig(ResourcePackSettings resourcePack, Cutting cutting, 
                 dishes.put(Key.key(entry.getKey()), Math.max(0, number.intValue()));
             }
         }
+        // cooking-skill.dishes: "id": {level, nutrition, saturation}
+        Map<Key, DishValues> dishValues = new java.util.LinkedHashMap<>();
+        ConfigurationSection valueSection = config.getConfigurationSection("cooking-skill.dishes");
+        if (valueSection != null) {
+            for (Map.Entry<String, Object> entry : valueSection.getValues(false).entrySet()) {
+                if (!Key.parseable(entry.getKey()) || !(entry.getValue() instanceof ConfigurationSection values)) {
+                    logger.warning("cooking-skill.dishes: invalid entry " + entry.getKey() + " is ignored");
+                    continue;
+                }
+                dishValues.put(Key.key(entry.getKey()), new DishValues(Math.max(1, values.getInt("level", 1)),
+                        values.getInt("nutrition", -1), (float) values.getDouble("saturation", -1)));
+            }
+        }
+        Map<Integer, Integer> effectPercent = new java.util.HashMap<>();
+        ConfigurationSection effectSection = config.getConfigurationSection("cooking-skill.effect-percent");
+        if (effectSection != null) {
+            for (String level : effectSection.getKeys(false)) {
+                try {
+                    effectPercent.put(Integer.parseInt(level), Math.max(0, effectSection.getInt(level)));
+                } catch (NumberFormatException e) {
+                    logger.warning("cooking-skill.effect-percent: invalid level " + level + " is ignored");
+                }
+            }
+        }
         Food food = new Food(config.getBoolean("food.vanilla.enabled", true), Math.max(0, config.getInt("food.vanilla.default-percent", 50)),
-                Collections.unmodifiableMap(percents), Collections.unmodifiableMap(dishes));
-        return new CookeryConfig(pack, cutting, oilDrops, food, List.copyOf(config.getStringList("disabled-recipes")),
+                Collections.unmodifiableMap(percents), Collections.unmodifiableMap(dishes), Collections.unmodifiableMap(dishValues),
+                Collections.unmodifiableMap(effectPercent));
+        return new CookeryConfig(cutting, oilDrops, food, List.copyOf(config.getStringList("disabled-recipes")),
                 config.getBoolean("dispensers", false));
     }
 }

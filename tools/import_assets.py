@@ -3,7 +3,8 @@
 Imports textures, models, sounds and the English language files from
 Kaleidoscope Cookery (branch 1.21.1-neoforge) into resourcepack/imported, or together with
 --project grilling --dest ../KaleidoscopeGrilling Kaleidoscope Grilling (neoforge-1.21.1 + common)
-into its resourcepack/imported, and converts them to the Minecraft 26.3 format.
+into its resourcepack/imported (--project tavern --dest ../KaleidoscopeTavern: Kaleidoscope Tavern, Fabric fork),
+and converts them to the Minecraft 26.3 format.
 
 Conversion:
   * remove NeoForge fields (render_type, neoforge_data, ...)
@@ -34,6 +35,9 @@ SOURCES = {
               "796f94dd7eb00b85988366ae0f623d46148b7612"),
     "grilling": ("https://github.com/breezeth-CN/KaleidoscopeGrilling.git", "main",
                  "9a1acdab27698457bec16c9362678e574895a28c"),
+    # Kaleidoscope Tavern, Fabric fork (26.3 branch)
+    "tavern": ("https://github.com/NightEpiphany/KaleidoscopeTavern-Refabricated.git", "26.3-fabric",
+               "087d20a7e1209fa14fe9c8639638d304822f1cfe"),
 }
 
 # Order = priority (later layers override earlier ones). Grilling is a separate plugin with its own pack
@@ -42,11 +46,15 @@ LAYERS = {
     # Eating animations: the fork's built-in pack (only vanilla properties using_item/use_duration)
     "cookery": [("refab", "src/main/resources/assets"), ("refab", "src/main/resources/resourcepacks/kaleidoscope_eating_animation/assets")],
     "grilling": [("grilling", "common/src/main/resources/assets"), ("grilling", "neoforge-1.21.1/src/main/resources/assets")],
+    "tavern": [("tavern", "src/main/resources/assets")],
 }
-NAMESPACES = {"kaleidoscope_cookery", "kaleidoscope_grilling", "minecraft"}
+NAMESPACES = {"kaleidoscope_cookery", "kaleidoscope_grilling", "kaleidoscope_tavern", "minecraft"}
 COPY_DIRS = {"models", "textures", "sounds", "equipment"}
 # Models only relevant for mod code
 SKIP_FILES = {"models/item_render_replacer.json"}
+# Tavern: pure decoration blocks are not part of the plugin (no world blocks), their assets stay out of the pack
+TAVERN_DECORATION = re.compile(r"(sofa|bar_stool|sandwich_board|string_lights|painting|incense|pendant_lamp|chalkboard|"
+                               r"(^|/)table|bar_counter|stepladder)")
 REMOVE_MODEL_KEYS = {"render_type", "neoforge_data", "forge_data", "loader", "visibility", "renderTypes"}
 
 
@@ -121,6 +129,8 @@ class Importer:
                     top = sub.split("/", 1)[0]
                     if re.search(r"pepper_(log|leaves|sapling)", sub):
                         continue  # pepper tree replaced by the pepper bush (tools/gen_pepper_bush.py)
+                    if ns == "kaleidoscope_tavern" and TAVERN_DECORATION.search(sub):
+                        continue
                     if sub == "sounds.json":
                         self.sounds.setdefault(ns, {}).update(read_json(file))
                     elif sub == "lang/en_us.json" and ns != "minecraft":

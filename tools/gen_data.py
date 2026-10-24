@@ -561,6 +561,8 @@ def resolve_tag(name: str, tags: dict, seen=None) -> list:
             result += resolve_tag(value[1:], tags, seen)
         elif value.startswith(("minecraft:", "kaleidoscope_cookery:", "kaleidoscope_grilling:")):
             result.append(value)
+    if name == "c:eggs":
+        return ["minecraft:egg", "minecraft:blue_egg", "minecraft:brown_egg", "minecraft:turtle_egg", "minecraft:sniffer_egg"]
     return list(dict.fromkeys(result))
 
 
@@ -599,11 +601,19 @@ def ingredient(value, used_tags: set) -> str | list:
         if value.startswith("#"):
             used_tags.add(value[1:])
             return value
-        return item_id(value)
+        val = item_id(value)
+        if val == "minecraft:egg":
+            used_tags.add("c:eggs")
+            return "#c:eggs"
+        return val
     if "tag" in value:
         used_tags.add(value["tag"])
         return "#" + value["tag"]
-    return item_id(value["item"])
+    val = item_id(value["item"])
+    if val == "minecraft:egg":
+        used_tags.add("c:eggs")
+        return "#c:eggs"
+    return val
 
 
 def result_list(recipe: dict) -> list:
@@ -711,7 +721,7 @@ def collect_recipes(tags: dict) -> dict:
 
 
 # Increase on every content change of the generated recipes.yml: the plugin then replaces old copies (with a backup)
-DATA_VERSION = 13
+DATA_VERSION = 15
 STOCKPOT_DEFAULT_TIME = 300
 POT_DEFAULT_TIME = 200
 POT_DEFAULT_STIR_FRY = 3
@@ -808,7 +818,7 @@ COMMON_TAGS = {
     "c:rods/wooden": ["minecraft:stick"],
     "c:strings": ["minecraft:string"],
     "c:leathers": ["minecraft:leather"],
-    "c:eggs": ["minecraft:egg"],
+    "c:eggs": ["minecraft:egg", "minecraft:blue_egg", "minecraft:brown_egg", "minecraft:turtle_egg", "minecraft:sniffer_egg"],
     "c:slime_balls": ["minecraft:slime_ball"],
     "c:bones": ["minecraft:bone"],
     "c:dusts/redstone": ["minecraft:redstone"],

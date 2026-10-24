@@ -117,6 +117,9 @@ public class CupStation extends Station {
             tea = pourId;
             teas++;
             TeapotItems.pourOne(held);
+            if (!pourId.value().equals("mystery_tea")) {
+                de.emrion.kaleidoscopeCookery.skill.CookingSkill.award(player, "teapot", 1);
+            }
             world().playSound(center(), Sound.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 1, 1);
             world().spawnParticle(Particle.SPLASH, center().add(0, -0.2, 0), 8, 0.15, 0.05, 0.15, 0);
             changed();

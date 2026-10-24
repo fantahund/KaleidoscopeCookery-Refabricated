@@ -43,6 +43,7 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
@@ -71,6 +72,7 @@ public class StationListener implements Listener {
     /** A self-triggered event for permission checks is currently running */
     private boolean checking;
     private final Map<UUID, Long> lastHandledTick = new HashMap<>();
+    private final Map<UUID, Long> lastPlacedTick = new HashMap<>();
 
     public StationListener(KaleidoscopeCookery plugin, StationManager stations) {
         this.plugin = plugin;
@@ -99,14 +101,22 @@ public class StationListener implements Listener {
         if (last != null && last == tick) {
             return;
         }
+        station.setLastActor(player);
         ItemStack held = player.getInventory().getItemInMainHand();
-        boolean stationItem = stations.typeByItem(CookeryItems.idOf(held)) != null;
+        boolean stationItem = !held.isEmpty() && stations.typeByItem(CookeryItems.typeOf(held)) != null;
         // Place station items (wok on stove ...) first, dishes only if the station does nothing with them
-        if (stationItem && station.interceptPlacement(player, held)) {
+        boolean intercepted;
+        try {
+            station.setClickPosition(clickPosition(station, event));
+            intercepted = stationItem && station.interceptPlacement(player, held);
+        } finally {
+            station.setClickPosition(null);
+        }
+        if (intercepted) {
             player.swingMainHand();
             return;
         }
-        if (stationItem && placeOnStation(player, held, event)) {
+        if (stationItem && player.isSneaking() && placeOnStation(player, held, event)) {
             return;
         }
         boolean handled;
@@ -183,6 +193,7 @@ public class StationListener implements Listener {
         if (!player.hasPermission(Permissions.USE) || !canUse(player, station.root())) {
             return;
         }
+        station.setLastActor(player);
         station.onAttack(player);
     }
 
@@ -234,7 +245,7 @@ public class StationListener implements Listener {
             return;
         }
         CookeryItem placed = plugin.getItems().get(CookeryItems.typeOf(item));
-        if (placed != null && placed.sneakToPlace() && !event.getPlayer().isSneaking()) {
+        if ((placed != null && placed.sneakToPlace() || stations.sneakToPlace(CookeryItems.typeOf(item))) && !event.getPlayer().isSneaking()) {
             return; // drink tea, use the teapot
         }
         if (opensOnClick(event)) {
@@ -252,7 +263,7 @@ public class StationListener implements Listener {
      */
     private @Nullable StationType placeableType(@Nullable ItemStack item) {
         Key itemId = CookeryItems.idOf(item);
-        StationType type = stations.typeByItem(itemId);
+        StationType type = item == null || item.isEmpty() ? null : stations.typeByItem(CookeryItems.typeOf(item));
         if (type == null && itemId != null) {
             CookeryItem dish = plugin.getItems().get(itemId);
             if (dish != null && dish.plate() != null) {
@@ -272,14 +283,20 @@ public class StationListener implements Listener {
         if (type == null || !player.hasPermission(Permissions.USE)) {
             return false;
         }
+        long tick = stations.serverTick();
+        Long lastPlaced = lastPlacedTick.get(player.getUniqueId());
+        if (lastPlaced != null && tick - lastPlaced < 5) {
+            return false;
+        }
         Key itemId = CookeryItems.idOf(item);
         CookeryItem dish = plugin.getItems().get(itemId);
-        if (dish != null && dish.sneakToPlace() && !player.isSneaking()) {
+        if ((dish != null && dish.sneakToPlace() || stations.sneakToPlace(CookeryItems.typeOf(item))) && !player.isSneaking()) {
             return false;
         }
         Block target = clicked.isReplaceable() && stations.at(clicked) == null ? clicked : clicked.getRelative(face);
         Facing facing = Facing.towards(player.getYaw());
-        for (BlockKey block : type.footprint(BlockKey.of(target))) {
+        List<BlockKey> footprint = type.footprint(BlockKey.of(target), facing);
+        for (BlockKey block : footprint) {
             Block part = block.block();
             if (part == null || !canPlaceAt(type, part)) {
                 return false;
@@ -312,11 +329,11 @@ public class StationListener implements Listener {
         checking = true;
         boolean allowed;
         try {
-            if (type.width() > 1 || type.height() > 1) {
+            if (footprint.size() > 1) {
                 // Multi-block station: protection plugins check all occupied blocks
                 List<BlockState> states = new ArrayList<>();
                 states.add(replaced);
-                for (BlockKey block : type.footprint(BlockKey.of(target))) {
+                for (BlockKey block : footprint) {
                     Block part = block.block();
                     if (part != null && !part.equals(target)) {
                         states.add(part.getState());
@@ -342,6 +359,7 @@ public class StationListener implements Listener {
         if (player.getGameMode() != GameMode.CREATIVE) {
             item.subtract();
         }
+        lastPlacedTick.put(player.getUniqueId(), tick);
         player.swingHand(hand);
         target.getWorld().playSound(target.getLocation().toCenterLocation(), Sound.BLOCK_WOOD_PLACE, SoundCategory.BLOCKS, 1, 1);
         return true;
@@ -368,7 +386,7 @@ public class StationListener implements Listener {
         } else if (station instanceof de.emrion.kaleidoscopeCookery.station.scarecrow.ScarecrowStation scarecrow && placer != null) {
             scarecrow.initYaw(placer.getYaw());
         } else if (station instanceof PlacedFromItem addon) {
-            addon.initFrom(placedFrom, face);
+            addon.initFrom(placedFrom, face, placer);
         }
     }
 
@@ -630,5 +648,11 @@ public class StationListener implements Listener {
                 stations.breakStation(station, null);
             }
         });
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        lastHandledTick.remove(event.getPlayer().getUniqueId());
+        lastPlacedTick.remove(event.getPlayer().getUniqueId());
     }
 }

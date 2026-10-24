@@ -15,9 +15,16 @@ import net.kyori.adventure.key.Key;
  * @param width              multi-block stations: edge length of the occupied square (millstone: 2 = 2x2). Odd widths are
  *                           centred on the station block, even ones extend towards +x/+z (the centre is then on the block edge)
  * @param height             number of occupied blocks stacked on top of each other (shawarma spit: 2)
+ * @param shape              optional footprint that depends on the facing (overrides width/height, e.g. the smithing
+ *                           smeltery with its casting table in front); null = width x width x height
  */
 public record StationType(String id, Key item, boolean barrier, float interactionWidth, float interactionHeight, boolean needsSupport, StationFactory factory,
-                          int width, int height) {
+                          int width, int height, @org.jspecify.annotations.Nullable Shape shape) {
+
+    public StationType(String id, Key item, boolean barrier, float interactionWidth, float interactionHeight, boolean needsSupport, StationFactory factory,
+                       int width, int height) {
+        this(id, item, barrier, interactionWidth, interactionHeight, needsSupport, factory, width, height, null);
+    }
 
     public StationType(String id, Key item, boolean barrier, float interactionWidth, float interactionHeight, boolean needsSupport, StationFactory factory) {
         this(id, item, barrier, interactionWidth, interactionHeight, needsSupport, factory, 1, 1);
@@ -39,6 +46,18 @@ public record StationType(String id, Key item, boolean barrier, float interactio
             }
         }
         return blocks;
+    }
+
+    /**
+     * All blocks a station of this type with centre block center and the given facing occupies.
+     */
+    public java.util.List<BlockKey> footprint(BlockKey center, Facing facing) {
+        return shape != null ? shape.blocks(center, facing) : footprint(center);
+    }
+
+    @FunctionalInterface
+    public interface Shape {
+        java.util.List<BlockKey> blocks(BlockKey center, Facing facing);
     }
 
     @FunctionalInterface

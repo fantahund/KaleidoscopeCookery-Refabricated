@@ -59,6 +59,7 @@ public class StationManager implements Listener {
     private final KaleidoscopeCookery plugin;
     private final Map<String, StationType> types = new LinkedHashMap<>();
     private final Map<Key, StationType> typesByItem = new HashMap<>();
+    private final java.util.Set<Key> sneakItems = new java.util.HashSet<>();
     private final Map<UUID, Station> byRoot = new HashMap<>();
     private final Map<BlockKey, Station> byBlock = new HashMap<>();
     /** Additional hitboxes (Interaction with STATION_OWNER) -> station */
@@ -91,6 +92,25 @@ public class StationManager implements Listener {
      */
     public void registerItem(Key item, StationType type) {
         typesByItem.put(item, type);
+    }
+
+    /**
+     * Like {@link #registerItem(Key, StationType)}, also for vanilla items (minecraft:potion ...).
+     *
+     * @param sneakToPlace only placed while sneaking (otherwise the item is used normally, e.g. drunk)
+     */
+    public void registerItem(Key item, StationType type, boolean sneakToPlace) {
+        typesByItem.put(item, type);
+        if (sneakToPlace) {
+            sneakItems.add(item);
+        } else {
+            sneakItems.remove(item);
+        }
+    }
+
+    /** Registered with sneakToPlace: placing needs sneaking */
+    public boolean sneakToPlace(@Nullable Key item) {
+        return item != null && sneakItems.contains(item);
     }
 
     public @Nullable StationType typeByItem(@Nullable Key item) {
@@ -286,24 +306,31 @@ public class StationManager implements Listener {
             if (paused != null && paused > serverTick) {
                 continue;
             }
-            RayTraceResult hit = player.getWorld().rayTraceEntities(player.getEyeLocation(), player.getEyeLocation().getDirection(), HUD_RANGE, 0,
-                    entity -> entity instanceof Interaction && byEntity(entity) != null);
-            if (hit == null || hit.getHitEntity() == null) {
-                continue;
-            }
-            RayTraceResult block = player.getWorld().rayTraceBlocks(player.getEyeLocation(), player.getEyeLocation().getDirection(), HUD_RANGE,
-                    FluidCollisionMode.NEVER, true);
-            if (block != null && block.getHitPosition().distanceSquared(player.getEyeLocation().toVector())
-                    < hit.getHitPosition().distanceSquared(player.getEyeLocation().toVector()) - 0.05
-                    && at(block.getHitBlock()) == null) {
-                continue; // block in front
-            }
-            Station station = byEntity(hit.getHitEntity());
+            Station station = lookedAt(player);
             Component hud = station == null ? null : station.hud(player);
             if (hud != null) {
                 player.sendActionBar(hud);
             }
         }
+    }
+
+    /**
+     * The station the player looks at (max. 5 blocks, not behind a block), e.g. for live displays of a single station.
+     */
+    public @Nullable Station lookedAt(Player player) {
+        RayTraceResult hit = player.getWorld().rayTraceEntities(player.getEyeLocation(), player.getEyeLocation().getDirection(), HUD_RANGE, 0,
+                entity -> entity instanceof Interaction && byEntity(entity) != null);
+        if (hit == null || hit.getHitEntity() == null) {
+            return null;
+        }
+        RayTraceResult block = player.getWorld().rayTraceBlocks(player.getEyeLocation(), player.getEyeLocation().getDirection(), HUD_RANGE,
+                FluidCollisionMode.NEVER, true);
+        if (block != null && block.getHitPosition().distanceSquared(player.getEyeLocation().toVector())
+                < hit.getHitPosition().distanceSquared(player.getEyeLocation().toVector()) - 0.05
+                && at(block.getHitBlock()) == null) {
+            return null; // block in front
+        }
+        return byEntity(hit.getHitEntity());
     }
 
     public long serverTick() {

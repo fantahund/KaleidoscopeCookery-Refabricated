@@ -390,6 +390,10 @@ public class PotStation extends Station {
     private void startCooking() {
         List<ItemStack> inputList = inputList();
         PotRecipe recipe = plugin().getRecipes().findPot(inputList);
+        // A dish above the cook's level fails
+        if (recipe != null && !de.emrion.kaleidoscopeCookery.skill.CookingSkill.mayCook(lastActor(), recipe.result().item())) {
+            recipe = null;
+        }
         if (recipe != null) {
             ItemStack created = items().create(recipe.result().item(), recipe.match(inputList));
             if (created != null) {
