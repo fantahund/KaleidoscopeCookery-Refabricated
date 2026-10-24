@@ -591,6 +591,10 @@ TEXTS = {
     f"{NS}.barrel.lid_closed": ("Lid closed - brewing starts once the barrel is full",
                                 "Deckel geschlossen - das Brauen beginnt, sobald das Fass voll ist"),
     f"{NS}.barrel.lid_opened": ("Lid opened", "Deckel geöffnet"),
+    # Brewing level (own addition)
+    f"skill.{NS}.brewing": ("Brewing", "Brauen"),
+    f"{NS}.brewing.required": ("Requires brewing level %s", "Benötigt Brau-Stufe %s"),
+    f"{NS}.brewing.too_low": ("Failed: %s needs brewing level %s", "Missglückt: %s braucht Brau-Stufe %s"),
     # Washing up (own addition)
     f"tooltip.{NS}.dirty_glassware": ("Wash it in a sink with a dish sponge", "Im Spülbecken mit einem Spülschwamm abwaschen"),
     f"tooltip.{NS}.dish_sponge": ("Scrub dirty glasses in the sink - in rhythm!", "Schrubbt dreckige Gläser im Spülbecken - im Takt!"),
