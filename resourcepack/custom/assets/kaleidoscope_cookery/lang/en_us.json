@@ -1,4 +1,5 @@
 {
+  "item.kaleidoscope_cookery.stone_kitchen_knife": "Stone Kitchen Knife",
   "tooltip.kaleidoscope_cookery.bamboo_tube_rice.maxim.line1": "A traditional southern Chinese dish made by filling bamboo tubes",
   "tooltip.kaleidoscope_cookery.bamboo_tube_rice.maxim.line2": "with fragrant rice, glutinous rice, meat, and vegetables before cooking.",
   "tooltip.kaleidoscope_cookery.baozi.maxim.line1": "Steaming hot baozi.",
@@ -91,6 +92,7 @@
   "tooltip.kaleidoscope_cookery.stir_fried_beef_offal_rice_bowl.maxim.line1": "So spicy that you need two more bowls of plain rice to balance it out.",
   "tooltip.kaleidoscope_cookery.stir_fried_pork_with_peppers.maxim.line1": "Crisp green peppers and tender pork slices.",
   "tooltip.kaleidoscope_cookery.stir_fried_pork_with_peppers_rice_bowl.maxim.line1": "Sauce-coated rice, satisfaction in every bite.",
+  "tooltip.kaleidoscope_cookery.stone_kitchen_knife": "A simple kitchen knife. Template for the knife blade mold of the smithy.",
   "tooltip.kaleidoscope_cookery.stuffed_tiger_skin_pepper.maxim.line1": "Green peppers fried to a tiger-skin pattern, wrapped with savory and juicy meat filling.",
   "tooltip.kaleidoscope_cookery.suspicious_stir_fry.maxim.line1": "What is this... What dish are you making...!?",
   "tooltip.kaleidoscope_cookery.suspicious_stir_fry_rice_bowl.maxim.line1": "A bowl of mysterious stir-fry on rice. What happens if you eat it?",

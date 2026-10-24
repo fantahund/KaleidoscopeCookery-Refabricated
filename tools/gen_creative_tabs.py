@@ -45,6 +45,8 @@ def main():
     main_items = accepted(main_block, ids)
     split = main_items.index(FIRST_FURNITURE)
     kitchen = ["kaleidoscope:cookbook"] + ["kaleidoscope_cookery:" + i for i in main_items[:split]]
+    # Own addition: the stone knife (template for the knife mold of KaleidoscopeSmithing) before the copper knife
+    kitchen.insert(kitchen.index("kaleidoscope_cookery:copper_kitchen_knife"), "kaleidoscope_cookery:stone_kitchen_knife")
     furniture = ["kaleidoscope_cookery:" + i for i in main_items[split:]]
 
     # Food: fixed entries, then all remaining Cookery items in registration order

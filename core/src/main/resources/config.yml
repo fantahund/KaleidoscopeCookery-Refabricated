@@ -7,8 +7,8 @@
 # Mod: 1 Schnitt pro Hieb (mit "Schnelles Messer" I/II: 2/4).
 cutting:
   tools:
-    # Steinmesser (KaleidoscopeSmithing): Vorlage für die Messer-Gussform
-    kaleidoscope_smithing:stone_kitchen_knife: 1
+    # Steinmesser: Vorlage für die Messer-Gussform (KaleidoscopeSmithing)
+    kaleidoscope_cookery:stone_kitchen_knife: 1
     kaleidoscope_cookery:copper_kitchen_knife: 1
     kaleidoscope_cookery:iron_kitchen_knife: 1
     kaleidoscope_cookery:gold_kitchen_knife: 1

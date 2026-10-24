@@ -2157,6 +2157,12 @@ items:
     tooltip: tooltip.kaleidoscope_cookery.stockpot_lid
     base: SHIELD
     max-damage: 120
+  "kaleidoscope_cookery:stone_kitchen_knife":
+    model: "kaleidoscope_cookery:stone_kitchen_knife"
+    name: item.kaleidoscope_cookery.stone_kitchen_knife
+    tooltip: tooltip.kaleidoscope_cookery.stone_kitchen_knife
+    base: JIGSAW
+    prototype: STONE_SWORD
   "kaleidoscope_cookery:stove":
     model: "kaleidoscope_cookery:stove"
     name: block.kaleidoscope_cookery.stove

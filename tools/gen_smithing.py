@@ -2186,21 +2186,6 @@ def main():
     de_lang[f"tooltip.{NS}.knife_head"] = "Am Montagetisch mit einem Griff zum Küchenmesser zusammensetzen."
     en_lang[f"tooltip.{NS}.knife_head"] = "Assemble with a handle into a kitchen knife on the assembly table."
 
-    # Stone kitchen knife: craftable, the template for the knife blade mold
-    register_2d_item("stone_kitchen_knife", sprites.stone_knife_item(), handheld=True)
-    items_yml[f"{NS}:stone_kitchen_knife"] = {
-        "model": f"{NS}:stone_kitchen_knife",
-        "name": f"item.{NS}.stone_kitchen_knife",
-        "tooltip": f"tooltip.{NS}.stone_kitchen_knife",
-        "base": "JIGSAW",
-        "prototype": "STONE_SWORD",
-        "repair": "COBBLESTONE",
-    }
-    de_lang[f"item.{NS}.stone_kitchen_knife"] = "Steinmesser"
-    de_lang[f"tooltip.{NS}.stone_kitchen_knife"] = "Einfaches Küchenmesser. Vorlage für die Gussform der Messerklinge."
-    en_lang[f"item.{NS}.stone_kitchen_knife"] = "Stone Kitchen Knife"
-    en_lang[f"tooltip.{NS}.stone_kitchen_knife"] = "A simple kitchen knife. Template for the knife blade mold."
-
     # Binding rings (cast around a ring core) for the heavy pickaxe tiers
     for tier, de_tier, en_tier, *_ in TIERS:
         if tier not in HEAVY_TIERS:
@@ -2567,18 +2552,8 @@ vanilla:
       item: "kaleidoscope_smithing:armor_padding"
       count: 2
 """
-    # Cookware molds: clay around the stone knife, a bowl (wok) or a flower pot (stockpot); the stone knife itself
-    recipes_yml += """  "kaleidoscope_smithing:stone_kitchen_knife":
-    type: crafting_shaped
-    pattern:
-      - "##"
-      - "#S"
-    key:
-      "#": "#minecraft:stone_tool_materials"
-      S: "minecraft:stick"
-    result: "kaleidoscope_smithing:stone_kitchen_knife"
-"""
-    for kind, letter, template in (("knife", "K", "kaleidoscope_smithing:stone_kitchen_knife"), ("wok", "B", "minecraft:bowl"),
+    # Cookware molds: clay around the Cookery stone knife, a bowl (wok) or a flower pot (stockpot)
+    for kind, letter, template in (("knife", "K", "kaleidoscope_cookery:stone_kitchen_knife"), ("wok", "B", "minecraft:bowl"),
                                    ("stockpot", "P", "minecraft:flower_pot")):
         recipes_yml += f"""  "kaleidoscope_smithing:clay_{kind}_mold":
     type: crafting_shaped
@@ -2612,7 +2587,7 @@ vanilla:
     experience: 0.35
     result: "kaleidoscope_smithing:{kind}_mold"
 """
-    recipes_yml += "data-version: 6\n"
+    recipes_yml += "data-version: 7\n"
     (RESOURCES / "recipes.yml").write_text(recipes_yml, encoding="utf-8")
 
     # Write generated/creative_tabs.yml
@@ -2643,7 +2618,6 @@ vanilla:
             if kind == "heavy_pickaxe" and tier not in HEAVY_TIERS:
                 continue
             tab_items.append(f"{NS}:{tier}_{kind}_plate" if kind in ARMOR_KINDS else f"{NS}:{tier}_{kind}_head")
-    tab_items.append(f"{NS}:stone_kitchen_knife")
     for kind, _, _, tiers in COOKWARE_KINDS:
         tab_items.append(f"{NS}:{kind}_mold")
     tab_items += [f"{NS}:{tier}_knife_head" for tier in COOKWARE_KINDS[0][3]]

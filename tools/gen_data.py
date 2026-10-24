@@ -280,6 +280,7 @@ BASE_MATERIALS = {
     "kaleidoscope_cookery:stockpot_lid": "SHIELD",
     # Kitchen knives: jigsaw block (not obtainable in survival, not placeable without op, no right-click function)
     # with all components of the matching sword. The plugin adds it to #minecraft:swords (like the knives in the mod).
+    "kaleidoscope_cookery:stone_kitchen_knife": "JIGSAW",
     "kaleidoscope_cookery:copper_kitchen_knife": "JIGSAW",
     "kaleidoscope_cookery:iron_kitchen_knife": "JIGSAW",
     "kaleidoscope_cookery:gold_kitchen_knife": "JIGSAW",
@@ -302,6 +303,7 @@ WEARABLES = {
     "kaleidoscope_cookery:farmer_boots": ("LEATHER_BOOTS", "feet", "kaleidoscope_cookery:cookery_farmer", 2),
 }
 PROTOTYPES = {
+    "kaleidoscope_cookery:stone_kitchen_knife": "STONE_SWORD",
     "kaleidoscope_cookery:copper_kitchen_knife": "COPPER_SWORD",
     "kaleidoscope_cookery:iron_kitchen_knife": "IRON_SWORD",
     "kaleidoscope_cookery:gold_kitchen_knife": "GOLDEN_SWORD",
@@ -520,6 +522,9 @@ def collect_items(foods: dict, bites: dict) -> dict:
         entry = {"model": full_id, "name": name_key, "tooltip": f"tooltip.{ns}.{item_id}"}
         if full_id == "kaleidoscope_cookery:recipe_item":
             entry["max-stack"] = 64
+        if full_id in BASE_MATERIALS:
+            entry["base"] = BASE_MATERIALS[full_id]
+            entry["prototype"] = PROTOTYPES[full_id]
         items.setdefault(full_id, entry)
     return dict(sorted(items.items()))
 
@@ -570,6 +575,8 @@ def resolve_tag(name: str, tags: dict, seen=None) -> list:
 RENAMED_ITEMS = {"minecraft:chain": "minecraft:iron_chain"}
 # Items without their own name in the language file (item id -> language key)
 EXTRA_ITEMS = {"kaleidoscope_cookery:recipe_item": "block.kaleidoscope_cookery.recipe_block",
+               # Own addition: simple stone knife, template for the knife blade mold of KaleidoscopeSmithing
+               "kaleidoscope_cookery:stone_kitchen_knife": "item.kaleidoscope_cookery.stone_kitchen_knife",
                # Seeds of the pepper bush (tools/gen_pepper_bush.py) instead of the pepper tree
                "kaleidoscope_grilling:sichuan_pepper_seeds": "item.kaleidoscope_grilling.sichuan_pepper_seeds"}
 
@@ -721,7 +728,7 @@ def collect_recipes(tags: dict) -> dict:
 
 
 # Increase on every content change of the generated recipes.yml: the plugin then replaces old copies (with a backup)
-DATA_VERSION = 15
+DATA_VERSION = 16
 STOCKPOT_DEFAULT_TIME = 300
 POT_DEFAULT_TIME = 200
 POT_DEFAULT_STIR_FRY = 3
@@ -1007,6 +1014,20 @@ def split_recipes(core: dict, full: dict) -> dict:
     return addon
 
 
+def write_stone_knife_assets():
+    """Texture (Cookery iron knife with a stone blade), handheld model and item definition of the stone knife."""
+    import smithing_sprites
+    out = custom("kaleidoscope_cookery")
+    (out / "textures" / "item").mkdir(parents=True, exist_ok=True)
+    smithing_sprites.stone_knife_item().save(out / "textures" / "item" / "stone_kitchen_knife.png")
+    for path, data in ((out / "models" / "item" / "stone_kitchen_knife.json",
+                        {"parent": "minecraft:item/handheld", "textures": {"layer0": "kaleidoscope_cookery:item/stone_kitchen_knife"}}),
+                       (out / "items" / "stone_kitchen_knife.json",
+                        {"model": {"type": "minecraft:model", "model": "kaleidoscope_cookery:item/stone_kitchen_knife"}})):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+
 def main():
     global RECIPE_DIRS, VANILLA_RECIPE_DIRS, TAG_DIRS
     raw_foods = parse_cookery_foods()
@@ -1031,6 +1052,12 @@ def main():
                      "# Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert\n"
                      "# und kann dort angepasst werden (/kc reload).\n"
                      "# Zutaten: Item-ID, \"#tag\" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.\n")
+    # Own addition: the stone knife, crafted like the copper knife
+    recipes["vanilla"]["kaleidoscope_cookery:stone_kitchen_knife"] = {
+        "type": "crafting_shaped", "pattern": ["##", "#S"],
+        "key": {"#": "#minecraft:stone_tool_materials", "S": "minecraft:stick"},
+        "result": "kaleidoscope_cookery:stone_kitchen_knife"}
+    write_stone_knife_assets()
     (RESOURCES / "recipes.yml").write_text(recipe_header + to_yaml(recipes) + "\n", encoding="utf-8")
     grilling_header = ("# Rezepte aus Kaleidoscope Grilling (tools/gen_data.py): neue Rezepte und Aenderungen an Cookery-Rezepten.\n"
                        "# Wird nach plugins/KaleidoscopeGrilling/recipes.yml kopiert; KaleidoscopeCookery mischt sie in seine Rezepte\n"

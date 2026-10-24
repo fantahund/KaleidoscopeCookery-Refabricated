@@ -242,7 +242,9 @@
     "kaleidoscope_cookery.ponder.recipe_item.text_1": "Liegen Zutaten in einem Wok oder Suppentopf, zeichnet ein Rechtsklick mit einem leeren Rezept den Inhalt auf.",
     "kaleidoscope_cookery.ponder.recipe_item.text_2": "Später Rechtsklick mit dem Rezept auf den Wok oder Suppentopf: alle aufgezeichneten Zutaten werden aus dem Inventar eingelegt.",
     "kaleidoscope_cookery.ponder.tag.kitchen_blocks": "Küchen-Grundlagen",
-    "kaleidoscope_cookery.ponder.tag.kitchen_blocks.description": "Beginne den Weg zum Meisterkoch!"
+    "kaleidoscope_cookery.ponder.tag.kitchen_blocks.description": "Beginne den Weg zum Meisterkoch!",
+    "item.kaleidoscope_cookery.stone_kitchen_knife": "Steinmesser",
+    "tooltip.kaleidoscope_cookery.stone_kitchen_knife": "Einfaches Küchenmesser. Vorlage für die Gussform der Messerklinge in der Schmiede."
   },
   "kaleidoscope_grilling": {
     "hud.kaleidoscope_grilling.pot.state.need_heat": "Wartet auf Hitzequelle",

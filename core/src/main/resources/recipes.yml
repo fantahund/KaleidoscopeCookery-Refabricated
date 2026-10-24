@@ -2,7 +2,7 @@
 # Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert
 # und kann dort angepasst werden (/kc reload).
 # Zutaten: Item-ID, "#tag" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.
-data-version: 15
+data-version: 16
 tags:
   "c:cobblestones":
     - "minecraft:cobblestone"
@@ -4424,3 +4424,12 @@ vanilla:
     time: 100
     experience: 0.35
     result: "kaleidoscope_cookery:samsa"
+  "kaleidoscope_cookery:stone_kitchen_knife":
+    type: crafting_shaped
+    pattern:
+      - "##"
+      - "#S"
+    key:
+      "#": "#minecraft:stone_tool_materials"
+      S: "minecraft:stick"
+    result: "kaleidoscope_cookery:stone_kitchen_knife"
