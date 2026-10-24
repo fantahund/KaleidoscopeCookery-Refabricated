@@ -1789,7 +1789,7 @@ def main():
     items_yml = {}
     de_lang = {
         f"block.{NS}.forge_crucible": "Schmelze (3x3) & Gießtisch",
-        f"tooltip.{NS}.forge_crucible": "3x3-Multiblock: Verbraucht Lava (2 Güsse pro Eimer), schmilzt 1 Erzsorte und gießt auf den Tisch.",
+        f"tooltip.{NS}.forge_crucible": "3x3-Multiblock: Verbraucht Lava (1 Eimer schmilzt 6 Barren), schmilzt 1 Erzsorte und gießt auf den Tisch.",
         f"block.{NS}.smithing_anvil": "Schmiedeamboss",
         f"tooltip.{NS}.smithing_anvil": "Glühende Rohlinge im richtigen Takt mit dem Schmiedehammer formen.",
         f"block.{NS}.quenching_basin": "Löschbecken & Wetzstein",
@@ -1799,7 +1799,7 @@ def main():
         "kaleidoscope.menu.tab.smithing": "Schmiedekunst",
         # Station HUD & Actionbar messages
         f"{NS}.crucible.need_heat": "Fülle zuerst Lava (Lavaeimer) als Brennstoff in die Schmelze!",
-        f"{NS}.crucible.lava_filled": "Lava eingefüllt (%s/%s Schmelzvorgänge)!",
+        f"{NS}.crucible.lava_filled": "Lava eingefüllt (reicht für %s/%s Barren)!",
         f"{NS}.crucible.need_mold": "Lege zuerst eine gebrannte Gussform vorne auf den Gießtisch!",
         f"{NS}.crucible.no_mixing": "In der Schmelze befindet sich bereits ein anderes Erz – kein Mischen möglich!",
         f"{NS}.crucible.added_metal": "Erz/Metall eingelegt (%s/%s) | Lava: %s/%s",
@@ -1829,7 +1829,7 @@ def main():
         f"jei.{NS}.crucible": "Schmelze (3x3) & Gießtisch",
         f"jei.{NS}.anvil": "Schmiedeamboss",
         f"jei.{NS}.assembly": "Schmiede-Montagetisch",
-        f"jei.{NS}.crucible.hint1": "1. Lavaeimer in die Schmelze füllen (1 Eimer = 2 Güsse) & Gussform auf den Gießtisch legen",
+        f"jei.{NS}.crucible.hint1": "1. Lavaeimer in die Schmelze füllen (1 Eimer schmilzt 6 Barren) & Gussform auf den Gießtisch legen",
         f"jei.{NS}.crucible.hint2": "2. Roherz, Erzblöcke oder Barren einer einzigen Sorte einwerfen (kein Mischen!)",
         f"jei.{NS}.crucible.hint3": "3. Nach dem Guss den glühenden Rohling mit der Schmiedezange vom Tisch nehmen",
         f"jei.{NS}.anvil.hint1": "1. Glühenden Rohling auf den Schmiedeamboss legen",
@@ -1874,7 +1874,7 @@ def main():
 
     en_lang = {
         f"block.{NS}.forge_crucible": "Smeltery (3x3) & Casting Table",
-        f"tooltip.{NS}.forge_crucible": "3x3 Multiblock: Consumes Lava (2 casts per bucket) to smelt 1 ore type and pours it onto the Casting Table.",
+        f"tooltip.{NS}.forge_crucible": "3x3 Multiblock: Consumes Lava (1 bucket melts 6 ingots) to smelt 1 ore type and pours it onto the Casting Table.",
         f"block.{NS}.smithing_anvil": "Smithing Anvil",
         f"tooltip.{NS}.smithing_anvil": "Shape glowing blanks with the smithing hammer in rhythm.",
         f"block.{NS}.quenching_basin": "Quenching Basin & Grindstone",
@@ -1883,7 +1883,7 @@ def main():
         f"tooltip.{NS}.smithing_table_station": "Assemble handles, tool heads and bindings without menus.",
         "kaleidoscope.menu.tab.smithing": "Smithing",
         f"{NS}.crucible.need_heat": "Fill the Smeltery with Lava (Lava Bucket) as fuel first!",
-        f"{NS}.crucible.lava_filled": "Lava added (%s/%s casts)!",
+        f"{NS}.crucible.lava_filled": "Lava added (enough for %s/%s ingots)!",
         f"{NS}.crucible.need_mold": "Place a fired mold onto the front Casting Table first!",
         f"{NS}.crucible.no_mixing": "Another ore is already in the Smeltery – mixing metals is not allowed!",
         f"{NS}.crucible.added_metal": "Added ore/metal (%s/%s) | Lava: %s/%s",
@@ -1911,7 +1911,7 @@ def main():
         f"jei.{NS}.crucible": "Smeltery (3x3) & Casting Table",
         f"jei.{NS}.anvil": "Smithing Anvil",
         f"jei.{NS}.assembly": "Tinker Assembly Table",
-        f"jei.{NS}.crucible.hint1": "1. Fill Smeltery with Lava Bucket (1 bucket = 2 casts) & place mold on Casting Table",
+        f"jei.{NS}.crucible.hint1": "1. Fill Smeltery with Lava Bucket (1 bucket melts 6 ingots) & place mold on Casting Table",
         f"jei.{NS}.crucible.hint2": "2. Add Raw Ore, Ore blocks, or Ingots of a single metal (no mixing!)",
         f"jei.{NS}.crucible.hint3": "3. Once poured onto the Casting Table, extract the glowing blank with Smithing Tongs",
         f"jei.{NS}.anvil.hint1": "1. Place the glowing blank on the Smithing Anvil",

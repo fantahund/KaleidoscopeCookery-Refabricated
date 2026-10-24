@@ -134,13 +134,18 @@ public final class CookingSkill implements Listener {
         return item == null ? dish.asString() : item.nameKey();
     }
 
+    /** Level for the perks (rank, quality chance, extra portion): 1 without the skill database */
+    public static int perkLevel(Player player) {
+        return instance == null ? 1 : instance.skills.getPerkLevel(player, ID);
+    }
+
     public static int level(Player player) {
         return instance == null ? 1 : instance.skills.getLevel(player, ID);
     }
 
     /** 0 = kitchen help (1-10) ... 4 = star chef (41-50) */
     public static int rank(Player player) {
-        return Math.min(4, (level(player) - 1) / LEVELS_PER_RANK);
+        return Math.min(4, (perkLevel(player) - 1) / LEVELS_PER_RANK);
     }
 
     private static int rankOf(@Nullable ItemStack stack) {
@@ -171,7 +176,7 @@ public final class CookingSkill implements Listener {
         }
         String source = event.getStationType().equals("stockpot") ? "stockpot" : "pot";
         FoodService food = KaleidoscopeCookery.getInstance().getFoodService();
-        int level = level(player);
+        int level = perkLevel(player);
         ThreadLocalRandom random = ThreadLocalRandom.current();
         Quality quality = FoodService.quality(dish);
         if (quality != null && quality != Quality.SUPERB && random.nextDouble() < level * qualityChancePerLevel) {

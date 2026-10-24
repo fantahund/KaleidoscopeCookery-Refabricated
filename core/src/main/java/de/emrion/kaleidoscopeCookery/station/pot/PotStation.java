@@ -552,6 +552,11 @@ public class PotStation extends Station {
         if (status != FINISHED && status != BURNT) {
             return false;
         }
+        // Only a cook of the dish's level can serve it (burnt food anyone)
+        Key dish = status == FINISHED && result != null ? CookeryItems.idOf(result) : null;
+        if (dish != null && !de.emrion.kaleidoscopeCookery.skill.CookingSkill.mayCook(player, dish)) {
+            return true;
+        }
         ItemStack product = status == FINISHED && result != null ? result.clone() : items().create(DARK_CUISINE, 1);
         if (product == null) {
             return false;

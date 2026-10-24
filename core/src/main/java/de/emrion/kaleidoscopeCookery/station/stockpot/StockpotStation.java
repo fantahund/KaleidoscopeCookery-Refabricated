@@ -595,6 +595,11 @@ public class StockpotStation extends Station {
         if (hasLid() || status != FINISHED || result == null || takeoutCount <= 0) {
             return false;
         }
+        // Only a cook of the dish's level can serve it
+        Key dish = CookeryItems.idOf(result);
+        if (dish != null && !de.emrion.kaleidoscopeCookery.skill.CookingSkill.mayCook(player, dish)) {
+            return true;
+        }
         if (!carrier.isEmpty()) {
             Ingredient carrierIngredient = new Ingredient(Set.copyOf(carrier));
             if (!carrierIngredient.test(held)) {
