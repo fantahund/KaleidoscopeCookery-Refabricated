@@ -20,11 +20,17 @@ public class MillstoneListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDamage(EntityDamageEvent event) {
+        // Only harnessed animals carry the mark: no search through all stations for every hit on the server
+        if (!event.getEntity().getPersistentDataContainer().has(MillstoneStation.HARNESSED)) {
+            return;
+        }
         for (Station station : stations.loaded()) {
             if (station instanceof MillstoneStation millstone && millstone.hasEntity() && millstone.isBoundTo(event.getEntity())) {
                 millstone.unbind();
                 return;
             }
         }
+        // Mark of a millstone that is gone
+        event.getEntity().getPersistentDataContainer().remove(MillstoneStation.HARNESSED);
     }
 }

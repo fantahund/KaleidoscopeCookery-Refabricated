@@ -287,6 +287,9 @@ public class MillstoneStation extends Station {
                 || entity.getPassengers().isEmpty() || !(entity.getPassengers().getFirst() instanceof Player);
     }
 
+    /** Marks a harnessed animal so the damage listener only looks for its millstone when it is one */
+    public static final org.bukkit.NamespacedKey HARNESSED = de.emrion.kaleidoscopeCookery.util.Keys.key("millstone_harnessed");
+
     private void bind(LivingEntity entity) {
         if (!canBind(entity) || entity.isDead()) {
             return;
@@ -294,6 +297,7 @@ public class MillstoneStation extends Station {
         float currentRot = hasEntity() ? rotation() : cacheRot;
         entityId = entity.getUniqueId();
         bound = entity;
+        entity.getPersistentDataContainer().set(HARNESSED, org.bukkit.persistence.PersistentDataType.BOOLEAN, true);
         rotSpeedTick = ROT_SPEED.getOrDefault(entity.getType(), DEFAULT_ROT_SPEED);
         long newSpeed = Math.max((long) rotSpeedTick, 1);
         double newDegPerTick = 360.0 / newSpeed;
@@ -307,6 +311,9 @@ public class MillstoneStation extends Station {
      */
     public void unbind() {
         float rot = rotation();
+        if (bound != null) {
+            bound.getPersistentDataContainer().remove(HARNESSED);
+        }
         entityId = null;
         bound = null;
         cacheRot = rot;
@@ -398,6 +405,8 @@ public class MillstoneStation extends Station {
             if (world().getEntity(entityId) instanceof LivingEntity living && !living.isDead() && living.getHeight() >= 1
                     && living.getLocation().distanceSquared(center) < MAX_DISTANCE_SQUARED && canBind(living)) {
                 bound = living;
+                // animals harnessed before the mark existed get it here
+                living.getPersistentDataContainer().set(HARNESSED, org.bukkit.persistence.PersistentDataType.BOOLEAN, true);
             } else {
                 entityId = null;
                 cacheRot = 0;

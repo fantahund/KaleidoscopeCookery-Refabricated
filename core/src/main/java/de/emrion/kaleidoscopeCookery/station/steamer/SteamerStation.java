@@ -120,6 +120,12 @@ public class SteamerStation extends Station {
         return context.manager().at(position().relative(0, dy, 0)) instanceof SteamerStation steamer ? steamer : null;
     }
 
+    /** A new layer is a block placed by the player: ask protection plugins like any other placed station */
+    private static boolean mayBuild(Player player, ItemStack held, Block block) {
+        return new org.bukkit.event.block.BlockPlaceEvent(block, block.getState(), block.getRelative(BlockFace.DOWN), held, player, true,
+                org.bukkit.inventory.EquipmentSlot.HAND).callEvent();
+    }
+
     private Block blockAt(int dy) {
         return world().getBlockAt(position().x(), position().y() + dy, position().z());
     }
@@ -247,7 +253,7 @@ public class SteamerStation extends Station {
             SteamerStation above = target.steamerAt(1);
             if (above == null) {
                 Block block = target.blockAt(1);
-                if ((block.getType().isAir() || block.isReplaceable()) && context.manager().at(block) == null) {
+                if ((block.getType().isAir() || block.isReplaceable()) && context.manager().at(block) == null && mayBuild(player, held, block)) {
                     context.manager().place(type(context), block, target.facing());
                     consume(player, held);
                     world().playSound(block.getLocation().toCenterLocation(), Sound.BLOCK_BAMBOO_PLACE, SoundCategory.BLOCKS, 1, 1);
@@ -260,7 +266,7 @@ public class SteamerStation extends Station {
         if (target != null && target.lid && target.steamerAt(1) == null) {
             // Onto a layer with a lid: new layer above it, the lid below disappears (SteamerBlock#updateShape)
             Block block = target.blockAt(1);
-            if ((block.getType().isAir() || block.isReplaceable()) && context.manager().at(block) == null) {
+            if ((block.getType().isAir() || block.isReplaceable()) && context.manager().at(block) == null && mayBuild(player, held, block)) {
                 target.lid = false;
                 target.markDirty();
                 target.updateDisplay();

@@ -412,7 +412,7 @@ public class StockpotStation extends Station {
             if (held.isEmpty()) {
                 player.getInventory().setItemInMainHand(removed);
             } else {
-                world().dropItemNaturally(center().add(0, 0.5, 0), removed);
+                give(player, removed);  // into the inventory (dropped only when it is full)
             }
             world().playSound(center(), Sound.BLOCK_LANTERN_BREAK, SoundCategory.BLOCKS, 0.5f, 0.5f);
             markDirty();
@@ -520,9 +520,9 @@ public class StockpotStation extends Station {
             if (stack == null || stack.isEmpty()) {
                 continue;
             }
-            Material container = CookeryItems.isCustom(stack) ? null : stack.getType().getCraftingRemainingItem();
-            if (container != null && !container.isAir()) {
-                give(player, new ItemStack(container));
+            ItemStack container = CookeryItems.containerOf(stack);
+            if (container != null) {
+                give(player, container);
             }
             inputs[i] = stack.asOne();
         }
@@ -540,9 +540,9 @@ public class StockpotStation extends Station {
             if (inputs[i] != null) {
                 continue;
             }
-            Material container = CookeryItems.isCustom(held) ? null : held.getType().getCraftingRemainingItem();
-            if (container != null && !container.isAir()) {
-                give(player, new ItemStack(container));
+            ItemStack container = CookeryItems.containerOf(held);
+            if (container != null) {
+                give(player, container);
             }
             inputs[i] = held.asOne();
             if (player.getGameMode() != GameMode.CREATIVE) {
@@ -567,11 +567,11 @@ public class StockpotStation extends Station {
             if (stack == null) {
                 continue;
             }
-            Material container = CookeryItems.isCustom(stack) ? null : stack.getType().getCraftingRemainingItem();
-            if (container != null && !container.isAir()) {
+            ItemStack container = CookeryItems.containerOf(stack);
+            if (container != null) {
                 ItemStack held = player.getInventory().getItemInMainHand();
-                if (held.getType() != container || CookeryItems.isCustom(held)) {
-                    player.sendMessage(Lang.raw("tip.kaleidoscope_cookery.kitchen.remove_ingredient.need_container", Component.translatable(container.translationKey())));
+                if (!held.isSimilar(container)) {
+                    player.sendMessage(Lang.raw("tip.kaleidoscope_cookery.kitchen.remove_ingredient.need_container", container.effectiveName()));
                     return false;
                 }
                 if (player.getGameMode() != GameMode.CREATIVE) {

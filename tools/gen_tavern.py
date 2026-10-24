@@ -838,6 +838,8 @@ TEXTS = {
     f"tooltip.{NS}.mulled_wine": ("Stockpot: wine with sugar and glow berries, served in a cup", "Suppentopf: Wein mit Zucker und Leuchtbeeren, im Becher serviert"),
     f"tooltip.{NS}.wineskin": ("Drink in the off hand + right-click: pour it in (4 portions). Or fill it at a barrel's tap",
                                 "Getränk in die Nebenhand + Rechtsklick: hineingießen (4 Portionen). Oder am Zapfhahn eines Fasses füllen"),
+    f"{NS}.barrel.item_content": ("Contains: %s (%s), %s bottles - place it to go on brewing",
+                                   "Enthält: %s (%s), %s Flaschen - aufstellen und weiterbrauen"),
     f"{NS}.wineskin.content": ("%s: %s/%s sips", "%s: %s/%s Schlucke"),
     f"{NS}.wineskin.full": ("The wineskin is full", "Der Weinschlauch ist voll"),
     f"{NS}.wineskin.mismatch": ("Only the same drink of the same brew level fits in", "Nur dasselbe Getränk in derselben Brau-Stufe passt hinein"),

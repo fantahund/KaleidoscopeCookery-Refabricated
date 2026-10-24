@@ -38,10 +38,13 @@ public class PlateStation extends Station {
     private static final NamespacedKey DISH = Keys.key("dish");
     private static final NamespacedKey BITES = Keys.key("bites");
     private static final NamespacedKey QUALITY = Keys.key("quality");
+    private static final NamespacedKey ORIGINAL = Keys.key("plate_item");
 
     private @Nullable Key dish;
     private int bites;
     private @Nullable Quality quality;
+    /** The placed dish as it was (chef rank, addon data such as "hot"), null for plates from before this was stored */
+    private byte @Nullable [] original;
 
     public PlateStation(StationContext context) {
         super(context);
@@ -69,6 +72,7 @@ public class PlateStation extends Station {
         dish = dishId;
         bites = 0;
         quality = FoodService.quality(item);
+        original = item.asOne().serializeAsBytes();
         markDirty();
         context.manager().updateOccupied(this, before);
     }
@@ -88,6 +92,7 @@ public class PlateStation extends Station {
         dish = id != null && Key.parseable(id) ? Key.key(id) : null;
         bites = state.getOrDefault(BITES, PersistentDataType.INTEGER, 0);
         quality = Quality.byId(state.get(QUALITY, PersistentDataType.STRING));
+        original = state.get(ORIGINAL, PersistentDataType.BYTE_ARRAY);
     }
 
     @Override
@@ -99,6 +104,25 @@ public class PlateStation extends Station {
         if (quality != null) {
             state.set(QUALITY, PersistentDataType.STRING, quality.id());
         }
+        if (original != null) {
+            state.set(ORIGINAL, PersistentDataType.BYTE_ARRAY, original);
+        }
+    }
+
+    /** The dish as placed, or a fresh one with the stored quality */
+    private @Nullable ItemStack dishItem() {
+        if (original != null) {
+            try {
+                return ItemStack.deserializeBytes(original);
+            } catch (RuntimeException ignored) {
+                // corrupt data: fall back to a fresh dish
+            }
+        }
+        ItemStack stack = dish == null ? null : items().create(dish, 1);
+        if (stack != null && quality != null) {
+            plugin().getFoodService().setQuality(stack, quality);
+        }
+        return stack;
     }
 
     @Override
@@ -167,10 +191,7 @@ public class PlateStation extends Station {
             context.manager().breakStation(this, player);
             return true;
         }
-        ItemStack dishStack = dish == null ? null : items().create(dish, 1);
-        if (dishStack != null && quality != null) {
-            plugin().getFoodService().setQuality(dishStack, quality);
-        }
+        ItemStack dishStack = dishItem();
         if (!plugin().getFoodService().eatBite(player, plate.food(), quality == null ? 1 : quality.ratio(),
                 dishStack == null ? ItemStack.empty() : dishStack)) {
             return false;
@@ -186,11 +207,7 @@ public class PlateStation extends Station {
         if (dish == null || bites > 0) {
             return null;
         }
-        ItemStack stack = items().create(dish, 1);
-        if (stack != null && quality != null) {
-            plugin().getFoodService().setQuality(stack, quality);
-        }
-        return stack;
+        return dishItem();
     }
 
     @Override

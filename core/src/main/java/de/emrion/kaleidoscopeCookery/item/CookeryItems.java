@@ -124,6 +124,22 @@ public class CookeryItems {
         return new CookeryItems(adjusted);
     }
 
+    /**
+     * Container an ingredient leaves behind in a wok or stockpot: the vanilla crafting remainder (bucket, bottle) or,
+     * for custom items, their use remainder (e.g. the empty bottle of a KaleidoscopeTavern drink).
+     */
+    public static @Nullable ItemStack containerOf(@Nullable ItemStack stack) {
+        if (stack == null || stack.isEmpty()) {
+            return null;
+        }
+        if (isCustom(stack)) {
+            io.papermc.paper.datacomponent.item.UseRemainder remainder = stack.getData(DataComponentTypes.USE_REMAINDER);
+            return remainder == null ? null : remainder.transformInto().clone();
+        }
+        org.bukkit.Material container = stack.getType().getCraftingRemainingItem();
+        return container != null && container.isItem() && !container.isAir() ? new ItemStack(container) : null;
+    }
+
     public CookeryItems merge(CookeryItems other) {
         Map<Key, CookeryItem> merged = new LinkedHashMap<>(items);
         merged.putAll(other.items);

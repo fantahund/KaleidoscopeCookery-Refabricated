@@ -476,9 +476,9 @@ public class PotStation extends Station {
             if (stack == null || stack.isEmpty()) {
                 continue;
             }
-            Material container = CookeryItems.isCustom(stack) ? null : stack.getType().getCraftingRemainingItem();
-            if (container != null && container.isItem() && !container.isAir()) {
-                give(player, new ItemStack(container));
+            ItemStack container = containerOf(stack);
+            if (container != null) {
+                give(player, container);
             }
             inputs[i] = stack.asOne();
         }
@@ -614,12 +614,7 @@ public class PotStation extends Station {
      * (KaleidoscopeTavern wine, vinegar ...), their use remainder (empty bottle).
      */
     private static @Nullable ItemStack containerOf(ItemStack stack) {
-        if (CookeryItems.isCustom(stack)) {
-            io.papermc.paper.datacomponent.item.UseRemainder remainder = stack.getData(io.papermc.paper.datacomponent.DataComponentTypes.USE_REMAINDER);
-            return remainder == null ? null : remainder.transformInto().clone();
-        }
-        Material container = stack.getType().getCraftingRemainingItem();
-        return container != null && container.isItem() && !container.isAir() ? new ItemStack(container) : null;
+        return CookeryItems.containerOf(stack);
     }
 
     private static boolean isIngredientContainer(ItemStack stack) {
@@ -721,6 +716,14 @@ public class PotStation extends Station {
                 if (input != null) {
                     contents.add(input);
                 }
+            }
+        } else if (status == FINISHED && result != null) {
+            // Breaking the wok does not throw the finished dish away
+            contents.add(result.clone());
+        } else if (status == BURNT) {
+            ItemStack burnt = items().create(DARK_CUISINE, 1);
+            if (burnt != null) {
+                contents.add(burnt);
             }
         }
         return contents;

@@ -318,6 +318,11 @@ public class ScarecrowStation extends Station {
     public boolean onAttack(Player player) {
         long now = context.manager().serverTick();
         if (player.getGameMode() == GameMode.CREATIVE || now - lastHit <= 5) {
+            // Breaking it with hits must be allowed here (protection plugins), like sneak-breaking any station
+            org.bukkit.block.Block block = position().block();
+            if (block == null || !new de.emrion.kaleidoscopeCookery.util.BreakPermissionCheck(block, player).callEvent()) {
+                return true;
+            }
             world().spawnParticle(Particle.BLOCK, center().add(0, 1.08, 0), 10, 0.125, 0.6, 0.125, 0.05,
                     Material.OAK_PLANKS.createBlockData());
             world().playSound(center(), Sound.ENTITY_ARMOR_STAND_BREAK, SoundCategory.BLOCKS, 1, 1);
