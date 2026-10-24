@@ -7,6 +7,8 @@
 # Mod: 1 Schnitt pro Hieb (mit "Schnelles Messer" I/II: 2/4).
 cutting:
   tools:
+    # Steinmesser (KaleidoscopeSmithing): Vorlage für die Messer-Gussform
+    kaleidoscope_smithing:stone_kitchen_knife: 1
     kaleidoscope_cookery:copper_kitchen_knife: 1
     kaleidoscope_cookery:iron_kitchen_knife: 1
     kaleidoscope_cookery:gold_kitchen_knife: 1
@@ -60,6 +62,13 @@ dispensers: false
 # Rezept-ID wie in recipes.yml (bzw. bei Addons deren recipes.yml), mit "*" am Ende für alle mit diesem Anfang,
 # z. B. "kaleidoscope_cookery:millstone/*" (alle Mühlen-Rezepte) oder "kaleidoscope_cookery:bamboo_tray/drying/*".
 disabled-recipes:
+  # Küchenmesser ab Eisen, Wok und Suppentopf werden in KaleidoscopeSmithing gegossen/geschmiedet
+  - "kaleidoscope_cookery:iron_kitchen_knife"
+  - "kaleidoscope_cookery:gold_kitchen_knife"
+  - "kaleidoscope_cookery:diamond_kitchen_knife"
+  - "kaleidoscope_cookery:netherite_kitchen_knife_smithing"
+  - "kaleidoscope_cookery:pot"
+  - "kaleidoscope_cookery:stockpot"
   # Ölblock und Strohballen herstellen (zurück in Öl bzw. Reisrispen geht weiter)
   - "kaleidoscope_cookery:oil_block"
   - "kaleidoscope_cookery:straw_block"
@@ -248,6 +257,8 @@ cooking-skill:
     "kaleidoscope_cookery:braised_beef": {level: 11, nutrition: 7, saturation: 7.0}
     "kaleidoscope_cookery:braised_beef_with_potatoes": {level: 11, nutrition: 6, saturation: 6.0}
     "kaleidoscope_cookery:candied_potato": {level: 11, nutrition: 8, saturation: 8.0}
+    "kaleidoscope_tavern:fruit_compote": {level: 11, nutrition: 7, saturation: 7.0}
+    "kaleidoscope_tavern:mulled_wine": {level: 31, nutrition: 10, saturation: 14.0}
     "kaleidoscope_cookery:chicken_and_mushroom_stew": {level: 11, nutrition: 6, saturation: 6.0}
     "kaleidoscope_cookery:clay_pot_milk_tea": {level: 11}
     "kaleidoscope_cookery:cold_roasted_meat": {level: 11, nutrition: 8, saturation: 8.0}

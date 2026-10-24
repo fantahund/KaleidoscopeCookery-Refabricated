@@ -265,6 +265,11 @@ public final class CookbookEntries {
      * Broth or tea liquid as a bucket name (water, lava, milk, fish bucket ...).
      */
     private static Component soupBase(Key base) {
+        if (!base.namespace().equals(Key.MINECRAFT_NAMESPACE)) {
+            // Addon broth (juice bucket, wine): the item's own name
+            de.emrion.kaleidoscopeCookery.item.CookeryItem item = de.emrion.kaleidoscopeCookery.KaleidoscopeCookery.getInstance().getItems().get(base);
+            return Lang.raw(item == null ? base.asString() : item.nameKey());
+        }
         String value = base.value();
         String bucket = value.endsWith("_bucket") ? value : value + "_bucket";
         return Lang.raw("item.minecraft." + bucket);

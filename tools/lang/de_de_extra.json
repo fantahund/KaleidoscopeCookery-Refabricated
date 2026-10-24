@@ -397,6 +397,8 @@
     "tooltip.kaleidoscope_grilling.roasted_chicken_wing.maxim": "Gart auch ohne Spieß, vermisst aber das Treiben neben der Glut.",
     "tooltip.kaleidoscope_grilling.roasted_sweet_potato.maxim": "Erst die Hände wärmen; richtig Winter wird es nach dem ersten Bissen.",
     "tooltip.kaleidoscope_grilling.sour_spicy_noodles.maxim": "Sauer genug zum Aufwachen, scharf genug zum Schwitzen und unmöglich, mit dem Schlürfen aufzuhören.",
-    "tooltip.kaleidoscope_grilling.sugared_tomato.maxim": "Süß, säuerlich und bereit, ein Grillfest abzuschließen."
+    "tooltip.kaleidoscope_grilling.sugared_tomato.maxim": "Süß, säuerlich und bereit, ein Grillfest abzuschließen.",
+    "message.kaleidoscope_grilling.marinated": "%s Spieße mit %s bestrichen - jetzt wenden",
+    "tooltip.kaleidoscope_grilling.marinade": "Mariniert: %s"
   }
 }

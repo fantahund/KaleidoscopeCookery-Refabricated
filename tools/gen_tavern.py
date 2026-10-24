@@ -16,6 +16,7 @@ Usage: python3 -I tools/gen_tavern.py
 """
 import json
 import sys
+import yaml
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -45,6 +46,19 @@ OWN_ITEMS = {
     "dirty_glassware": ("Dirty Glassware", "Dreckiges Glas"),
     "dish_sponge": ("Dish Sponge", "Spülschwamm"),
     "sink": ("Sink", "Spülbecken"),
+    "fruit_compote": ("Fruit Compote", "Früchtekompott"),
+    "mulled_wine": ("Mulled Wine", "Glühwein"),
+}
+
+# Broths for Cookery's stockpot (registered by the plugin): item -> surface texture
+STOCKPOT_BASES = {
+    "grape_bucket": "block/grape_juice_still",
+    "ice_grape_bucket": "block/ice_grape_juice_still",
+    "gold_grape_bucket": "block/gold_grape_juice_still",
+    "green_grape_bucket": "block/green_grape_juice_still",
+    "sweet_berries_bucket": "block/sweet_berries_juice_still",
+    "glow_berries_bucket": "block/glow_berries_juice_still",
+    "wine": "block/grape_juice_still",
 }
 
 
@@ -167,6 +181,14 @@ def items(barrel, cocktails):
     add("dirty_glassware", tooltip=f"tooltip.{NS}.dirty_glassware", **{"max-stack": 16})
     add("dish_sponge", tooltip=f"tooltip.{NS}.dish_sponge", **{"max-stack": 1, "max-damage": 384})
     add("sink", tooltip=f"tooltip.{NS}.sink")
+    # Stockpot dishes with a juice or wine broth (own addition, values by level in Cookery's cooking-skill.dishes)
+    add("fruit_compote", tooltip=f"tooltip.{NS}.fruit_compote", **{"max-stack": 16},
+        food={"nutrition": 7, "saturation": 7.0, "always-edible": True, "remainder": "minecraft:bowl",
+              "effects": [{"effect": "minecraft:regeneration", "duration": 200}, {"effect": "kaleidoscope_cookery:vigor", "duration": 1200}]})
+    add("mulled_wine", tooltip=f"tooltip.{NS}.mulled_wine", **{"max-stack": 16},
+        food={"nutrition": 10, "saturation": 14.0, "always-edible": True, "drink": True, "remainder": "kaleidoscope_cookery:empty_cup",
+              "effects": [{"effect": "kaleidoscope_cookery:warmth", "duration": 6000}, {"effect": "minecraft:regeneration", "duration": 400},
+                          {"effect": "minecraft:resistance", "duration": 1200}]})
     # Stations, racks and cabinets
     for station in ("pressing_tub", "barrel", "tap", "bar_cabinet", "glass_bar_cabinet", "cellar_cabinet",
                     "tilted_rack", "circular_rack", "holder", "glassware_holder"):
@@ -200,6 +222,18 @@ TAGS = {
 }
 CRAFTING = ["barrel", "pressing_tub", "tap", "shaker", "empty_bottle", "empty_glassware", "trellis", "bar_cabinet",
             "glass_bar_cabinet", "cellar_cabinet", "circular_rack", "tilted_rack", "holder", "glassware_holder"]
+
+
+# Wok dishes that need a drink (by result; every pot and flex-pot recipe of the dish gets the drink)
+WOK_DRINKS = {
+    "sweet_and_sour_pork": "vinegar",
+    "fish_flavored_shredded_pork": "vinegar",
+    "braised_beef": "wine",
+    "braised_pork_ribs": "wine",
+    "dongpo_pork": "wine",
+    "braised_fish": "riesling_dry_white",
+    "candied_potato": "rum",
+}
 
 
 def write_recipes():
@@ -250,7 +284,55 @@ def write_recipes():
         f"      item: {yaml_str(k('dish_sponge'))}",
         "      count: 2",
     ]
-    lines.append("data-version: 1")
+    # Wok dishes that need a drink (overrides the Cookery recipe of the same id, the empty bottle comes back)
+    cookery = yaml.safe_load((ROOT / "core" / "src" / "main" / "resources" / "recipes.yml").read_text(encoding="utf-8"))
+    for section in ("pot", "flex-pot"):
+        lines.append(f"{section}:")
+        for recipe, r in cookery[section].items():
+            res = r["result"]
+            drink = WOK_DRINKS.get((res if isinstance(res, str) else res["item"]).split(":")[1])
+            if drink is None:
+                continue
+            assert len(r["ingredients"]) < 9, recipe
+            lines.append(f"  {yaml_str(recipe)}:")
+            lines.append("    ingredients:")
+            lines += [f"      - {yaml_str(v)}" for v in r["ingredients"] + [k(drink)]]
+            for key in ("time", "stir-fry", "per-item"):
+                if key in r:
+                    lines.append(f"    {key}: {str(r[key]).lower()}")
+            if "carrier" in r:
+                lines.append(f"    carrier: {yaml_str(r['carrier'])}")
+            if isinstance(res, str):
+                lines.append(f"    result: {yaml_str(res)}")
+            else:
+                lines.append("    result:")
+                lines += [f"      {key}: {yaml_str(v) if isinstance(v, str) else v}" for key, v in res.items()]
+    # Stockpot dishes on a juice or wine broth
+    lines += [
+        "stockpot:",
+        f"  {yaml_str(k('stockpot/fruit_compote'))}:",
+        "    ingredients:",
+        '      - "minecraft:apple"',
+        '      - "minecraft:apple"',
+        '      - "minecraft:sweet_berries"',
+        '      - "minecraft:sweet_berries"',
+        '      - "minecraft:sweet_berries"',
+        f"    soup-base: {yaml_str(k('grape_bucket'))}",
+        '    finished-texture: "kaleidoscope_cookery:stockpot/default_finished_berry"',
+        f"    result: {yaml_str(k('fruit_compote'))}",
+        f"  {yaml_str(k('stockpot/mulled_wine'))}:",
+        "    ingredients:",
+        '      - "minecraft:sugar"',
+        '      - "minecraft:sugar"',
+        '      - "minecraft:glow_berries"',
+        '      - "minecraft:glow_berries"',
+        '      - "minecraft:glow_berries"',
+        f"    soup-base: {yaml_str(k('wine'))}",
+        '    finished-texture: "kaleidoscope_cookery:stockpot/default_finished_red"',
+        '    carrier: "kaleidoscope_cookery:empty_cup"',
+        f"    result: {yaml_str(k('mulled_wine'))}",
+    ]
+    lines.append("data-version: 3")
     (RES / "recipes.yml").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -360,6 +442,54 @@ def fluid_models():
             "elements": [{"from": [0, 0, 0], "to": [16, 0.01, 16], "faces": {"up": face, "down": dict(face)}}],
         })
         model_item(f"block/{name}", [{"type": "minecraft:constant", "value": tint}] if tint is not None else None)
+
+
+def stockpot_surface_models():
+    """Soup surfaces of the juice and wine broths, shaped like Cookery's kaleidoscope:surface models."""
+    for item, texture in STOCKPOT_BASES.items():
+        name = f"block/stockpot_surface/{item}"
+        face = {"uv": [0, 0, 10, 10], "texture": "#surface"}
+        write_json(OUT / "models" / f"{name}.json", {
+            "textures": {"surface": k(texture), "particle": k(texture)},
+            "elements": [{"from": [3, 0, 3], "to": [13, 0, 13], "shade": False, "faces": {"up": face}}],
+        })
+        model_item(name)
+
+
+def dish_textures():
+    """Fruit compote (Cookery's borscht bowl with grape and berry colours) and mulled wine (the barley tea cup, red)."""
+    from PIL import Image
+    src = ROOT / "resourcepack" / "imported" / "assets" / "kaleidoscope_cookery" / "textures" / "item"
+    out = OUT / "textures" / "item"
+    out.mkdir(parents=True, exist_ok=True)
+
+    def lum(c):
+        return 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]
+
+    compote = Image.open(src / "borscht.png").convert("RGBA")
+    for y in range(16):
+        for x in range(16):
+            r, g, b, a = compote.getpixel((x, y))
+            if not a:
+                continue
+            if r > 1.6 * max(g, 1):  # red soup -> grape purple
+                l = lum((r, g, b)) / 120
+                compote.putpixel((x, y), (int(110 * l + 30), int(30 * l + 10), int(120 * l + 40), a))
+            elif g > r:  # dill -> sweet berries
+                compote.putpixel((x, y), (200, 36, 48, a) if (x + y) % 2 else (150, 20, 34, a))
+    compote.save(out / "fruit_compote.png")
+
+    wine = Image.open(src / "barley_tea.png").convert("RGBA")
+    tea = {(137, 133, 41): (96, 12, 30), (167, 170, 61): (138, 22, 44), (226, 223, 104): (196, 70, 70)}
+    for y in range(16):
+        for x in range(16):
+            c = wine.getpixel((x, y))
+            if c[3] and c[:3] in tea:
+                wine.putpixel((x, y), tea[c[:3]] + (c[3],))
+    wine.save(out / "mulled_wine.png")
+    for item in ("fruit_compote", "mulled_wine"):
+        write_json(OUT / "models" / "item" / f"{item}.json", {"parent": "minecraft:item/generated", "textures": {"layer0": k(f"item/{item}")}})
+        write_json(OUT / "items" / f"{item}.json", {"model": {"type": "minecraft:model", "model": k(f"item/{item}")}})
 
 
 def young_vine_models():
@@ -627,6 +757,8 @@ TEXTS = {
     f"{NS}.trellis.wrong_ground": ("Grapes need dirt, ice/snow or netherrack/magma below the trellis",
                                    "Trauben brauchen Erde, Eis/Schnee oder Netherrack/Magma unter dem Rankgitter"),
     f"{NS}.rack.empty_bottle_only": ("Only empty glasses can be hung up here!", "Hier können nur leere Gläser aufgehängt werden!"),
+    f"tooltip.{NS}.fruit_compote": ("Stockpot: grape juice broth with apples and sweet berries", "Suppentopf: Traubensaft-Brühe mit Äpfeln und Süßbeeren"),
+    f"tooltip.{NS}.mulled_wine": ("Stockpot: wine with sugar and glow berries, served in a cup", "Suppentopf: Wein mit Zucker und Leuchtbeeren, im Becher serviert"),
     f"tooltip.{NS}.signature_effects": ("Mixed from your own drinks", "Aus deinen eigenen Getränken gemixt"),
 }
 
@@ -657,6 +789,8 @@ def main():
     washing_models()
     young_vine_models()
     fluid_models()
+    stockpot_surface_models()
+    dish_textures()
     effect_font()
     write_texts()
     print(f"Tavern: {len(entries)} Items, {len(barrel)} Fass-, {len(pressing)} Kelter-, {len(shaker)} Shaker-Rezepte, "

@@ -501,9 +501,9 @@ public class PotStation extends Station {
         }
         for (int i = 0; i < inputs.length; i++) {
             if (inputs[i] == null) {
-                Material container = held.getType().getCraftingRemainingItem();
-                if (container != null && container.isItem() && !container.isAir() && !CookeryItems.isCustom(held)) {
-                    give(player, new ItemStack(container));
+                ItemStack container = containerOf(held);
+                if (container != null) {
+                    give(player, container);
                 }
                 inputs[i] = held.asOne();
                 if (player.getGameMode() != GameMode.CREATIVE) {
@@ -527,11 +527,11 @@ public class PotStation extends Station {
             if (stack == null) {
                 continue;
             }
-            Material container = CookeryItems.isCustom(stack) ? null : stack.getType().getCraftingRemainingItem();
-            if (container != null && !container.isAir()) {
+            ItemStack container = containerOf(stack);
+            if (container != null) {
                 ItemStack held = player.getInventory().getItemInMainHand();
-                if (held.getType() != container || CookeryItems.isCustom(held)) {
-                    player.sendMessage(Lang.raw("tip.kaleidoscope_cookery.kitchen.remove_ingredient.need_container", Component.translatable(container.translationKey())));
+                if (!held.isSimilar(container)) {
+                    player.sendMessage(Lang.raw("tip.kaleidoscope_cookery.kitchen.remove_ingredient.need_container", container.effectiveName()));
                     return false;
                 }
                 if (player.getGameMode() != GameMode.CREATIVE) {
@@ -607,6 +607,19 @@ public class PotStation extends Station {
         if (hasHeatSource()) {
             player.damage(1, DamageSource.builder(DamageType.IN_FIRE).build());
         }
+    }
+
+    /**
+     * Container an ingredient leaves behind: the vanilla crafting remainder (bucket, bottle) or, for custom drinks
+     * (KaleidoscopeTavern wine, vinegar ...), their use remainder (empty bottle).
+     */
+    private static @Nullable ItemStack containerOf(ItemStack stack) {
+        if (CookeryItems.isCustom(stack)) {
+            io.papermc.paper.datacomponent.item.UseRemainder remainder = stack.getData(io.papermc.paper.datacomponent.DataComponentTypes.USE_REMAINDER);
+            return remainder == null ? null : remainder.transformInto().clone();
+        }
+        Material container = stack.getType().getCraftingRemainingItem();
+        return container != null && container.isItem() && !container.isAir() ? new ItemStack(container) : null;
     }
 
     private static boolean isIngredientContainer(ItemStack stack) {

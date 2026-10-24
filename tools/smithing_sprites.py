@@ -149,7 +149,49 @@ def star_shape() -> set:
 ARMOR_KINDS = ("helmet", "chestplate", "leggings", "boots")
 
 
+COOKERY_TEXTURES = Path(__file__).resolve().parent.parent / "resourcepack" / "imported" / "assets" / "kaleidoscope_cookery" / "textures" / "item"
+# Cookware cast for KaleidoscopeCookery (knife blade, wok, stockpot)
+COOKWARE_KINDS = ("knife", "wok", "stockpot")
+
+
+@lru_cache(maxsize=None)
+def cookery_texture(name: str) -> Image.Image:
+    return Image.open(COOKERY_TEXTURES / f"{name}.png").convert("RGBA")
+
+
+def cookware_pixels(kind: str) -> dict:
+    """Knife: the blade of the Cookery iron knife (rows above the wooden grip); wok: the Cookery pot; stockpot: the vanilla cauldron."""
+    if kind == "knife":
+        return centered({p: c for p, c in pixels(cookery_texture("iron_kitchen_knife")).items() if p[1] <= 9})
+    if kind == "wok":
+        return centered(pixels(cookery_texture("pot_no_oil")))
+    return centered(pixels(vanilla("cauldron")))
+
+
+def cookware_3d(kind: str, palette: list):
+    """Recoloured cookware part (thin blade, thick pots)."""
+    px = recolor(cookware_pixels(kind), palette)
+    return to_image(px), {p: sym(1.0 if kind == "knife" else 2.5) for p in px}
+
+
+STONE = [(30, 30, 30), (70, 70, 70), (104, 104, 104), (128, 128, 128), (150, 150, 150), (178, 178, 178)]
+
+
+def stone_knife_item() -> Image.Image:
+    """Cookery iron knife with a stone blade (the grip stays wooden)."""
+    px = pixels(cookery_texture("iron_kitchen_knife"))
+    blade = {p: c for p, c in px.items() if p[1] <= 9}
+    px.update(recolor(blade, STONE))
+    return to_image(px)
+
+
 def silhouette(kind: str) -> set:
+    if kind == "knife":
+        return set(cookware_pixels(kind))
+    if kind in COOKWARE_KINDS:
+        # Pots fill the whole sprite: shrink them so the cavity sits inside the mold's rim
+        small = to_image(cookware_pixels(kind)).resize((10, 10), Image.NEAREST)
+        return set(centered({(x, y): c for y in range(10) for x in range(10) if (c := small.getpixel((x, y)))[3] > 0}))
     if kind in ARMOR_KINDS:
         return set(centered(pixels(vanilla(f"iron_{kind}"))))
     if kind == "ring":

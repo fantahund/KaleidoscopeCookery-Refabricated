@@ -62,8 +62,31 @@ public class StockpotStation extends Station {
     private static final int MAX_TAKEOUT_COUNT = 9;
     private static final float SOUP_HEIGHT = 0.38f;
 
-    /** Broths: bucket -> key and colour of the bubbles (ModSoupBases) */
-    private record SoupBase(Key key, Material bucket, int color, Key surface, @Nullable Material floating) {
+    /**
+     * Broths: bucket -> key and colour of the bubbles (ModSoupBases). Addon broths are custom items ({@code item}, e.g.
+     * juice buckets of KaleidoscopeTavern), their key is the item id and their container is the item's use remainder.
+     */
+    private record SoupBase(Key key, @Nullable Material bucket, @Nullable Key item, int color, Key surface, @Nullable Material floating) {
+
+        SoupBase(Key key, Material bucket, int color, Key surface, @Nullable Material floating) {
+            this(key, bucket, null, color, surface, floating);
+        }
+
+        boolean matches(ItemStack stack) {
+            return item != null ? item.equals(CookeryItems.idOf(stack)) : !CookeryItems.isCustom(stack) && stack.getType() == bucket;
+        }
+    }
+
+    private static final List<SoupBase> ADDON_SOUP_BASES = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    /**
+     * Broth from an addon item (e.g. a juice bucket or a bottle of wine); stockpot recipes use the item id as soup-base.
+     *
+     * @param surface item model of the soup surface while ingredients go in
+     */
+    public static void registerSoupBase(Key item, int color, Key surface) {
+        ADDON_SOUP_BASES.removeIf(base -> item.equals(base.item()));
+        ADDON_SOUP_BASES.add(new SoupBase(item, null, item, color, surface, null));
     }
 
     private static final List<SoupBase> SOUP_BASES = List.of(
@@ -205,12 +228,29 @@ public class StockpotStation extends Station {
     }
 
     private @Nullable SoupBase soup() {
-        for (SoupBase base : SOUP_BASES) {
+        for (SoupBase base : allSoupBases()) {
             if (base.key().equals(soupBase)) {
                 return base;
             }
         }
         return null;
+    }
+
+    private static List<SoupBase> allSoupBases() {
+        List<SoupBase> all = new ArrayList<>(SOUP_BASES);
+        all.addAll(ADDON_SOUP_BASES);
+        return all;
+    }
+
+    /** Container that holds the broth again: the empty bucket, or the addon item's use remainder (bucket, bottle) */
+    private @Nullable ItemStack container(SoupBase base) {
+        if (base.item() == null) {
+            return new ItemStack(Material.BUCKET);
+        }
+        ItemStack full = items().create(base.item(), 1);
+        io.papermc.paper.datacomponent.item.UseRemainder remainder = full == null ? null
+                : full.getData(io.papermc.paper.datacomponent.DataComponentTypes.USE_REMAINDER);
+        return remainder == null ? null : remainder.transformInto().clone();
     }
 
     /** Is a finished dish ready to be taken out (addons: clear the seasoning after the last plate) */
@@ -383,16 +423,19 @@ public class StockpotStation extends Station {
     }
 
     private boolean addSoupBase(Player player, ItemStack held) {
-        if (hasLid() || status != PUT_SOUP_BASE || CookeryItems.isCustom(held)) {
+        if (hasLid() || status != PUT_SOUP_BASE) {
             return false;
         }
-        for (SoupBase base : SOUP_BASES) {
-            if (held.getType() == base.bucket()) {
+        for (SoupBase base : allSoupBases()) {
+            if (base.matches(held)) {
                 soupBase = base.key();
                 status = PUT_INGREDIENT;
                 if (player.getGameMode() != GameMode.CREATIVE) {
                     held.subtract();
-                    give(player, new ItemStack(Material.BUCKET));
+                    ItemStack container = container(base);
+                    if (container != null) {
+                        give(player, container);
+                    }
                 }
                 world().playSound(center(), base.bucket() == Material.LAVA_BUCKET ? Sound.ITEM_BUCKET_EMPTY_LAVA : Sound.ITEM_BUCKET_EMPTY,
                         SoundCategory.BLOCKS, 1, 1);
@@ -407,13 +450,18 @@ public class StockpotStation extends Station {
 
     private boolean removeSoupBase(Player player, ItemStack held) {
         SoupBase base = soup();
-        if (status != PUT_INGREDIENT || !isEmpty() || base == null || held.getType() != Material.BUCKET || CookeryItems.isCustom(held)) {
+        ItemStack container = base == null ? null : container(base);
+        if (status != PUT_INGREDIENT || !isEmpty() || container == null || !held.isSimilar(container)) {
+            return false;
+        }
+        ItemStack full = base.item() != null ? items().create(base.item(), 1) : new ItemStack(base.bucket());
+        if (full == null) {
             return false;
         }
         if (player.getGameMode() != GameMode.CREATIVE) {
             held.subtract();
         }
-        give(player, new ItemStack(base.bucket()));
+        give(player, full);
         world().playSound(center(), base.bucket() == Material.LAVA_BUCKET ? Sound.ITEM_BUCKET_FILL_LAVA : Sound.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 1, 1);
         soupBase = Key.key("minecraft", "water");
         status = PUT_SOUP_BASE;

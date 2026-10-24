@@ -49,8 +49,13 @@ public record CookeryConfig(Cutting cutting, OilDrops oilDrops, Food food, List<
             if (tool == null || tool.isEmpty()) {
                 return 0;
             }
-            return tools.getOrDefault(CookeryItems.typeOf(tool), 0);
+            int cuts = tools.getOrDefault(CookeryItems.typeOf(tool), 0);
+            // A masterwork knife from KaleidoscopeSmithing cuts once more per hit
+            String quality = tool.getPersistentDataContainer().get(SMITHING_QUALITY, org.bukkit.persistence.PersistentDataType.STRING);
+            return cuts > 0 && "masterwork".equals(quality) ? cuts + 1 : cuts;
         }
+
+        private static final org.bukkit.NamespacedKey SMITHING_QUALITY = new org.bukkit.NamespacedKey("kaleidoscope_smithing", "quality");
 
         public boolean isTool(@Nullable ItemStack tool) {
             return cuts(tool) > 0;

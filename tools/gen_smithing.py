@@ -172,6 +172,13 @@ TOOL_KINDS = [
     ("boots", "Stiefel", "Boots", "Stiefelplatten", "Boot Plates", 4),
 ]
 ARMOR_KINDS = ("helmet", "chestplate", "leggings", "boots")
+# Cookware cast for KaleidoscopeCookery: (kind, German part, English part, tiers). The knife blade is assembled with a
+# handle into the Cookery kitchen knife; wok and stockpot come out of the basin as the finished Cookery station.
+COOKWARE_KINDS = [
+    ("knife", "Küchenmesser-Klinge", "Kitchen Knife Blade", ("iron", "gold", "diamond", "netherite")),
+    ("wok", "Wok", "Wok", ("iron",)),
+    ("stockpot", "Suppentopf", "Stockpot", ("iron",)),
+]
 ARMOR_SLOTS = {"helmet": "head", "chestplate": "chest", "leggings": "legs", "boots": "feet"}
 
 
@@ -2052,7 +2059,7 @@ def main():
     en_lang[f"tooltip.{NS}.ring_core"] = "Lay it into the ring mold on the casting table, then cast diamond or netherite around it."
 
     # Molds (Clay & Fired) for each tool kind
-    for kind, de_part, en_part in [(k, dp, ep) for k, _, _, dp, ep, _ in TOOL_KINDS] + PART_KINDS:
+    for kind, de_part, en_part in [(k, dp, ep) for k, _, _, dp, ep, _ in TOOL_KINDS] + PART_KINDS + [(k, dp, ep) for k, dp, ep, _ in COOKWARE_KINDS]:
         clay_id = f"clay_{kind}_mold"
         fired_id = f"{kind}_mold"
         register_3d_sprite(clay_id, sprites.mold_3d(kind, fired=False))
@@ -2155,6 +2162,44 @@ def main():
                 prefix_de = "Geschmiedetes" if kind == "schwert" or de_tool == "Schwert" else "Geschmiedete"
                 de_lang[f"item.{NS}.{tool_id}"] = f"{prefix_de} {de_tier}-{de_tool}"
                 en_lang[f"item.{NS}.{tool_id}"] = f"Forged {en_tier} {en_tool}"
+
+    # Cookware: glowing blank, hot part and (knife only) the finished blade
+    for kind, de_part, en_part, tiers in COOKWARE_KINDS:
+        for tier, de_tier, en_tier, *_ in TIERS:
+            if tier not in tiers:
+                continue
+            blank_id = f"heated_{tier}_{kind}_blank"
+            hot_id = f"hot_{tier}_{kind}_head"
+            register_3d_sprite(blank_id, sprites.blank_3d(kind), glow=12)
+            register_3d_sprite(hot_id, sprites.cookware_3d(kind, sprites.HEAT), glow=12)
+            parts = [(blank_id, "heated_blank", 1, f"Glühender {de_tier}-{de_part}-Rohling", f"Glowing {en_tier} {en_part} Blank"),
+                     (hot_id, "hot_head", 1, f"Heiße {de_tier}-{de_part}", f"Hot {en_tier} {en_part}")]
+            if kind == "knife":
+                head_id = f"{tier}_knife_head"
+                register_3d_sprite(head_id, sprites.cookware_3d(kind, PALETTES[tier]))
+                parts.append((head_id, "knife_head", 16, f"Geschmiedete {de_tier}-{de_part}", f"Forged {en_tier} {en_part}"))
+            for item_id, tooltip, stack, de_name, en_name in parts:
+                items_yml[f"{NS}:{item_id}"] = {"model": f"{NS}:{item_id}", "name": f"item.{NS}.{item_id}",
+                                                "tooltip": f"tooltip.{NS}.{tooltip}", "max-stack": stack}
+                de_lang[f"item.{NS}.{item_id}"] = de_name
+                en_lang[f"item.{NS}.{item_id}"] = en_name
+    de_lang[f"tooltip.{NS}.knife_head"] = "Am Montagetisch mit einem Griff zum Küchenmesser zusammensetzen."
+    en_lang[f"tooltip.{NS}.knife_head"] = "Assemble with a handle into a kitchen knife on the assembly table."
+
+    # Stone kitchen knife: craftable, the template for the knife blade mold
+    register_2d_item("stone_kitchen_knife", sprites.stone_knife_item(), handheld=True)
+    items_yml[f"{NS}:stone_kitchen_knife"] = {
+        "model": f"{NS}:stone_kitchen_knife",
+        "name": f"item.{NS}.stone_kitchen_knife",
+        "tooltip": f"tooltip.{NS}.stone_kitchen_knife",
+        "base": "JIGSAW",
+        "prototype": "STONE_SWORD",
+        "repair": "COBBLESTONE",
+    }
+    de_lang[f"item.{NS}.stone_kitchen_knife"] = "Steinmesser"
+    de_lang[f"tooltip.{NS}.stone_kitchen_knife"] = "Einfaches Küchenmesser. Vorlage für die Gussform der Messerklinge."
+    en_lang[f"item.{NS}.stone_kitchen_knife"] = "Stone Kitchen Knife"
+    en_lang[f"tooltip.{NS}.stone_kitchen_knife"] = "A simple kitchen knife. Template for the knife blade mold."
 
     # Binding rings (cast around a ring core) for the heavy pickaxe tiers
     for tier, de_tier, en_tier, *_ in TIERS:
@@ -2522,6 +2567,30 @@ vanilla:
       item: "kaleidoscope_smithing:armor_padding"
       count: 2
 """
+    # Cookware molds: clay around the stone knife, a bowl (wok) or a flower pot (stockpot); the stone knife itself
+    recipes_yml += """  "kaleidoscope_smithing:stone_kitchen_knife":
+    type: crafting_shaped
+    pattern:
+      - "##"
+      - "#S"
+    key:
+      "#": "#minecraft:stone_tool_materials"
+      S: "minecraft:stick"
+    result: "kaleidoscope_smithing:stone_kitchen_knife"
+"""
+    for kind, letter, template in (("knife", "K", "kaleidoscope_smithing:stone_kitchen_knife"), ("wok", "B", "minecraft:bowl"),
+                                   ("stockpot", "P", "minecraft:flower_pot")):
+        recipes_yml += f"""  "kaleidoscope_smithing:clay_{kind}_mold":
+    type: crafting_shaped
+    pattern:
+      - " C "
+      - "C{letter}C"
+      - " C "
+    key:
+      C: "minecraft:clay_ball"
+      {letter}: "{template}"
+    result: "kaleidoscope_smithing:clay_{kind}_mold"
+"""
     # Armor molds: clay around the leather piece of the same slot
     for kind, letter in (("helmet", "H"), ("chestplate", "C"), ("leggings", "L"), ("boots", "B")):
         recipes_yml += f"""  "kaleidoscope_smithing:clay_{kind}_mold":
@@ -2535,7 +2604,7 @@ vanilla:
       {letter}: "minecraft:leather_{kind}"
     result: "kaleidoscope_smithing:clay_{kind}_mold"
 """
-    for kind in [k for k, *_ in TOOL_KINDS] + [k for k, *_ in PART_KINDS]:
+    for kind in [k for k, *_ in TOOL_KINDS] + [k for k, *_ in PART_KINDS] + [k for k, *_ in COOKWARE_KINDS]:
         recipes_yml += f"""  "kaleidoscope_smithing:smelt_{kind}_mold":
     type: smelting
     ingredient: "kaleidoscope_smithing:clay_{kind}_mold"
@@ -2543,7 +2612,7 @@ vanilla:
     experience: 0.35
     result: "kaleidoscope_smithing:{kind}_mold"
 """
-    recipes_yml += "data-version: 5\n"
+    recipes_yml += "data-version: 6\n"
     (RESOURCES / "recipes.yml").write_text(recipes_yml, encoding="utf-8")
 
     # Write generated/creative_tabs.yml
@@ -2574,6 +2643,10 @@ vanilla:
             if kind == "heavy_pickaxe" and tier not in HEAVY_TIERS:
                 continue
             tab_items.append(f"{NS}:{tier}_{kind}_plate" if kind in ARMOR_KINDS else f"{NS}:{tier}_{kind}_head")
+    tab_items.append(f"{NS}:stone_kitchen_knife")
+    for kind, _, _, tiers in COOKWARE_KINDS:
+        tab_items.append(f"{NS}:{kind}_mold")
+    tab_items += [f"{NS}:{tier}_knife_head" for tier in COOKWARE_KINDS[0][3]]
 
     tabs_lines = [
         "# Generiert von tools/gen_smithing.py",
