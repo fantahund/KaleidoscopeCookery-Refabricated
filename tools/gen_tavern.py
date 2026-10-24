@@ -15,6 +15,7 @@ Data for the KaleidoscopeTavern plugin (repo KaleidoscopeTavern next to this one
 Usage: python3 -I tools/gen_tavern.py
 """
 import json
+import math
 import sys
 import yaml
 from pathlib import Path
@@ -468,31 +469,75 @@ def stockpot_surface_models():
         model_item(name)
 
 
+
+
+WS_LEATHER = [(70, 40, 20), (98, 58, 30), (128, 80, 42), (158, 104, 58), (190, 138, 84), (218, 170, 112)]
+WS_OUTLINE = (42, 24, 12)
+WS_STITCH = (226, 204, 156)
+WS_CORD, WS_WS_CORD_D = (212, 186, 128), (150, 120, 70)
+WS_BRASS, WS_WS_BRASS_D, WS_WS_BRASS_H = (196, 160, 72), (124, 96, 40), (240, 214, 130)
+WS_CAP = (64, 44, 30)
+
+
+def wineskin_sprite(full: bool):
+    """A bota bag lying diagonally: shaded leather pouch (light from the top left), seam on the lower rim, brass spout
+    with cap and a carrying cord; the empty one is flatter with a crease."""
+    from PIL import Image
+    img = Image.new("RGBA", (16, 16))
+    cx, cy = 6.6, 9.6
+    a, b = (5.9, 4.7) if full else (5.6, 3.7)
+    d = (1 / math.sqrt(2), -1 / math.sqrt(2))          # major axis towards the top right
+    p = (1 / math.sqrt(2), 1 / math.sqrt(2))
+    light = (-0.55, -0.65, 0.52)
+    ln = math.sqrt(sum(c * c for c in light)); light = tuple(c / ln for c in light)
+    px = {}
+    for y in range(16):
+        for x in range(16):
+            dx, dy = x + 0.5 - cx, y + 0.5 - cy
+            u = (dx * d[0] + dy * d[1]) / a
+            v = (dx * p[0] + dy * p[1]) / b
+            r = u * u + v * v
+            if r <= 1:
+                z = math.sqrt(max(0, 1 - r))
+                # normal in screen space
+                nx = (u * d[0] + v * p[0]); ny = (u * d[1] + v * p[1])
+                n = (nx, ny, z * (1.3 if full else 0.8)); nl = math.sqrt(sum(c * c for c in n))
+                i = max(0, sum(n[k] / nl * light[k] for k in range(3)))
+                shade = min(len(WS_LEATHER) - 1, int(i * (len(WS_LEATHER) - 0.01)))
+                if not full and abs(u + 0.15 - 0.35 * v) < 0.09 and abs(v) < 0.7:
+                    shade = max(0, shade - 2)  # crease of the slack skin
+                px[(x, y)] = WS_LEATHER[shade]
+                # seam around the rim on the lower side
+                if 0.55 < r < 0.8 and v > 0.25 and (x + y) % 2 == 0:
+                    px[(x, y)] = WS_STITCH
+    # neck towards the spout
+    for t in [i / 20 for i in range(21)]:
+        x0, y0 = 9.6 + t * 2.4, 6.6 - t * 2.4
+        rad = 1.5 - 0.6 * t
+        for y in range(16):
+            for x in range(16):
+                if (x + 0.5 - x0) ** 2 + (y + 0.5 - y0) ** 2 <= rad * rad and (x, y) not in px:
+                    px[(x, y)] = WS_LEATHER[2 if x + y < 15 else 1]
+    outline = {q for q in px if any((q[0] + dx, q[1] + dy) not in px for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))}
+    for q in outline:
+        px[q] = WS_OUTLINE
+    # brass spout and cap
+    for q, c in {(12, 3): WS_WS_BRASS_D, (13, 3): WS_BRASS, (12, 2): WS_BRASS, (13, 2): WS_WS_BRASS_H, (13, 1): WS_CAP, (14, 1): WS_CAP, (14, 2): WS_WS_BRASS_D}.items():
+        px[q] = c
+    # cord: tied at the neck, looping over the top left
+    cord = [(11, 5), (10, 4), (9, 3), (8, 2), (7, 2), (6, 2), (5, 2), (4, 3), (3, 4), (3, 5), (2, 6), (2, 7), (2, 8)]
+    for i, q in enumerate(cord):
+        px[q] = WS_CORD if i % 2 == 0 else WS_WS_CORD_D
+    for (x, y), c in px.items():
+        if 0 <= x < 16 and 0 <= y < 16:
+            img.putpixel((x, y), c + (255,))
+    return img
+
+
 def wineskin_textures():
-    """Wineskin: a leather bag with a wooden stopper and a cord; the full one bulges with highlights."""
-    import smithing_sprites
-    art = ["................",
-           ".......SS.......",
-           ".......Ss.......",
-           "......OccO......",
-           ".....OLLLLO.....",
-           "....OLLBBBBO....",
-           "...OLBBBBBBDO...",
-           "...OLBB{0}BBBDO...",
-           "..OLBBBBBBBBDO..",
-           "..OLB{1}BBBBBBDO..",
-           "..OBBBBB{0}BBBDO..",
-           "..OBBBBBBBBDDO..",
-           "...OBB{1}BBBDDO...",
-           "....ODDDDDDO....",
-           ".....OOOOOO.....",
-           "................"]
-    palette = {"O": (52, 30, 18), "L": (150, 96, 56), "B": (118, 72, 40), "D": (86, 50, 28), "S": (176, 132, 80),
-               "s": (128, 92, 52), "c": (214, 200, 170), "H": (186, 132, 84), "W": (96, 56, 30)}
-    for item, (a, b) in (("wineskin", ("W", "W")), ("full_wineskin", ("H", "H"))):
-        img = smithing_sprites.draw([row.replace("{0}", a).replace("{1}", b) for row in art], palette)
+    for item, full in (("wineskin", False), ("full_wineskin", True)):
         (OUT / "textures" / "item").mkdir(parents=True, exist_ok=True)
-        img.save(OUT / "textures" / "item" / f"{item}.png")
+        wineskin_sprite(full).save(OUT / "textures" / "item" / f"{item}.png")
         write_json(OUT / "models" / "item" / f"{item}.json", {"parent": "minecraft:item/generated", "textures": {"layer0": k(f"item/{item}")}})
         write_json(OUT / "items" / f"{item}.json", {"model": {"type": "minecraft:model", "model": k(f"item/{item}")}})
 
