@@ -759,6 +759,8 @@ TEXTS = {
     f"{NS}.rack.empty_bottle_only": ("Only empty glasses can be hung up here!", "Hier können nur leere Gläser aufgehängt werden!"),
     f"tooltip.{NS}.fruit_compote": ("Stockpot: grape juice broth with apples and sweet berries", "Suppentopf: Traubensaft-Brühe mit Äpfeln und Süßbeeren"),
     f"tooltip.{NS}.mulled_wine": ("Stockpot: wine with sugar and glow berries, served in a cup", "Suppentopf: Wein mit Zucker und Leuchtbeeren, im Becher serviert"),
+    f"{NS}.pairing.perfect": ("Perfect pairing! Effects last 25% longer", "Perfekte Kombination! Effekte halten 25 % länger"),
+    f"{NS}.pairing.goes_with": ("Goes well with: %s", "Passt zu: %s"),
     f"tooltip.{NS}.signature_effects": ("Mixed from your own drinks", "Aus deinen eigenen Getränken gemixt"),
 }
 
