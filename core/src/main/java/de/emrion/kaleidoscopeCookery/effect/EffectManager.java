@@ -479,6 +479,7 @@ public class EffectManager implements Listener {
         save(event.getPlayer());
         hideBar(event.getPlayer());
         active.remove(event.getPlayer().getUniqueId());
+        addonActive.remove(event.getPlayer().getUniqueId());
     }
 
     /**
@@ -604,7 +605,8 @@ public class EffectManager implements Listener {
             }
             return;
         }
-        if (dead instanceof Ageable ageable && ageable.isAdult() && dead.getType().getEntityClass() != null) {
+        // Animals only: villagers, piglins and hoglins are Ageable too, but no free babies of them
+        if (dead instanceof org.bukkit.entity.Animals ageable && ageable.isAdult() && dead.getType().getEntityClass() != null) {
             Entity baby = location.getWorld().spawn(location, dead.getType().getEntityClass());
             if (baby instanceof Ageable babyAgeable) {
                 babyAgeable.setBaby();

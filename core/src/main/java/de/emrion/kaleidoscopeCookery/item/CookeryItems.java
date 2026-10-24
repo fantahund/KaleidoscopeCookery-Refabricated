@@ -114,8 +114,13 @@ public class CookeryItems {
             return this;
         }
         Map<Key, CookeryItem> adjusted = new LinkedHashMap<>(items);
-        dishes.forEach((id, values) -> adjusted.computeIfPresent(id, (key, item) -> item.withDishValues(values.nutrition(),
-                values.saturation(), effectPercentByLevel.getOrDefault(values.level(), 100))));
+        // Effect percent of the highest configured level at or below the dish's level (1, 11, 21 ... cover 15 too)
+        java.util.TreeMap<Integer, Integer> percents = new java.util.TreeMap<>(effectPercentByLevel);
+        dishes.forEach((id, values) -> {
+            Map.Entry<Integer, Integer> percent = percents.floorEntry(values.level());
+            adjusted.computeIfPresent(id, (key, item) -> item.withDishValues(values.nutrition(), values.saturation(),
+                    percent == null ? 100 : percent.getValue()));
+        });
         return new CookeryItems(adjusted);
     }
 

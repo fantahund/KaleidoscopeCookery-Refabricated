@@ -372,14 +372,7 @@ public class MillstoneStation extends Station {
             migrateLayout();
         }
         long gameTime = world().getGameTime();
-        if (entityId == null) {
-            if (gameTime % 5 == 4) {
-                checkStepOn();
-            }
-            return;
-        }
-
-        // Eject the results at the front
+        // Eject the results at the front (also when the animal was unbound right after the last turn)
         if (gameTime % 20 == 9 && !outputs.isEmpty()) {
             Location drop = outputLocation();
             for (ItemStack output : outputs) {
@@ -389,6 +382,13 @@ public class MillstoneStation extends Station {
             progress = 0;
             markDirty();
             updateItems();
+        }
+
+        if (entityId == null) {
+            if (gameTime % 5 == 4) {
+                checkStepOn();
+            }
+            return;
         }
 
         float rot = rotation();

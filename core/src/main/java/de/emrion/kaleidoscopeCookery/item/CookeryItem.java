@@ -71,18 +71,15 @@ public record CookeryItem(Key id, Material base, @Nullable Material prototype, K
      */
     public CookeryItem withDishValues(int nutrition, float saturation, int effectPercent) {
         int bites = plate != null ? plate.maxBites() : 1;
-        Food ref = plate != null ? plate.food() : food;
-        if (ref == null) {
-            return this;
-        }
-        int newNutrition = nutrition < 0 ? ref.nutrition() : Math.max(1, Math.round((float) nutrition / bites));
-        float newSaturation = saturation < 0 ? ref.saturation() : saturation / bites;
-        java.util.function.UnaryOperator<Food> adjust = f -> f == null ? null : new Food(newNutrition, newSaturation,
+        // The totals are the whole dish: eaten from the hand at once, from a plate split over its bites
+        java.util.function.BiFunction<Food, Integer, Food> adjust = (f, parts) -> f == null ? null : new Food(
+                nutrition < 0 ? f.nutrition() : Math.max(1, Math.round((float) nutrition / parts)),
+                saturation < 0 ? f.saturation() : saturation / parts,
                 f.alwaysEdible(), f.eatSeconds(), f.remainder(),
                 f.effects().stream().map(e -> new FoodEffect(e.effect(), Math.round(e.duration() * effectPercent / 100f), e.amplifier(), e.probability())).toList(),
                 f.drink(), f.sound());
-        Plate newPlate = plate == null ? null : new Plate(plate.maxBites(), adjust.apply(plate.food()), plate.loot(), plate.wide(), plate.large(), plate.models());
-        return new CookeryItem(id, base, prototype, model, nameKey, tooltipKey, maxStack, maxDamage, adjust.apply(food), newPlate,
+        Plate newPlate = plate == null ? null : new Plate(plate.maxBites(), adjust.apply(plate.food(), bites), plate.loot(), plate.wide(), plate.large(), plate.models());
+        return new CookeryItem(id, base, prototype, model, nameKey, tooltipKey, maxStack, maxDamage, adjust.apply(food, 1), newPlate,
                 sneakToPlace, wearable, repair, attributes, useAnimation, maximLines);
     }
 

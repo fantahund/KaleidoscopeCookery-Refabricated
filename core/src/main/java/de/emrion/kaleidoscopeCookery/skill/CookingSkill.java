@@ -114,10 +114,15 @@ public final class CookingSkill implements Listener {
     }
 
     /**
-     * May the player cook this dish? Tells them the level they need if not.
+     * May the player cook this dish? Tells them the level they need if not. No player (the last one at the station is
+     * offline): only dishes without a level requirement.
      */
     public static boolean mayCook(@Nullable Player player, Key dish) {
-        if (player == null || level(player) >= requiredLevel(dish)) {
+        if (player == null) {
+            // The cook went offline: nobody vouches for the level, only beginner dishes go through
+            return requiredLevel(dish) <= 1;
+        }
+        if (level(player) >= requiredLevel(dish)) {
             return true;
         }
         player.sendActionBar(Lang.raw("kaleidoscope.chef.too_low", Lang.raw(nameKey(dish)), requiredLevel(dish)).color(NamedTextColor.RED));

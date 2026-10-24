@@ -57,6 +57,12 @@ public class ItemProtectionListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCrafter(CrafterCraftEvent event) {
+        // The placeholder recipes (any_items) only exist for the crafting table's written recipe; in a crafter they would
+        // turn mod items into plain paper
+        if (VanillaRecipes.isAnyItemsRecipe(event.getRecipe())) {
+            event.setCancelled(true);
+            return;
+        }
         if (!VanillaRecipes.isOwn(event.getRecipe()) && event.getBlock().getState(false) instanceof Crafter crafter
                 && containsCustom(crafter.getInventory().getContents())) {
             event.setCancelled(true);
@@ -68,6 +74,18 @@ public class ItemProtectionListener implements Listener {
      */
     private static boolean isTool(ItemStack stack) {
         return CookeryItems.isCustom(stack) && stack.getType() != CookeryItems.BASE_MATERIAL;
+    }
+
+    /**
+     * Villager trades only check the item type: mod items (paper) would count as paper (24 paper = 1 emerald at the
+     * librarian). Taking the result with a mod item in a payment slot is blocked.
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onTrade(org.bukkit.event.inventory.InventoryClickEvent event) {
+        if (event.getInventory() instanceof org.bukkit.inventory.MerchantInventory merchant && event.getRawSlot() == 2
+                && (CookeryItems.isCustom(merchant.getItem(0)) || CookeryItems.isCustom(merchant.getItem(1)))) {
+            event.setCancelled(true);
+        }
     }
 
     private static boolean containsCustom(ItemStack[] items) {
