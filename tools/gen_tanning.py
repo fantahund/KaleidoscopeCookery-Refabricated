@@ -96,6 +96,28 @@ def bark(log: str, dark: bool) -> Image.Image:
     return sprites.to_image(px)
 
 
+def soap() -> Image.Image:
+    """A rounded bar of soap with a few bubbles above it."""
+    art = ["................",
+           "..........ww....",
+           ".........w..w...",
+           "....ww...w..w...",
+           "...w..w...ww....",
+           "...w..w.........",
+           "....ww..........",
+           "................",
+           "...OOOOOOOOOO...",
+           "..OHHHHHHHHHPO..",
+           "..OHPPPPPPPPDO..",
+           "..OHPPPHHPPPDO..",
+           "..OPPPPPPPPDDO..",
+           "..ODDDDDDDDDDO..",
+           "...OOOOOOOOOO...",
+           "................"]
+    return sprites.draw(art, {"O": (112, 92, 142), "H": (244, 238, 252), "P": (216, 200, 236), "D": (174, 154, 202),
+                              "w": (214, 236, 255, 220)})
+
+
 def item_sprites() -> dict:
     return {
         "raw_hide": raw_hide(),
@@ -103,7 +125,7 @@ def item_sprites() -> dict:
         "tallow": sprites.to_image(sprites.recolor(sprites.pixels(sprites.vanilla("slime_ball")), TALLOW)),
         "bark": bark("spruce_log", True),
         "oak_bark": bark("oak_log", False),
-        "soap": sprites.to_image(sprites.recolor(sprites.pixels(sprites.vanilla("brick")), SOAP)),
+        "soap": soap(),
         "leather_grip": sprites.to_image(sprites.recolor(sprites.pixels(sprites.vanilla("lead")), GRIP)),
         "crude_leather": sprites.to_image(sprites.recolor(leather_px(), CRUDE)),
         "fine_leather": sprites.to_image(sprites.recolor(leather_px(), FINE)),
@@ -175,6 +197,53 @@ def frame_models():
                    {"model": {"type": "minecraft:model", "model": k(f"block/frame_hide/{state}")}})
 
 
+BOARD_DISPLAY = {
+    "thirdperson_righthand": {"rotation": [66, 0, 0], "translation": [0, 0.5, -5], "scale": [0.55, 0.55, 0.55]},
+    "firstperson_righthand": {"rotation": [-175.58, -79.14, -172.05], "translation": [5.5, 1.75, 0], "scale": [0.68, 0.68, 0.68]},
+    "ground": {"translation": [0, 2, -2.75], "scale": [0.5, 0.5, 0.5]},
+    "gui": {"translation": [0, -1.75, 0]},
+    "fixed": {"rotation": [0, -180, 0], "translation": [0, -4.25, 6.5]},
+}
+SCRAPE_CUTS = 6
+
+
+def board_models():
+    """Raw hide on Cookery's chopping board (models chopping_board/raw_hide/<cut>): the fur fades with every cut and the
+    scraped-off tallow piles up next to it."""
+    import random
+    out = OUT / "textures" / "chopping_board"
+    out.mkdir(parents=True, exist_ok=True)
+    for cut in range(SCRAPE_CUTS + 1):
+        t = cut / SCRAPE_CUTS
+        palette = [tuple(round(a + (b - a) * t) for a, b in zip(r, c)) for r, c in zip(RAW, SCRAPED)]
+        rnd = random.Random(5)
+        img = Image.new("RGBA", (16, 16))
+        for y in range(16):
+            for x in range(16):
+                edge = x in (0, 15) or y in (0, 15)
+                i = 0 if edge else min(4, max(1, round(rnd.gauss(2.6, 0.8))))
+                c = palette[i]
+                # fur tufts that are scraped away cut by cut
+                if not edge and rnd.random() < 0.35 * (1 - t):
+                    c = FUR[rnd.randrange(2)]
+                img.putpixel((x, y), c + (255,))
+        img.save(out / f"raw_hide_{cut}.png")
+        elements = [{"from": [3, 0, 4], "to": [13, 0.5, 12], "faces": {
+            "up": {"uv": [0, 0, 16, 16], "texture": "#hide"}, "north": {"uv": [0, 0, 16, 1], "texture": "#hide"},
+            "south": {"uv": [0, 0, 16, 1], "texture": "#hide"}, "east": {"uv": [0, 0, 16, 1], "texture": "#hide"},
+            "west": {"uv": [0, 0, 16, 1], "texture": "#hide"}}}]
+        if cut >= 2:
+            size = 1 + cut / SCRAPE_CUTS * 1.5
+            faces = {f: {"uv": [5, 5, 11, 11], "texture": "#tallow"} for f in ("up", "north", "south", "east", "west")}
+            elements.append({"from": [13.5, 0, 9], "to": [13.5 + size, size * 0.6, 9 + size], "faces": faces})
+        write_json(OUT / "models" / "chopping_board" / "raw_hide" / f"{cut}.json", {
+            "textures": {"hide": k(f"chopping_board/raw_hide_{cut}"), "tallow": k("item/tallow"),
+                         "particle": k(f"chopping_board/raw_hide_{cut}")},
+            "elements": elements, "display": BOARD_DISPLAY})
+        write_json(OUT / "items" / "chopping_board" / "raw_hide" / f"{cut}.json",
+                   {"model": {"type": "minecraft:model", "model": k(f"chopping_board/raw_hide/{cut}")}})
+
+
 def item_assets():
     out = OUT / "textures" / "item"
     out.mkdir(parents=True, exist_ok=True)
@@ -210,8 +279,8 @@ TEXTS = {
     f"tooltip.{NS}.oak_bark": ("Tanning agent: with salt fine leather. From stripping oak logs", "Gerbstoff: mit Salz feines Leder. Fällt beim Entrinden von Eichenstämmen"),
     f"tooltip.{NS}.soap": ("Put it into a sink: glasses get clean faster", "In die Spüle geben: Gläser werden schneller sauber"),
     f"tooltip.{NS}.leather_grip": ("Wrap a handle on the smithing assembly table: more durability", "Am Schmiede-Montagetisch um den Griff wickeln: mehr Haltbarkeit"),
-    f"tooltip.{NS}.tanning_frame": ("Stretch a scraped hide on it, add a tanning agent and start with an empty hand",
-                                     "Geschabte Haut aufspannen, Gerbstoff dazugeben und mit leerer Hand starten"),
+    f"tooltip.{NS}.tanning_frame": ("Stretch a scraped hide on it, add a tanning agent and wet it with a water bottle",
+                                     "Geschabte Haut aufspannen, Gerbstoff dazugeben und mit einer Wasserflasche anfeuchten"),
     f"skill.{NS}.tanning": ("Tanning", "Gerben"),
     "kaleidoscope.menu.tab.tanning": ("Tannery", "Gerberei"),
     f"{NS}.quality.crude": ("Quality: Crude", "Qualität: Grob"),
@@ -222,7 +291,8 @@ TEXTS = {
     f"{NS}.quality_name.normal": ("normal", "normal"),
     f"{NS}.quality_name.fine": ("fine", "fein"),
     f"{NS}.frame.empty": ("Tanning frame | stretch a scraped hide on it", "Gerbrahmen | geschabte Haut aufspannen"),
-    f"{NS}.frame.ready": ("Tanning frame | agent: %s | empty hand: start tanning", "Gerbrahmen | Gerbstoff: %s | leere Hand: Gerben starten"),
+    f"{NS}.frame.ready": ("Tanning frame | agent: %s | water bottle: wet it and start tanning",
+                          "Gerbrahmen | Gerbstoff: %s | Wasserflasche: anfeuchten und Gerben starten"),
     f"{NS}.frame.tanning": ("Tanning: %s%% | %s", "Gerben: %s%% | %s"),
     f"{NS}.frame.done": ("Leather ready (%s) - take it with an empty hand", "Leder fertig (%s) - mit leerer Hand abnehmen"),
     f"{NS}.frame.agent.none": ("none (crude)", "keiner (grob)"),
@@ -257,7 +327,7 @@ RECIPES = f"""# Rezepte fuer KaleidoscopeTanning (generiert von tools/gen_tannin
 chopping-board:
   "{NS}:chopping_board/scraped_hide":
     ingredient: "{NS}:raw_hide"
-    cuts: 6
+    cuts: {SCRAPE_CUTS}
     model: "{NS}:raw_hide"
     results:
       - "{NS}:scraped_hide"
@@ -338,6 +408,7 @@ def main():
     write_tabs()
     item_assets()
     frame_models()
+    board_models()
     write_texts()
     print(f"Tanning: {len(ITEMS)} Items, {len(TEXTS)} Texte")
 

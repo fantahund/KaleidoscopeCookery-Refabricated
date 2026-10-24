@@ -1060,13 +1060,30 @@ def write_dish_assets():
 
 
 def write_salt_assets():
-    """Salt: the vanilla sugar sprite in greyish white."""
+    """Salt: a small burlap sack tied with twine, white salt heaped in the opening."""
     import smithing_sprites
-    px = smithing_sprites.pixels(smithing_sprites.vanilla("sugar"))
-    palette = [(118, 122, 130), (170, 174, 182), (212, 214, 220), (238, 240, 244), (255, 255, 255)]
+    art = ["................",
+           "......sSSs......",
+           ".....sSSSSs.....",
+           "......OTTO......",
+           ".......TT.......",
+           "......OBBO......",
+           "....OOBLBBOO....",
+           "...OBLLBBBbBO...",
+           "..OBLBBBBBbbBO..",
+           "..OBLBBbBBBbBO..",
+           "..OBBBBBBBBbbO..",
+           "..OBBbBBBBBbbO..",
+           "..OBBBBBbBBbbO..",
+           "...OBBBBBBbbO...",
+           "....OOOOOOOO....",
+           "................"]
+    palette = {"O": (78, 56, 34), "B": (186, 156, 112), "b": (150, 122, 84), "L": (214, 190, 146),
+               "T": (120, 84, 46), "S": (250, 250, 252), "s": (206, 210, 218)}
+    img = smithing_sprites.draw(art, palette)
     out = custom("kaleidoscope_cookery")
     (out / "textures" / "item").mkdir(parents=True, exist_ok=True)
-    smithing_sprites.to_image(smithing_sprites.recolor(px, palette)).save(out / "textures" / "item" / "salt.png")
+    img.save(out / "textures" / "item" / "salt.png")
     for path, data in ((out / "models" / "item" / "salt.json",
                         {"parent": "minecraft:item/generated", "textures": {"layer0": "kaleidoscope_cookery:item/salt"}}),
                        (out / "items" / "salt.json",

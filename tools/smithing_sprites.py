@@ -185,6 +185,17 @@ def stone_knife_item() -> Image.Image:
     return to_image(px)
 
 
+def draw(art: list, palette: dict) -> Image.Image:
+    """16x16 sprite from 16 strings; every character is a key of the palette (RGB or RGBA), "." is transparent."""
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    for y, row in enumerate(art):
+        for x, ch in enumerate(row):
+            if ch != ".":
+                c = palette[ch]
+                img.putpixel((x, y), c if len(c) == 4 else c + (255,))
+    return img
+
+
 def silhouette(kind: str) -> set:
     if kind == "knife":
         return set(cookware_pixels(kind))
