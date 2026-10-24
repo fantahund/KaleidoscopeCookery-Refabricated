@@ -609,7 +609,8 @@ class PackBuilder:
         for name in sorted(definitions):
             ns = name.split("/")[1]
             item = name.split("/")[3][:-5]
-            if ns not in ("minecraft", "kaleidoscope", "kaleidoscope_cookery", "kaleidoscope_grilling", "kaleidoscope_smithing", "kaleidoscope_tavern"):
+            if ns not in ("minecraft", "kaleidoscope", "kaleidoscope_cookery", "kaleidoscope_grilling", "kaleidoscope_smithing", "kaleidoscope_tavern",
+                          "kaleidoscope_tanning"):
                 continue
             definition = read(name)
             model = first_model(definition.get("model")) if definition else None

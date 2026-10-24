@@ -1794,6 +1794,10 @@ items:
   "kaleidoscope_cookery:sakura_fubuki_tea_bag":
     model: "kaleidoscope_cookery:sakura_fubuki_tea_bag"
     name: item.kaleidoscope_cookery.sakura_fubuki_tea_bag
+  "kaleidoscope_cookery:salt":
+    model: "kaleidoscope_cookery:salt"
+    name: item.kaleidoscope_cookery.salt
+    tooltip: tooltip.kaleidoscope_cookery.salt
   "kaleidoscope_cookery:samsa":
     model: "kaleidoscope_cookery:samsa"
     name: item.kaleidoscope_cookery.samsa

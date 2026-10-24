@@ -2,7 +2,7 @@
 # Diese Datei wird beim ersten Start nach plugins/KaleidoscopeCookery/recipes.yml kopiert
 # und kann dort angepasst werden (/kc reload).
 # Zutaten: Item-ID, "#tag" (siehe tags; minecraft:-Tags kommen vom Server) oder Liste von Alternativen.
-data-version: 16
+data-version: 17
 tags:
   "c:cobblestones":
     - "minecraft:cobblestone"
@@ -2966,6 +2966,11 @@ millstone:
     results:
       - item: "minecraft:yellow_dye"
         count: 3
+  "kaleidoscope_cookery:millstone/salt_from_calcite":
+    ingredient: "minecraft:calcite"
+    results:
+      - item: "kaleidoscope_cookery:salt"
+        count: 2
 bamboo-tray:
   "kaleidoscope_cookery:bamboo_tray/drying/fresh_tea_leaves_to_dried_tea_leaves":
     type: drying

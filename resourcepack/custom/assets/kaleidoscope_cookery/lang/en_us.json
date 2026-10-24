@@ -1,5 +1,6 @@
 {
   "item.kaleidoscope_cookery.fruit_compote": "Fruit Compote",
+  "item.kaleidoscope_cookery.salt": "Salt",
   "item.kaleidoscope_cookery.stone_kitchen_knife": "Stone Kitchen Knife",
   "tooltip.kaleidoscope_cookery.bamboo_tube_rice.maxim.line1": "A traditional southern Chinese dish made by filling bamboo tubes",
   "tooltip.kaleidoscope_cookery.bamboo_tube_rice.maxim.line2": "with fragrant rice, glutinous rice, meat, and vegetables before cooking.",
@@ -75,6 +76,7 @@
   "tooltip.kaleidoscope_cookery.raw_bamboo_tube_rice.maxim.line2": "",
   "tooltip.kaleidoscope_cookery.red_mushroom_pot_soup.maxim.line1": "A warming crock of pot soup.",
   "tooltip.kaleidoscope_cookery.sakura_fubuki.maxim.line1": "Refreshing fragrance with layered depth.",
+  "tooltip.kaleidoscope_cookery.salt": "Ground from calcite in the millstone",
   "tooltip.kaleidoscope_cookery.samsa.maxim.line1": "A traditional Xinjiang pastry.",
   "tooltip.kaleidoscope_cookery.scramble_egg_with_tomatoes.maxim.line1": "Sweet, tangy, and tender, a signature comfort dish.",
   "tooltip.kaleidoscope_cookery.scramble_egg_with_tomatoes_rice_bowl.maxim.line1": "A spoonful of tomato egg over rice, happiness overload.",

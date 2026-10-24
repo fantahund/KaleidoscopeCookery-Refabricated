@@ -586,6 +586,8 @@ RENAMED_ITEMS = {"minecraft:chain": "minecraft:iron_chain"}
 EXTRA_ITEMS = {"kaleidoscope_cookery:recipe_item": "block.kaleidoscope_cookery.recipe_block",
                # Own addition: simple stone knife, template for the knife blade mold of KaleidoscopeSmithing
                "kaleidoscope_cookery:stone_kitchen_knife": "item.kaleidoscope_cookery.stone_kitchen_knife",
+               # Own addition: salt from the millstone (cooking ingredient, used by KaleidoscopeTanning for fine leather)
+               "kaleidoscope_cookery:salt": "item.kaleidoscope_cookery.salt",
                # Own stockpot dish on a grape juice broth of KaleidoscopeTavern (recipe in Tavern)
                "kaleidoscope_cookery:fruit_compote": "item.kaleidoscope_cookery.fruit_compote",
                # Seeds of the pepper bush (tools/gen_pepper_bush.py) instead of the pepper tree
@@ -739,7 +741,7 @@ def collect_recipes(tags: dict) -> dict:
 
 
 # Increase on every content change of the generated recipes.yml: the plugin then replaces old copies (with a backup)
-DATA_VERSION = 16
+DATA_VERSION = 17
 STOCKPOT_DEFAULT_TIME = 300
 POT_DEFAULT_TIME = 200
 POT_DEFAULT_STIR_FRY = 3
@@ -1057,6 +1059,21 @@ def write_dish_assets():
             path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 
 
+def write_salt_assets():
+    """Salt: the vanilla sugar sprite in greyish white."""
+    import smithing_sprites
+    px = smithing_sprites.pixels(smithing_sprites.vanilla("sugar"))
+    palette = [(118, 122, 130), (170, 174, 182), (212, 214, 220), (238, 240, 244), (255, 255, 255)]
+    out = custom("kaleidoscope_cookery")
+    (out / "textures" / "item").mkdir(parents=True, exist_ok=True)
+    smithing_sprites.to_image(smithing_sprites.recolor(px, palette)).save(out / "textures" / "item" / "salt.png")
+    for path, data in ((out / "models" / "item" / "salt.json",
+                        {"parent": "minecraft:item/generated", "textures": {"layer0": "kaleidoscope_cookery:item/salt"}}),
+                       (out / "items" / "salt.json",
+                        {"model": {"type": "minecraft:model", "model": "kaleidoscope_cookery:item/salt"}})):
+        path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+
 def write_stone_knife_assets():
     """Texture (Cookery iron knife with a stone blade), handheld model and item definition of the stone knife."""
     import smithing_sprites
@@ -1101,6 +1118,10 @@ def main():
         "key": {"#": "#minecraft:stone_tool_materials", "S": "minecraft:stick"},
         "result": "kaleidoscope_cookery:stone_kitchen_knife"}
     write_stone_knife_assets()
+    write_salt_assets()
+    # Own addition: rock salt from calcite in the millstone
+    recipes["millstone"]["kaleidoscope_cookery:millstone/salt_from_calcite"] = {
+        "ingredient": "minecraft:calcite", "results": [{"item": "kaleidoscope_cookery:salt", "count": 2}]}
     write_dish_assets()
     (RESOURCES / "recipes.yml").write_text(recipe_header + to_yaml(recipes) + "\n", encoding="utf-8")
     grilling_header = ("# Rezepte aus Kaleidoscope Grilling (tools/gen_data.py): neue Rezepte und Aenderungen an Cookery-Rezepten.\n"
