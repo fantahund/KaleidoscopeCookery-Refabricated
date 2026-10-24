@@ -98,6 +98,10 @@ public class MillstoneStation extends Station {
     private final List<ItemStack> outputs = new ArrayList<>();
 
     private @Nullable LivingEntity bound;
+    /** Ticks the harnessed animal has not been found since loading (Paper loads entities after the chunk) */
+    private int missingTicks;
+    /** Give up on an animal that does not show up within 30 seconds of loaded millstone */
+    private static final int MAX_MISSING_TICKS = 600;
     /** Old 3x3 millstones: remove surplus barriers on the first tick */
     private boolean oldLayout;
 
@@ -400,9 +404,19 @@ public class MillstoneStation extends Station {
 
         float rot = rotation();
         Location center = bottomCenter();
+        if (bound != null && !bound.isValid() && !bound.isDead()) {
+            // Its chunk was unloaded before the millstone's: look for it again once it is back
+            bound = null;
+        }
         if (bound == null) {
             // After loading: find the animal again
-            if (world().getEntity(entityId) instanceof LivingEntity living && !living.isDead() && living.getHeight() >= 1
+            Entity found = world().getEntity(entityId);
+            if (found == null && ++missingTicks < MAX_MISSING_TICKS) {
+                // Not loaded yet, keep it harnessed and the wheel where it is
+                return;
+            }
+            missingTicks = 0;
+            if (found instanceof LivingEntity living && !living.isDead() && living.getHeight() >= 1
                     && living.getLocation().distanceSquared(center) < MAX_DISTANCE_SQUARED && canBind(living)) {
                 bound = living;
                 // animals harnessed before the mark existed get it here
@@ -414,7 +428,7 @@ public class MillstoneStation extends Station {
                 updateWheel(0);
                 return;
             }
-        } else if (!bound.isValid() || bound.isDead() || !bound.getWorld().equals(world())
+        } else if (bound.isDead() || !bound.getWorld().equals(world())
                 || bound.getLocation().distanceSquared(center) >= MAX_DISTANCE_SQUARED
                 || bound.getFallDistance() > 0.5f || isInWall(bound)) {
             unbind();
