@@ -541,17 +541,30 @@ public class EffectManager implements Listener {
     }
 
     /**
-     * Flatulence: sneaking triggers a jump upwards.
+     * Flatulence: sneaking triggers a jump upwards, but only up to {@link #FLATULENCE_MAX_HEIGHT} blocks above the
+     * block below the player (no flying to the build limit by sneaking over and over).
      */
     @EventHandler(ignoreCancelled = true)
     public void onSneak(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
-        if (!event.isSneaking() || !has(player, CookeryEffect.FLATULENCE)) {
+        if (!event.isSneaking() || !has(player, CookeryEffect.FLATULENCE) || !belowFlatulenceLimit(player)) {
             return;
         }
         player.setVelocity(player.getVelocity().add(new Vector(0, 0.75, 0)));
         player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 6, 0.2, 0.05, 0.2, 0.01);
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_LLAMA_SPIT, SoundCategory.PLAYERS, 0.8f, 0.6f);
+    }
+
+    /** Highest a flatulence jump may carry the player above the block (or water surface) below */
+    private static final double FLATULENCE_MAX_HEIGHT = 100;
+    /** About how high one jump of 0.75 velocity carries the player */
+    private static final double FLATULENCE_JUMP_HEIGHT = 3;
+
+    private static boolean belowFlatulenceLimit(Player player) {
+        Location feet = player.getLocation();
+        org.bukkit.util.RayTraceResult ground = player.getWorld().rayTraceBlocks(feet, new Vector(0, -1, 0),
+                FLATULENCE_MAX_HEIGHT - FLATULENCE_JUMP_HEIGHT, org.bukkit.FluidCollisionMode.SOURCE_ONLY, true);
+        return ground != null;
     }
 
     /**
