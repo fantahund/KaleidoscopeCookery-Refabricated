@@ -118,18 +118,41 @@ class PackBuilder:
         self.wrap_tooltips()
 
     def wrap_tooltips(self):
-        for name, data in list(self.files.items()):
-            if "/lang/" not in name or not name.endswith(".json"):
-                continue
-            lang = load_json(data, name)
-            for key, text in list(lang.items()):
-                # One placeholder at most: every line gets the arguments, so a second one would be filled wrongly
-                if (not key.startswith("tooltip.") or ".wrap" in key or not isinstance(text, str) or len(text) <= TOOLTIP_WIDTH
-                        or len(PLACEHOLDER.findall(text)) > 1):
-                    continue
-                for i, line in enumerate(textwrap.wrap(text, TOOLTIP_WIDTH, break_long_words=False, break_on_hyphens=False), 1):
-                    lang[f"{key}.wrap{i}"] = line
-            self.files[name] = json.dumps(lang, ensure_ascii=False).encode("utf-8")
+        # All languages of a namespace get the same number of lines: the plugin asks for .wrap1 .. .wrapN once for every player
+        by_dir: dict[str, dict[str, dict]] = {}
+        for name, data in self.files.items():
+            if "/lang/" in name and name.endswith(".json"):
+                by_dir.setdefault(name.rsplit("/", 1)[0], {})[name] = load_json(data, name)
+        for langs in by_dir.values():
+            keys = {k for lang in langs.values() for k, v in lang.items() if self.wrappable(k, v)}
+            for key in keys:
+                count = max(len(self.wrap(lang[key], TOOLTIP_WIDTH)) for lang in langs.values() if key in lang)
+                for lang in langs.values():
+                    if key not in lang or not isinstance(lang[key], str):
+                        continue
+                    lines = self.wrap(lang[key], TOOLTIP_WIDTH)
+                    # Fewer lines in this language: narrower until it has as many, else empty lines at the end
+                    for width in range(TOOLTIP_WIDTH - 1, 9, -1):
+                        if len(lines) >= count:
+                            break
+                        narrower = self.wrap(lang[key], width)
+                        if len(narrower) <= count:
+                            lines = narrower
+                    lines += [""] * (count - len(lines))
+                    for i, line in enumerate(lines[:count], 1):
+                        lang[f"{key}.wrap{i}"] = line
+            for name, lang in langs.items():
+                self.files[name] = json.dumps(lang, ensure_ascii=False).encode("utf-8")
+
+    @staticmethod
+    def wrappable(key, text) -> bool:
+        # One placeholder at most: every line gets the arguments, so a second one would be filled wrongly
+        return (key.startswith("tooltip.") and ".wrap" not in key and isinstance(text, str) and len(text) > TOOLTIP_WIDTH
+                and len(PLACEHOLDER.findall(text)) <= 1)
+
+    @staticmethod
+    def wrap(text, width) -> list:
+        return textwrap.wrap(text, width, break_long_words=False, break_on_hyphens=False) or [""]
 
     @staticmethod
     def read_layers(root: Path) -> dict[str, bytes]:
