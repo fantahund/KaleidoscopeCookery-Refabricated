@@ -117,6 +117,10 @@ PALETTES = {
     "sculk_accent": [(0, 84, 104), (0, 134, 154), (36, 196, 206), (116, 236, 236), (216, 255, 255)],
     "sculk_grip": [(4, 12, 16), (10, 22, 28), (18, 36, 44), (40, 170, 180), (150, 240, 240)],
     "sculk_gem": [(0, 60, 74), (0, 120, 140), (36, 196, 206), (130, 244, 244), (230, 255, 255)],
+    # Vote design (only from the vote case): royal blue with gold trim and a golden topaz
+    "vote_metal": [(10, 18, 58), (22, 40, 112), (38, 70, 170), (78, 118, 220), (160, 196, 250)],
+    "vote_grip": [(8, 12, 36), (16, 24, 66), (28, 40, 104), (214, 170, 40), (252, 226, 120)],
+    "vote_gem": [(120, 70, 4), (196, 132, 10), (244, 196, 40), (255, 232, 130), (255, 252, 226)],
     # Gems set into the better tools: ruby (gold), emerald (diamond), glowing amethyst (netherite)
     "ruby": [
         (74, 6, 16),
@@ -215,7 +219,7 @@ def draw_material_texture(pal: list[tuple], variant: str = "mid", mat_name: str 
             elif mat_name.endswith("_grip"):
                 # Black leather with a thin gold wire spiral
                 shade = 3 if (x + y) % 6 == 0 else (2 if (x + y) % 6 == 3 else 1)
-            elif mat_name in ("ruby", "emerald", "amethyst", "sculk_gem"):
+            elif mat_name in ("ruby", "emerald", "amethyst", "sculk_gem", "vote_gem"):
                 # Cut gem: one sparkle, saturated body (small faces only show the first pixels from (2, 2))
                 shade = 4 if (x, y) == (2, 2) else (3 if (x, y) in ((3, 2), (2, 3)) else (2 if x + y < 10 else 1))
             elif mat_name == "glowing":
@@ -887,7 +891,9 @@ DESIGNS = {
     "end": ("end_metal", "mat_end_accent", "end_grip", "amethyst"),
     "nether": ("nether_metal", "mat_gold", "nether_grip", "ruby"),
     "sculk": ("sculk_metal", "mat_sculk_accent", "sculk_grip", "sculk_gem"),
+    "vote": ("vote_metal", "mat_gold", "vote_grip", "vote_gem"),
 }
+DESIGN_NAMES = (("end", "End", "End"), ("nether", "Nether", "Nether"), ("sculk", "Sculk", "Sculk"), ("vote", "Vote", "Vote"))
 
 
 def separate_planes(elements: list[dict]) -> list[dict]:
@@ -1711,8 +1717,9 @@ def build_3d_armor_elements(kind: str, tier: str) -> list[dict]:
 ARMOR_GUI_ROTATION = [18, 160, 0]
 
 
-def register_3d_armor(item_id: str, kind: str, tier: str, img_fallback: Image.Image):
-    """3D model of a finished armor piece; the helmet also shows this model when worn (head slot, no equipment asset)."""
+def register_3d_armor(item_id: str, kind: str, tier: str, img_fallback: Image.Image, design: str | None = None):
+    """3D model of a finished armor piece; the helmet also shows this model when worn (head slot, no equipment asset).
+    With a design, plates, trim and gem take the design's look (the edge keeps the tier's colour, like the tools)."""
     tex_path = ASSETS / "textures" / "item" / f"{item_id}.png"
     tex_path.parent.mkdir(parents=True, exist_ok=True)
     img_fallback.save(tex_path)
@@ -1737,7 +1744,12 @@ def register_3d_armor(item_id: str, kind: str, tier: str, img_fallback: Image.Im
             "dark": f"{NS}:item/mat_{tier}_dark",
             "accent": f"{NS}:item/mat_{accent}",
             "gem": f"{NS}:item/mat_{GEM_BY_TIER.get(tier, 'ruby')}",
-        },
+        } | ({} if design is None else {
+            "metal": f"{NS}:item/mat_{DESIGNS[design][0]}",
+            "dark": f"{NS}:item/mat_{DESIGNS[design][0]}_dark",
+            "accent": f"{NS}:item/{DESIGNS[design][1]}",
+            "gem": f"{NS}:item/mat_{DESIGNS[design][3]}",
+        }),
         "display": display,
         "elements": elements,
     })
@@ -1758,6 +1770,10 @@ def register_armor_kind(items_yml, de_lang, en_lang, tier, de_tier, en_tier, pro
     de_lang[f"item.{NS}.{plate_id}"] = f"Geschmiedete {de_tier}-{de_part}"
     en_lang[f"item.{NS}.{plate_id}"] = f"Forged {en_tier} {en_part}"
     register_3d_armor(armor_id, kind, tier, sprites.armor_item(kind, PALETTES[tier], accent, gem))
+    # Model variants for the designs (chosen via the item_model component when a design is hammered on)
+    for design, (metal, accent_tex, _, design_gem) in DESIGNS.items():
+        register_3d_armor(f"{armor_id}_design_{design}", kind, tier,
+                          sprites.armor_item(kind, PALETTES[metal], PALETTES[accent_tex.removeprefix("mat_")], design_gem if gem else None), design=design)
     prototype = f"{proto_prefix}_{kind.upper()}"
     items_yml[f"{NS}:{armor_id}"] = {"model": f"{NS}:{armor_id}", "name": f"item.{NS}.{armor_id}", "base": prototype, "prototype": prototype,
                                      "repair": repair_mat,
@@ -1779,6 +1795,15 @@ def generate_armor_equipment():
         write_json(ASSETS / "equipment" / f"forged_{tier}.json", {"layers": {
             "humanoid": [{"texture": f"{NS}:forged_{tier}"}],
             "humanoid_leggings": [{"texture": f"{NS}:forged_{tier}"}]}})
+    # Designs look the same on every tier when worn (the plugin swaps the equipment asset)
+    for design, (metal, accent_tex, _, gem) in DESIGNS.items():
+        for layer in ("humanoid", "humanoid_leggings"):
+            path = ASSETS / "textures" / "entity" / "equipment" / layer / f"forged_design_{design}.png"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            sprites.worn_texture(layer, PALETTES[metal], PALETTES[accent_tex.removeprefix("mat_")], gem).save(path)
+        write_json(ASSETS / "equipment" / f"forged_design_{design}.json", {"layers": {
+            "humanoid": [{"texture": f"{NS}:forged_design_{design}"}],
+            "humanoid_leggings": [{"texture": f"{NS}:forged_design_{design}"}]}})
 
 
 def main():
@@ -2229,16 +2254,16 @@ def main():
                                    ("shovel", "Schaufel", "Shovel"), ("hoe", "Hacke", "Hoe"), ("spear", "Speer", "Spear")):
         de_lang[f"skill.{NS}.{kind}"] = de_name
         en_lang[f"skill.{NS}.{kind}"] = en_name
-    for design, de_name, en_name in (("end", "End", "End"), ("nether", "Nether", "Nether"), ("sculk", "Sculk", "Sculk")):
-        register_3d_sprite(f"design_{design}", sprites.design_3d(design), glow=4 if design == "sculk" else 0)
+    for design, de_name, en_name in DESIGN_NAMES:
+        register_3d_sprite(f"design_{design}", sprites.design_3d(design), glow=4 if design in ("sculk", "vote") else 0)
         items_yml[f"{NS}:design_{design}"] = {"model": f"{NS}:design_{design}", "name": f"item.{NS}.design_{design}",
                                               "tooltip": f"tooltip.{NS}.design_item", "max-stack": 16}
         de_lang[f"item.{NS}.design_{design}"] = f"Schmiede-Design: {de_name}"
         en_lang[f"item.{NS}.design_{design}"] = f"Smithing Design: {en_name}"
         de_lang[f"tooltip.{NS}.design.{design}"] = f"Design: {de_name}"
         en_lang[f"tooltip.{NS}.design.{design}"] = f"Design: {en_name}"
-    de_lang[f"tooltip.{NS}.design_item"] = "Selten! Am Montagetisch auf ein fertiges geschmiedetes Werkzeug aufschmieden."
-    en_lang[f"tooltip.{NS}.design_item"] = "Rare! Hammer onto a finished forged tool on the assembly table."
+    de_lang[f"tooltip.{NS}.design_item"] = "Selten! Am Montagetisch auf ein fertig geschmiedetes Werkzeug, eine Waffe oder ein Rüstungsteil aufschmieden."
+    en_lang[f"tooltip.{NS}.design_item"] = "Rare! Hammer onto a finished forged tool, weapon or armor piece on the assembly table."
     de_lang[f"{NS}.table.put_design"] = "Lege jetzt ein Schmiede-Design auf das Werkzeug!"
     en_lang[f"{NS}.table.put_design"] = "Now lay a smithing design onto the tool!"
     de_lang[f"{NS}.table.has_design"] = "Dieses Werkzeug hat schon ein Design."
