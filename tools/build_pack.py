@@ -22,7 +22,9 @@ import hashlib
 import io
 import math
 import json
+import re
 import sys
+import textwrap
 import urllib.request
 import zipfile
 
@@ -48,6 +50,10 @@ MULTIBLOCK_MODELS = {"kaleidoscope_cookery:shawarma_spit": [("kaleidoscope_cooke
                                                             ("kaleidoscope_cookery:block/shawarma_spit_upper", 16)]}
 ZIP_TIME = (2026, 1, 1, 0, 0, 0)
 MERGE_JSON = ("/lang/", "/sounds.json")
+# Item tooltips longer than this are wrapped into <key>.wrap1, .wrap2 ... (the original key stays for other uses); the
+# plugins show those lines (Lang.lines), so the text stays readable with a large GUI scale
+TOOLTIP_WIDTH = 34
+PLACEHOLDER = re.compile(r"%(?:\d+\$)?[sd]")
 BUILTIN_PARENTS = {"builtin/generated", "minecraft:builtin/generated"}
 
 
@@ -109,6 +115,21 @@ class PackBuilder:
 
     def collect(self):
         self.files = self.read_layers(self.root)
+        self.wrap_tooltips()
+
+    def wrap_tooltips(self):
+        for name, data in list(self.files.items()):
+            if "/lang/" not in name or not name.endswith(".json"):
+                continue
+            lang = load_json(data, name)
+            for key, text in list(lang.items()):
+                # One placeholder at most: every line gets the arguments, so a second one would be filled wrongly
+                if (not key.startswith("tooltip.") or ".wrap" in key or not isinstance(text, str) or len(text) <= TOOLTIP_WIDTH
+                        or len(PLACEHOLDER.findall(text)) > 1):
+                    continue
+                for i, line in enumerate(textwrap.wrap(text, TOOLTIP_WIDTH, break_long_words=False, break_on_hyphens=False), 1):
+                    lang[f"{key}.wrap{i}"] = line
+            self.files[name] = json.dumps(lang, ensure_ascii=False).encode("utf-8")
 
     @staticmethod
     def read_layers(root: Path) -> dict[str, bytes]:

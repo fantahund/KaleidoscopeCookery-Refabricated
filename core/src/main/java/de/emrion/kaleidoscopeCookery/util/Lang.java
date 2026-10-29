@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -118,6 +120,21 @@ public final class Lang {
      */
     public static Component raw(String key, Object... args) {
         return Component.translatable(key, arguments(args));
+    }
+
+    /**
+     * A tooltip as lore lines: the pack builder wraps long tooltips into {@code <key>.wrap1, .wrap2 ...} so they stay
+     * readable with a large GUI scale; without those the key is one line. Every line gets the arguments.
+     */
+    public static List<Component> lines(String key, Object... args) {
+        List<Component> lines = new ArrayList<>();
+        for (int i = 1; store != null && store.contains(key + ".wrap" + i); i++) {
+            lines.add(raw(key + ".wrap" + i, args));
+        }
+        if (lines.isEmpty()) {
+            lines.add(raw(key, args));
+        }
+        return lines;
     }
 
     private static ComponentLike[] arguments(Object[] args) {

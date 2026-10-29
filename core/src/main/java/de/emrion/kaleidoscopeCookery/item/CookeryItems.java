@@ -403,11 +403,11 @@ public class CookeryItems {
     public static List<Component> tooltipLines(CookeryItem item) {
         List<Component> lines = new java.util.ArrayList<>();
         if (item.tooltipKey() != null) {
-            lines.add(Text.noItalic(Lang.raw(item.tooltipKey()).color(NamedTextColor.GRAY)));
+            Lang.lines(item.tooltipKey()).forEach(line -> lines.add(Text.noItalic(line.color(NamedTextColor.GRAY))));
         }
         for (int i = 1; i <= item.maximLines(); i++) {
-            lines.add(Lang.raw("tooltip." + item.id().namespace() + "." + item.id().value() + ".maxim.line" + i)
-                    .color(NamedTextColor.DARK_GRAY).decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, true));
+            Lang.lines("tooltip." + item.id().namespace() + "." + item.id().value() + ".maxim.line" + i).forEach(line -> lines.add(
+                    line.color(NamedTextColor.DARK_GRAY).decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, true)));
         }
         return lines;
     }

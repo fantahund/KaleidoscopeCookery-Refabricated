@@ -96,7 +96,7 @@ public class RecipeItems implements Listener {
         stack.setData(DataComponentTypes.ITEM_NAME, Text.noItalic(Lang.raw("block.kaleidoscope_cookery.recipe_block.has_record",
                 record.output().effectiveName(), station)));
         List<Component> lore = new ArrayList<>();
-        lore.add(Text.noItalic(Lang.raw("tooltip.kaleidoscope_cookery.recipe_item").color(NamedTextColor.GRAY)));
+        Lang.lines("tooltip.kaleidoscope_cookery.recipe_item").forEach(line -> lore.add(Text.noItalic(line.color(NamedTextColor.GRAY))));
         for (Entry<String, Integer> entry : count(record.input()).entrySet()) {
             ItemStack sample = record.input().stream().filter(item -> typeKey(item).equals(entry.getKey())).findFirst().orElseThrow();
             lore.add(Text.noItalic(Lang.raw("tooltip.kaleidoscope_cookery.recipe_item.ingredient").color(NamedTextColor.DARK_GRAY)
