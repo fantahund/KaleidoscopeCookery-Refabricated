@@ -173,10 +173,11 @@ def frame_models():
         # bars
         box([2, 14, 7.25], [14, 15.5, 8.75], "#wood"), box([2, 2, 7.25], [14, 3.5, 8.75], "#wood"),
     ]
-    # lacing between the hide and the frame
+    # lacing between the hide and the frame: a bit thicker than the hide (7.9-8.1), so where the bottom lace
+    # overlaps the hide's edge it lies in front of it instead of flickering in the same planes
     for x in (3, 6, 9.5, 12.5):
-        elements.append(box([x, 13, 7.9], [x + 0.5, 14, 8.1], "#lace"))
-        elements.append(box([x, 3.5, 7.9], [x + 0.5, 4.5, 8.1], "#lace"))
+        elements.append(box([x, 13, 7.85], [x + 0.5, 14, 8.15], "#lace"))
+        elements.append(box([x, 3.5, 7.85], [x + 0.5, 4.5, 8.15], "#lace"))
     write_json(OUT / "models" / "block" / "tanning_frame.json", {
         "parent": "minecraft:block/block",
         "textures": {"wood": log, "lace": "minecraft:block/white_wool", "particle": log},
@@ -292,22 +293,21 @@ TEXTS = {
     f"{NS}.quality_name.normal": ("normal", "normal"),
     f"{NS}.quality_name.fine": ("fine", "fein"),
     f"{NS}.frame.empty": ("Tanning frame | stretch a scraped hide on it", "Gerbrahmen | geschabte Haut aufspannen"),
-    f"{NS}.frame.ready": ("Tanning frame | agent: %s | water bottle: wet it and start tanning",
-                          "Gerbrahmen | Gerbstoff: %s | Wasserflasche: anfeuchten und Gerben starten"),
+    f"{NS}.frame.ready": ("Agent: %s | water bottle: start", "Gerbstoff: %s | Wasserflasche: starten"),
     f"{NS}.frame.tanning": ("Tanning: %s%% | %s", "Gerben: %s%% | %s"),
-    f"{NS}.frame.done": ("Leather ready (%s) - take it with an empty hand", "Leder fertig (%s) - mit leerer Hand abnehmen"),
+    f"{NS}.frame.done": ("Leather ready (%s) - take with empty hand", "Leder fertig (%s) - mit leerer Hand nehmen"),
     f"{NS}.frame.agent.none": ("none (crude)", "keiner (grob)"),
     f"{NS}.frame.agent.bark": ("bark (normal)", "Rinde (normal)"),
-    f"{NS}.frame.agent.oak_bark": ("oak bark (normal, with salt fine)", "Eichenrinde (normal, mit Salz fein)"),
-    f"{NS}.frame.agent.oak_bark_salt": ("oak bark + salt (fine)", "Eichenrinde + Salz (fein)"),
+    f"{NS}.frame.agent.oak_bark": ("oak (normal)", "Eiche (normal)"),
+    f"{NS}.frame.agent.oak_bark_salt": ("oak+salt (fine)", "Eiche+Salz (fein)"),
     f"{NS}.frame.agent_full": ("The frame already has its tanning agent", "Der Rahmen hat schon seinen Gerbstoff"),
-    f"{NS}.frame.need_oak": ("Salt only works together with oak bark - add the oak bark first", "Salz wirkt nur mit Eichenrinde - zuerst Eichenrinde dazugeben"),
+    f"{NS}.frame.need_oak": ("Add oak bark first - salt needs it", "Erst Eichenrinde - Salz wirkt nur damit"),
     f"{NS}.frame.too_low": ("Fine leather needs tanning level %s", "Feines Leder braucht Gerb-Stufe %s"),
     f"{NS}.frame.better": ("Well done - the leather turned out better!", "Gut gemacht - das Leder ist besser geworden!"),
     f"{NS}.frame.busy": ("The hide is tanning - wait until it is done", "Die Haut gerbt gerade - warte, bis sie fertig ist"),
     f"{NS}.saddle.crude": ("Riding speed -10%", "Reittempo -10 %"),
     f"{NS}.saddle.fine": ("Riding speed +10%", "Reittempo +10 %"),
-    f"{NS}.sink.soap": ("Soap: %s glasses", "Seife: %s Gläser"),
+    f"{NS}.sink.soap": ("Soap: %s", "Seife: %s"),
 }
 
 

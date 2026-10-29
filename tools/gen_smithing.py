@@ -1732,8 +1732,8 @@ def register_3d_armor(item_id: str, kind: str, tier: str, img_fallback: Image.Im
         "thirdperson_lefthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.4, 0.4, 0.4]},
         "firstperson_righthand": {"rotation": [0, 135, 0], "translation": [0, 2, 0], "scale": [0.45, 0.45, 0.45]},
         "firstperson_lefthand": {"rotation": [0, 135, 0], "translation": [0, 2, 0], "scale": [0.45, 0.45, 0.45]},
-        # On the head the model is used as is: the shell (1.4-14.6) sits just around the player's head
-        "head": {"rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [1, 1, 1]},
+        # On the head a bit larger than the shell (1.4-14.6) so the skin's hat layer (1.125x the head) does not show through
+        "head": {"rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [1.16, 1.16, 1.16]},
     }
     accent = ARMOR_ACCENT[tier]
     write_json(ASSETS / "models" / "item" / f"{item_id}.json", {
@@ -1823,26 +1823,26 @@ def main():
         f"tooltip.{NS}.smithing_table_station": "Griff, Werkzeugkopf und Verstärkungen ohne Menü zusammenfügen.",
         "kaleidoscope.menu.tab.smithing": "Schmiedekunst",
         # Station HUD & Actionbar messages
-        f"{NS}.crucible.need_heat": "Fülle zuerst Lava (Lavaeimer) als Brennstoff in die Schmelze!",
-        f"{NS}.crucible.lava_filled": "Lava eingefüllt (reicht für %s/%s Barren)!",
-        f"{NS}.crucible.need_mold": "Lege zuerst eine gebrannte Gussform vorne auf den Gießtisch!",
-        f"{NS}.crucible.no_mixing": "In der Schmelze befindet sich bereits ein anderes Erz – kein Mischen möglich!",
-        f"{NS}.crucible.added_metal": "Erz/Metall eingelegt (%s/%s) | Lava: %s/%s",
-        f"{NS}.crucible.melting": "Schmilzt & gießt: %s%% (%s) | Lava: %s/%s",
-        f"{NS}.crucible.ready": "Guss fertig auf dem Gießtisch! Rechtsklick mit der Schmiedezange zum Entnehmen.",
-        f"{NS}.crucible.need_tongs": "Verwende eine Schmiedezange! Der frisch gegossene Rohling ist viel zu heiß!",
+        f"{NS}.crucible.need_heat": "Zuerst Lava (Eimer) als Brennstoff einfüllen!",
+        f"{NS}.crucible.lava_filled": "Lava eingefüllt (für %s/%s Barren)!",
+        f"{NS}.crucible.need_mold": "Gebrannte Gussform auf den Gießtisch!",
+        f"{NS}.crucible.no_mixing": "Schon ein anderes Erz drin - kein Mischen!",
+        f"{NS}.crucible.added_metal": "Eingelegt (%s/%s) | Lava: %s/%s",
+        f"{NS}.crucible.melting": "Schmilzt: %s%% (%s) | Lava: %s/%s",
+        f"{NS}.crucible.ready": "Guss fertig! Mit Schmiedezange entnehmen",
+        f"{NS}.crucible.need_tongs": "Schmiedezange nehmen - der Rohling ist heiß!",
         f"{NS}.anvil.need_blank": "Lege einen glühenden Rohling vom Gießtisch auf den Amboss!",
-        f"{NS}.anvil.need_hammer": "Schlage mit einem Schmiedehammer (Linksklick) im richtigen Takt!",
+        f"{NS}.anvil.need_hammer": "Linksklick im Takt mit dem Schmiedehammer!",
         f"{NS}.anvil.progress": "Schmieden: %s/%s | Takt: %s | Präzision: %s%%",
-        f"{NS}.anvil.ready": "Fertig geschmiedet! Nimm den heißen Kopf mit der Schmiedezange (Rechtsklick).",
-        f"{NS}.basin.need_liquid": "Fülle zuerst Wasser (Wassereimer) oder Speiseöl in das Löschbecken!",
-        f"{NS}.basin.quenched": "Abgeschreckt! Jetzt %s× mit Linksklick am Wetzstein schärfen.",
+        f"{NS}.anvil.ready": "Fertig! Heißen Kopf mit Schmiedezange nehmen",
+        f"{NS}.basin.need_liquid": "Erst Wasser oder Speiseöl ins Becken füllen!",
+        f"{NS}.basin.quenched": "Abgeschreckt! %s× Linksklick am Wetzstein",
         f"{NS}.basin.sharpening": "Schärfen am Wetzstein: %s/%s",
         f"{NS}.basin.done": "Werkzeugkopf fertiggestellt (%s)!",
-        f"{NS}.table.put_handle": "Lege zuerst einen Werkzeuggriff oder ein Rüstungspolster auf den Montagetisch!",
-        f"{NS}.table.put_head": "Lege nun einen geschmiedeten Werkzeugkopf auf den Griff!",
-        f"{NS}.table.need_binding": "Für den 1x2-Stollenhammer fehlt noch ein Verstärkungsring aus demselben Material (Rechtsklick)!",
-        f"{NS}.table.hammer_to_finish": "Schlage noch %s× mit dem Schmiedehammer (Linksklick) zur Montage!",
+        f"{NS}.table.put_handle": "Lege zuerst Griff oder Rüstungspolster auf!",
+        f"{NS}.table.put_head": "Lege nun einen Werkzeugkopf auf den Griff!",
+        f"{NS}.table.need_binding": "Fehlt: Verstärkungsring aus gleichem Material",
+        f"{NS}.table.hammer_to_finish": "Noch %s× Linksklick mit dem Hammer",
         f"{NS}.table.done": "Werkzeug erfolgreich zusammengebaut!",
         # Quality names
         f"tooltip.{NS}.quality.crude": "Schmiede-Qualität: Grob (75% Haltbarkeit)",
@@ -1907,26 +1907,26 @@ def main():
         f"block.{NS}.smithing_table_station": "Tinker Assembly Table",
         f"tooltip.{NS}.smithing_table_station": "Assemble handles, tool heads and bindings without menus.",
         "kaleidoscope.menu.tab.smithing": "Smithing",
-        f"{NS}.crucible.need_heat": "Fill the Smeltery with Lava (Lava Bucket) as fuel first!",
+        f"{NS}.crucible.need_heat": "Fill in lava (bucket) as fuel first!",
         f"{NS}.crucible.lava_filled": "Lava added (enough for %s/%s ingots)!",
-        f"{NS}.crucible.need_mold": "Place a fired mold onto the front Casting Table first!",
-        f"{NS}.crucible.no_mixing": "Another ore is already in the Smeltery – mixing metals is not allowed!",
+        f"{NS}.crucible.need_mold": "Put a fired mold on the Casting Table!",
+        f"{NS}.crucible.no_mixing": "Another ore is already inside - no mixing!",
         f"{NS}.crucible.added_metal": "Added ore/metal (%s/%s) | Lava: %s/%s",
-        f"{NS}.crucible.melting": "Smelting & casting: %s%% (%s) | Lava: %s/%s",
-        f"{NS}.crucible.ready": "Cast complete on the Casting Table! Right-click with Smithing Tongs to extract.",
-        f"{NS}.crucible.need_tongs": "Use Smithing Tongs! The freshly cast blank is way too hot!",
+        f"{NS}.crucible.melting": "Smelting: %s%% (%s) | Lava: %s/%s",
+        f"{NS}.crucible.ready": "Cast done! Take it out with Smithing Tongs",
+        f"{NS}.crucible.need_tongs": "Use Smithing Tongs - the blank is too hot!",
         f"{NS}.anvil.need_blank": "Place a glowing blank from the Casting Table onto the anvil!",
-        f"{NS}.anvil.need_hammer": "Strike with a Smithing Hammer (left-click) in rhythm!",
+        f"{NS}.anvil.need_hammer": "Left-click in rhythm with a Smithing Hammer!",
         f"{NS}.anvil.progress": "Forging: %s/%s | Rhythm: %s | Precision: %s%%",
-        f"{NS}.anvil.ready": "Forging complete! Take the hot head with Smithing Tongs (right-click).",
-        f"{NS}.basin.need_liquid": "Fill the basin with water (bucket) or cooking oil first!",
-        f"{NS}.basin.quenched": "Quenched! Now left-click %s× on the grindstone to sharpen.",
+        f"{NS}.anvil.ready": "Done! Take the hot head with Smithing Tongs",
+        f"{NS}.basin.need_liquid": "Fill the basin with water or oil first!",
+        f"{NS}.basin.quenched": "Quenched! Left-click %s× on the grindstone",
         f"{NS}.basin.sharpening": "Sharpening on grindstone: %s/%s",
         f"{NS}.basin.done": "Tool head finished (%s)!",
-        f"{NS}.table.put_handle": "Place a tool handle or an armor padding onto the assembly table first!",
+        f"{NS}.table.put_handle": "Place a tool handle or armor padding first!",
         f"{NS}.table.put_head": "Now place a forged tool head onto the handle!",
-        f"{NS}.table.need_binding": "The 1x2 Heavy Pickaxe needs a Binding Ring of the same material!",
-        f"{NS}.table.hammer_to_finish": "Strike %s× with the Smithing Hammer (left-click) to assemble!",
+        f"{NS}.table.need_binding": "Needs a Binding Ring of the same material!",
+        f"{NS}.table.hammer_to_finish": "Strike %s× with the hammer (left-click)",
         f"{NS}.table.done": "Tool assembled!",
         f"tooltip.{NS}.quality.crude": "Forged Quality: Crude (75% Durability)",
         f"tooltip.{NS}.quality.sturdy": "Forged Quality: Sturdy (100% Standard)",
@@ -2064,9 +2064,9 @@ def main():
                                       ("masterwork", "Meisterwerk (140% Haltbarkeit, +0.5 Rüstung)", "Masterwork (140% Durability, +0.5 Armor)")):
         de_lang[f"tooltip.{NS}.quality_armor.{quality}"] = f"Schmiede-Qualität: {de_text}"
         en_lang[f"tooltip.{NS}.quality_armor.{quality}"] = f"Forged Quality: {en_text}"
-    de_lang[f"{NS}.table.need_padding"] = "Rüstungsplatten brauchen ein Rüstungspolster statt eines Griffs!"
-    en_lang[f"{NS}.table.need_padding"] = "Armor plates need an armor padding instead of a handle!"
-    de_lang[f"{NS}.table.padding_only_armor"] = "Auf das Rüstungspolster passen nur Rüstungsplatten!"
+    de_lang[f"{NS}.table.need_padding"] = "Platten brauchen Rüstungspolster statt Griff!"
+    en_lang[f"{NS}.table.need_padding"] = "Armor plates need padding, not a handle!"
+    de_lang[f"{NS}.table.padding_only_armor"] = "Aufs Polster passen nur Rüstungsplatten!"
     en_lang[f"{NS}.table.padding_only_armor"] = "Only armor plates fit onto the armor padding!"
     de_lang[f"skill.{NS}.armor"] = "Rüstung"
     en_lang[f"skill.{NS}.armor"] = "Armor"
@@ -2245,7 +2245,7 @@ def main():
         en_lang[f"item.{NS}.{item_id}"] = en_name
     de_lang[f"tooltip.{NS}.star_core"] = "Herzstück des Ringkerns (Werkbank)."
     en_lang[f"tooltip.{NS}.star_core"] = "Heart of the ring core (crafting table)."
-    de_lang[f"{NS}.crucible.wrong_metal"] = "Dieses Material passt nicht in diese Gussform!"
+    de_lang[f"{NS}.crucible.wrong_metal"] = "Material passt nicht in diese Gussform!"
     en_lang[f"{NS}.crucible.wrong_metal"] = "This material does not fit this mold!"
     de_lang[f"{NS}.crucible.need_ring_core"] = "Lege zuerst einen Ringkern in die Ringform!"
     en_lang[f"{NS}.crucible.need_ring_core"] = "Lay a ring core into the ring mold first!"
@@ -2264,7 +2264,7 @@ def main():
         en_lang[f"tooltip.{NS}.design.{design}"] = f"Design: {en_name}"
     de_lang[f"tooltip.{NS}.design_item"] = "Selten! Am Montagetisch auf ein fertig geschmiedetes Werkzeug, eine Waffe oder ein Rüstungsteil aufschmieden."
     en_lang[f"tooltip.{NS}.design_item"] = "Rare! Hammer onto a finished forged tool, weapon or armor piece on the assembly table."
-    de_lang[f"{NS}.table.put_design"] = "Lege jetzt ein Schmiede-Design auf das Werkzeug!"
+    de_lang[f"{NS}.table.put_design"] = "Lege jetzt ein Schmiede-Design auf!"
     en_lang[f"{NS}.table.put_design"] = "Now lay a smithing design onto the tool!"
     de_lang[f"{NS}.table.has_design"] = "Dieses Werkzeug hat schon ein Design."
     en_lang[f"{NS}.table.has_design"] = "This tool already has a design."
@@ -2281,8 +2281,8 @@ def main():
     en_lang[f"tooltip.{NS}.folio"] = "Right-click to read: XP for this tool kind."
     de_lang[f"{NS}.folio.disabled"] = "Das Level-System ist auf diesem Server aus."
     en_lang[f"{NS}.folio.disabled"] = "The level system is off on this server."
-    de_lang[f"{NS}.crucible.end_steel"] = "Endstahl beigemischt (%s/%s) - das Werkzeug wird mindestens gehärtet!"
-    en_lang[f"{NS}.crucible.end_steel"] = "End steel mixed in (%s/%s) - the tool will be at least tempered!"
+    de_lang[f"{NS}.crucible.end_steel"] = "Endstahl dazu (%s/%s): mind. gehärtet"
+    en_lang[f"{NS}.crucible.end_steel"] = "End steel (%s/%s): at least tempered"
     register_3d_sprite("end_steel_shard", sprites.end_steel_shard_3d(), glow=8)
     items_yml[f"{NS}:end_steel_shard"] = {"model": f"{NS}:end_steel_shard", "name": f"item.{NS}.end_steel_shard",
                                           "tooltip": f"tooltip.{NS}.end_steel_shard"}
@@ -2292,8 +2292,8 @@ def main():
     en_lang[f"tooltip.{NS}.end_steel_shard"] = "Add to the smeltery before casting (1, heavy pickaxe 2): the tool will be at least tempered."
     de_lang[f"{NS}.skill.too_low_forge"] = "Dafür brauchst du %s Stufe %s."
     en_lang[f"{NS}.skill.too_low_forge"] = "You need %s level %s for that."
-    de_lang[f"{NS}.skill.too_low_use"] = "Zu hohe Stufe! Ab %s Stufe %s nutzbar (mit doppeltem Verschleiß)."
-    en_lang[f"{NS}.skill.too_low_use"] = "Tier too high! Usable from %s level %s (with double wear)."
+    de_lang[f"{NS}.skill.too_low_use"] = "Ab %s Stufe %s: doppelter Verschleiß!"
+    en_lang[f"{NS}.skill.too_low_use"] = "Needs %s level %s - double wear!"
     de_lang[f"{NS}.basin.done_part"] = "Abgeschreckt und fertig!"
     en_lang[f"{NS}.basin.done_part"] = "Quenched and finished!"
 

@@ -112,5 +112,7 @@
   "tooltip.kaleidoscope_cookery.wild_mushroom_rabbit_soup.maxim.line1": "Tender rabbit with fresh, fragrant mushrooms.",
   "tooltip.kaleidoscope_cookery.yakitori.maxim.line1": "Charcoal aroma lingering, juicy chicken, soul of the izakaya.",
   "tooltip.kaleidoscope_cookery.zongzi.maxim.line1": "A Dragon Boat Festival food said to commemorate the poet Qu Yuan.",
-  "effect.kaleidoscope_cookery.flatulence.description": "Sneak to induce flatulence and gain elevation – at most 100 blocks above the ground."
+  "effect.kaleidoscope_cookery.flatulence.description": "Sneak to induce flatulence and gain elevation – at most 100 blocks above the ground.",
+  "tooltip.kaleidoscope_cookery.teapot.take_tea_fluid.blocked": "Only before brewing and with no ingredient",
+  "tip.kaleidoscope_cookery.pot.need_kitchen_shovel": "Sneak + right-click with kitchen shovel"
 }
